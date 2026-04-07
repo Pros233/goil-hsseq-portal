@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOIL HSSEQ – Facility Details</title>
+<script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────────── */
+:root{
+  --bg:       #0D1117;
+  --bg2:      #161B22;
+  --bg3:      #1C2128;
+  --bg4:      #21262D;
+  --bg5:      #30363D;
+  --border:   rgba(255,255,255,.08);
+  --border2:  rgba(255,255,255,.14);
+  --or:       #F47920;
+  --or-dim:   rgba(244,121,32,.12);
+  --or-glow:  rgba(244,121,32,.3);
+  --wh:       #E6EDF3;
+  --wh2:      #C9D1D9;
+  --wh3:      #8B949E;
+  --wh4:      #484F58;
+  --low:      #3FB950;
+  --med:      #D29922;
+  --high:     #E07D23;
+  --crit:     #DA3633;
+  --t:        .18s ease;
+  --radius:   8px;
+  --radius-lg:12px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  color:var(--wh2);
+  display:flex;flex-direction:column;
+  min-height:100vh;
+}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  flex-shrink:0;
+  height:58px;
+  background:rgba(10,10,14,0.98);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(244,121,32,0.25);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  position:relative;
+  z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{height:32px;width:auto;display:block}
+.topbar-divider{width:1px;height:26px;background:rgba(255,255,255,0.1)}
+.topbar-brand{display:flex;flex-direction:column;gap:1px}
+.topbar-dept{
+  font-size:9px;font-weight:700;letter-spacing:2.5px;
+  color:var(--or);text-transform:uppercase;line-height:1;
+}
+.topbar-page{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;font-weight:800;color:var(--wh);
+  letter-spacing:.4px;text-transform:uppercase;line-height:1.2;
+}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-step-badge{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--or);
+  background:rgba(244,121,32,0.1);
+  border:1px solid rgba(244,121,32,0.25);
+  padding:4px 10px;border-radius:999px;
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar{
+  flex-shrink:0;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;
+  display:flex;align-items:center;gap:0;height:52px;
+}
+.step{
+  display:flex;align-items:center;gap:10px;
+  padding:0 20px 0 0;position:relative;
+}
+.step-dot{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--bg5);
+  background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--wh3);
+  transition:all .3s;flex-shrink:0;
+}
+.step.active .step-dot{
+  border-color:var(--or);background:var(--or);color:#fff;
+  box-shadow:0 0 0 4px var(--or-dim);
+}
+.step.done .step-dot{
+  border-color:var(--low);background:var(--low);color:#fff;
+}
+.step.done .step-dot::after{content:'✓'}
+.step.done .step-dot span{display:none}
+.step-label{
+  font-size:12px;font-weight:600;color:var(--wh3);
+  letter-spacing:.3px;white-space:nowrap;
+}
+.step.active .step-label{color:var(--or);}
+.step.done  .step-label{color:var(--low);}
+.step-line{
+  flex:0 0 40px;height:1px;background:var(--bg5);margin:0 4px;
+  transition:background .3s;
+}
+.step-line.done{background:var(--low)}
+
+/* ─── MAIN SCROLL AREA ─── */
+.page-body{
+  flex:1;overflow-y:auto;
+  padding:40px 32px 120px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--bg5) transparent;
+}
+.page-body::-webkit-scrollbar{width:6px}
+.page-body::-webkit-scrollbar-track{background:transparent}
+.page-body::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+.page-body::-webkit-scrollbar-thumb:hover{background:var(--wh4)}
+
+/* ─── CARD ─── */
+.card{
+  max-width:780px;margin:0 auto;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+.card-head{
+  padding:28px 32px 24px;
+  border-bottom:1px solid rgba(244,121,32,0.18);
+  display:flex;align-items:flex-start;gap:16px;
+  background:linear-gradient(135deg,rgba(244,121,32,0.07) 0%,var(--bg2) 55%);
+  position:relative;overflow:hidden;
+}
+.card-head::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(to right,var(--or),transparent);
+}
+.card-head-watermark{
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  height:110px;width:auto;
+  opacity:0.06;filter:grayscale(1);
+  pointer-events:none;user-select:none;
+}
+.card-head-icon{
+  width:48px;height:48px;border-radius:10px;
+  background:rgba(244,121,32,0.12);border:1px solid rgba(244,121,32,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;margin-top:2px;
+  box-shadow:0 0 20px rgba(244,121,32,0.1);
+}
+.card-head-text h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.3px;color:var(--wh);margin-bottom:4px;
+}
+.card-head-text p{
+  font-size:13px;color:var(--wh3);line-height:1.5;
+}
+.card-body{padding:28px 32px}
+
+/* ─── SECTION HEADERS ─── */
+.form-section{margin-bottom:32px}
+.form-section:last-child{margin-bottom:0}
+.section-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:1.5px;color:var(--or);
+  padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::before{
+  content:'';display:inline-block;width:3px;height:14px;
+  background:var(--or);border-radius:2px;
+}
+
+/* ─── FORM ROWS / GROUPS ─── */
+.form-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;
+}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{
+  font-size:12px;font-weight:600;color:var(--wh2);
+  display:flex;align-items:center;gap:6px;
+}
+.label-req{color:var(--crit);font-size:14px;line-height:1}
+.label-auto{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--wh4);background:var(--bg4);border:1px solid var(--border);
+  padding:1px 5px;border-radius:3px;
+}
+
+/* ─── INPUTS & SELECTS ─── */
+.form-input,.form-select{
+  height:42px;padding:0 14px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  color:var(--wh);
+  font-family:'Barlow',sans-serif;font-size:13px;
+  outline:none;transition:border-color var(--t),box-shadow var(--t);
+  width:100%;
+}
+.form-input:focus,.form-select:focus{
+  border-color:var(--or);
+  box-shadow:0 0 0 3px var(--or-dim);
+}
+.form-input[readonly]{
+  background:var(--bg4);color:var(--wh3);cursor:default;
+  border-color:var(--border);
+}
+.form-input[readonly]:focus{box-shadow:none;border-color:var(--border)}
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B949E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;cursor:pointer;
+}
+.form-select:focus{
+  border-color:var(--or);box-shadow:0 0 0 3px var(--or-dim);
+}
+.form-select option{background:var(--bg3);color:var(--wh)}
+.form-select:disabled{
+  opacity:.4;cursor:not-allowed;
+}
+
+/* ─── CONDITIONAL REVEAL ─── */
+.reveal-wrap{
+  overflow:hidden;
+  max-height:0;opacity:0;
+  transition:max-height .35s cubic-bezier(.22,1,.36,1),opacity .25s,margin .3s;
+  margin-top:0;
+}
+.reveal-wrap.open{
+  max-height:600px;opacity:1;margin-top:12px;
+  overflow:visible;
+}
+.reveal-input{
+  width:100%;padding:10px 14px;
+  background:var(--bg3);
+  border:1.5px dashed var(--or-glow);
+  border-radius:var(--radius);
+  color:var(--wh);
+  font-family:'Barlow',sans-serif;font-size:13px;
+  outline:none;
+  transition:border-color var(--t),box-shadow var(--t);
+}
+.reveal-input:focus{
+  border-color:var(--or);border-style:solid;
+  box-shadow:0 0 0 3px var(--or-dim);
+}
+.reveal-label{
+  font-size:11px;font-weight:600;color:var(--or);
+  margin-bottom:6px;display:flex;align-items:center;gap:5px;
+}
+.reveal-label::before{content:'↳';font-size:12px}
+
+/* ─── VALIDATION STATES ─── */
+.form-group.has-error .form-input,
+.form-group.has-error .form-select,
+.form-group.has-error .reveal-input{
+  border-color:var(--crit) !important;
+  box-shadow:0 0 0 3px rgba(218,54,51,.15) !important;
+}
+.field-error{
+  font-size:11px;color:var(--crit);font-weight:500;
+  display:none;align-items:center;gap:4px;margin-top:2px;
+}
+.field-error.show{display:flex}
+.field-error::before{content:'⚠';font-size:10px}
+
+/* ─── LIVE PREVIEW CARD ─── */
+.preview-card{
+  margin-top:48px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+}
+.preview-card.show{display:block}
+.preview-head{
+  padding:8px 16px;
+  background:var(--or-dim);
+  border-bottom:1px solid var(--or-glow);
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--or);
+}
+.preview-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;
+}
+.preview-item{
+  padding:10px 16px;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.preview-item:nth-child(3n){border-right:none}
+.preview-item:nth-last-child(-n+3){border-bottom:none}
+.preview-key{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--wh3);margin-bottom:3px}
+.preview-val{font-size:12px;font-weight:600;color:var(--wh);word-break:break-word}
+
+/* ─── FOOTER / BUTTON BAR ─── */
+.page-footer{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  padding:16px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:20;
+  backdrop-filter:blur(10px);
+}
+.footer-note{font-size:12px;color:var(--wh3)}
+.footer-note strong{color:var(--or)}
+.btn-group{display:flex;gap:10px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border-radius:6px;border:none;cursor:pointer;
+  font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.3px;transition:all var(--t);min-height:42px;
+}
+.btn-ghost{
+  background:transparent;border:1.5px solid var(--border2);color:var(--wh3);
+}
+.btn-ghost:hover{border-color:var(--wh4);color:var(--wh)}
+.btn-primary{
+  background:var(--or);color:#fff;
+  box-shadow:0 2px 12px var(--or-glow);
+}
+.btn-primary:hover{
+  background:#e06b15;box-shadow:0 4px 20px rgba(244,121,32,.5);transform:translateY(-1px);
+}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary svg,.btn-ghost svg{width:16px;height:16px;flex-shrink:0}
+
+/* ─── TOAST ─── */
+.toast-wrap{
+  position:fixed;top:80px;right:24px;
+  display:flex;flex-direction:column;gap:8px;
+  z-index:1000;pointer-events:none;
+}
+.toast{
+  padding:10px 18px;border-radius:6px;
+  font-size:13px;font-weight:600;color:#fff;
+  display:flex;align-items:center;gap:8px;
+  animation:toastIn .25s ease forwards;
+  pointer-events:auto;
+}
+.toast.warning{background:#92400e;border-left:3px solid var(--high)}
+.toast.success{background:#065f46;border-left:3px solid var(--low)}
+.toast.error{background:#7f1d1d;border-left:3px solid var(--crit)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateX(20px)}}
+
+@media(max-width:640px){
+  .progress-bar,.page-body,.page-footer{padding-left:16px;padding-right:16px}
+  .form-row{grid-template-columns:1fr}
+  .preview-grid{grid-template-columns:1fr 1fr}
+  .card-body{padding:20px 16px}
+  .card-head{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ──────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <img src="../assets/img/goil-logo.png" alt="GOIL Logo" class="topbar-logo" />
+    <div class="topbar-divider"></div>
+    <div class="topbar-brand">
+      <span class="topbar-dept">HSSEQ Department</span>
+      <span class="topbar-page">Risk Assessment &amp; Facility Inspection</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-step-badge">Step 1 of 3</span>
+  </div>
+</div>
+
+<!-- ─── PROGRESS ────────────────────────────── -->
+<div class="progress-bar">
+  <div class="step active" id="step1">
+    <div class="step-dot"><span>1</span></div>
+    <div class="step-label">Facility Details</div>
+  </div>
+  <div class="step-line" id="stepLine1"></div>
+  <div class="step" id="step2">
+    <div class="step-dot"><span>2</span></div>
+    <div class="step-label">Assessment Checklist</div>
+  </div>
+  <div class="step-line" id="stepLine2"></div>
+  <div class="step" id="step3">
+    <div class="step-dot"><span>3</span></div>
+    <div class="step-label">Review &amp; Submit</div>
+  </div>
+</div>
+
+<!-- ─── BODY ─────────────────────────────────── -->
+<main class="page-body">
+  <div class="card">
+
+    <div class="card-head">
+      <img src="../assets/img/goil-logo.png" alt="" class="card-head-watermark" aria-hidden="true" />
+      <div class="card-head-icon">🏭</div>
+      <div class="card-head-text">
+        <h1>Facility Details</h1>
+        <p>Provide facility identification and assessment context. All fields marked <strong style="color:var(--crit)">*</strong> are required before you can proceed to the checklist.</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- ══ SECTION A: Assessor Information ══ -->
+      <div class="form-section">
+        <div class="section-label">Assessor Information</div>
+
+        <div class="form-row">
+          <div class="form-group" id="grp-assessor">
+            <label class="form-label">
+              Assessor Name
+              <span class="label-auto">Auto-filled</span>
+            </label>
+            <input class="form-input" id="fld-assessor" type="text" readonly placeholder="Sign in to populate">
+          </div>
+          <div class="form-group" id="grp-date">
+            <label class="form-label">Assessment Date <span class="label-req">*</span></label>
+            <input class="form-input" id="fld-date" type="date" oninput="livePreview()">
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="form-group" id="grp-atype">
+            <label class="form-label">Assessment Type <span class="label-req">*</span></label>
+            <select class="form-select" id="fld-atype" onchange="onAtypeChange()">
+              <option value="" disabled selected>Select assessment type…</option>
+              <option value="Routine">Routine</option>
+              <option value="Post-incident">Post-incident</option>
+              <option value="Other">Other</option>
+            </select>
+            <div class="field-error" id="err-atype">Please select an assessment type</div>
+            <div class="reveal-wrap" id="rev-atype">
+              <div class="reveal-label">Specify Assessment Type <span class="label-req">*</span></div>
+              <input class="reveal-input" id="fld-atype-other" type="text"
+                     placeholder="Describe the assessment type…"
+                     oninput="livePreview()" onblur="clearError('grp-atype','err-atype')">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECTION B: Facility Identification ══ -->
+      <div class="form-section">
+        <div class="section-label">Facility Identification</div>
+
+        <!-- Facility Type -->
+        <div class="form-row full">
+          <div class="form-group" id="grp-ftype">
+            <label class="form-label">Facility Type <span class="label-req">*</span></label>
+            <select class="form-select" id="fld-ftype" onchange="onFacilityTypeChange()">
+              <option value="" disabled selected>Select facility type…</option>
+              <option value="Fuel Station">Fuel Station</option>
+              <option value="LPG Plant">LPG Plant</option>
+              <option value="Office &amp; Depot">Office &amp; Depot</option>
+            </select>
+            <div class="field-error" id="err-ftype">Please select a facility type</div>
+          </div>
+        </div>
+
+        <!-- Zone (Fuel Station / LPG Plant only) -->
+        <div class="reveal-wrap" id="rev-zone-wrap">
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-zone">
+              <label class="form-label">Zone <span class="label-req">*</span></label>
+              <select class="form-select" id="fld-zone" onchange="onZoneChange()">
+                <option value="" disabled selected>Select zone…</option>
+                <option>Zonal Office Middle Belt</option>
+                <option>Zonal Office North</option>
+                <option>Zonal Office South</option>
+                <option>Zonal Office South East</option>
+                <option>Zonal Office Tema &amp; Central Depot</option>
+                <option>Zonal Office Upper Mid Belt</option>
+                <option>Zonal Office West</option>
+              </select>
+              <div class="field-error" id="err-zone">Please select a zone</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Station Name (Fuel Station, zone-filtered) -->
+        <div class="reveal-wrap" id="rev-station-wrap">
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-station">
+              <label class="form-label">Station Name <span class="label-req">*</span></label>
+              <select class="form-select" id="fld-station" onchange="onNameSelect('station')">
+                <option value="" disabled selected>Select zone first…</option>
+              </select>
+              <div class="field-error" id="err-station">Please select a station</div>
+              <div class="reveal-wrap" id="rev-station-other">
+                <div class="reveal-label">Specify Station Name <span class="label-req">*</span></div>
+                <input class="reveal-input" id="fld-station-other" type="text"
+                       placeholder="Enter station name…" oninput="livePreview()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LPG Plant Name (LPG Plant, zone-filtered) -->
+        <div class="reveal-wrap" id="rev-lpg-wrap">
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-lpg">
+              <label class="form-label">LPG Plant Name <span class="label-req">*</span></label>
+              <select class="form-select" id="fld-lpg" onchange="onNameSelect('lpg')">
+                <option value="" disabled selected>Select zone first…</option>
+              </select>
+              <div class="field-error" id="err-lpg">Please select an LPG plant</div>
+              <div class="reveal-wrap" id="rev-lpg-other">
+                <div class="reveal-label">Specify LPG Plant Name <span class="label-req">*</span></div>
+                <input class="reveal-input" id="fld-lpg-other" type="text"
+                       placeholder="Enter LPG plant name…" oninput="livePreview()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facility Name (Office / Office & Depot) -->
+        <div class="reveal-wrap" id="rev-facility-wrap">
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-facility">
+              <label class="form-label">Facility Name <span class="label-req">*</span></label>
+              <select class="form-select" id="fld-facility" onchange="onNameSelect('facility')">
+                <option value="" disabled selected>Select facility…</option>
+              </select>
+              <div class="field-error" id="err-facility">Please select a facility</div>
+              <div class="reveal-wrap" id="rev-facility-other">
+                <div class="reveal-label">Specify Facility Name <span class="label-req">*</span></div>
+                <input class="reveal-input" id="fld-facility-other" type="text"
+                       placeholder="Enter facility name…" oninput="livePreview()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /section B -->
+
+      <!-- ══ LIVE SUMMARY PREVIEW ══ -->
+      <div class="preview-card" id="previewCard">
+        <div class="preview-head">📋 Session Summary Preview</div>
+        <div class="preview-grid">
+          <div class="preview-item"><div class="preview-key">Assessor</div><div class="preview-val" id="prev-assessor">—</div></div>
+          <div class="preview-item"><div class="preview-key">Date</div><div class="preview-val" id="prev-date">—</div></div>
+          <div class="preview-item"><div class="preview-key">Assessment Type</div><div class="preview-val" id="prev-atype">—</div></div>
+          <div class="preview-item"><div class="preview-key">Facility Type</div><div class="preview-val" id="prev-ftype">—</div></div>
+          <div class="preview-item"><div class="preview-key">Zone</div><div class="preview-val" id="prev-zone">—</div></div>
+          <div class="preview-item"><div class="preview-key">Facility / Station</div><div class="preview-val" id="prev-name">—</div></div>
+        </div>
+      </div>
+
+    </div><!-- /card-body -->
+  </div><!-- /card -->
+</main>
+
+<!-- ─── FOOTER ────────────────────────────────── -->
+<footer class="page-footer">
+  <div class="footer-note">
+    Fields marked <strong>*</strong> are required &nbsp;·&nbsp;
+    Details are saved before proceeding
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-ghost" onclick="goBack()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
+      Back
+    </button>
+    <button class="btn btn-primary" id="proceedBtn" onclick="proceed()">
+      Proceed to Assessment
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h8M9 4l4 4-4 4"/></svg>
+    </button>
+  </div>
+</footer>
+
+<!-- ─── TOAST CONTAINER ───────────────────────── -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────────────────
+const DATA_STATIONS  = {"Zonal Office South":["ABEKA LAPAZ","ABLEKUMA  MAIN","ABLEKUMA AYAWASO","ABLEKUMA NSUFA","ABLOR ADJEI","ACP - POKUASE","ADDEY JUNCTION","ADENTA AVIATION","AGBOBA","AGYIRIGANO","AKWETEYMAN NO. 2","AMAMOLEY","ANYAA MARKET","ASHALLEY BOTWE","ASHALLEY BOTWE HIGHWAYS","ASHONGMAN","ASHONGMAN CITY","AVIATION","AWOSHIE","BATSOONA","BAWJIASE","BAWJIASE NO. 2","BEREKUSO","BORTIANOR","BUBUASHIE","BURMA CAMP S/S","CANTOMENTS","CHRISTIAN VILLAGE","CIRCLE CAPRICE","CIRCLE OVERHEAD","COCA COLA","DANSOMAN MAIN","DANSOMAN ROUNDABOUT","DARKUMAN KOKOMPE","DARKUMAN KOKOMPE","DENCHIRA","DOME","GALILEA","GBAWE ZERO","GUGGISBERG AVENUE","HAATSO","IRON CITY","JUBA BARRACKS","KANESHIE MARKET","KANESHIE ODORKOR","KASOA BROADCASTING","KASOA CITY (AMANFROM KASOA)","KASOA MARKET","KASOA NYANYANOR","KASOA OBOUM","KASOA ODUPONKPEHE","KISSEIMAN","KOKROBITE","KORKORJOR","KORLE GONNOR","KPESHIE","KWABENYA","KWABENYA TAXI RANK","KWASHIEMAN","LA NKWANTANAN","LIBERATION RD (AIRPORT)","LIBERIA ROAD","LINK ROAD","MADINA","MADINA ZONGO JUNCTION","MALLAM JUNCTION","MALLAM MARKET","MAYERA","MILE 11","NIMA","NORTH LEGON","NYANYANO KAKRABA","NYANYANO TOWN","NYANYANOR ADADE","ODORKOR MAIN","ODORKOR TERRAZO","ODUPONGKPEHE SECTOR 23","OFANKOR","OPEIKUMA F/S","OPEIKUMA KRISPO CITY","PALLADIUM","POKUASE","PRESEC","PRINTEX JUNCTION","RACE COURSE","SANTOE","SOUTH LA","SOWUTUOM CAPITAL HILLS","SPINTEX","STC-KANESHIE","TABORA","TAIFA","TAIFA GHANEEMA","TANTRA HILL","TOLL BOOTH","TOUGA JUNCTION","TSE ADDO","TUBA  BY PASS","WEIJA 2","WEIJA OLD BARRIER","WEIJA WHITE CROSS"],"Zonal Office South East":["ABURI GYANKAMA","ACHIASE","ADENTA SUPERIOR (AMPOMAH JUNC)","ADUMANYA","AGONA SWEDRU","AKIM ODA","AKIM ODA GUGGISBURG","AKIM SUBI","AKOTSI","AMASAMAN-ABEHENASE","AMRAHIA","AMRAHIA NO. 2","ANYINAM","APOLLONIA CITY","ASAMANKESE","ASHIYIE-FULANI ROAD","ATIBE","ATIBIE AMANFROM","AWUTU","AWUTU BREKU","AYIKAI BOBLO (ASHALAGA)","AYIKAI DOBLO","BEGORO","BUDUBURAM","BUDUBURAM","BUNSO","DODOWA MARKET","FETTEH  KAKRABA","GOMOA FETTEH","HEBRON","JIDA","KADE","KOFORIDUA ADWESO","KOFORIDUA ASOKORE","KOFORIDUA HUHUNYA","KOFORIDUA OKOENYA","KOFORIDUA OKORASE","KOFORIDUA SUHUM","KUKURANTUMI","KUNTUNSE","KWAFOKROM","MAMPONG AKWAPIM","MENSAH KROM","MPRAESO","NKAWANDA","NSAWAM LORRY PARK","NSAWAM POLICE STATION","OBEYEYIE","OJOBI","OKOBEYEYIE","OSIEM","OYARIFA","OYIBI","POBIMAN","SAPEIMAN","SOWUTUOM","SUHUM","TEIMAN (ABOKOBI)","TOMAN","WINNEBA UNIVERSITY ROAD"],"Zonal Office Tema & Central Depot":["ABATTIOR","ABEKOPE","ADA","AFIENYA MATAHEKO","AFIENYA TOLLBOOTH","AFLAO","AGORTA KEDZI","AKATSI BYPASS","AKUSE- NEW SOMANYA ROAD","ANLOGA","ASHAIMAN ZENU","ASHIAMAN SEC. SCH","ASHIAMAN VALCO FLATS","ASHIAMAN ZONGO","ATIMPOKU F/S","BETHLEHEM - GULF CITY","BORTEYMAN","DAMBAI-BANKA","DAWHENYA","DAWHENYA - ADJUMADOR","DAWHENYA-DEVTRACO","DENU BARRIER","DENU TORKOR","DORYUMU","DZODZE AKANU","GBETILE","HO MAIN MARKET","HO MAIN S/S- OPPOSITE S.I.C","HO OLA","HO-HOSPITAL ROAD","HOHOE FIRE SERVICE","HOHOE KPOETA","HOHOE MAIN","JASIKAN","KETE KRACHI 1","KLAGON","KPANDO S/S","KPONE GPHA ROAD","KPONE JUNCTION","KPONE KATAMANSO / APPOLONIA / KUBEKROM","KPONE KOKOMPE","KPONG KOTOKOLI","KPONG S/S","LARPLEKU","LASHIBI","NUNGUA CHANNEL 5","NUNGUA JUNCTION MALL","SEBREPO","SHAI HILLS","SOGAKOPE","SOKODE","SOMANYA TROM","TEMA COMM.1 MARKET","TEMA COMM.9","TEMA TTL","TEMA VRA JUNCTION","TSOPOLI - TOLLBOOTH"],"Zonal Office Middle Belt":["ABIDJAN NKWANTA 1","ABIDJAN NKWANTA 2","ABRANKESE SOANDRO","ABREPOKESE","ABREPOKUMA","ADANSI ASOKWA","AFRANCHO","AFRANCHO (UNITY)","AGOGO HWEDIEM","AGOGO NO. 2","AHODWO ROUNDABOUT","AHODWO-DABAN","AHWIANKWANTA","AKYAWKROM","AMANFROM","ASAFO MARKET","ASOKORE MAMPONG","ATASOMANSO","AYIGYA","BANTAMA","BEBRE","BEDIESO-OBUASI","BEKWAI ROUNDABOUT","BOANKRA","BOMFA JUNCTION","BREMAN","BREMEN UGC","BUOKROM","DICHEMSO","DUNKWA ATECHEM","EFFIDUASE","EJISU","EJURA","EKOSO KONONGO","EMENA","ESRESO","FAWODE","HOMOASI","JACHIE PRAMSO","JUABEN","JUABEN - YAW NKRUMAH","KAASE","KEGYASE","KEJETIA - MBROM","KENTINKRONO KNUST","KENTINKRONO NO. 2","KENYASI","KONONGO ODUMASE","KRAPA","KROFROM","KROMOASE","KRONUM ABUOHIA","KUBEASE","KWABENA KWA-OBUASI","KWAMO","MAAKRO","MAASE","MABAN","MAMPONG BYPASS","MAMPONG TOWN","MANHYIA","MANHYIA HOSPITAL","MEDUMA","MFOUM-BIBANIHA","NEW AMAKOM","NEW KENTINKRONO (SIPODEMS)","NEW KYEKYEWERE-OBUASI","NSUTA","NYANKYERENIASI","OBUASI","OBUASI KYEKYEWERE","OLD TAFO","PAKYI NO. 1","PANKRONO NO. 2","PANKRONU KODUA JUNCTION","SANTASI","SANTASI ANYINAM","SUAME ROUNDABOUT","TAFO WESLEY (TAFO CEMETARY)","TAKYIKROM","TANOSO","TANOSO","TEWOBAABI","YAWKWEI","YEJI"],"Zonal Office Upper Mid Belt":["ABESIM","AHAFO HWIDIEM","AKROPONG","AKUMADAN","AYORYA","BECHEM TEPA JUNCTION","BENUE NKWANTA","BEREKUM MAIN","BEREKUM SEIKWA","BEREKUM-DORMAA ROAD","BIBIANI LINESO","BIBIANI MANUKROM","BUI JAMA","DOMFETE","DORMAA AHENKRO","DROBO 1","FIAPRE","GOASO HWIDIEM ROAD","GOASO KUKUOM ROAD","GOASO-MIM ROAD","KINTAMPO","MIM OPPONKROM","NEW DORMAA ROAD","NEW WENCHI","NKAWIE","NKORANZA","ODUMASI/TECHIMAN","OFFINSO ABOFOUR","OFFINSO ASAMANKAMA","OFFINSO DENASE","OFFINSO DENTIN","OFFINSO TUTUASE 1","OFFINSO TUTUASE 2","SAMPA","SANKORE","SEFWI AWAWSO","SEFWI BEKWAI","SEFWI BODI","SEFWI DIASO","SEFWI DWENASE","SUNYANI BYPASS","SUNYANI OLD BARRIER","SUNYANI RIDGE","SUNYANI TANOSO","SUNYANI ZONGO","TECHIMAN ANYINABREM","TECHIMAN BANKOMA EST.","TECHIMAN KUNTUNSO","TECHIMAN MARKET","TECHIMAN TANOSO","TUOBODOM","TUOBODOM","WAMFIE","WENCHI MAIN","WENCHI-WA ROAD"],"Zonal Office West":["ABANDZIE","ABOADE AGONA NKWANTA","ABURA STADIUM","ADISADEL (CAPE COAST)","ADJUMAKO","AGONA AMENFI","AIRPORT ROUNDABOUT","AKWAKROM","ANAJIE FIE","APOWA (OJK)","APREMDO","ASSIN BROFOYEDURU","ASSIN PRASO","BAKAANO","BAKAEKYIRE","BATANYA","BEPOSO","BOGOSO","BOGOSO PRESTEA JUNCTION","BREMAN ASIKUMA","BUELA LANE (ABEASI)","CAPE COAST BY PASS","ELMINA (SUPERIOR)","ELUBO (SUPERIOR)","ENCHI","ESSIAMA","FANTE NYANKOMASI","FIJAI (OJK)","HALF ASSINI","INCHABAN","KIKAM","KOJOKROM","MANKESSIM MAIN","MEMPEASEM","OLD AXIM  (CHAPEL HILL)","OLD SHAMA   (ESSIKADO)","PRESTEA","PRESTEA ANKOBRA","PRESTEA NAKABA","SEKONDI ROAD","SIWDO (CAPE COAST)","TARKWA BOBOOBO.","TARKWA BOGOSO JUNNTION","TARKWA MAIN","TWIFO PRASO","UCC","WASSA  AGONA","WEST ANAJI","YESUNKWA"],"Zonal Office North":["AIRPORT ROAD, TAMALE","BAWKU BY-PASS","BAWKU MAIN","BIMBILLA","BOLGA - BAWKU ROAD","BOLGA MAIN","BONGO","BUIPE","DUNGU","HOSPITAL ROAD","JISONAYILY - TAMALE","KALADAN","KONGO","NAVRONGO","RIVOLI","SALAGA","SANDEMA","SAVELUGU","SOE-BOLGATANTA","SOUTH VITTIN -TAMALE","TAMALE RICE CITY","VITTIN","WALEWALE (UNION OIL)","WALEWALE NALERIGU","WALEWALE WULUGU","YENDI","YENDI ROAD","YIKENE","ZEBILLA","ZUARUNGU NO.2"]};
+const DATA_LPG       = {"Zonal Office Middle Belt":["CAPTAIN 50/50","GAG ENTERPRISE","YAW FOSU LPG","ABDUL RAZAK ISSAH","AFI GAS","ABBAN GAS","MR. KWAME SEKYERE","GOIL GAS (KENTINKRONO GAS PLANT"],"Zonal Office North":["GOIL GAS(LT. COL. ABDULAI IBRAHIM)","IDDRISU TAULUT WABUGRI","NADE ENERGY (BOLGA GAS)"],"Zonal Office South":["GHANEEMA LPG FILLING PLANT","MUSDAC VENTURES - OYIBI PLANT","MIJUKAY ENTERPRISE","MOJO GAS","ASHALAJA LPG REFILLING PLANT","AUTO GAS","MILLODART","NADE ENERGY GH. LTD","YAW TWUMASI","ARETHA BAKER-WOODE (BURMA CAMP)","KPESHIE GOIL GAS PLANT"],"Zonal Office South East":["SUNRISE CLASSIC GAS","KASOA NYANYANO - GOIL GAS","GOIL GAS (LINDA DOR)","NELSON ANNOR","ATLANTIC GAS LTD","LINKWADO LIMITED","DANASO ENTERPRISE","MICHIKWAM GAS LTD","OFORI GAS","CONNORS GAS"],"Zonal Office Tema & Central Depot":["MUSDAC VENTURES","VALCO FLAT GAS","SUPREME GAS LTD","SALAKO ENTERPRISE","MACBARON LP GAS PLANT","ANTHOINETTE KUSH. (GOIL GAS)","ALHAJI JAMAL RAJI"],"Zonal Office Upper Mid Belt":["EMMANUEL GEORGE YEBOAH","FRANYEB COMPANY LTD","CHARLES BOFAH"],"Zonal Office West":["E K FOSU ENTERPRISE","HARTBOVAN GAS ENT.","CAPE COAST BY-PASS","NANA EFUA EDZII","ALIMEX ENTERPRISE","TAKORADI GAS PLANT (PACO GAS)","KOFI ANTWI-SEFWI BEKWAI LPG"]};
+const DATA_OFFICES   = ["GOIL Head Office","GOIL Head Office Annex","GOUPSTREAM","GoEnergy","Liaison Office Bolga","Liaison Office Buipe","Quality Control Office","Ridge Office","Tema Bunkering Office"];
+const DATA_OFF_DEPOT = ["GoBitumen","GoEnergy","GOIL Head Office","GOIL Head Office Annex","GOUPSTREAM","Kumasi Aviation Office","Kumasi Liaison Office","Kumasi LPG Plant","Liaison Office APD","Liaison Office Bolga","Liaison Office Buipe","Quality Control Office","Ridge Office","Takoradi Aviation Depot","Takoradi Harbour Bunkering","Takoradi Naval Base Bunkering","Tamale Aviation Depot","Tema Bunkering Office","Tema LPG Plant","Zonal Office Middle Belt","Zonal Office North","Zonal Office South","Zonal Office South East","Zonal Office Tema & Central Depot","Zonal Office Upper Mid Belt","Zonal Office West"];
+
+const SAVE_KEY = 'goil_facility_details';
+const AUTH_KEY = 'goilAuth';
+const USER_KEY = 'goilUser';
+const INSPECTION_META_KEY = 'goil_inspection_meta';
+
+const STATUS = {
+  DRAFT: 'Draft',
+  IN_PROGRESS: 'In Progress',
+  PENDING_CORRECTIVE: 'Checklist Submitted / Pending Corrective Action',
+  PUBLISHED: 'Fully Submitted / Published to Register'
+};
+
+async function purgeLegacyClientCaches() {
+  try {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(reg => reg.unregister().catch(() => false)));
+    }
+  } catch (error) {}
+
+  try {
+    if (window.caches && caches.keys) {
+      const names = await caches.keys();
+      await Promise.all(names.map(name => caches.delete(name).catch(() => false)));
+    }
+  } catch (error) {}
+
+  try {
+    localStorage.setItem('goil_cache_flush_at', new Date().toISOString());
+  } catch (error) {}
+}
+
+// ─────────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  purgeLegacyClientCaches();
+
+  // Set today's date
+  document.getElementById('fld-date').value = new Date().toISOString().split('T')[0];
+
+  // Load assessor from auth context/session
+  try {
+    const user = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+    const authSession = JSON.parse(localStorage.getItem('goil_auth_session') || '{}');
+    const assessorName = user.username || user.email || authSession.name || '';
+    if (assessorName) {
+      document.getElementById('fld-assessor').value = assessorName;
+    }
+  } catch(e) {}
+
+  // Restore any previously saved form state
+  restoreState();
+  livePreview();
+});
+
+// ─────────────────────────────────────────────────────────
+//  REVEAL HELPERS
+// ─────────────────────────────────────────────────────────
+function show(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('open'); }
+}
+function hide(id) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.remove('open'); }
+}
+
+// ─────────────────────────────────────────────────────────
+//  CASCADE: ASSESSMENT TYPE
+// ─────────────────────────────────────────────────────────
+function onAtypeChange() {
+  const val = document.getElementById('fld-atype').value;
+  clearError('grp-atype', 'err-atype');
+  if (val === 'Other') {
+    show('rev-atype');
+    setTimeout(() => document.getElementById('fld-atype-other').focus(), 320);
+  } else {
+    hide('rev-atype');
+    document.getElementById('fld-atype-other').value = '';
+  }
+  livePreview();
+}
+
+// ─────────────────────────────────────────────────────────
+//  CASCADE: FACILITY TYPE
+// ─────────────────────────────────────────────────────────
+function onFacilityTypeChange() {
+  const ftype = document.getElementById('fld-ftype').value;
+  clearError('grp-ftype', 'err-ftype');
+
+  // Reset downstream
+  hide('rev-zone-wrap');
+  hide('rev-station-wrap');
+  hide('rev-lpg-wrap');
+  hide('rev-facility-wrap');
+  hide('rev-station-other');
+  hide('rev-lpg-other');
+  hide('rev-facility-other');
+  document.getElementById('fld-zone').value = '';
+  document.getElementById('fld-station').innerHTML = '<option value="" disabled selected>Select zone first…</option>';
+  document.getElementById('fld-lpg').innerHTML     = '<option value="" disabled selected>Select zone first…</option>';
+  document.getElementById('fld-facility').innerHTML= '<option value="" disabled selected>Select facility…</option>';
+
+  if (ftype === 'Fuel Station' || ftype === 'LPG Plant') {
+    show('rev-zone-wrap');
+  } else if (ftype === 'Office') {
+    populateSelect('fld-facility', DATA_OFFICES);
+    show('rev-facility-wrap');
+  } else if (ftype === 'Office & Depot') {
+    populateSelect('fld-facility', DATA_OFF_DEPOT);
+    show('rev-facility-wrap');
+  }
+  livePreview();
+}
+
+// ─────────────────────────────────────────────────────────
+//  CASCADE: ZONE
+// ─────────────────────────────────────────────────────────
+function onZoneChange() {
+  const ftype = document.getElementById('fld-ftype').value;
+  const zone  = document.getElementById('fld-zone').value;
+  clearError('grp-zone', 'err-zone');
+
+  // Reset name selects
+  hide('rev-station-wrap');
+  hide('rev-lpg-wrap');
+  hide('rev-station-other');
+  hide('rev-lpg-other');
+
+  if (!zone) { livePreview(); return; }
+
+  if (ftype === 'Fuel Station') {
+    const list = DATA_STATIONS[zone] || [];
+    populateSelect('fld-station', list, list.length ? 'Select station…' : 'No stations found for this zone');
+    show('rev-station-wrap');
+  } else if (ftype === 'LPG Plant') {
+    const list = DATA_LPG[zone] || [];
+    populateSelect('fld-lpg', list, list.length ? 'Select LPG plant…' : 'No LPG plants for this zone');
+    show('rev-lpg-wrap');
+  }
+  livePreview();
+}
+
+// ─────────────────────────────────────────────────────────
+//  NAME SELECT (station / lpg / facility)
+// ─────────────────────────────────────────────────────────
+function onNameSelect(type) {
+  const selId    = { station:'fld-station',   lpg:'fld-lpg',   facility:'fld-facility' }[type];
+  const revId    = { station:'rev-station-other', lpg:'rev-lpg-other', facility:'rev-facility-other' }[type];
+  const inputId  = { station:'fld-station-other', lpg:'fld-lpg-other', facility:'fld-facility-other' }[type];
+  const grpId    = { station:'grp-station',   lpg:'grp-lpg',   facility:'grp-facility' }[type];
+  const errId    = { station:'err-station',   lpg:'err-lpg',   facility:'err-facility' }[type];
+
+  const val = document.getElementById(selId).value;
+  clearError(grpId, errId);
+
+  if (val === 'Other') {
+    show(revId);
+    setTimeout(() => document.getElementById(inputId).focus(), 320);
+  } else {
+    hide(revId);
+    document.getElementById(inputId).value = '';
+  }
+  livePreview();
+}
+
+// ─────────────────────────────────────────────────────────
+//  POPULATE SELECT UTILITY
+// ─────────────────────────────────────────────────────────
+function populateSelect(selId, items, placeholder) {
+  const sel = document.getElementById(selId);
+  sel.innerHTML = '<option value="" disabled selected>' + (placeholder || 'Select…') + '</option>';
+  items.forEach(name => {
+    const o = document.createElement('option');
+    o.value = name; o.textContent = name;
+    sel.appendChild(o);
+  });
+  const other = document.createElement('option');
+  other.value = 'Other'; other.textContent = 'Other — specify below';
+  sel.appendChild(other);
+}
+
+// ─────────────────────────────────────────────────────────
+//  LIVE PREVIEW
+// ─────────────────────────────────────────────────────────
+function livePreview() {
+  const assessor = document.getElementById('fld-assessor').value;
+  const date     = document.getElementById('fld-date').value;
+  const atypeRaw = document.getElementById('fld-atype').value;
+  const atypeOth = document.getElementById('fld-atype-other').value.trim();
+  const atype    = atypeRaw === 'Other' ? (atypeOth || 'Other') : atypeRaw;
+  const ftype    = document.getElementById('fld-ftype').value;
+  const zone     = document.getElementById('fld-zone').value;
+
+  let selName = '—';
+  if (ftype === 'Fuel Station') {
+    const v = document.getElementById('fld-station').value;
+    selName = v === 'Other' ? (document.getElementById('fld-station-other').value || 'Other') : (v || '—');
+  } else if (ftype === 'LPG Plant') {
+    const v = document.getElementById('fld-lpg').value;
+    selName = v === 'Other' ? (document.getElementById('fld-lpg-other').value || 'Other') : (v || '—');
+  } else if (ftype === 'Office' || ftype === 'Office & Depot') {
+    const v = document.getElementById('fld-facility').value;
+    selName = v === 'Other' ? (document.getElementById('fld-facility-other').value || 'Other') : (v || '—');
+  }
+
+  const hasData = assessor || date || atype || ftype;
+  document.getElementById('previewCard').classList.toggle('show', !!hasData);
+
+  document.getElementById('prev-assessor').textContent = assessor || '—';
+  document.getElementById('prev-date').textContent = date
+    ? new Date(date + 'T12:00').toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
+    : '—';
+  document.getElementById('prev-atype').textContent  = atype  || '—';
+  document.getElementById('prev-ftype').textContent  = ftype  || '—';
+  document.getElementById('prev-zone').textContent   = zone   || 'N/A';
+  document.getElementById('prev-name').textContent   = selName;
+}
+
+// ─────────────────────────────────────────────────────────
+//  VALIDATION
+// ─────────────────────────────────────────────────────────
+function validate() {
+  let ok = true;
+
+  function check(grpId, errId, value) {
+    if (!value || !value.trim()) {
+      document.getElementById(grpId).classList.add('has-error');
+      document.getElementById(errId).classList.add('show');
+      ok = false;
+      return false;
+    }
+    return true;
+  }
+
+  // Date
+  if (!document.getElementById('fld-date').value) {
+    document.getElementById('grp-date').classList.add('has-error');
+    ok = false;
+  }
+
+  // Assessment type
+  const atype = document.getElementById('fld-atype').value;
+  if (!atype) { check('grp-atype','err-atype', ''); }
+  else if (atype === 'Other') {
+    if (!document.getElementById('fld-atype-other').value.trim()) {
+      document.getElementById('grp-atype').classList.add('has-error');
+      ok = false;
+    }
+  }
+
+  // Facility type
+  const ftype = document.getElementById('fld-ftype').value;
+  if (!ftype) { check('grp-ftype','err-ftype', ''); }
+  else {
+    if (ftype === 'Fuel Station' || ftype === 'LPG Plant') {
+      const zone = document.getElementById('fld-zone').value;
+      if (!zone) { check('grp-zone','err-zone', ''); }
+    }
+    if (ftype === 'Fuel Station') {
+      const v = document.getElementById('fld-station').value;
+      if (!v) { check('grp-station','err-station', ''); }
+      else if (v === 'Other' && !document.getElementById('fld-station-other').value.trim()) {
+        document.getElementById('grp-station').classList.add('has-error'); ok = false;
+      }
+    }
+    if (ftype === 'LPG Plant') {
+      const v = document.getElementById('fld-lpg').value;
+      if (!v) { check('grp-lpg','err-lpg', ''); }
+      else if (v === 'Other' && !document.getElementById('fld-lpg-other').value.trim()) {
+        document.getElementById('grp-lpg').classList.add('has-error'); ok = false;
+      }
+    }
+    if (ftype === 'Office' || ftype === 'Office & Depot') {
+      const v = document.getElementById('fld-facility').value;
+      if (!v) { check('grp-facility','err-facility', ''); }
+      else if (v === 'Other' && !document.getElementById('fld-facility-other').value.trim()) {
+        document.getElementById('grp-facility').classList.add('has-error'); ok = false;
+      }
+    }
+  }
+
+  return ok;
+}
+
+function clearError(grpId, errId) {
+  document.getElementById(grpId).classList.remove('has-error');
+  if (errId) document.getElementById(errId).classList.remove('show');
+}
+
+// ─────────────────────────────────────────────────────────
+//  SAVE & PROCEED
+// ─────────────────────────────────────────────────────────
+function buildDetails() {
+  const ftype    = document.getElementById('fld-ftype').value;
+  const atypeRaw = document.getElementById('fld-atype').value;
+  const atypeOth = document.getElementById('fld-atype-other').value.trim();
+  const zone     = document.getElementById('fld-zone').value || '';
+
+  let nameVal = '', nameOther = '', nameDisplay = '';
+  if (ftype === 'Fuel Station') {
+    nameVal     = document.getElementById('fld-station').value;
+    nameOther   = document.getElementById('fld-station-other').value.trim();
+    nameDisplay = nameVal === 'Other' ? nameOther : nameVal;
+  } else if (ftype === 'LPG Plant') {
+    nameVal     = document.getElementById('fld-lpg').value;
+    nameOther   = document.getElementById('fld-lpg-other').value.trim();
+    nameDisplay = nameVal === 'Other' ? nameOther : nameVal;
+  } else {
+    nameVal     = document.getElementById('fld-facility').value;
+    nameOther   = document.getElementById('fld-facility-other').value.trim();
+    nameDisplay = nameVal === 'Other' ? nameOther : nameVal;
+  }
+
+  return {
+    assessorName:    document.getElementById('fld-assessor').value,
+    date:            document.getElementById('fld-date').value,
+    atypeVal:        atypeRaw,
+    atypeOther:      atypeOth,
+    atypeDisplay:    atypeRaw === 'Other' ? atypeOth : atypeRaw,
+    facilityType:    ftype,
+    zone:            zone,
+    nameVal:         nameVal,
+    nameOther:       nameOther,
+    nameDisplay:     nameDisplay,
+    savedAt:         new Date().toISOString()
+  };
+}
+
+function buildFacilityStoragePayload(details) {
+  return {
+    assessorName: details.assessorName || '',
+    assessmentDate: details.date || '',
+    assessmentType: details.atypeDisplay || '',
+    facilityType: details.facilityType || '',
+    zone: details.zone || '',
+    nameVal: details.nameVal || '',
+    nameOther: details.nameOther || '',
+    nameDisplay: details.nameDisplay || ''
+  };
+}
+
+async function proceed() {
+  // Clear all errors first
+  document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+  document.querySelectorAll('.field-error.show').forEach(el => el.classList.remove('show'));
+
+  if (!validate()) {
+    toast('Please complete all required fields', 'warning');
+    const first = document.querySelector('.has-error');
+    if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+
+  const details = buildDetails();
+  const payload = buildFacilityStoragePayload(details);
+
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    toast('Unable to save facility details. Please try again.', 'error');
+    return;
+  }
+
+  await purgeLegacyClientCaches();
+
+  // Animate progress bar (best-effort only; navigation must not depend on it)
+  const step1 = document.getElementById('step1');
+  const stepLine1 = document.getElementById('stepLine1');
+  const step2 = document.getElementById('step2');
+  if (step1) {
+    step1.classList.remove('active');
+    step1.classList.add('done');
+  }
+  if (stepLine1) stepLine1.classList.add('done');
+  if (step2) step2.classList.add('active');
+
+  toast('Facility details saved - proceeding...', 'success');
+
+  const ts = Date.now();
+  setTimeout(() => {
+    if (payload.facilityType === 'Office & Depot') {
+      window.location.replace('GOIL_Checklist_OfficeDepot.html?v=20260325&_=' + ts);
+    } else {
+      window.location.replace('GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + ts);
+    }
+  }, 120);
+}
+
+function goBack() {
+  if (window.history.length > 1) window.history.back();
+  else window.dispatchEvent(new CustomEvent('facilityDetailsBack'));
+}
+
+// ─────────────────────────────────────────────────────────
+//  RESTORE STATE
+// ─────────────────────────────────────────────────────────
+function restoreState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+    if (!saved.savedAt) return;
+
+    if (saved.date) document.getElementById('fld-date').value = saved.date;
+
+    if (saved.atypeVal) {
+      document.getElementById('fld-atype').value = saved.atypeVal;
+      if (saved.atypeVal === 'Other') {
+        show('rev-atype');
+        document.getElementById('fld-atype-other').value = saved.atypeOther || '';
+      }
+    }
+
+    if (saved.facilityType) {
+      document.getElementById('fld-ftype').value = saved.facilityType;
+      onFacilityTypeChange();
+
+      if (saved.zone && (saved.facilityType === 'Fuel Station' || saved.facilityType === 'LPG Plant')) {
+        document.getElementById('fld-zone').value = saved.zone;
+        onZoneChange();
+      }
+
+      setTimeout(() => {
+        const selId   = saved.facilityType === 'Fuel Station'  ? 'fld-station' :
+                        saved.facilityType === 'LPG Plant'     ? 'fld-lpg'     : 'fld-facility';
+        const revId   = saved.facilityType === 'Fuel Station'  ? 'rev-station-other' :
+                        saved.facilityType === 'LPG Plant'     ? 'rev-lpg-other'     : 'rev-facility-other';
+        const inpId   = saved.facilityType === 'Fuel Station'  ? 'fld-station-other' :
+                        saved.facilityType === 'LPG Plant'     ? 'fld-lpg-other'     : 'fld-facility-other';
+        if (saved.nameVal) {
+          document.getElementById(selId).value = saved.nameVal;
+          if (saved.nameVal === 'Other') {
+            show(revId);
+            document.getElementById(inpId).value = saved.nameOther || '';
+          }
+        }
+        livePreview();
+      }, 80);
+    }
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'toastOut .25s ease forwards';
+    setTimeout(() => el.remove(), 260);
+  }, 3000);
+}
+</script>
+</body>
+</html>

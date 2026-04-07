@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrections & Corrective Actions | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
+  <style>
+    /* Page-only width refinement: keep existing look, use more available screen space. */
+    .rm-shell {
+      width: min(1680px, 98vw);
+    }
+
+    @media (max-width: 1280px) {
+      .rm-shell {
+        width: 97vw;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .rm-shell {
+        width: 94vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="rm-topbar">
+    <div class="rm-topbar-left">
+      <button class="rm-back-btn" id="backLandingBtn">← Assessment Management Center</button>
+      <div class="rm-title-wrap">
+        <h1 class="rm-title">Corrections &amp; Corrective Actions</h1>
+        <p class="rm-subtitle">Facility-level corrective action register and closure entry</p>
+      </div>
+    </div>
+    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
+  </header>
+
+  <main class="rm-shell">
+    <section class="rm-card">
+      <div class="rm-section-head">
+        <h3>Facility Corrective Action Register</h3>
+      </div>
+      <div class="rm-table-wrap" style="margin-top:10px;">
+        <table class="rm-table">
+          <thead>
+            <tr>
+              <th>Master Reference</th>
+              <th>Facility</th>
+              <th>Open Actions</th>
+              <th>Overdue Actions</th>
+              <th>Closed Actions</th>
+              <th>Latest Assessment Date</th>
+              <th>Highest Risk</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="facilityTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    function riskClass(level) {
+      const raw = String(level || '').toLowerCase();
+      if (raw === 'critical') return 'b-overdue';
+      if (raw === 'high') return 'b-high';
+      if (raw === 'moderate' || raw === 'medium') return 'b-pending';
+      if (raw === 'low') return 'b-published';
+      return 'b-draft';
+    }
+
+    function normalizeRef(ref) {
+      return String(ref || '')
+        .trim()
+        .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+        .replace(/[-_ ]+$/, '')
+        .trim();
+    }
+
+    function actionMasterReference(action) {
+      const candidate = String(
+        action && (
+          action.master_reference ||
+          action.masterReference ||
+          action.parentReference ||
+          action.parent_reference ||
+          action.inspectionRef ||
+          action.assessment_reference ||
+          ''
+        ) || ''
+      ).trim();
+      if (candidate) return normalizeRef(candidate);
+      const actionId = String(action && action.actionId || '').trim();
+      if (!actionId) return '';
+      const match = actionId.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+      return normalizeRef(match && match[1] || actionId);
+    }
+
+    function riskRank(level) {
+      const raw = String(level || '').toLowerCase();
+      if (raw === 'critical') return 4;
+      if (raw === 'high') return 3;
+      if (raw === 'moderate' || raw === 'medium') return 2;
+      return 1;
+    }
+
+    function bestRisk(a, b) {
+      return riskRank(b) > riskRank(a) ? b : a;
+    }
+
+    function summarizeActionsByMaster(actions, records) {
+      const map = new Map();
+      (actions || []).forEach((action) => {
+        const masterRef = actionMasterReference(action);
+        if (!masterRef) return;
+        if (!map.has(masterRef)) {
+          map.set(masterRef, {
+            masterRef: masterRef,
+            facilityName: action.facilityName || 'Unknown Facility',
+            open: 0,
+            overdue: 0,
+            closed: 0,
+            latestAssessmentDate: action.latestAssessmentDate || '',
+            highestRisk: action.riskLevel || 'Low'
+          });
+        }
+        const row = map.get(masterRef);
+        const status = String(action.status || '').toLowerCase();
+        if (status === 'closed' || status === 'verified closed') row.closed += 1;
+        else if (status === 'overdue') row.overdue += 1;
+        else row.open += 1;
+
+        const dNew = new Date(action.latestAssessmentDate || 0).getTime();
+        const dPrev = new Date(row.latestAssessmentDate || 0).getTime();
+        if (Number.isFinite(dNew) && dNew > dPrev) row.latestAssessmentDate = action.latestAssessmentDate || row.latestAssessmentDate;
+        row.highestRisk = bestRisk(row.highestRisk, action.riskLevel || row.highestRisk);
+        if (!row.facilityName && action.facilityName) row.facilityName = action.facilityName;
+      });
+
+      (records || []).forEach((record) => {
+        const masterRef = normalizeRef(
+          (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function')
+            ? RiskModuleUtils.getParentInspectionReference(record)
+            : (record.assessment_reference || record.inspectionRef || '')
+        );
+        if (!masterRef || !map.has(masterRef)) return;
+        const row = map.get(masterRef);
+        row.facilityName = row.facilityName || record.facilityName || record.facility_name || 'Unknown Facility';
+        row.highestRisk = bestRisk(row.highestRisk, record.overallRiskLevel || record.overall_risk_level || row.highestRisk);
+        const recDate = record.inspectionDate || record.assessment_date || '';
+        const dNew = new Date(recDate || 0).getTime();
+        const dPrev = new Date(row.latestAssessmentDate || 0).getTime();
+        if (Number.isFinite(dNew) && dNew > dPrev) row.latestAssessmentDate = recDate;
+      });
+
+      return Array.from(map.values()).sort((a, b) => (b.overdue - a.overdue) || (b.open - a.open));
+    }
+
+    function openDetail(masterRef, facilityName) {
+      const ref = encodeURIComponent(masterRef || '');
+      const facility = encodeURIComponent(facilityName || '');
+      window.location.href = 'risk-corrections-detail.html?v=20260319-corrwidth1&ref=' + ref + '&facility=' + facility + '&_=' + Date.now();
+    }
+
+    function render() {
+      if (RiskModuleUtils.purgeUnpublishedActions) {
+        RiskModuleUtils.purgeUnpublishedActions({ latestByMaster: true });
+      }
+      const actions = (RiskModuleUtils.getPublishedActions
+        ? RiskModuleUtils.getPublishedActions({ latestByMaster: true })
+        : RiskModuleUtils.getActions()
+      );
+      const records = (RiskModuleUtils.getPublishedLatestRecordsByMaster
+        ? RiskModuleUtils.getPublishedLatestRecordsByMaster(RiskModuleUtils.getRecords())
+        : RiskModuleUtils.getRecords()
+      );
+      const rows = summarizeActionsByMaster(actions, records);
+      const tbody = document.getElementById('facilityTbody');
+
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="8">No published corrective actions available yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map((row) => {
+        const facilityToken = encodeURIComponent(row.facilityName || 'Unknown Facility');
+        const refToken = encodeURIComponent(row.masterRef || '');
+        return '<tr>' +
+          '<td><a href="risk-corrections-detail.html?v=20260319-corrwidth1&ref=' + refToken + '&facility=' + facilityToken + '&_=' + Date.now() + '" style="color:var(--or);font-weight:700;">' + RiskModuleUtils.esc(row.masterRef) + '</a></td>' +
+          '<td>' + RiskModuleUtils.esc(row.facilityName) + '</td>' +
+          '<td>' + RiskModuleUtils.esc(row.open) + '</td>' +
+          '<td><span class="rm-badge ' + (row.overdue > 0 ? 'b-overdue' : 'b-draft') + '">' + RiskModuleUtils.esc(row.overdue) + '</span></td>' +
+          '<td>' + RiskModuleUtils.esc(row.closed) + '</td>' +
+          '<td>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(row.latestAssessmentDate)) + '</td>' +
+          '<td><span class="rm-badge ' + riskClass(row.highestRisk) + '">' + RiskModuleUtils.esc(row.highestRisk) + '</span></td>' +
+          '<td><button class="rm-btn" data-ref="' + refToken + '" data-facility="' + facilityToken + '">Open</button></td>' +
+        '</tr>';
+      }).join('');
+
+      Array.from(tbody.querySelectorAll('button[data-ref]')).forEach((btn) => {
+        btn.addEventListener('click', function () {
+          openDetail(decodeURIComponent(btn.getAttribute('data-ref')), decodeURIComponent(btn.getAttribute('data-facility') || ''));
+        });
+      });
+    }
+
+    function init() {
+      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      render();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assessment Management Center | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
+  <style>
+    body.amc-landing {
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(900px 460px at 4% -8%, rgba(47,129,247,.17), transparent 62%),
+        radial-gradient(860px 480px at 96% -10%, rgba(244,121,32,.16), transparent 64%),
+        radial-gradient(900px 460px at 52% 116%, rgba(139,92,246,.12), transparent 64%),
+        #0D1117;
+    }
+
+    body.amc-landing::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 120px 120px;
+      -webkit-mask-image: radial-gradient(circle at 50% 35%, #000 20%, transparent 92%);
+      mask-image: radial-gradient(circle at 50% 35%, #000 20%, transparent 92%);
+    }
+
+    body.amc-landing .rm-topbar {
+      background: linear-gradient(132deg, rgba(18,25,35,.94), rgba(13,17,23,.96) 54%, rgba(16,22,30,.95));
+      border-bottom-color: rgba(255,255,255,.14);
+      box-shadow: 0 12px 32px rgba(0,0,0,.38);
+    }
+
+    body.amc-landing .rm-shell {
+      width: min(1450px, 95vw);
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    body.amc-landing .rm-primary-btn {
+      background: linear-gradient(135deg, #F47920 0%, #F3A21F 44%, #2F81F7 120%);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow:
+        0 8px 28px rgba(244,121,32,.35),
+        0 0 0 1px rgba(255,255,255,.08) inset;
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    body.amc-landing .rm-primary-btn:hover {
+      transform: translateY(-2px);
+      filter: saturate(1.08);
+      box-shadow:
+        0 14px 34px rgba(244,121,32,.42),
+        0 0 26px rgba(47,129,247,.28),
+        0 0 0 1px rgba(255,255,255,.12) inset;
+    }
+
+    body.amc-landing .rm-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 28px 30px;
+      border-radius: 18px;
+      border-color: rgba(255,255,255,.16);
+      background:
+        linear-gradient(128deg, rgba(244,121,32,.17), rgba(47,129,247,.16) 52%, rgba(139,92,246,.15)),
+        rgba(22,27,34,.80);
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 16px 42px rgba(0,0,0,.36),
+        inset 0 1px 0 rgba(255,255,255,.09);
+    }
+
+    body.amc-landing .rm-hero::before,
+    body.amc-landing .rm-hero::after {
+      content: '';
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(2px);
+    }
+
+    body.amc-landing .rm-hero::before {
+      top: -160px;
+      right: -70px;
+      background: radial-gradient(circle, rgba(47,129,247,.38), transparent 72%);
+    }
+
+    body.amc-landing .rm-hero::after {
+      bottom: -190px;
+      left: -70px;
+      background: radial-gradient(circle, rgba(244,121,32,.32), transparent 74%);
+    }
+
+    .amc-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .amc-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 26px;
+      border-radius: 999px;
+      padding: 0 11px;
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(13,17,23,.36);
+      color: #E6EDF3;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .9px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .amc-kicker-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F47920, #2F81F7);
+      box-shadow: 0 0 10px rgba(244,121,32,.5);
+    }
+
+    body.amc-landing .rm-hero h2 {
+      margin-bottom: 8px;
+      font-size: clamp(34px, 3.9vw, 52px);
+      letter-spacing: .8px;
+      text-shadow: 0 8px 20px rgba(0,0,0,.28);
+    }
+
+    body.amc-landing .rm-hero p {
+      font-size: 14px;
+      color: #D1D9E0;
+      max-width: 820px;
+      line-height: 1.65;
+    }
+
+    .amc-folder-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .amc-publish-banner{
+      display:none;
+      border:1px solid rgba(63,185,80,.35);
+      background:linear-gradient(135deg, rgba(63,185,80,.18), rgba(22,27,34,.88));
+      border-radius:12px;
+      padding:12px 14px;
+      box-shadow:0 10px 26px rgba(0,0,0,.26);
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .amc-publish-banner.show{display:flex}
+    .amc-publish-banner h4{
+      margin:0 0 4px;
+      color:var(--wh);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:20px;
+      letter-spacing:.3px;
+      line-height:1;
+    }
+    .amc-publish-banner p{margin:0;color:#CFE9D8;font-size:12px;line-height:1.45}
+    .amc-publish-banner .meta{font-size:11px;color:#A7D9B6;margin-top:4px}
+    .amc-publish-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .amc-publish-actions .rm-btn{
+      border-color:rgba(63,185,80,.45);
+      color:#CFE9D8;
+      background:rgba(13,17,23,.35);
+    }
+    .amc-publish-actions .rm-btn:hover{
+      border-color:var(--ok);
+      color:var(--ok);
+    }
+
+    .amc-folder-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 2px;
+    }
+
+    .amc-folder-head h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--wh);
+      line-height: 1;
+    }
+
+    .amc-folder-head p {
+      font-size: 12px;
+      color: var(--wh3);
+      text-align: right;
+    }
+
+    body.amc-landing .rm-folder-grid {
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    body.amc-landing .rm-folder {
+      --accent-rgb: 244,121,32;
+      position: relative;
+      min-height: 190px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background:
+        linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015)),
+        rgba(22,27,34,.82);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 16px 34px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+      display: grid;
+      align-content: space-between;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    body.amc-landing .rm-folder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(520px 210px at -10% -20%, rgba(var(--accent-rgb), .26), transparent 70%);
+      pointer-events: none;
+      transition: opacity .22s ease;
+    }
+
+    body.amc-landing .rm-folder::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(var(--accent-rgb),.82), rgba(255,255,255,.65), rgba(var(--accent-rgb),.35));
+      opacity: .9;
+      pointer-events: none;
+    }
+
+    body.amc-landing .rm-folder:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(var(--accent-rgb), .58);
+      box-shadow:
+        0 24px 42px rgba(0,0,0,.42),
+        0 0 0 1px rgba(var(--accent-rgb),.34),
+        0 0 24px rgba(var(--accent-rgb),.24),
+        inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    body.amc-landing .rm-folder:hover::before { opacity: .95; }
+
+    .amc-folder-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .amc-folder-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .9px;
+      color: #fff;
+      border: 1px solid rgba(var(--accent-rgb), .58);
+      background: linear-gradient(145deg, rgba(var(--accent-rgb), .44), rgba(var(--accent-rgb), .18));
+      box-shadow: 0 8px 18px rgba(var(--accent-rgb), .26);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    body.amc-landing .rm-folder:hover .amc-folder-icon {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(var(--accent-rgb), .34);
+    }
+
+    .amc-folder-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: rgba(230,237,243,.82);
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(13,17,23,.28);
+      border-radius: 999px;
+      padding: 4px 9px;
+      white-space: nowrap;
+    }
+
+    body.amc-landing .rm-folder-name {
+      position: relative;
+      z-index: 1;
+      font-size: 25px;
+      line-height: 1.08;
+      letter-spacing: .25px;
+      color: #F4F7FA;
+      text-shadow: 0 6px 14px rgba(0,0,0,.26);
+    }
+
+    body.amc-landing .rm-folder-meta {
+      position: relative;
+      z-index: 1;
+      align-items: flex-end;
+    }
+
+    body.amc-landing .rm-folder-k {
+      font-size: 11px;
+      letter-spacing: .85px;
+      color: #B9C4D0;
+    }
+
+    body.amc-landing .rm-folder-v {
+      font-size: 44px;
+      color: #fff;
+      line-height: .95;
+      text-shadow:
+        0 0 16px rgba(var(--accent-rgb),.34),
+        0 8px 18px rgba(0,0,0,.28);
+    }
+
+    .folder-dashboard { --accent-rgb: 47,129,247; }
+    .folder-uncompleted { --accent-rgb: 244,121,32; }
+    .folder-published { --accent-rgb: 63,185,80; }
+    .folder-corrections { --accent-rgb: 218,54,51; }
+    .folder-profile { --accent-rgb: 139,92,246; }
+
+    @media (max-width: 1280px) {
+      body.amc-landing .rm-folder-grid {
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      body.amc-landing .rm-shell {
+        width: 94vw;
+      }
+
+      body.amc-landing .rm-hero {
+        padding: 20px 18px;
+      }
+
+      .amc-folder-head {
+        display: grid;
+        gap: 4px;
+      }
+
+      .amc-folder-head p { text-align: left; }
+
+      body.amc-landing .rm-folder-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      body.amc-landing .rm-folder {
+        min-height: 172px;
+      }
+    }
+  </style>
+</head>
+<body class="amc-landing">
+  <header class="rm-topbar">
+    <div class="rm-topbar-left">
+      <button class="rm-back-btn" id="backPortalBtn">Back to Modules</button>
+      <div class="rm-title-wrap">
+        <h1 class="rm-title">Assessment Management Center</h1>
+        <p class="rm-subtitle">Risk Assessment &amp; Facility Inspection module landing page</p>
+      </div>
+    </div>
+    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
+  </header>
+
+  <main class="rm-shell">
+    <section class="amc-publish-banner" id="publishSuccessBanner">
+      <div>
+        <h4>Assessment Published</h4>
+        <p id="publishSuccessText">Assessment was successfully published to the register.</p>
+        <div class="meta" id="publishSuccessMeta"></div>
+      </div>
+      <div class="amc-publish-actions">
+        <button class="rm-btn" id="viewPublishedRecordBtn">View Published Record</button>
+        <button class="rm-btn" id="goPublishedRegisterBtn">Go to Published Register</button>
+        <button class="rm-btn" id="startNewAssessmentBtn">Start New Assessment</button>
+      </div>
+    </section>
+
+    <section class="rm-hero">
+      <div class="amc-hero-content">
+        <div class="amc-kicker"><span class="amc-kicker-dot"></span>Risk Assessment &amp; Facility Inspection</div>
+        <h2>Assessment Management Center</h2>
+        <p>
+          Central workspace for conducting assessments, tracking unpublished records, managing corrective actions, and reviewing published results.
+        </p>
+      </div>
+      <button class="rm-primary-btn" id="conductAssessmentBtn2">Conduct Assessment</button>
+    </section>
+
+    <section class="amc-folder-wrap">
+      <div class="amc-folder-head">
+        <h3>Navigation Folders</h3>
+        <p>Select a workspace to continue. Each folder opens a dedicated page.</p>
+      </div>
+
+      <div class="rm-folder-grid">
+      <a class="rm-folder folder-dashboard" href="risk-dashboard.html?v=20260318-masterrefdeep6">
+        <div class="amc-folder-top">
+          <span class="amc-folder-icon">DB</span>
+          <span class="amc-folder-tag">Operational</span>
+        </div>
+        <div class="rm-folder-name">Dashboard</div>
+        <div class="rm-folder-meta">
+          <span class="rm-folder-k">Critical Items</span>
+          <span class="rm-folder-v" id="cntDashboard">0</span>
+        </div>
+      </a>
+
+      <a class="rm-folder folder-uncompleted" href="risk-uncompleted.html?v=20260318-uncompletedfix4">
+        <div class="amc-folder-top">
+          <span class="amc-folder-icon">UC</span>
+          <span class="amc-folder-tag">Workflow</span>
+        </div>
+        <div class="rm-folder-name">Uncompleted Assessments</div>
+        <div class="rm-folder-meta">
+          <span class="rm-folder-k">Unpublished</span>
+          <span class="rm-folder-v" id="cntUncompleted">0</span>
+        </div>
+      </a>
+
+      <a class="rm-folder folder-published" href="risk-published-register.html?v=20260318-pubmirror4">
+        <div class="amc-folder-top">
+          <span class="amc-folder-icon">PR</span>
+          <span class="amc-folder-tag">Register</span>
+        </div>
+        <div class="rm-folder-name">Published Register</div>
+        <div class="rm-folder-meta">
+          <span class="rm-folder-k">Published</span>
+          <span class="rm-folder-v" id="cntPublished">0</span>
+        </div>
+      </a>
+
+      <a class="rm-folder folder-corrections" href="risk-corrections.html?v=20260319-corrwidth1">
+        <div class="amc-folder-top">
+          <span class="amc-folder-icon">CA</span>
+          <span class="amc-folder-tag">Action Tracking</span>
+        </div>
+        <div class="rm-folder-name">Corrections &amp; Corrective Actions</div>
+        <div class="rm-folder-meta">
+          <span class="rm-folder-k">Open / Overdue Actions</span>
+          <span class="rm-folder-v" id="cntCorrections">0</span>
+        </div>
+      </a>
+
+      <a class="rm-folder folder-profile" href="risk-facility-profile.html?v=20260318-masterrefdeep6">
+        <div class="amc-folder-top">
+          <span class="amc-folder-icon">FP</span>
+          <span class="amc-folder-tag">Analytics</span>
+        </div>
+        <div class="rm-folder-name">Facility Profile</div>
+        <div class="rm-folder-meta">
+          <span class="rm-folder-k">Facilities</span>
+          <span class="rm-folder-v" id="cntFacilities">0</span>
+        </div>
+      </a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    const PUBLISH_FLASH_KEY = 'goil_publish_success_flash';
+
+    function renderCounts() {
+      const counts = RiskModuleUtils.getFolderCounts();
+      document.getElementById('cntDashboard').textContent = String(counts.dashboard);
+      document.getElementById('cntUncompleted').textContent = String(counts.uncompleted);
+      document.getElementById('cntPublished').textContent = String(counts.published);
+      document.getElementById('cntCorrections').textContent = String(counts.corrections);
+      document.getElementById('cntFacilities').textContent = String(counts.facilities);
+    }
+
+    function readPublishFlash() {
+      try {
+        return JSON.parse(localStorage.getItem(PUBLISH_FLASH_KEY) || 'null');
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function clearPublishFlash() {
+      localStorage.removeItem(PUBLISH_FLASH_KEY);
+    }
+
+    function renderPublishBanner() {
+      const flash = readPublishFlash();
+      const banner = document.getElementById('publishSuccessBanner');
+      if (!flash || !flash.referenceNo) {
+        banner.classList.remove('show');
+        return;
+      }
+
+      document.getElementById('publishSuccessText').textContent =
+        flash.message || `Assessment ${flash.referenceNo} was successfully published to the register.`;
+      document.getElementById('publishSuccessMeta').textContent =
+        `Reference: ${flash.publishedReference || flash.referenceNo} · Submitted by: ${flash.submittedBy || 'Unknown User'} · Published at: ${flash.submittedAt ? new Date(flash.submittedAt).toLocaleString() : '—'}`;
+      banner.classList.add('show');
+
+      document.getElementById('viewPublishedRecordBtn').onclick = () => {
+        window.location.href = `risk-published-register.html?v=20260318-pubmirror4&ref=${encodeURIComponent(flash.referenceNo)}&_=${Date.now()}`;
+      };
+      document.getElementById('goPublishedRegisterBtn').onclick = () => {
+        window.location.href = `risk-published-register.html?v=20260318-pubmirror4&_=${Date.now()}`;
+      };
+      document.getElementById('startNewAssessmentBtn').onclick = () => {
+        RiskModuleUtils.goFacilityDetails();
+      };
+
+      clearPublishFlash();
+    }
+
+    function init() {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.getElementById('backPortalBtn').addEventListener('click', RiskModuleUtils.goPortal);
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      document.getElementById('conductAssessmentBtn2').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      renderPublishBanner();
+      renderCounts();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

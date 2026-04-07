@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Published Register | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep11" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep11" />
+  <style>
+    .rm-ref-toggle{
+      background:transparent;border:0;padding:0;color:var(--or,#F47920);font-weight:700;cursor:pointer;
+      text-decoration:underline;text-underline-offset:2px;font-size:12px;
+    }
+    .rm-ref-toggle:hover{opacity:.9}
+    .rm-version-row td{
+      background:rgba(255,255,255,.02);
+      border-top:0;
+      padding-top:8px;
+      padding-bottom:10px;
+    }
+    .rm-version-scroll{
+      width:100%;
+      overflow-x:auto;
+    }
+    .rm-version-list{
+      min-width:1560px;
+      display:grid;
+      gap:8px;
+    }
+    .rm-version-head,
+    .rm-version-line{
+      display:grid;
+      grid-template-columns:32px minmax(180px,1.25fr) 118px 130px 130px 105px minmax(280px,1.5fr) minmax(220px,1fr) 165px 72px;
+      gap:8px;
+      align-items:center;
+    }
+    .rm-version-line > span{
+      min-width:0;
+    }
+    .rm-version-line .rm-badge{
+      max-width:100%;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .rm-version-head{
+      padding:0 8px;
+      color:var(--wh4,#8B949E);
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.45px;
+    }
+    .rm-version-line{
+      padding:8px;
+      border:1px solid var(--border2,rgba(255,255,255,.12));
+      border-radius:8px;
+      background:var(--bg3,#1C2128);
+    }
+    .rm-version-line .v-seq{
+      color:var(--wh3,#8B949E);
+      font-size:11px;
+      font-weight:600;
+    }
+    .rm-version-line .v-ref{
+      color:var(--or,#F47920);
+      font-size:11px;
+      font-weight:700;
+    }
+    .rm-version-view{
+      height:24px;
+      padding:0 8px;
+      border-radius:6px;
+      border:1.5px solid var(--border2,rgba(255,255,255,.12));
+      background:transparent;
+      color:var(--wh3,#8B949E);
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.35px;
+      cursor:pointer;
+    }
+    .rm-version-view:hover{
+      border-color:var(--or,#F47920);color:var(--or,#F47920);
+    }
+    .rm-version-caption{
+      color:var(--wh3,#8B949E);font-size:11px;
+    }
+    .rm-metrics{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:8px;
+    }
+    .rm-metric{
+      border:1px solid var(--border2,rgba(255,255,255,.12));
+      border-radius:8px;
+      background:var(--bg3,#1C2128);
+      padding:10px;
+      display:grid;
+      gap:3px;
+    }
+    .rm-metric .k{
+      font-size:10px;
+      color:var(--wh3,#8B949E);
+      text-transform:uppercase;
+      letter-spacing:.35px;
+      font-weight:700;
+    }
+    .rm-metric strong{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:24px;
+      line-height:1;
+      color:var(--wh,#E6EDF3);
+    }
+    .rm-toolbar{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .rm-ghost-btn{
+      height:30px;
+      border-radius:6px;
+      border:1.5px solid var(--border2,rgba(255,255,255,.12));
+      background:transparent;
+      color:var(--wh3,#8B949E);
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      padding:0 10px;
+      cursor:pointer;
+    }
+    .rm-ghost-btn:hover{
+      border-color:var(--or,#F47920);
+      color:var(--or,#F47920);
+      background:rgba(244,121,32,.1);
+    }
+    .rm-sort{
+      background:transparent;
+      border:0;
+      color:inherit;
+      font:inherit;
+      text-transform:inherit;
+      letter-spacing:inherit;
+      font-weight:inherit;
+      cursor:pointer;
+      padding:0;
+    }
+    .rm-sort:hover{color:var(--or,#F47920)}
+    .rm-sort.active{color:var(--or,#F47920)}
+    .rm-check{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      color:var(--wh3,#8B949E);
+      font-weight:600;
+    }
+    .rm-select-row{
+      width:14px;
+      height:14px;
+      accent-color:var(--or,#F47920);
+    }
+    .rm-view-btn{
+      height:26px;
+      padding:0 10px;
+      border-radius:6px;
+      border:1.5px solid var(--border2,rgba(255,255,255,.12));
+      background:transparent;
+      color:var(--wh3,#8B949E);
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.35px;
+      cursor:pointer;
+    }
+    .rm-view-btn:hover{
+      border-color:var(--or,#F47920);
+      color:var(--or,#F47920);
+    }
+    .rm-ca-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.25px;
+      border:1px solid var(--border2,rgba(255,255,255,.12));
+    }
+    .rm-ca-pill.none{background:rgba(63,185,80,.1);color:#3FB950;border-color:rgba(63,185,80,.25)}
+    .rm-ca-pill.open{background:rgba(224,125,35,.1);color:#E07D23;border-color:rgba(224,125,35,.25)}
+    .rm-ca-pill.overdue{background:rgba(218,54,51,.1);color:#DA3633;border-color:rgba(218,54,51,.25)}
+    .rm-residual-strong{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:11px;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 0 0 1px rgba(255,255,255,.04) inset;
+    }
+    .rm-reduction{
+      display:grid;
+      gap:2px;
+    }
+    .rm-reduction .pct{
+      font-size:10px;
+      color:var(--wh3,#8B949E);
+    }
+    .rm-trend{
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.25px;
+    }
+    .rm-trend.improved{color:#3FB950}
+    .rm-trend.unchanged{color:#D29922}
+    .rm-trend.worsened{color:#DA3633}
+    .rm-preview-row td{
+      background:rgba(255,255,255,.015);
+      border-top:0;
+      padding-top:8px;
+      padding-bottom:10px;
+    }
+    .rm-preview-shell{
+      border:1px solid var(--border2,rgba(255,255,255,.12));
+      border-radius:8px;
+      background:var(--bg3,#1C2128);
+      padding:10px;
+      display:grid;
+      gap:10px;
+    }
+    .rm-preview-grid{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:8px;
+    }
+    .rm-preview-card{
+      border:1px solid var(--border,rgba(255,255,255,.07));
+      border-radius:7px;
+      padding:8px;
+      background:rgba(255,255,255,.01);
+      display:grid;
+      gap:2px;
+    }
+    .rm-preview-card .k{
+      font-size:10px;
+      color:var(--wh4,#6B7280);
+      text-transform:uppercase;
+      letter-spacing:.35px;
+      font-weight:700;
+    }
+    .rm-preview-card .v{
+      font-size:12px;
+      color:var(--wh2,#C9D1D9);
+      font-weight:600;
+      line-height:1.3;
+    }
+    @media (max-width:1200px){
+      .rm-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .rm-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:760px){
+      .rm-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    .pr-shell{width:min(1720px,98.5vw);margin:14px auto 24px}
+    .pr-topbar{padding:12px 16px;gap:12px}
+    .pr-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
+    .pr-vsep{width:1px;height:24px;background:var(--line2,rgba(255,255,255,.13))}
+    .pr-brand{display:inline-flex;align-items:center;gap:8px;color:var(--wh2,#C9D1D9);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+    .pr-brand img{width:22px;height:22px;filter:drop-shadow(0 0 6px rgba(244,121,32,.35))}
+    .pr-title-wrap{display:grid;gap:1px;min-width:0}
+    .pr-title{margin:0;font-family:'Barlow Condensed',sans-serif;font-size:30px;line-height:1;font-weight:900;text-transform:uppercase;color:var(--wh,#E6EDF3);letter-spacing:.25px}
+    .pr-subtitle{margin:0;color:var(--wh4,#484F58);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pr-conduct{min-width:192px}
+
+    .pr-card{padding:14px;border-radius:14px;display:grid;gap:10px}
+    .pr-hero{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+    .pr-hero-main{display:grid;gap:4px}
+    .pr-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--or,#F47920);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+    .pr-eyebrow::before{content:'';width:20px;height:2px;border-radius:999px;background:var(--or,#F47920)}
+    .pr-hero-main h2{margin:0;font-family:'Barlow Condensed',sans-serif;font-size:50px;line-height:.92;text-transform:uppercase;color:var(--wh,#E6EDF3);font-weight:900}
+    .pr-hero-main p{margin:0;color:var(--wh3,#8B949E);font-size:13px;line-height:1.45}
+    .pr-hero-actions{display:flex;gap:8px;align-items:center}
+    .pr-hero-ghost{height:38px;border-radius:8px;padding:0 14px;font-size:12px}
+    .pr-hero-summary{height:38px;border-radius:8px;padding:0 14px;font-size:12px;box-shadow:0 2px 12px rgba(244,121,32,.34)}
+
+    .pr-metrics{gap:10px;grid-template-columns:repeat(6,minmax(0,1fr))}
+    .pr-metric{padding:12px 14px;border-radius:10px;gap:4px;position:relative;background:var(--bg3,#1C2128)}
+    .pr-metric::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;border-radius:10px 10px 0 0;background:var(--line2,#30363D)}
+    .pr-metric .k{font-size:10px;letter-spacing:1px;color:var(--wh4,#484F58);font-weight:700}
+    .pr-metric strong{font-family:'Barlow Condensed',sans-serif;font-size:42px;line-height:.9;font-weight:900}
+    .pr-metric .n{font-size:11px;color:var(--wh4,#484F58)}
+    .pr-metric.total::before{background:#F47920}.pr-metric.total strong{color:#F47920}
+    .pr-metric.low::before{background:#3FB950}.pr-metric.low strong{color:#3FB950}
+    .pr-metric.medium::before{background:#D29922}.pr-metric.medium strong{color:#D29922}
+    .pr-metric.high::before{background:#E07D23}.pr-metric.high strong{color:#E07D23}
+    .pr-metric.critical::before{background:#DA3633}.pr-metric.critical strong{color:#DA3633}
+    .pr-metric.ca::before{background:#3498DB}.pr-metric.ca strong{color:#3498DB}
+
+    .pr-filter-shell{border:1px solid var(--line2,rgba(255,255,255,.12));border-radius:12px;background:rgba(255,255,255,.01);overflow:hidden}
+    .pr-filter-shell summary{list-style:none}
+    .pr-filter-shell summary::-webkit-details-marker{display:none}
+    .pr-filter-toggle{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 14px;cursor:pointer;
+      color:var(--wh2,#C9D1D9);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;
+      text-transform:uppercase;letter-spacing:.6px;
+      transition:background .15s ease;
+      user-select:none;
+    }
+    .pr-filter-toggle:hover{background:rgba(255,255,255,.03)}
+    .pr-filter-shell[open] .pr-filter-toggle{
+      border-bottom:1px solid var(--line2,rgba(255,255,255,.12));
+      color:var(--or,#F47920);
+    }
+    .pr-filter-toggle-left{display:inline-flex;align-items:center;gap:8px}
+    .pr-filter-badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:18px;height:18px;padding:0 5px;
+      border-radius:999px;background:var(--or,#F47920);
+      color:#fff;font-size:10px;font-weight:800;letter-spacing:0;text-transform:none;
+    }
+    .pr-filter-chevron{font-size:13px;color:var(--wh3,#8B949E);transition:transform .2s ease}
+    .pr-filter-shell[open] .pr-filter-chevron{transform:rotate(180deg);color:var(--or,#F47920)}
+    .pr-filter-body{padding:10px;display:grid;gap:8px}
+    .pr-filter-row{display:grid;gap:8px;align-items:center}
+    .pr-filter-row.top{grid-template-columns:2fr 1fr 1fr 1fr 160px 26px 160px}
+    .pr-filter-row.bottom{grid-template-columns:1fr 1fr 1fr auto}
+    .pr-filter-row .rm-input,.pr-filter-row .rm-select{height:40px;border-radius:8px;background:var(--bg3,#1C2128)}
+    .pr-to{color:var(--wh3,#8B949E);font-size:13px;text-align:center}
+    .pr-latest{height:40px;border:1.5px solid rgba(244,121,32,.45);border-radius:8px;background:rgba(244,121,32,.08);display:inline-flex;align-items:center;gap:8px;padding:0 10px;color:#ffb067;font-size:12px;font-weight:700}
+    .pr-latest input{accent-color:var(--or,#F47920)}
+
+    .pr-table-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line2,rgba(255,255,255,.12));border-bottom:0;border-radius:12px 12px 0 0;padding:10px 12px;background:rgba(255,255,255,.01)}
+    .pr-table-meta-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--wh3,#8B949E);font-size:13px}
+    .pr-table-meta-left strong{color:var(--wh2,#C9D1D9);font-size:24px;font-family:'Barlow Condensed',sans-serif}
+    .pr-table-meta-left .dot{width:12px;height:12px;border-radius:999px;display:inline-block}
+    .pr-table-meta-left .dot.low{background:#3FB950}.pr-table-meta-left .dot.med{background:#D29922}.pr-table-meta-left .dot.high{background:#E07D23}.pr-table-meta-left .dot.crit{background:#DA3633}
+    .pr-table-meta-right{color:var(--wh4,#484F58);font-size:11px}
+
+    .pr-table-wrap{margin-top:0;border-radius:0 0 12px 12px}
+    .pr-table-wrap .rm-table{min-width:1460px}
+    .pr-table-wrap .rm-table th,.pr-table-wrap .rm-table td{padding:9px 10px;font-size:12px}
+    .pr-table-wrap .rm-table th{font-size:10px;color:var(--wh4,#484F58);letter-spacing:.9px}
+    .pr-row{border-left:3px solid transparent}
+    .pr-risk-low td:first-child{border-left:3px solid #3FB950}
+    .pr-risk-medium td:first-child{border-left:3px solid #D29922}
+    .pr-risk-high td:first-child{border-left:3px solid #E07D23}
+    .pr-risk-critical td:first-child{border-left:3px solid #DA3633}
+    .pr-master{display:grid;gap:1px}
+    .pr-master .sub{font-size:10px;color:var(--wh4,#484F58)}
+    .pr-fac{display:grid;gap:1px}
+    .pr-fac .main{font-family:'Barlow Condensed',sans-serif;font-size:20px;line-height:.95;font-weight:900;text-transform:uppercase;color:var(--wh,#E6EDF3)}
+    .pr-fac .sub{font-size:11px;color:var(--wh4,#484F58)}
+    .pr-zone{font-size:14px;line-height:1.05;font-family:'Barlow Condensed',sans-serif;color:var(--wh2,#C9D1D9);text-transform:capitalize}
+    .pr-type{font-size:13px;line-height:1.05;font-family:'Barlow Condensed',sans-serif;color:var(--wh3,#8B949E)}
+    .pr-assessor{font-size:13px;font-family:'Barlow Condensed',sans-serif;line-height:1;color:var(--wh2,#C9D1D9)}
+    .pr-subdate{display:grid;gap:1px}
+    .pr-subdate .date{font-size:13px;font-family:'Barlow Condensed',sans-serif;line-height:1;color:var(--wh2,#C9D1D9)}
+    .pr-subdate .rel{font-size:11px;color:var(--wh4,#484F58)}
+    .pr-ca-pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.35px;border:1px solid var(--line2,rgba(255,255,255,.12))}
+    .pr-ca-pill.none{background:rgba(139,148,158,.12);color:#8B949E}
+    .pr-ca-pill.open{background:rgba(224,125,35,.12);color:#E07D23;border-color:rgba(224,125,35,.35)}
+    .pr-ca-pill.overdue{background:rgba(218,54,51,.12);color:#DA3633;border-color:rgba(218,54,51,.35)}
+    .pr-version{display:grid;gap:1px}
+    .pr-version .main{font-family:'Barlow Condensed',sans-serif;font-size:22px;line-height:.95;color:var(--wh,#E6EDF3);font-weight:900}
+    .pr-version .sub{font-size:11px;color:var(--wh4,#484F58)}
+    .pr-reduction{display:grid;gap:2px}
+    .pr-reduction .main{font-family:'Barlow Condensed',sans-serif;font-size:24px;line-height:.9;font-weight:900;color:#3FB950}
+    .pr-reduction .bar{height:6px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+    .pr-reduction .bar > span{display:block;height:100%;border-radius:999px;background:#3FB950}
+    .pr-reduction .pct{font-size:11px;color:#3FB950;font-weight:700;text-transform:uppercase}
+    .pr-reduction .unchanged{color:var(--wh4,#484F58)}
+
+    @media (max-width:1400px){
+      .pr-filter-row.top{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .pr-filter-row.bottom{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:900px){
+      .pr-vsep,.pr-brand{display:none}
+      .pr-title{font-size:24px}
+      .pr-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .pr-filter-row.top,.pr-filter-row.bottom{grid-template-columns:1fr}
+      .pr-topbar-actions .rm-ghost-btn{display:none}
+    }
+
+    /* ── Orange accent on header ── */
+    .rm-topbar.pr-topbar{border-top:3px solid var(--or,#F47920)}
+
+    /* ── Compact metric strip ── */
+    .pr-metric{padding:8px 10px;gap:3px}
+    .pr-metric strong{font-size:26px}
+    .pr-metric .k{font-size:9px}
+    .pr-metric .n{font-size:10px}
+
+    /* ── Compact filter inputs ── */
+    .pr-filter-row .rm-input,.pr-filter-row .rm-select{height:34px;border-radius:7px;font-size:12px}
+    .pr-latest{height:34px;font-size:11px}
+
+    /* ── Topbar right actions ── */
+    .pr-topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+
+    /* ── Slim result bar above table ── */
+    .pr-result-bar{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+      padding:7px 12px;
+      border:1px solid var(--line2,rgba(255,255,255,.12));
+      border-bottom:0;border-radius:12px 12px 0 0;
+      background:rgba(255,255,255,.01);
+    }
+    .pr-result-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--wh3,#8B949E);font-size:12px}
+    .pr-result-left strong{color:var(--wh2,#C9D1D9);font-size:18px;font-family:'Barlow Condensed',sans-serif}
+    .pr-result-left .dot{width:8px;height:8px;border-radius:999px;display:inline-block}
+    .pr-result-left .dot.low{background:#3FB950}
+    .pr-result-left .dot.med{background:#D29922}
+    .pr-result-left .dot.high{background:#E07D23}
+    .pr-result-left .dot.crit{background:#DA3633}
+    .pr-result-right{color:var(--wh4,#484F58);font-size:11px;white-space:nowrap}
+
+    /* ── Hide redundant Zone + Facility Type columns (shown in cell sub-lines) ── */
+    .pr-table-wrap .rm-table th:nth-child(4),
+    .pr-table-wrap .rm-table td:nth-child(4),
+    .pr-table-wrap .rm-table th:nth-child(5),
+    .pr-table-wrap .rm-table td:nth-child(5){display:none}
+
+    /* ── Tighten table rows ── */
+    .pr-table-wrap .rm-table th,.pr-table-wrap .rm-table td{padding:7px 9px}
+    .pr-table-wrap .rm-table{min-width:1180px}
+  </style>
+</head>
+<body>
+  <header class="rm-topbar pr-topbar">
+    <div class="rm-topbar-left pr-left">
+      <button class="rm-back-btn" id="backLandingBtn">‹ Assessment Management Center</button>
+      <span class="pr-vsep"></span>
+      <div class="pr-brand">
+        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--or,#F47920);flex-shrink:0"></span><span style="color:var(--or,#F47920)">GOIL</span> HSSEQ</span>
+      </div>
+      <span class="pr-vsep"></span>
+      <div class="pr-title-wrap">
+        <h1 class="pr-title">Published Register</h1>
+        <p class="pr-subtitle">Fully submitted and published inspection records</p>
+      </div>
+    </div>
+    <div class="pr-topbar-actions">
+      <button class="rm-ghost-btn" id="exportAllBtn">⇩ Export All</button>
+      <button class="rm-ghost-btn" id="summaryTopBtn">Summary Report</button>
+      <button class="rm-primary-btn pr-conduct" id="conductAssessmentBtn">+ Conduct Assessment</button>
+    </div>
+  </header>
+
+  <main class="rm-shell pr-shell">
+    <section class="rm-card pr-card">
+      <div class="rm-metrics pr-metrics" id="summaryMetrics">
+        <article class="rm-metric pr-metric total"><span class="k">Total Published</span><strong id="mTotal">0</strong><span class="n">Master records</span></article>
+        <article class="rm-metric pr-metric low"><span class="k">Low Risk</span><strong id="mLow">0</strong><span class="n">Compliant</span></article>
+        <article class="rm-metric pr-metric medium"><span class="k">Medium Risk</span><strong id="mMedium">0</strong><span class="n">Monitor</span></article>
+        <article class="rm-metric pr-metric high"><span class="k">High Risk</span><strong id="mHigh">0</strong><span class="n">Action required</span></article>
+        <article class="rm-metric pr-metric critical"><span class="k">Critical Risk</span><strong id="mCritical">0</strong><span class="n">None this cycle</span></article>
+        <article class="rm-metric pr-metric ca"><span class="k">Open Corr. Actions</span><strong id="mOpenCA">0</strong><span class="n">Across all records</span></article>
+      </div>
+
+      <details class="pr-filter-shell" id="filterShell">
+        <summary class="pr-filter-toggle">
+          <span class="pr-filter-toggle-left">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Filters
+            <span class="pr-filter-badge" id="filterBadge" style="display:none">0</span>
+          </span>
+          <span class="pr-filter-chevron">▾</span>
+        </summary>
+        <div class="pr-filter-body">
+          <div class="pr-filter-row top">
+            <input class="rm-input" id="fltSearch" placeholder="Search reference, facility, assessor..." />
+            <select class="rm-select" id="fltFacility"><option value="">Facility name</option></select>
+            <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
+            <select class="rm-select" id="fltFacilityType"><option value="">All Types</option></select>
+            <input class="rm-input" id="fltPublishedFrom" type="date" />
+            <span class="pr-to">to</span>
+            <input class="rm-input" id="fltPublishedTo" type="date" />
+          </div>
+          <div class="pr-filter-row bottom">
+            <select class="rm-select" id="fltInspector"><option value="">Inspector / Assessor</option></select>
+            <select class="rm-select" id="fltResidualRisk"><option value="">All Risk Levels</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+            <select class="rm-select" id="fltOpenCA"><option value="">All CA Statuses</option><option value="none">No Open Actions</option><option value="open">Open Actions</option><option value="overdue">Overdue Actions</option></select>
+            <label class="pr-latest"><input type="checkbox" id="fltLatestOnly" checked /> Latest Version Only</label>
+          </div>
+        </div>
+      </details>
+
+      <div class="pr-result-bar">
+        <div class="pr-result-left">
+          <strong id="metaRecordCount">0 records</strong>
+          <span class="dot low"></span><span id="metaLow">Low</span>
+          <span class="dot med"></span><span id="metaMed">Medium</span>
+          <span class="dot high"></span><span id="metaHigh">High</span>
+          <span class="dot crit"></span><span id="metaCrit">Critical</span>
+        </div>
+        <div class="pr-result-right">Row border = residual risk</div>
+      </div>
+
+      <div class="rm-table-wrap pr-table-wrap">
+        <table class="rm-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllRows" /></th>
+              <th>Master Reference ↓</th>
+              <th><button class="rm-sort" data-sort="facility">Facility</button></th>
+              <th>Zone</th>
+              <th>Facility Type</th>
+              <th><button class="rm-sort" data-sort="inspectionDate">Inspection Date</button></th>
+              <th><button class="rm-sort" data-sort="initialRisk">Initial Risk</button></th>
+              <th><button class="rm-sort" data-sort="residualRisk">Residual Risk</button></th>
+              <th><button class="rm-sort" data-sort="riskReduction">Risk Reduction</button></th>
+              <th>Corrective Action Status</th>
+              <th><button class="rm-sort" data-sort="assessor">Assessor</button></th>
+              <th><button class="rm-sort" data-sort="submissionDate">Submission Date</button></th>
+              <th>Current Version</th>
+            </tr>
+          </thead>
+          <tbody id="publishedTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    const state = {
+      sortKey: 'submissionDate',
+      sortDir: 'desc',
+      selectedKeys: new Set(),
+      lastRows: []
+    };
+
+    function normalizeRiskLevel(level) {
+      const raw = String(level || '').trim().toLowerCase();
+      if (raw === 'critical') return 'Critical';
+      if (raw === 'high') return 'High';
+      if (raw === 'moderate' || raw === 'medium') return 'Medium';
+      if (raw === 'low') return 'Low';
+      return 'Low';
+    }
+
+    function riskClass(level) {
+      const normalized = normalizeRiskLevel(level);
+      if (normalized === 'Critical') return 'b-overdue';
+      if (normalized === 'High') return 'b-high';
+      if (normalized === 'Medium') return 'b-pending';
+      return 'b-published';
+    }
+
+    function statusClass(status) {
+      if (String(status || '') === 'Fully Submitted / Published to Register') return 'b-published';
+      return 'b-draft';
+    }
+
+    function stripVersionSuffix(ref) {
+      return String(ref || '')
+        .trim()
+        .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+        .replace(/[-_ ]+$/, '')
+        .trim();
+    }
+
+    function safeVersion(value, record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getRecordVersionNumber === 'function' && record) {
+        return RiskModuleUtils.getRecordVersionNumber(record);
+      }
+      const n = Number(value || 1);
+      if (Number.isFinite(n) && n > 0) return Math.floor(n);
+      const token = String(value == null ? '' : value);
+      const match = token.match(/(?:^|[^A-Z0-9])V(?:ERSION)?[-_ ]?(\d+)(?:$|[^0-9])/i) || token.match(/-v(\d+)$/i);
+      if (!match) return 1;
+      const parsed = Number(match[1]);
+      return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1;
+    }
+
+    function toDateMs(value) {
+      const ms = new Date(value || 0).getTime();
+      return Number.isFinite(ms) ? ms : 0;
+    }
+
+    function actionStatus(action) {
+      const raw = String(action && action.status || '').trim();
+      if (raw) return raw;
+      const due = new Date(action && action.dueDate || 0).getTime();
+      if (Number.isFinite(due) && due > 0 && due < Date.now()) return 'Overdue';
+      return 'Open';
+    }
+
+    function actionIsClosed(status) {
+      const normalized = String(status || '').toLowerCase();
+      return normalized === 'closed' || normalized === 'verified closed';
+    }
+
+    function actionIsOpen(status) {
+      const normalized = String(status || '').toLowerCase();
+      return normalized === 'open' || normalized === 'in progress' || normalized === 'overdue' || normalized === 'closed pending verification';
+    }
+
+    function caStatusForCounts(stats) {
+      if (stats.overdue > 0) return { key: 'overdue', label: 'Overdue Actions' };
+      if (stats.open > 0) return { key: 'open', label: 'Open Actions' };
+      return { key: 'none', label: 'No Open Actions' };
+    }
+
+    function getCaStatsForRecord(record, actions) {
+      const stats = { open: 0, overdue: 0, closed: 0, total: 0 };
+      (actions || []).forEach((action) => {
+        const linked = window.RiskModuleUtils && typeof RiskModuleUtils.isActionForRecord === 'function'
+          ? RiskModuleUtils.isActionForRecord(action, record)
+          : String(action.inspectionRef || '') === String((record && (record.inspectionRef || record.assessment_reference)) || '');
+        if (!linked) return;
+        const status = actionStatus(action);
+        stats.total += 1;
+        if (actionIsClosed(status)) {
+          stats.closed += 1;
+          return;
+        }
+        if (String(status).toLowerCase() === 'overdue') stats.overdue += 1;
+        if (actionIsOpen(status)) stats.open += 1;
+      });
+      return stats;
+    }
+
+    function actionMasterReference(action) {
+      const candidate = String(
+        action && (
+          action.master_reference ||
+          action.masterReference ||
+          action.parentReference ||
+          action.parent_reference ||
+          action.inspectionRef ||
+          action.assessment_reference ||
+          ''
+        ) || ''
+      ).trim();
+      if (candidate) return stripVersionSuffix(candidate);
+      const actionId = String(action && action.actionId || '').trim();
+      if (!actionId) return '';
+      const match = actionId.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+      return stripVersionSuffix(match && match[1] || actionId);
+    }
+
+    function getPublishedCaMap(actions) {
+      const map = new Map();
+      (actions || []).forEach((action) => {
+        const masterRef = actionMasterReference(action);
+        if (!masterRef) return;
+        if (!map.has(masterRef)) map.set(masterRef, { open: 0, overdue: 0, closed: 0, total: 0 });
+        const stats = map.get(masterRef);
+        const status = actionStatus(action);
+        stats.total += 1;
+        if (actionIsClosed(status)) {
+          stats.closed += 1;
+          return;
+        }
+        if (String(status).toLowerCase() === 'overdue') stats.overdue += 1;
+        if (actionIsOpen(status)) stats.open += 1;
+      });
+      return map;
+    }
+
+    function getPublishedSubmissionDate(record) {
+      return record.final_submitted_at || record.publishedAt || record.correctiveSubmittedAt || record.lastUpdatedAt || record.last_updated_at || '';
+    }
+
+    function getInspectionDate(record) {
+      return record.assessment_date || record.inspectionDate || record.lastUpdatedAt || record.last_updated_at || '';
+    }
+
+    function getRecordField(record, keys) {
+      for (let i = 0; i < keys.length; i += 1) {
+        const value = record[keys[i]];
+        if (value != null && String(value).trim()) return String(value).trim();
+      }
+      return '';
+    }
+
+    function buildGroups() {
+      const actions = RiskModuleUtils.getActions();
+      const records = RiskModuleUtils.getRecords().filter((record) => {
+        if (record.is_published === true) return true;
+        return String(record.assessment_status || record.status || '') === 'Fully Submitted / Published to Register';
+      });
+      const map = new Map();
+      records.forEach((record) => {
+        const parentRefRaw = (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function')
+          ? RiskModuleUtils.getParentInspectionReference(record)
+          : (record.assessment_reference || record.inspectionRef || '');
+        const parentRef = stripVersionSuffix(parentRefRaw);
+        if (!parentRef) return;
+        const version = safeVersion(record.version_number || record.version, record);
+        const riskSnapshot = RiskModuleUtils.getRiskSnapshotForRecord(record, actions);
+        const initialScore = Number(riskSnapshot.initialScore || 0);
+        const residualScore = Number(riskSnapshot.residualScore || 0);
+        const delta = Math.round((initialScore - residualScore) * 10) / 10;
+        const reductionPct = initialScore > 0 ? Math.round((delta / initialScore) * 100) : 0;
+        const recordCaStats = getCaStatsForRecord(record, actions);
+        const entry = {
+          parentRef,
+          version,
+          record,
+          riskSnapshot,
+          versionLabel: parentRef + '/V' + String(version),
+          facility: getRecordField(record, ['facility_name', 'facilityName']) || '-',
+          zone: getRecordField(record, ['zone', 'location']) || '-',
+          location: getRecordField(record, ['location', 'zone']) || '-',
+          facilityType: getRecordField(record, ['facility_type', 'facilityType']) || '-',
+          inspectionDate: getInspectionDate(record),
+          inspectionTs: toDateMs(getInspectionDate(record)),
+          submissionDate: getPublishedSubmissionDate(record),
+          submissionTs: toDateMs(getPublishedSubmissionDate(record)),
+          assessor: getRecordField(record, ['assessor_name', 'inspector']) || '-',
+          initialLevel: normalizeRiskLevel(riskSnapshot.initialLevel || record.overallRiskLevel || 'Low'),
+          residualLevel: normalizeRiskLevel(riskSnapshot.residualLevel || record.residualRiskLevel || record.overallRiskLevel || 'Low'),
+          initialScore: initialScore,
+          residualScore: residualScore,
+          riskReduction: delta,
+          reductionPct: reductionPct,
+          trend: delta > 0 ? 'improved' : (delta < 0 ? 'worsened' : 'unchanged'),
+          caStats: recordCaStats
+        };
+        if (!map.has(parentRef)) map.set(parentRef, { parentRef, versions: [] });
+        map.get(parentRef).versions.push(entry);
+      });
+
+      return Array.from(map.values()).map((group) => {
+        group.versions.sort((a, b) => {
+          if (b.version !== a.version) return b.version - a.version;
+          return b.submissionTs - a.submissionTs;
+        });
+        group.latest = group.versions[0];
+        group.versionCount = group.versions.length;
+        return group;
+      }).sort((a, b) => b.latest.submissionTs - a.latest.submissionTs);
+    }
+
+    function valueText(input) {
+      return String(input || '').trim().toLowerCase();
+    }
+
+    function uniqueSorted(values) {
+      return Array.from(new Set((values || []).map((v) => String(v || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    }
+
+    function setSelectOptions(nodeId, values, placeholder) {
+      const node = document.getElementById(nodeId);
+      if (!node) return;
+      const current = String(node.value || '');
+      const list = uniqueSorted(values);
+      node.innerHTML = ['<option value="">' + RiskModuleUtils.esc(placeholder) + '</option>'].concat(list.map((value) => {
+        return '<option value="' + RiskModuleUtils.esc(value) + '">' + RiskModuleUtils.esc(value) + '</option>';
+      })).join('');
+      if (current && list.indexOf(current) >= 0) node.value = current;
+    }
+
+    function populateDynamicFilters() {
+      const groups = buildGroups();
+      const latestOnly = document.getElementById('fltLatestOnly').checked;
+      const pool = [];
+      groups.forEach((group) => {
+        if (latestOnly) {
+          pool.push(group.latest);
+          return;
+        }
+        group.versions.forEach((entry) => pool.push(entry));
+      });
+      setSelectOptions('fltFacility', pool.map((entry) => entry.facility), 'Facility name');
+      setSelectOptions('fltZone', pool.map((entry) => entry.zone), 'All Zones');
+      setSelectOptions('fltFacilityType', pool.map((entry) => entry.facilityType), 'All Types');
+      setSelectOptions('fltInspector', pool.map((entry) => entry.assessor), 'Inspector / Assessor');
+    }
+
+    function getRows() {
+      const groups = buildGroups();
+      const latestOnly = document.getElementById('fltLatestOnly').checked;
+      const search = valueText(document.getElementById('fltSearch').value);
+      const facility = valueText(document.getElementById('fltFacility').value);
+      const zone = valueText(document.getElementById('fltZone').value);
+      const facilityType = valueText(document.getElementById('fltFacilityType').value);
+      const dateFrom = valueText(document.getElementById('fltPublishedFrom').value);
+      const dateTo = valueText(document.getElementById('fltPublishedTo').value);
+      const inspector = valueText(document.getElementById('fltInspector').value);
+      const residualRisk = String(document.getElementById('fltResidualRisk').value || '').trim();
+      const openCA = String(document.getElementById('fltOpenCA').value || '').trim();
+      const fromTs = dateFrom ? toDateMs(dateFrom) : 0;
+      const toTs = dateTo ? (toDateMs(dateTo) + 86399999) : 0;
+
+      let rows = [];
+      groups.forEach((group) => {
+        if (latestOnly) {
+          rows.push({ key: group.parentRef + '::' + String(group.latest.version), group, entry: group.latest });
+          return;
+        }
+        group.versions.forEach((entry) => {
+          rows.push({ key: group.parentRef + '::' + String(entry.version), group, entry });
+        });
+      });
+
+      rows = rows.filter((row) => {
+        const entry = row.entry;
+        const stats = entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 };
+        const haystack = [
+          row.group.parentRef,
+          entry.versionLabel,
+          entry.facility,
+          entry.zone,
+          entry.facilityType,
+          entry.assessor
+        ].join(' ').toLowerCase();
+        if (search && haystack.indexOf(search) < 0) return false;
+        if (facility && entry.facility.toLowerCase() !== facility) return false;
+        if (zone && entry.zone.toLowerCase() !== zone) return false;
+        if (facilityType && entry.facilityType.toLowerCase() !== facilityType) return false;
+        if (inspector && entry.assessor.toLowerCase() !== inspector) return false;
+        if (fromTs && entry.submissionTs < fromTs) return false;
+        if (toTs && entry.submissionTs > toTs) return false;
+        if (residualRisk && entry.residualLevel !== residualRisk) return false;
+        if (openCA === 'none' && (stats.open > 0 || stats.overdue > 0)) return false;
+        if (openCA === 'open' && stats.open <= 0) return false;
+        if (openCA === 'overdue' && stats.overdue <= 0) return false;
+        return true;
+      });
+
+      const dir = state.sortDir === 'asc' ? 1 : -1;
+      rows.sort((a, b) => {
+        let av = '';
+        let bv = '';
+        if (state.sortKey === 'inspectionDate') {
+          av = a.entry.inspectionTs;
+          bv = b.entry.inspectionTs;
+        } else if (state.sortKey === 'submissionDate') {
+          av = a.entry.submissionTs;
+          bv = b.entry.submissionTs;
+        } else if (state.sortKey === 'facility') {
+          av = a.entry.facility.toLowerCase();
+          bv = b.entry.facility.toLowerCase();
+        } else if (state.sortKey === 'assessor') {
+          av = a.entry.assessor.toLowerCase();
+          bv = b.entry.assessor.toLowerCase();
+        } else if (state.sortKey === 'initialRisk') {
+          av = a.entry.initialScore;
+          bv = b.entry.initialScore;
+        } else if (state.sortKey === 'residualRisk') {
+          av = a.entry.residualScore;
+          bv = b.entry.residualScore;
+        } else if (state.sortKey === 'riskReduction') {
+          av = a.entry.riskReduction;
+          bv = b.entry.riskReduction;
+        }
+        if (typeof av === 'string') return av.localeCompare(bv) * dir;
+        return (Number(av) - Number(bv)) * dir;
+      });
+
+      return rows;
+    }
+
+    function fmtScore(score) {
+      const n = Number(score || 0);
+      return Number.isInteger(n) ? String(n) : n.toFixed(1);
+    }
+
+    function relativeDay(value) {
+      const ts = toDateMs(value);
+      if (!ts) return '-';
+      const now = new Date();
+      const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const startTs = new Date(new Date(ts).getFullYear(), new Date(ts).getMonth(), new Date(ts).getDate()).getTime();
+      const diff = Math.floor((startToday - startTs) / 86400000);
+      if (diff <= 0) return 'Today';
+      if (diff === 1) return 'Yesterday';
+      return diff + ' days ago';
+    }
+
+    function csvEscape(value) {
+      return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+    }
+
+    function downloadText(filename, text, mimeType) {
+      const blob = new Blob([text], { type: mimeType || 'text/plain;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function selectedRows() {
+      return state.lastRows.filter((row) => state.selectedKeys.has(row.key));
+    }
+
+    function rowsToCsv(rows) {
+      const headers = [
+        'Master Reference',
+        'Version',
+        'Display Reference',
+        'Facility',
+        'Zone',
+        'Facility Type',
+        'Inspection Date',
+        'Initial Risk',
+        'Residual Risk',
+        'Risk Reduction',
+        'Risk Reduction Percent',
+        'Trend',
+        'Corrective Action Status',
+        'Assessor',
+        'Submission Date'
+      ];
+      const lines = [headers.map(csvEscape).join(',')];
+      rows.forEach((row) => {
+        const caStatus = caStatusForCounts(row.entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 });
+        lines.push([
+          row.group.parentRef,
+          'v' + row.entry.version,
+          row.entry.versionLabel,
+          row.entry.facility,
+          row.entry.zone,
+          row.entry.facilityType,
+          RiskModuleUtils.fmtDate(row.entry.inspectionDate),
+          row.entry.initialLevel + ' (' + fmtScore(row.entry.initialScore) + ')',
+          row.entry.residualLevel + ' (' + fmtScore(row.entry.residualScore) + ')',
+          fmtScore(row.entry.riskReduction),
+          String(row.entry.reductionPct) + '%',
+          row.entry.trend,
+          caStatus.label,
+          row.entry.assessor,
+          RiskModuleUtils.fmtDateTime(row.entry.submissionDate)
+        ].map(csvEscape).join(','));
+      });
+      return lines.join('\n');
+    }
+
+    function renderSummaryMetrics(rows) {
+      const masters = new Map();
+      rows.forEach((row) => {
+        const prev = masters.get(row.group.parentRef);
+        if (!prev || row.entry.version > prev.entry.version) masters.set(row.group.parentRef, row);
+      });
+      const summaryRows = Array.from(masters.values());
+      const low = summaryRows.filter((row) => row.entry.residualLevel === 'Low').length;
+      const medium = summaryRows.filter((row) => row.entry.residualLevel === 'Medium').length;
+      const high = summaryRows.filter((row) => row.entry.residualLevel === 'High').length;
+      const critical = summaryRows.filter((row) => row.entry.residualLevel === 'Critical').length;
+      let openCa = 0;
+      summaryRows.forEach((row) => {
+        const stats = row.entry.caStats || { open: 0, overdue: 0 };
+        openCa += Number(stats.open || 0) + Number(stats.overdue || 0);
+      });
+      document.getElementById('mTotal').textContent = String(summaryRows.length);
+      document.getElementById('mLow').textContent = String(low);
+      document.getElementById('mMedium').textContent = String(medium);
+      document.getElementById('mHigh').textContent = String(high);
+      document.getElementById('mCritical').textContent = String(critical);
+      document.getElementById('mOpenCA').textContent = String(openCa);
+
+      const metaCount = document.getElementById('metaRecordCount');
+      const metaLow = document.getElementById('metaLow');
+      const metaMed = document.getElementById('metaMed');
+      const metaHigh = document.getElementById('metaHigh');
+      const metaCrit = document.getElementById('metaCrit');
+      if (metaCount) metaCount.textContent = summaryRows.length + ' records';
+      if (metaLow) { metaLow.textContent = 'Low'; metaLow.title = String(low) + ' low risk records'; }
+      if (metaMed) { metaMed.textContent = 'Medium'; metaMed.title = String(medium) + ' medium risk records'; }
+      if (metaHigh) { metaHigh.textContent = 'High'; metaHigh.title = String(high) + ' high risk records'; }
+      if (metaCrit) { metaCrit.textContent = 'Critical'; metaCrit.title = String(critical) + ' critical risk records'; }
+    }
+
+    function updateSortButtons() {
+      document.querySelectorAll('.rm-sort').forEach((btn) => {
+        const base = btn.getAttribute('data-label') || btn.textContent.replace(/[↑↓]/g, '').trim();
+        btn.setAttribute('data-label', base);
+        const active = btn.getAttribute('data-sort') === state.sortKey;
+        btn.classList.toggle('active', active);
+        btn.textContent = active ? (base + (state.sortDir === 'asc' ? ' ↑' : ' ↓')) : base;
+      });
+    }
+
+    function updateSelectAll() {
+      const allNode = document.getElementById('selectAllRows');
+      if (!allNode) return;
+      if (!state.lastRows.length) {
+        allNode.checked = false;
+        return;
+      }
+      allNode.checked = state.lastRows.every((row) => state.selectedKeys.has(row.key));
+    }
+
+    function render() {
+      populateDynamicFilters();
+      const rows = getRows();
+      state.lastRows = rows;
+      renderSummaryMetrics(rows);
+      updateSortButtons();
+
+      const tbody = document.getElementById('publishedTbody');
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="13">No published records match current filters.</td></tr>';
+        updateSelectAll();
+        return;
+      }
+
+      tbody.innerHTML = rows.map((row) => {
+        const entry = row.entry;
+        const group = row.group;
+        const parentRef = group.parentRef || '-';
+        const selected = state.selectedKeys.has(row.key) ? ' checked' : '';
+        const previewRowId = 'preview-' + RiskModuleUtils.esc(row.key).replace(/[^a-zA-Z0-9]+/g, '-');
+        const entryCaStats = entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 };
+        const caStatus = caStatusForCounts(entryCaStats);
+        const rowRiskClass = 'pr-risk-' + String(entry.residualLevel || 'low').toLowerCase();
+        const initialRiskText = entry.initialLevel + ' (' + fmtScore(entry.initialScore) + ')';
+        const residualRiskText = entry.residualLevel + ' (' + fmtScore(entry.residualScore) + ')';
+        const caLabel = caStatus.key === 'overdue'
+          ? ('⚠ ' + String(entryCaStats.overdue) + ' Overdue')
+          : (caStatus.key === 'open'
+            ? ('⚡ ' + String(entryCaStats.open) + ' Open')
+            : '✓ No Actions');
+        const versionsSorted = group.versions.slice().sort((a, b) => a.version - b.version);
+        const versionsHead = ''
+          + '<div class="rm-version-head">'
+          + '<span>#</span><span>Reference Number</span><span>Inspection Date</span><span>Initial Risk</span><span>Residual Risk</span><span>Risk Reduction</span><span>Status</span><span>Inspector</span><span>Last Updated</span><span>View</span>'
+          + '</div>';
+        const versionsHtml = versionsSorted.map((v, idx) => {
+          return ''
+            + '<div class="rm-version-line">'
+            + '<span class="v-seq">' + RiskModuleUtils.esc(String(idx + 1) + '.') + '</span>'
+            + '<span class="v-ref">' + RiskModuleUtils.esc(v.versionLabel) + '</span>'
+            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(v.inspectionDate)) + '</span>'
+            + '<span><span class="rm-badge ' + riskClass(v.initialLevel) + '">' + RiskModuleUtils.esc(v.initialLevel + ' (' + fmtScore(v.initialScore) + ')') + '</span></span>'
+            + '<span><span class="rm-badge ' + riskClass(v.residualLevel) + '">' + RiskModuleUtils.esc(v.residualLevel + ' (' + fmtScore(v.residualScore) + ')') + '</span></span>'
+            + '<span>' + RiskModuleUtils.esc(fmtScore(v.riskReduction)) + '</span>'
+            + '<span><span class="rm-badge ' + statusClass(v.record.assessment_status || v.record.status || '') + '">' + RiskModuleUtils.esc(v.record.assessment_status || v.record.status || '-') + '</span></span>'
+            + '<span>' + RiskModuleUtils.esc(v.assessor) + '</span>'
+            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(v.submissionDate)) + '</span>'
+            + '<span><button class="rm-version-view" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-version="' + RiskModuleUtils.esc(v.version) + '">View</button></span>'
+            + '</div>';
+        }).join('');
+        return ''
+          + '<tr class="pr-row ' + RiskModuleUtils.esc(rowRiskClass) + '">'
+          + '<td><input type="checkbox" class="rm-select-row" data-key="' + RiskModuleUtils.esc(row.key) + '"' + selected + ' /></td>'
+          + '<td><div class="pr-master"><button class="rm-ref-toggle" data-target="' + previewRowId + '" title="Show versions">' + RiskModuleUtils.esc(parentRef) + '</button><span class="sub">' + RiskModuleUtils.esc(entry.facilityType + ' · ' + RiskModuleUtils.fmtDate(entry.inspectionDate)) + '</span></div></td>'
+          + '<td><div class="pr-fac"><span class="main">' + RiskModuleUtils.esc(entry.facility) + '</span><span class="sub">' + RiskModuleUtils.esc(entry.location || entry.zone || '-') + '</span></div></td>'
+          + '<td><span class="pr-zone">' + RiskModuleUtils.esc(entry.zone) + '</span></td>'
+          + '<td><span class="pr-type">' + RiskModuleUtils.esc(entry.facilityType) + '</span></td>'
+          + '<td>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(entry.inspectionDate)) + '</td>'
+          + '<td><span class="rm-badge ' + riskClass(entry.initialLevel) + '">' + RiskModuleUtils.esc(initialRiskText) + '</span></td>'
+          + '<td><span class="rm-residual-strong ' + riskClass(entry.residualLevel) + '">' + RiskModuleUtils.esc(residualRiskText) + '</span></td>'
+          + '<td><div class="pr-reduction">'
+            + (entry.riskReduction > 0
+              ? ('<span class="main">↓ ' + RiskModuleUtils.esc(fmtScore(entry.riskReduction)) + '</span><div class="bar"><span style="width:' + RiskModuleUtils.esc(String(Math.max(0, Math.min(100, entry.reductionPct)))) + '%"></span></div><span class="pct">↓ ' + RiskModuleUtils.esc(String(entry.reductionPct)) + '% improved</span>')
+              : ('<span class="main unchanged">—</span><div class="bar"><span style="width:0%"></span></div><span class="pct unchanged">Unchanged</span>'))
+          + '</div></td>'
+          + '<td><span class="pr-ca-pill ' + RiskModuleUtils.esc(caStatus.key) + '">' + RiskModuleUtils.esc(caLabel) + '</span></td>'
+          + '<td><span class="pr-assessor">' + RiskModuleUtils.esc(entry.assessor) + '</span></td>'
+          + '<td><div class="pr-subdate"><span class="date">' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(entry.submissionDate)) + '</span><span class="rel">' + RiskModuleUtils.esc(relativeDay(entry.submissionDate)) + '</span></div></td>'
+          + '<td><div class="pr-version"><span class="main">v' + RiskModuleUtils.esc(entry.version) + '</span><span class="sub">' + RiskModuleUtils.esc(String(group.versionCount)) + ' versions</span></div></td>'
+          + '</tr>'
+          + '<tr id="' + previewRowId + '" class="rm-preview-row" style="display:none;">'
+          + '<td colspan="13"><div class="rm-preview-shell">'
+          + '<div class="rm-version-scroll"><div class="rm-version-list">' + versionsHead + versionsHtml + '</div></div>'
+          + '</div></td>'
+          + '</tr>';
+      }).join('');
+
+      updateSelectAll();
+    }
+
+    function updateFilterBadge() {
+      const activeIds = ['fltSearch','fltFacility','fltZone','fltFacilityType','fltPublishedFrom','fltPublishedTo','fltInspector','fltResidualRisk','fltOpenCA'];
+      let count = 0;
+      activeIds.forEach(function(id) {
+        const node = document.getElementById(id);
+        if (node && String(node.value || '').trim()) count += 1;
+      });
+      const badge = document.getElementById('filterBadge');
+      if (!badge) return;
+      if (count > 0) {
+        badge.textContent = String(count);
+        badge.style.display = '';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function bindFilters() {
+      ['fltSearch', 'fltFacility', 'fltZone', 'fltFacilityType', 'fltPublishedFrom', 'fltPublishedTo', 'fltInspector', 'fltResidualRisk', 'fltOpenCA', 'fltLatestOnly'].forEach((id) => {
+        const node = document.getElementById(id);
+        if (!node) return;
+        node.addEventListener('input', function() { updateFilterBadge(); render(); });
+        node.addEventListener('change', function() { updateFilterBadge(); render(); });
+      });
+    }
+
+    function bindSorting() {
+      document.querySelectorAll('.rm-sort').forEach((btn) => {
+        btn.addEventListener('click', function () {
+          const key = btn.getAttribute('data-sort');
+          if (!key) return;
+          if (state.sortKey === key) {
+            state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+          } else {
+            state.sortKey = key;
+            state.sortDir = key === 'facility' || key === 'assessor' ? 'asc' : 'desc';
+          }
+          render();
+        });
+      });
+    }
+
+    function bindExports() {
+      const allBtn = document.getElementById('exportAllBtn');
+      if (allBtn) {
+        allBtn.addEventListener('click', function () {
+          const groups = buildGroups();
+          const latestOnly = document.getElementById('fltLatestOnly').checked;
+          const rows = [];
+          groups.forEach((group) => {
+            if (latestOnly) rows.push({ key: group.parentRef + '::' + String(group.latest.version), group, entry: group.latest });
+            else group.versions.forEach((entry) => rows.push({ key: group.parentRef + '::' + String(entry.version), group, entry }));
+          });
+          downloadText('published-register-all.csv', rowsToCsv(rows), 'text/csv;charset=utf-8;');
+        });
+      }
+      const exportSummary = function () {
+        const rows = state.lastRows.slice();
+        const total = rows.length;
+        const summaryText = [
+          'GOIL HSSEQ Published Register Summary',
+          'Generated: ' + new Date().toLocaleString(),
+          '',
+          'Rows in current filtered view: ' + total,
+          'Unique master references: ' + new Set(rows.map((row) => row.group.parentRef)).size,
+          'Selected rows: ' + selectedRows().length,
+          '',
+          'Key filters:',
+          '- Search: ' + (document.getElementById('fltSearch').value || 'All'),
+          '- Facility: ' + (document.getElementById('fltFacility').value || 'All'),
+          '- Zone: ' + (document.getElementById('fltZone').value || 'All'),
+          '- Facility Type: ' + (document.getElementById('fltFacilityType').value || 'All'),
+          '- Published From: ' + (document.getElementById('fltPublishedFrom').value || 'All'),
+          '- Published To: ' + (document.getElementById('fltPublishedTo').value || 'All'),
+          '- Residual Risk: ' + (document.getElementById('fltResidualRisk').value || 'All'),
+          '- Open CA: ' + (document.getElementById('fltOpenCA').value || 'All'),
+          '- Latest Version Only: ' + (document.getElementById('fltLatestOnly').checked ? 'Yes' : 'No')
+        ].join('\n');
+        downloadText('published-register-summary.txt', summaryText, 'text/plain;charset=utf-8;');
+      };
+
+      const topSummaryBtn = document.getElementById('summaryTopBtn');
+      if (topSummaryBtn) {
+        topSummaryBtn.addEventListener('click', exportSummary);
+      }
+    }
+
+    function init() {
+      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      bindFilters();
+      bindSorting();
+      bindExports();
+
+      document.getElementById('selectAllRows').addEventListener('change', function (event) {
+        const checked = !!event.target.checked;
+        state.lastRows.forEach((row) => {
+          if (checked) state.selectedKeys.add(row.key);
+          else state.selectedKeys.delete(row.key);
+        });
+        render();
+      });
+
+      document.getElementById('publishedTbody').addEventListener('click', function (event) {
+        const toggle = event.target.closest('.rm-ref-toggle');
+        if (toggle) {
+          const id = toggle.getAttribute('data-target');
+          const row = id ? document.getElementById(id) : null;
+          if (row) row.style.display = row.style.display === 'none' ? '' : 'none';
+          return;
+        }
+
+        const versionBtn = event.target.closest('.rm-version-view, .rm-view-record');
+        if (versionBtn) {
+          RiskModuleUtils.openAssessmentRecord(versionBtn.getAttribute('data-ref'), versionBtn.getAttribute('data-version'));
+          return;
+        }
+
+        const select = event.target.closest('.rm-select-row');
+        if (select) {
+          const key = select.getAttribute('data-key');
+          if (key) {
+            if (select.checked) state.selectedKeys.add(key);
+            else state.selectedKeys.delete(key);
+            updateSelectAll();
+          }
+        }
+      });
+
+      render();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F47920" />
+    <link rel="manifest" href="manifest.json" />
+    <title>GOIL HSSEQ | Login</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js', { scope: '/' }).catch(function () {});
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #0D1117;
+        --bg2: #161B22;
+        --bg3: #1C2128;
+        --bg4: #21262D;
+        --border: rgba(255, 255, 255, 0.12);
+        --border-soft: rgba(255, 255, 255, 0.07);
+        --or: #F47920;
+        --or-strong: #e06b15;
+        --or-soft: rgba(244, 121, 32, 0.16);
+        --wh: #E6EDF3;
+        --wh2: #C9D1D9;
+        --wh3: #8B949E;
+        --wh4: #484F58;
+        --crit: #DA3633;
+        --crit-text: #f85149;
+        --radius: 12px;
+        --t: .18s ease;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body { height: 100%; }
+
+      body {
+        font-family: 'Barlow', sans-serif;
+        background: var(--bg);
+        color: var(--wh2);
+        min-height: 100vh;
+      }
+
+      .login-shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: minmax(460px, 1.1fr) 2px minmax(380px, .9fr);
+      }
+
+      .brand-panel {
+        background: var(--bg);
+        padding: 34px 44px 26px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 34px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .brand-watermark {
+        position: absolute;
+        bottom: -60px;
+        right: -60px;
+        width: 70%;
+        max-width: 520px;
+        opacity: 0.06;
+        pointer-events: none;
+        user-select: none;
+        filter: grayscale(1);
+      }
+
+      .brand-logo-wrap {
+        width: min(270px, 48%);
+      }
+
+      .brand-logo {
+        width: 100%;
+        height: auto;
+        display: block;
+        mix-blend-mode: lighten;
+      }
+
+      .brand-copy {
+        align-self: center;
+        max-width: 760px;
+      }
+
+      .brand-eyebrow {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--or);
+        margin-bottom: 14px;
+      }
+
+      .brand-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: clamp(40px, 4.6vw, 52px);
+        font-weight: 900;
+        text-transform: uppercase;
+        line-height: .95;
+        color: var(--wh);
+        margin-bottom: 18px;
+      }
+
+      .brand-subline {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--wh3);
+        margin-bottom: 22px;
+        max-width: 560px;
+      }
+
+      .feature-list {
+        list-style: none;
+        display: grid;
+        gap: 10px;
+      }
+
+      .feature-item {
+        position: relative;
+        padding-left: 16px;
+        font-size: 13px;
+        color: var(--wh2);
+      }
+
+      .feature-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--or);
+      }
+
+      .brand-foot {
+        font-size: 10px;
+        color: var(--wh4);
+        letter-spacing: .2px;
+      }
+
+      .panel-divider {
+        background: rgba(244, 121, 32, 0.4);
+      }
+
+      .form-panel {
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+      }
+
+      .login-card {
+        width: min(440px, 100%);
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+        padding: 40px;
+      }
+
+      .swirl-anchor {
+        width: 36px;
+        height: 36px;
+        display: block;
+        margin: 0 auto 14px;
+      }
+
+      .card-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 28px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--wh);
+        text-align: center;
+        margin-bottom: 6px;
+      }
+
+      .card-sub {
+        font-size: 12px;
+        color: var(--wh3);
+        text-align: center;
+        margin-bottom: 22px;
+      }
+
+      .form-row {
+        margin-bottom: 12px;
+      }
+
+      .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: var(--wh2);
+        margin-bottom: 6px;
+      }
+
+      .demo-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(244, 121, 32, .35);
+        background: rgba(244, 121, 32, .1);
+        color: var(--or);
+        border-radius: 999px;
+        padding: 1px 7px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .7px;
+      }
+
+      .field {
+        width: 100%;
+        height: 44px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--bg3);
+        color: var(--wh);
+        padding: 0 12px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color var(--t), box-shadow var(--t);
+      }
+
+      .field:focus {
+        border-color: var(--or);
+        box-shadow: 0 0 0 3px var(--or-soft);
+      }
+
+      .field::placeholder { color: var(--wh3); }
+
+      .password-wrap {
+        position: relative;
+      }
+
+      .password-wrap .field {
+        padding-right: 42px;
+      }
+
+      .toggle-pass {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        color: var(--wh3);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: color var(--t), background var(--t);
+      }
+
+      .toggle-pass:hover {
+        color: var(--or);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .login-btn {
+        margin-top: 10px;
+        width: 100%;
+        height: 46px;
+        border: none;
+        border-radius: 6px;
+        background: var(--or);
+        color: #fff;
+        font-family: 'Barlow', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        transition: transform var(--t), background var(--t), box-shadow var(--t);
+        box-shadow: 0 2px 10px rgba(244, 121, 32, .28);
+      }
+
+      .login-btn:hover:not(:disabled) {
+        background: var(--or-strong);
+        transform: translateY(-1px);
+      }
+
+      .login-btn:disabled {
+        opacity: .8;
+        cursor: wait;
+        transform: none;
+      }
+
+      .spinner {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, .35);
+        border-top-color: #fff;
+        animation: spin .7s linear infinite;
+        display: none;
+      }
+
+      .login-btn.loading .spinner { display: inline-block; }
+      .login-btn.loading .btn-text { letter-spacing: .2px; }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .login-error {
+        display: none;
+        margin-top: 10px;
+        background: rgba(218, 54, 51, .1);
+        border-left: 3px solid var(--crit);
+        color: var(--crit-text);
+        font-size: 12px;
+        padding: 9px 10px;
+        border-radius: 6px;
+      }
+
+      .login-error.show { display: block; }
+
+      .card-foot {
+        margin-top: 16px;
+        text-align: center;
+        color: var(--wh4);
+        font-size: 10px;
+      }
+
+      @media (max-width: 980px) {
+        .login-shell {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1px auto;
+        }
+
+        .panel-divider {
+          height: 1px;
+          width: 100%;
+        }
+
+        .brand-panel {
+          padding: 22px 18px 20px;
+          gap: 18px;
+        }
+
+        .brand-logo-wrap {
+          width: min(220px, 58%);
+        }
+
+        .brand-copy { align-self: start; }
+        .brand-title { font-size: clamp(30px, 8vw, 40px); }
+        .form-panel { padding: 16px; }
+        .login-card { padding: 28px 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="login-shell">
+      <section class="brand-panel" aria-label="GOIL HSSEQ brand panel">
+        <img src="assets/img/goil-logo.png" alt="" class="brand-watermark" aria-hidden="true" />
+        <div class="brand-logo-wrap">
+          <img src="assets/img/goil-logo.png" alt="GOIL Logo" class="brand-logo" />
+        </div>
+
+        <div class="brand-copy">
+          <h1 class="brand-title" style="color: #f97316;">GOIL HSSEQ PORTAL</h1>
+        </div>
+      </section>
+
+      <div class="panel-divider" aria-hidden="true"></div>
+
+      <section class="form-panel" aria-label="Sign in panel">
+        <form id="loginForm" class="login-card" novalidate>
+          <h2 class="card-title">Sign In</h2>
+          <p class="card-sub">Use your assigned GOIL credentials to continue.</p>
+
+          <div class="form-row">
+            <label for="email" class="form-label">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="field"
+              placeholder="e.g., name@goil.com.gh"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="password" class="form-label">Password</label>
+            <div class="password-wrap">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                class="field"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" id="togglePassword" class="toggle-pass" aria-label="Show password" aria-pressed="false">👁</button>
+            </div>
+          </div>
+
+          <button type="submit" id="loginBtn" class="login-btn">
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="btn-text">Login</span>
+          </button>
+
+          <div id="loginError" class="login-error" aria-live="polite"></div>
+
+          <p class="card-foot">Restricted to authorised GOIL HSSEQ personnel only</p>
+        </form>
+      </section>
+    </main>
+
+    <script src="assets/js/auth.js?v=20260318-masterrefdeep6" defer></script>
+  </body>
+</html>

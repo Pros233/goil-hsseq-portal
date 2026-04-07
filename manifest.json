@@ -1,0 +1,27 @@
+{
+  "name": "GOIL HSSEQ Portal",
+  "short_name": "GOIL HSSEQ",
+  "description": "GOIL HSSEQ Integrated Risk Assessment & Facility Inspection Portal",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0D1117",
+  "theme_color": "#F47920",
+  "lang": "en",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/img/goil-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/goil-logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

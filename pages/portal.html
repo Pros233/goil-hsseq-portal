@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOIL HSSEQ – Integrated Risk Assessment & Facility Inspection Portal</title>
+<script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:      #F47920;
+    --orange-deep: #C9600A;
+    --charcoal:    #1E1E1E;
+    --charcoal-2:  #252525;
+    --charcoal-3:  #2E2E2E;
+    --charcoal-4:  #3A3A3A;
+    --white:       #FFFFFF;
+    --muted:       #A0A0A0;
+    --muted-2:     #6A6A6A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Barlow', sans-serif;
+    background: var(--charcoal);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(20,20,20,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(244,121,32,0.3);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 62px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-brand { display: flex; flex-direction: column; }
+  .topbar-dept {
+    font-size: 10px; font-weight: 600; letter-spacing: 2.5px;
+    color: var(--orange); text-transform: uppercase;
+  }
+  .topbar-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 700; color: var(--white);
+    letter-spacing: .5px; line-height: 1;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .user-info { text-align: right; }
+  .user-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .user-email { font-size: 13px; font-weight: 500; color: var(--white); }
+  .btn-logout {
+    background: transparent; border: 1.5px solid var(--orange);
+    color: var(--orange); padding: 7px 20px; border-radius: 4px;
+    font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
+    letter-spacing: .5px; cursor: pointer; transition: all .2s;
+  }
+  .btn-logout:hover { background: var(--orange); color: #fff; }
+
+  .page {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    padding-top: 62px;
+  }
+
+  .hero {
+    flex: 0 0 auto;
+    padding: 70px 60px 60px;
+    position: relative; overflow: hidden;
+    background: var(--charcoal);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(135deg, rgba(244,121,32,0.07) 0%, transparent 55%),
+      repeating-linear-gradient(
+        -45deg, transparent, transparent 40px,
+        rgba(244,121,32,0.025) 40px, rgba(244,121,32,0.025) 41px
+      );
+    pointer-events: none;
+  }
+
+  .hero-shard {
+    position: absolute; right: -60px; top: 20px;
+    width: 480px; height: 480px;
+    background: linear-gradient(145deg, rgba(244,121,32,0.1), rgba(244,121,32,0.01));
+    clip-path: polygon(30% 0%, 100% 0%, 100% 70%, 70% 100%, 0% 100%, 0% 30%);
+    border: 1px solid rgba(244,121,32,0.12);
+    animation: shardFloat 9s ease-in-out infinite;
+  }
+  .hero-shard-2 {
+    position: absolute; right: 180px; top: 80px;
+    width: 180px; height: 180px;
+    background: rgba(244,121,32,0.05);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    border: 1px solid rgba(244,121,32,0.08);
+    animation: shardFloat 12s ease-in-out infinite reverse;
+  }
+  @keyframes shardFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%       { transform: translateY(-16px) rotate(3deg); }
+  }
+
+  .hero-line {
+    position: absolute; left: 60px; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--orange), transparent 80%);
+    opacity: .45;
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 680px; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    color: var(--orange); text-transform: uppercase; margin-bottom: 18px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 28px; height: 2px; background: var(--orange);
+  }
+
+  .hero-welcome {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 76px; font-weight: 800; line-height: .93;
+    letter-spacing: -1px; text-transform: uppercase; margin-bottom: 8px;
+    animation: fadeUp .65s ease both;
+  }
+  .hero-welcome .accent { color: var(--orange); }
+
+  .hero-subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px; font-weight: 400; color: var(--muted);
+    letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 24px;
+    animation: fadeUp .65s .12s ease both;
+  }
+
+  .hero-desc {
+    font-size: 15.5px; font-weight: 300; color: var(--muted);
+    line-height: 1.75; max-width: 500px; margin-bottom: 36px;
+    animation: fadeUp .65s .22s ease both;
+  }
+  .hero-desc strong { color: var(--white); font-weight: 500; }
+
+  .hero-cta-row {
+    display: flex; gap: 14px; align-items: center;
+    animation: fadeUp .65s .32s ease both;
+  }
+  .btn-primary {
+    background: var(--orange); color: #fff;
+    padding: 13px 34px; border: none; border-radius: 4px;
+    font-family: 'Barlow', sans-serif; font-size: 13.5px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    transition: all .2s;
+    clip-path: polygon(0 0, 95% 0, 100% 20%, 100% 100%, 5% 100%, 0% 80%);
+    box-shadow: 0 0 28px rgba(244,121,32,0.28);
+  }
+  .btn-primary:hover { background: var(--orange-deep); box-shadow: 0 0 44px rgba(244,121,32,0.48); transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent; color: var(--muted);
+    padding: 12px 26px; border: 1.5px solid var(--charcoal-4);
+    border-radius: 4px; font-family: 'Barlow', sans-serif;
+    font-size: 13.5px; font-weight: 500; cursor: pointer; transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .modules-section {
+    flex: 1;
+    background: var(--charcoal-2);
+    padding: 56px 60px 70px;
+    position: relative;
+  }
+  .modules-section::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, var(--orange) 30%, var(--orange) 70%, transparent);
+    opacity: .5;
+  }
+
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 40px;
+  }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 3px;
+    color: var(--orange); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 40px; font-weight: 800; letter-spacing: -.5px;
+    text-transform: uppercase; line-height: 1;
+  }
+  .section-desc {
+    font-size: 13px; color: var(--muted); max-width: 260px;
+    text-align: right; line-height: 1.65;
+  }
+
+  /* ── Unit groups ── */
+  .unit-group {
+    margin-bottom: 48px;
+  }
+  .unit-group:last-child { margin-bottom: 0; }
+
+  .unit-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px;
+  }
+  .unit-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    color: var(--orange); text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .unit-rule {
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, rgba(244,121,32,0.35), transparent);
+  }
+
+  .unit-empty {
+    background: var(--charcoal-3);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 28px 26px;
+    color: var(--muted-2);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: .3px;
+  }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .mod-card {
+    background: var(--charcoal-3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 30px 26px;
+    position: relative; overflow: hidden;
+    transition: all .28s; cursor: pointer;
+    display: flex; flex-direction: column;
+    animation: fadeUp .65s ease both;
+  }
+  .mod-card:nth-child(1) { animation-delay: .10s; }
+  .mod-card:nth-child(2) { animation-delay: .22s; }
+  .mod-card:nth-child(3) { animation-delay: .34s; }
+  .mod-card:nth-child(4) { animation-delay: .46s; }
+  .mod-card:nth-child(5) { animation-delay: .58s; }
+  .mod-card:nth-child(6) { animation-delay: .70s; }
+
+  .mod-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--charcoal-4); transition: background .28s;
+  }
+  .mod-card:hover { border-color: rgba(244,121,32,0.3); transform: translateY(-5px); box-shadow: 0 18px 50px rgba(0,0,0,.5); }
+  .mod-card:hover::before { background: var(--orange); }
+
+  .mod-card.active {
+    border-color: var(--orange);
+    background: linear-gradient(150deg, rgba(244,121,32,0.09), var(--charcoal-3) 60%);
+    box-shadow: 0 0 40px rgba(244,121,32,0.1), inset 0 0 30px rgba(244,121,32,0.03);
+  }
+  .mod-card.active::before { background: var(--orange); }
+
+  .mod-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .mod-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge-planned { color: var(--muted-2); }
+  .badge-active  { color: var(--orange); }
+
+  .priority-tag {
+    position: absolute; top: 18px; right: 18px;
+    background: var(--orange); color: #fff;
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+    clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);
+  }
+
+  .mod-icon { font-size: 30px; margin-bottom: 12px; }
+
+  .mod-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .5px; color: var(--white); margin-bottom: 10px; line-height: 1.1;
+  }
+  .mod-desc {
+    font-size: 13px; color: var(--muted); line-height: 1.65; flex: 1; margin-bottom: 26px;
+  }
+
+  .mod-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 18px; border-radius: 4px;
+    font-family: 'Barlow', sans-serif; font-size: 12.5px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    transition: all .2s; border: none;
+  }
+  .mod-btn.launch {
+    background: var(--orange); color: #fff;
+    box-shadow: 0 4px 18px rgba(244,121,32,0.32);
+  }
+  .mod-card.active .mod-btn.launch {
+    margin-top: 20px;
+  }
+  .mod-btn.launch:hover { background: var(--orange-deep); box-shadow: 0 4px 28px rgba(244,121,32,0.5); }
+  .mod-btn.planned {
+    background: transparent; color: var(--muted-2);
+    border: 1.5px solid var(--charcoal-4);
+  }
+  .mod-btn.planned:hover { border-color: var(--orange); color: var(--orange); }
+  .mod-btn svg { transition: transform .2s; }
+  .mod-btn:hover svg { transform: translateX(4px); }
+
+  .workflow-section {
+    padding: 0 60px 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .queue-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .queue-card {
+    background: var(--charcoal-2);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+  .queue-card:hover { border-color: rgba(244,121,32,.45); transform: translateY(-1px); }
+  .queue-k { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .queue-v { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; color: #fff; margin-top: 4px; line-height: 1; }
+  .queue-card.active { border-color: var(--orange); box-shadow: 0 0 0 1px rgba(244,121,32,.45) inset; }
+
+  .register-card {
+    background: var(--charcoal-2);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .filters input, .filters select {
+    width: 100%;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.16);
+    background: #1c1c1c;
+    color: #fff;
+    padding: 0 10px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+  }
+  .table-wrap { overflow: auto; border: 1px solid rgba(255,255,255,.08); border-radius: 8px; }
+  .records-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+  }
+  .records-table th, .records-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .records-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .9px;
+    color: var(--muted);
+    background: rgba(255,255,255,.03);
+  }
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .status-published { color: #3FB950; border-color: rgba(63,185,80,.45); background: rgba(63,185,80,.12); }
+  .status-pending { color: #2F81F7; border-color: rgba(47,129,247,.45); background: rgba(47,129,247,.12); }
+  .status-draft { color: #A0A0A0; border-color: rgba(160,160,160,.45); background: rgba(160,160,160,.12); }
+  .status-reopen { color: #D29922; border-color: rgba(210,153,34,.45); background: rgba(210,153,34,.12); }
+
+  .notif-card {
+    background: var(--charcoal-2);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow: auto;
+  }
+  .notif-item {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: #222;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .notif-title { font-size: 12px; font-weight: 700; color: #fff; }
+  .notif-meta { font-size: 11px; color: var(--muted); }
+
+  @media (max-width:1200px) {
+    .queue-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .workflow-section { padding: 0 16px 26px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-left">
+    <img src="../assets/img/goil-logo.png" alt="GOIL Logo" style="height:38px;width:auto;display:block;" />
+    <div class="topbar-brand">
+      <span class="topbar-dept">GOIL HSSEQ Department</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-info">
+      <div class="user-label">Signed in as</div>
+      <div class="user-email" id="portalUserEmail">-</div>
+    </div>
+    <button class="btn-logout" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <section class="hero">
+    <div class="hero-line"></div>
+    <div class="hero-shard"></div>
+    <div class="hero-shard-2"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">GOIL HSSEQ Department</div>
+
+      <div class="hero-welcome">
+        Welcome to<br><span class="accent">GOIL HSSEQ</span>
+      </div>
+      <div class="hero-subtitle">Health · Safety · Security · Environment · Quality</div>
+    </div>
+  </section>
+
+  <section class="modules-section">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Platform Modules</div>
+        <div class="section-title">Your Workspaces</div>
+      </div>
+    </div>
+
+    <div class="modules-grid">
+
+      <!-- HSE -->
+      <div class="mod-card active" onclick="window.location.href='unit-hse.html'">
+        <div class="mod-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+            <rect x="3" y="27" width="42" height="8" rx="4" fill="#F47920"/>
+            <path d="M9 31 Q24 8 39 31 Z" fill="#F47920"/>
+          </svg>
+        </div>
+        <div class="mod-name">HSE</div>
+        <p class="mod-desc">Health, Safety &amp; Environment — facility inspections, hazard reporting and risk assessments.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-hse.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Compliance & Regulatory -->
+      <div class="mod-card active" onclick="window.location.href='unit-compliance.html'">
+        <div class="mod-icon">📋</div>
+        <div class="mod-name">Compliance &amp; Regulatory</div>
+        <p class="mod-desc">Regulatory compliance tracking, audit management and legal obligation monitoring.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-compliance.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Security -->
+      <div class="mod-card active" onclick="window.location.href='unit-security.html'">
+        <div class="mod-icon">🔒</div>
+        <div class="mod-name">Security</div>
+        <p class="mod-desc">Physical and operational security management, access control and incident response.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-security.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Quality -->
+      <div class="mod-card active" onclick="window.location.href='unit-quality.html'">
+        <div class="mod-icon">🏅</div>
+        <div class="mod-name">Quality</div>
+        <p class="mod-desc">Quality management, non-conformance tracking and continuous improvement processes.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-quality.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- ISO -->
+      <div class="mod-card active" onclick="window.location.href='unit-iso.html'">
+        <div class="mod-icon">📜</div>
+        <div class="mod-name">ISO</div>
+        <p class="mod-desc">ISO standard compliance, certification management and documentation control.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-iso.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- Common -->
+      <div class="mod-card active" onclick="window.location.href='unit-common.html'">
+        <div class="mod-icon">📁</div>
+        <div class="mod-name">Common</div>
+        <p class="mod-desc">Shared tools and cross-unit resources including KPI dashboards and programme management.</p>
+        <button class="mod-btn launch" onclick="event.stopPropagation(); window.location.href='unit-common.html'">
+          OPEN UNIT
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3" defer></script>
+<script src="../assets/js/portal.js?v=20260319-portalclean1" defer></script>
+</body>
+</html>

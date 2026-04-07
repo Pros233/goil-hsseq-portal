@@ -1,0 +1,53 @@
+{
+  "templateId": "TPL-LPG-PLANT",
+  "versionNo": "1.0.0",
+  "state": "Published",
+  "effectiveDate": "2026-03-01",
+  "facilityType": "LPG Plant",
+  "areaOrder": [
+    "Forecourt",
+    "Dispenser Island",
+    "LPG Area",
+    "Tank Farm / Offloading",
+    "Warehouse / Depot",
+    "Office / Admin",
+    "Electrical Room"
+  ],
+  "includedCategories": [
+    "Process Safety",
+    "Fire Safety",
+    "Environmental Protection",
+    "Mechanical Integrity",
+    "Emergency Preparedness",
+    "Documentation & Compliance",
+    "Electrical Safety",
+    "Traffic Management",
+    "Access Control",
+    "First Aid"
+  ],
+  "baseQuestionIds": [
+    "Q-FC-001",
+    "Q-FC-003",
+    "Q-DI-003",
+    "Q-DI-004",
+    "Q-LPG-001",
+    "Q-LPG-002",
+    "Q-LPG-003",
+    "Q-LPG-004",
+    "Q-LPG-005",
+    "Q-OFF-001",
+    "Q-OFF-002",
+    "Q-OFF-003",
+    "Q-OFF-004",
+    "Q-EL-001",
+    "Q-EL-002",
+    "Q-EL-003",
+    "Q-EL-004"
+  ],
+  "moduleQuestionIds": {
+    "Auto Gas": ["Q-LPG-001", "Q-LPG-003", "Q-DI-004"],
+    "Tank Farm": ["Q-TF-001", "Q-TF-002", "Q-TF-003", "Q-TF-004"],
+    "Warehouse": ["Q-WH-001", "Q-WH-002", "Q-WH-004", "Q-WH-005"],
+    "Office Block": ["Q-OFF-005"]
+  }
+}

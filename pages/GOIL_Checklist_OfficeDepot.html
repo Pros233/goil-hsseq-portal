@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>GOIL HSSEQ – Office &amp; Depot Inspection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117;--bg2:#161B22;--bg3:#1C2128;--bg4:#21262D;--bg5:#30363D;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+  --or:#F47920;--or-dim:rgba(244,121,32,.1);--or-glow:rgba(244,121,32,.28);
+  --wh:#E6EDF3;--wh2:#C9D1D9;--wh3:#8B949E;--wh4:#484F58;
+  --low:#3FB950;--low-dim:rgba(63,185,80,.1);
+  --med:#D29922;--med-dim:rgba(210,153,34,.1);
+  --high:#E07D23;--high-dim:rgba(224,125,35,.1);
+  --crit:#DA3633;--crit-dim:rgba(218,54,51,.1);
+  --t:.18s ease;--r:8px;--rl:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--wh2);display:flex;flex-direction:column;overflow:hidden}
+
+/* TOP NAV */
+.top-nav{flex-shrink:0;height:56px;background:var(--bg2);border-bottom:1px solid var(--border2);display:flex;align-items:center;padding:0 24px;gap:14px;z-index:50}
+.nav-home{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px;border:1.5px solid var(--border2);border-radius:6px;background:transparent;color:var(--or);font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all var(--t);text-align:center;gap:1px;min-width:54px}
+.nav-home svg{width:14px;height:14px}
+.nav-home:hover{border-color:var(--or);background:rgba(244,121,32,0.08)}
+.nav-back{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px;border:1.5px solid var(--border2);border-radius:6px;background:transparent;color:var(--wh3);font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all var(--t);text-align:center;gap:1px;min-width:54px}
+.nav-back svg{width:14px;height:14px}
+.nav-back:hover{border-color:var(--wh4);color:var(--wh)}
+.nav-logo{height:26px;width:auto;display:block;flex-shrink:0}
+.nav-divider{width:1px;height:24px;background:var(--border2);flex-shrink:0}
+.nav-facility{display:flex;flex-direction:column;gap:1px}
+.nav-facility-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--wh);line-height:1}
+.nav-facility-meta{font-size:11px;color:var(--wh3)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.status-badge{padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.status-draft{background:rgba(139,148,158,.15);color:var(--wh3);border:1px solid var(--border2)}
+.status-in-progress{background:var(--med-dim);color:var(--med);border:1px solid rgba(210,153,34,.25)}
+.status-completed{background:var(--low-dim);color:var(--low);border:1px solid rgba(63,185,80,.25)}
+.save-later-btn{padding:6px 14px;border:1.5px solid var(--border2);border-radius:6px;background:transparent;color:var(--wh3);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t);display:flex;align-items:center;gap:6px}
+.save-later-btn:hover{border-color:var(--or);color:var(--or)}
+.autosave-dot{width:7px;height:7px;border-radius:50%;background:var(--wh4);transition:background .4s;flex-shrink:0}
+.autosave-dot.saving{background:var(--or);animation:pulse .8s infinite}
+.autosave-dot.saved{background:var(--low)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* SECTION TABS — wrapping layout */
+.section-progress{flex-shrink:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 24px}
+.section-progress-inner{display:flex;flex-wrap:wrap;gap:2px}
+.sp-item{display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--wh4);border-radius:6px;cursor:pointer;transition:all var(--t);white-space:nowrap;border:1.5px solid transparent;user-select:none}
+.sp-item:hover{color:var(--wh3);background:var(--bg3)}
+.sp-item.active{color:var(--or);background:var(--or-dim);border-color:rgba(244,121,32,.25)}
+.sp-item.done{color:var(--low);background:var(--low-dim);border-color:rgba(63,185,80,.2)}
+.sp-item.partial{color:var(--med);background:var(--med-dim);border-color:rgba(210,153,34,.2)}
+.sp-num{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;background:var(--bg5);color:var(--wh4);flex-shrink:0;transition:all .2s}
+.sp-item.active .sp-num{background:var(--or);color:#fff}
+.sp-item.done .sp-num{background:var(--low);color:#fff}
+.sp-item.partial .sp-num{background:var(--med);color:#fff}
+.sp-pct{font-size:9px;font-weight:700;color:inherit;opacity:.75}
+.sp-icon{font-size:13px;line-height:1}
+
+/* MAIN */
+.main{flex:1;display:flex;overflow:hidden;min-height:0}
+.checklist-area{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--bg5) transparent}
+.checklist-area::-webkit-scrollbar{width:6px}
+.checklist-area::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+
+/* SECTION HEADER */
+.cl-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:14px 20px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);border-left:4px solid var(--or)}
+.cl-sh-left h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;color:var(--wh);margin-bottom:2px}
+.cl-sh-left p{font-size:12px;color:var(--wh3)}
+.cl-progress-ring{position:relative;width:52px;height:52px;flex-shrink:0}
+.cl-progress-ring svg{transform:rotate(-90deg)}
+.cl-ring-bg{fill:none;stroke:var(--bg5);stroke-width:4}
+.cl-ring-fill{fill:none;stroke:var(--or);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .5s ease;stroke-dasharray:138;stroke-dashoffset:138}
+.cl-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--wh);font-family:'Barlow Condensed',sans-serif}
+
+/* CHECKLIST ITEM */
+.cl-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden;border-left:3px solid transparent;transition:border-color .2s;scroll-margin-top:16px}
+.cl-item.resp-Y{border-left-color:var(--low)}
+.cl-item.resp-P{border-left-color:var(--med)}
+.cl-item.resp-N{border-left-color:var(--crit)}
+.cl-item.resp-NA{border-left-color:var(--wh4);opacity:.6}
+.cl-item-main{padding:12px 14px;display:flex;align-items:flex-start;gap:12px}
+.cl-item-meta{flex:1;min-width:0}
+.cl-item-top{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.cl-code{font-size:10px;font-weight:800;color:var(--or);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;flex-shrink:0}
+.cl-crit-tag{font-size:8px;font-weight:800;padding:2px 5px;border-radius:2px;letter-spacing:.5px;background:var(--crit-dim);color:var(--crit);text-transform:uppercase}
+.cl-question{font-size:13px;color:var(--wh);line-height:1.5}
+.cl-scope{font-size:10px;color:var(--wh4);margin-top:3px;font-style:italic}
+.subarea-header{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--or);background:rgba(244,121,32,.08);border-left:3px solid var(--or);padding:8px 14px;margin:18px 0 8px;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.subarea-label{flex:1}
+.subarea-na-toggle{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;text-transform:none;letter-spacing:.3px;color:var(--wh3);cursor:pointer;white-space:nowrap;border:1px solid var(--border);background:var(--bg3);border-radius:5px;padding:3px 9px;transition:border-color .15s,color .15s,background .15s}
+.subarea-na-toggle input{accent-color:var(--or);cursor:pointer;width:13px;height:13px}
+.subarea-na-toggle:has(input:checked){border-color:rgba(244,121,32,.45);background:rgba(244,121,32,.1);color:var(--or)}
+.cl-resp-btns{display:flex;gap:5px;flex-shrink:0;padding-top:1px}
+.resp-btn{min-width:38px;height:36px;padding:0 8px;border:1.5px solid var(--bg5);background:transparent;color:var(--wh3);font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;border-radius:5px;cursor:pointer;transition:all .12s}
+.resp-btn:hover{border-color:var(--or);color:var(--or)}
+.resp-btn.sel-Y{background:var(--low);border-color:var(--low);color:#fff}
+.resp-btn.sel-P{background:var(--med);border-color:var(--med);color:#fff}
+.resp-btn.sel-N{background:var(--crit);border-color:var(--crit);color:#fff}
+.resp-btn.sel-NA{background:var(--bg5);border-color:var(--bg5);color:var(--wh2)}
+
+/* DETAIL PANEL */
+.cl-detail{display:none;padding:14px;border-top:1px solid var(--border);background:var(--bg3);animation:slideDown .2s ease}
+.cl-detail.show{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* PRESET TILES */
+.preset-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.preset-group{display:flex;flex-direction:column;gap:5px}
+.preset-label{font-size:11px;font-weight:600;color:var(--wh3);display:flex;align-items:center;justify-content:space-between}
+.preset-hint{font-size:9px;color:var(--wh4);font-style:italic;font-weight:400}
+.preset-tile{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;cursor:pointer;transition:border-color var(--t),background var(--t);user-select:none}
+.preset-tile:hover{border-color:var(--or-glow);background:var(--bg3)}
+.preset-tile-num{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--wh);line-height:1;flex-shrink:0}
+.preset-tile-right{flex:1;min-width:0}
+.preset-tile-name{font-size:12px;font-weight:600;color:var(--wh2);line-height:1.2}
+.preset-tile-sub{font-size:10px;color:var(--wh4);margin-top:2px}
+.preset-tile-lock{font-size:11px;flex-shrink:0;opacity:.45;color:var(--wh3)}
+.preset-tile:hover .preset-tile-lock{opacity:1;color:var(--or)}
+
+/* SPINNER WIDGET */
+.preset-spinner{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1.5px solid var(--or);border-radius:5px;background:rgba(244,121,32,.06)}
+.spin-btn{width:28px;height:28px;border-radius:4px;border:1px solid var(--border2);background:var(--bg3);color:var(--wh);font-size:16px;font-weight:700;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.spin-btn:hover:not(:disabled){background:var(--or);border-color:var(--or);color:#fff}
+.spin-btn:disabled{opacity:.25;cursor:not-allowed}
+.spin-center{flex:1;text-align:center}
+.spin-num{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--wh);line-height:1;display:block}
+.spin-label{font-size:10px;color:var(--wh3)}
+
+/* RISK RESULT */
+.risk-result-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:9px 14px;background:var(--bg4);border-radius:5px;border:1px solid var(--border)}
+.risk-result-eq{font-size:11px;color:var(--wh3);flex:1}
+.risk-result-score{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--wh)}
+.risk-badge{display:inline-flex;align-items:center;justify-content:center;padding:3px 9px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.risk-Low{background:var(--low-dim);color:var(--low);border:1px solid rgba(63,185,80,.2)}
+.risk-Medium{background:var(--med-dim);color:var(--med);border:1px solid rgba(210,153,34,.2)}
+.risk-High{background:var(--high-dim);color:var(--high);border:1px solid rgba(224,125,35,.2)}
+.risk-Critical{background:var(--crit-dim);color:var(--crit);border:1px solid rgba(218,54,51,.2)}
+
+/* HAZARD / ACTION */
+.hazard-text{font-size:12px;color:var(--wh3);line-height:1.5;margin-bottom:8px;padding:7px 10px;background:rgba(218,54,51,.06);border-radius:4px;border-left:2px solid var(--crit)}
+.risk-action{font-size:12px;color:#7FB3D3;line-height:1.5;margin-bottom:10px;padding:7px 10px;background:rgba(52,152,219,.07);border-radius:4px;border-left:2px solid #3498DB}
+
+/* FORM */
+.detail-label{font-size:11px;font-weight:600;color:var(--wh3);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.detail-req{color:var(--crit)}
+.detail-textarea{width:100%;padding:8px 10px;resize:vertical;min-height:64px;line-height:1.45;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--wh);font-family:'Barlow',sans-serif;font-size:12px;outline:none;transition:border-color var(--t)}
+.detail-textarea:focus{border-color:var(--or)}
+.field-err{font-size:11px;color:var(--crit);margin-top:3px;display:none}
+.field-err.show{display:block}
+
+/* EVIDENCE */
+.evidence-area{margin-top:10px;border:1.5px dashed var(--border2);border-radius:6px;padding:10px 12px}
+.evidence-label{font-size:11px;font-weight:600;color:var(--wh3);margin-bottom:8px}
+.evidence-actions{display:flex;gap:8px;flex-wrap:wrap}
+.upload-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border:1.5px dashed var(--border2);border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;color:var(--wh3);transition:all var(--t);background:transparent;font-family:'Barlow',sans-serif}
+.upload-btn:hover{border-color:var(--or);color:var(--or)}
+.photo-only{border-style:solid;background:var(--bg4)}
+input[type=file]{display:none}
+.file-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.file-chip{padding:3px 8px;background:var(--bg4);border:1px solid var(--border2);border-radius:4px;font-size:11px;color:var(--wh3);display:flex;align-items:center;gap:5px}
+.file-chip-remove{cursor:pointer;color:var(--crit);font-size:14px;line-height:1;flex-shrink:0}
+.evidence-hint{font-size:10px;color:var(--wh4);margin-top:6px;line-height:1.4}
+
+/* FOOTER */
+.footer-nav{flex-shrink:0;background:var(--bg2);border-top:1px solid var(--border2);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.footer-info{font-size:12px;color:var(--wh3)}
+.footer-info strong{color:var(--wh)}
+.footer-btns{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:6px;border:none;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.2px;transition:all var(--t)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border2);color:var(--wh3)}
+.btn-ghost:hover:not(:disabled){border-color:var(--wh4);color:var(--wh)}
+.btn-ghost:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--or);color:#fff;box-shadow:0 2px 10px var(--or-glow)}
+.btn-primary:hover{background:#e06b15;transform:translateY(-1px)}
+.btn-finish{background:#2ea043;color:#fff;box-shadow:0 2px 10px rgba(46,160,67,.3)}
+.btn-finish:hover{background:#2c9740;transform:translateY(-1px)}
+.btn svg{width:15px;height:15px;flex-shrink:0}
+
+/* EDIT CONFIRM MODAL */
+.ce-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
+.ce-overlay.show{display:flex}
+.ce-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:36px 32px;max-width:420px;width:100%;animation:ceIn .22s cubic-bezier(.22,1,.36,1)}
+@keyframes ceIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.ce-icon{font-size:36px;margin-bottom:16px;display:block}
+.ce-box h3{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--wh);margin-bottom:10px}
+.ce-box p{font-size:14px;color:var(--wh3);line-height:1.65;margin-bottom:14px}
+.ce-field-chip{display:inline-flex;align-items:center;gap:6px;background:var(--or-dim);border:1px solid var(--or-glow);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:700;color:var(--or);margin-bottom:24px}
+.ce-btns{display:flex;gap:10px;justify-content:flex-end}
+.ce-cancel{padding:10px 20px;border:1.5px solid var(--border2);border-radius:6px;background:transparent;color:var(--wh3);font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all var(--t)}
+.ce-cancel:hover{border-color:var(--wh4);color:var(--wh)}
+.ce-confirm{padding:10px 22px;border:none;border-radius:6px;background:var(--or);color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all var(--t)}
+.ce-confirm:hover{background:#e06b15}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:68px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:999;pointer-events:none}
+.toast{padding:9px 16px;border-radius:6px;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;gap:7px;pointer-events:auto;animation:tIn .2s ease}
+.toast.success{background:#065f46;border-left:3px solid var(--low)}
+.toast.warning{background:#78350f;border-left:3px solid var(--high)}
+.toast.error{background:#7f1d1d;border-left:3px solid var(--crit)}
+@keyframes tIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+
+/* SECTION FINDING BAR */
+.section-finding-bar{margin-top:12px;padding:12px 16px;border:1.5px dashed var(--border2);border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sfb-text{font-size:12px;color:var(--wh3)}
+.sfb-count{font-size:11px;font-weight:700;color:var(--or);background:var(--or-dim);border:1px solid rgba(244,121,32,.2);border-radius:999px;padding:1px 8px;margin-right:6px;display:none}
+.sfb-count.show{display:inline}
+.sfb-btn{padding:7px 14px;border:1.5px solid var(--or);border-radius:6px;background:transparent;color:var(--or);font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--t);white-space:nowrap}
+.sfb-btn:hover{background:var(--or);color:#fff}
+.sfb-findings-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.sfb-finding-card{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;position:relative}
+.sfb-fc-top{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.sfb-fc-id{font-size:10px;font-weight:800;color:var(--or);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+.sfb-fc-obs{font-size:12px;color:var(--wh);line-height:1.45;margin-bottom:5px}
+.sfb-fc-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sfb-fc-risk{font-size:10px;color:var(--wh4)}
+.sfb-fc-remove{position:absolute;top:8px;right:10px;font-size:13px;color:var(--wh4);cursor:pointer;background:none;border:none;transition:color var(--t)}
+.sfb-fc-remove:hover{color:var(--crit)}
+
+/* FINDING MODAL */
+.find-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);z-index:800;display:none;align-items:center;justify-content:center;padding:18px}
+.find-overlay.show{display:flex}
+.find-modal{width:min(680px,100%);max-height:90vh;overflow-y:auto;border:1px solid var(--border2);border-radius:var(--rl);background:var(--bg2);padding:24px;display:grid;gap:14px}
+.find-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--wh);text-transform:uppercase;letter-spacing:.4px}
+.find-sub{font-size:12px;color:var(--wh3);line-height:1.5;margin-top:2px}
+.find-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.find-full{grid-column:1/-1}
+.find-risk-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--border2);border-radius:7px;background:var(--bg3);padding:9px 12px}
+.find-risk-eq{font-size:12px;color:var(--wh3)}
+.find-risk-score{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--wh);line-height:1}
+.find-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:4px}
+.find-error{display:none;font-size:12px;color:var(--crit);padding:8px 10px;border:1px solid rgba(218,54,51,.4);background:var(--crit-dim);border-radius:6px}
+.find-error.show{display:block}
+.detail-select{height:36px;padding:0 10px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--wh);font-family:'Barlow',sans-serif;font-size:12px;outline:none;transition:border-color var(--t);appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238B949E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;width:100%}
+.detail-select:focus{border-color:var(--or)}
+.detail-select option{background:var(--bg3)}
+.detail-select.invalid,.detail-textarea.invalid{border-color:var(--crit)}
+
+/* LOADING */
+.loading-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.loading-spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--bg5);border-top-color:var(--or);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--wh3)}
+
+@media(max-width:760px){
+  .top-nav,.checklist-area,.footer-nav{padding-left:14px;padding-right:14px}
+  .section-progress{padding:6px 14px}
+  .preset-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <button class="nav-home" onclick="window.location.href='portal.html'" title="Go to Home">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5L8 2l6 4.5V14a1 1 0 01-1 1H3a1 1 0 01-1-1V6.5z"/><path d="M6 15V9h4v6"/></svg>
+    Home
+  </button>
+  <button class="nav-back" onclick="goBack()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
+    Facility<br>Details
+  </button>
+  <img src="../assets/img/goil-logo.png" alt="GOIL" class="nav-logo">
+  <div class="nav-divider"></div>
+  <div class="nav-facility">
+    <div class="nav-facility-name" id="navFacilityName">Loading…</div>
+    <div class="nav-facility-meta" id="navFacilityMeta">Office &amp; Depot Inspection</div>
+  </div>
+  <div class="nav-right">
+    <div class="autosave-dot" id="autosaveDot"></div>
+    <span id="autosaveText" style="font-size:11px;color:var(--wh4)">Saved</span>
+    <button class="save-later-btn" onclick="saveDraft(true)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><path d="M13 13H3V3h7l3 3v7z"/><path d="M10 13V9H6v4M6 3v3h5"/></svg>
+      Save &amp; Continue Later
+    </button>
+    <span class="status-badge status-draft" id="statusBadge">Draft</span>
+  </div>
+</nav>
+
+<!-- SECTION TABS -->
+<div class="section-progress">
+  <div class="section-progress-inner" id="sectionProgressInner"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="mainArea">
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading Office &amp; Depot checklist…</div>
+  </div>
+  <div class="checklist-area" id="checklistArea" style="display:none">
+    <div class="cl-section-header">
+      <div class="cl-sh-left">
+        <h2 id="sectionTitle">-</h2>
+        <p id="sectionDesc">-</p>
+      </div>
+      <div class="cl-progress-ring">
+        <svg width="52" height="52" viewBox="0 0 48 48">
+          <circle class="cl-ring-bg" cx="24" cy="24" r="22"/>
+          <circle class="cl-ring-fill" id="ringFill" cx="24" cy="24" r="22"/>
+        </svg>
+        <div class="cl-ring-text" id="ringPct">0%</div>
+      </div>
+    </div>
+    <div id="itemsContainer"></div>
+    <!-- SECTION FINDING BAR -->
+    <div class="section-finding-bar" id="sectionFindingBar">
+      <div style="flex:1;min-width:0">
+        <div class="sfb-text">Capture additional inspection findings discovered in this section.</div>
+        <div class="sfb-findings-list" id="sfbFindingsList"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="sfb-count" id="sfbCount">0</span>
+        <button class="sfb-btn" onclick="openFindingModal()">+ Add Finding</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer-nav">
+  <div class="footer-info">
+    Section <strong id="footerSecNum">1</strong> of <strong id="footerSecTotal">19</strong>
+    &middot; <span id="footerUnanswered">0 remaining</span>
+  </div>
+  <div class="footer-btns">
+    <button class="btn btn-ghost" id="prevBtn" onclick="navigate(-1)" disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
+      Previous
+    </button>
+    <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">
+      Next Section
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h8M9 4l4 4-4 4"/></svg>
+    </button>
+  </div>
+</footer>
+
+<!-- EDIT PRESET CONFIRM MODAL -->
+<div class="ce-overlay" id="ceOverlay">
+  <div class="ce-box">
+    <span class="ce-icon">!</span>
+    <h3>Edit Pre-set Value?</h3>
+    <p>This value is automatically determined from the standard risk assessment criteria for this checklist item.</p>
+    <p>You should only override it if site-specific conditions justify a different score. The change will be recorded.</p>
+    <div class="ce-field-chip" id="ceFieldChip">Severity</div>
+    <div class="ce-btns">
+      <button class="ce-cancel" onclick="cancelEditConfirm()">Cancel</button>
+      <button class="ce-confirm" onclick="confirmEdit()">Yes, I want to edit this</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINDING MODAL -->
+<div class="find-overlay" id="findOverlay">
+  <div class="find-modal">
+    <div>
+      <div class="find-title" id="findModalTitle">Add Finding</div>
+      <div class="find-sub" id="findModalSub">Capture a section-specific observation not covered by the checklist items.</div>
+    </div>
+    <div class="find-grid">
+      <div class="find-full" id="findLinkedWrap" style="display:none">
+        <div class="detail-label">Linked Section <span style="color:var(--wh4);font-weight:400">(optional)</span></div>
+        <select class="detail-select" id="findLinkedSection">
+          <option value="">General Finding (no specific section)</option>
+        </select>
+      </div>
+      <div class="find-full">
+        <div class="detail-label">Observation / Comment <span class="detail-req">*</span></div>
+        <textarea class="detail-textarea" id="findObs" placeholder="Describe the issue, deviation, or non-compliance observed…" rows="3"></textarea>
+      </div>
+      <div>
+        <div class="detail-label">Severity <span class="detail-req">*</span></div>
+        <select class="detail-select" id="findSev" onchange="updateFindRisk()">
+          <option value="">Select severity…</option>
+          <option value="1">1 – Very Low</option>
+          <option value="2">2 – Low</option>
+          <option value="3">3 – Moderate</option>
+          <option value="4">4 – High</option>
+          <option value="5">5 – Critical</option>
+        </select>
+      </div>
+      <div>
+        <div class="detail-label">Likelihood <span class="detail-req">*</span></div>
+        <select class="detail-select" id="findLik" onchange="updateFindRisk()">
+          <option value="">Select likelihood…</option>
+          <option value="1">1 – Rare</option>
+          <option value="2">2 – Unlikely</option>
+          <option value="3">3 – Possible</option>
+          <option value="4">4 – Likely</option>
+          <option value="5">5 – Almost Certain</option>
+        </select>
+      </div>
+      <div class="find-full">
+        <div class="find-risk-bar">
+          <span class="find-risk-eq" id="findRiskEq">Risk Score = — × —</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="find-risk-score" id="findRiskScore">—</span>
+            <span class="risk-badge risk-Low" id="findRiskBadge" style="display:none">Low</span>
+          </div>
+        </div>
+      </div>
+      <div class="find-full">
+        <div class="detail-label">Recommended Action <span class="detail-req">*</span></div>
+        <textarea class="detail-textarea" id="findAction" placeholder="Enter recommended corrective or preventive action…" rows="2"></textarea>
+      </div>
+      <div class="find-full">
+        <div class="evidence-area">
+          <div class="evidence-label">Supporting Evidence (photos / documents)
+            <span style="color:var(--wh4);font-weight:400">– optional</span>
+          </div>
+          <div class="file-list" id="findFileList"></div>
+          <div class="evidence-actions">
+            <button class="upload-btn" onclick="triggerFindUpload()">+ Upload Attachment</button>
+            <button class="upload-btn photo-only" onclick="triggerFindPhoto()">+ Take Photo</button>
+          </div>
+          <input type="file" id="findFileInput" multiple accept=".jpg,.jpeg,.png,.webp,.heic,.pdf" onchange="handleFindFiles(this)">
+          <input type="file" id="findPhotoInput" accept="image/*" capture="environment" onchange="handleFindFiles(this)">
+          <div class="evidence-hint">No evidence attached? You may continue and add evidence if available.</div>
+        </div>
+      </div>
+    </div>
+    <div class="find-error" id="findError">Please complete all required fields.</div>
+    <div class="find-modal-actions">
+      <button class="btn btn-ghost" onclick="closeFindingModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveFinding()">Save Finding</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const FACILITY_KEY = 'goil_facility_details';
+const SESSION_KEY  = 'goil_od_checklist_session';
+const QB_URL       = '../assets/data/question-bank.json';
+const TPL_URL      = '../assets/data/template-office-depot.json';
+
+const SEV_LABELS = ['','Very Low','Low','Moderate','High','Critical'];
+const LIK_LABELS = ['','Rare','Unlikely','Possible','Likely','Almost Certain'];
+
+const AREA_ICONS = {
+  'Layout & Access':      '🗺️',
+  'Work Environment':     '🌿',
+  'Emergency & Fire':     '🔥',
+  'Welfare':              '🏥',
+  'Electrical Safety':    '⚡',
+  'SOPs & Documentation': '📋',
+  'Operations':           '⚙️',
+  'Equipment':            '🔩',
+  'Laboratory':           '🔬',
+  'Environmental Management': '🌱',
+  '__findings__':         '📝',
+};
+
+function getRiskLevel(score) {
+  return score >= 17 ? 'Critical' : score >= 10 ? 'High' : score >= 5 ? 'Medium' : 'Low';
+}
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let facility    = {};
+let areas       = [];   // ordered area names
+let areaMap     = {};   // areaName → [question objects]
+let session     = {};   // questionId → { resp, notes, sevOverride, likOverride, sevEditing, likEditing, files }
+let currentIdx  = 0;
+
+// edit-confirm modal state
+let ceCode  = null;
+let ceField = null;
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
+(async function boot() {
+  try { facility = JSON.parse(localStorage.getItem(FACILITY_KEY) || '{}'); } catch(e){}
+  if (facility.facilityName) {
+    document.getElementById('navFacilityName').textContent = facility.facilityName;
+    document.getElementById('navFacilityMeta').textContent =
+      (facility.facilityType || 'Office & Depot') + ' · ' + (facility.inspectionDate || '');
+  }
+
+  try { session = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}'); } catch(e){}
+
+  let bank, template;
+  try {
+    [bank, template] = await Promise.all([
+      fetch(QB_URL + '?_=' + Date.now()).then(r => r.json()),
+      fetch(TPL_URL + '?_=' + Date.now()).then(r => r.json())
+    ]);
+  } catch(err) {
+    document.getElementById('loadingScreen').innerHTML =
+      '<div style="color:var(--crit);font-size:13px">Error loading checklist. Please refresh.</div>';
+    return;
+  }
+
+  const bankById = {};
+  (bank.questions || bank).forEach(q => { bankById[q.questionId] = q; });
+
+  areas = (template.areaOrder || []);
+  (template.baseQuestionIds || []).forEach(id => {
+    const q = bankById[id];
+    if (!q) return;
+    const a = q.area || 'General';
+    if (!areaMap[a]) areaMap[a] = [];
+    areaMap[a].push(q);
+  });
+  areas = areas.filter(a => areaMap[a] && areaMap[a].length > 0);
+  // Always append the Findings tab last
+  areas.push('__findings__');
+  areaMap['__findings__'] = [];
+
+  const savedIdx = parseInt(localStorage.getItem(SESSION_KEY + '_idx') || '0', 10);
+  currentIdx = (savedIdx >= 0 && savedIdx < areas.length) ? savedIdx : 0;
+
+  buildTabs();
+  renderSection(currentIdx);
+
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('checklistArea').style.display = '';
+
+  setInterval(() => saveDraft(false), 30000);
+})();
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+function buildTabs() {
+  const inner = document.getElementById('sectionProgressInner');
+  inner.innerHTML = '';
+  document.getElementById('footerSecTotal').textContent = areas.length;
+
+  areas.forEach((area, i) => {
+    const icon = AREA_ICONS[area] || '📌';
+    let cls, label, pctLabel;
+
+    if (area === '__findings__') {
+      const total = getAllFindings().length;
+      cls      = i === currentIdx ? 'active' : total > 0 ? 'done' : '';
+      label    = 'Additional Findings';
+      pctLabel = total > 0 ? ` <span class="sp-pct">${total} captured</span>` : '';
+    } else {
+      const qs  = areaMap[area] || [];
+      const ans = qs.filter(q => (session[q.questionId] || {}).resp).length;
+      const pct = qs.length ? Math.round((ans / qs.length) * 100) : 0;
+      cls      = i === currentIdx ? 'active' : ans === qs.length && qs.length > 0 ? 'done' : '';
+      label    = area;
+      pctLabel = ans > 0 ? ` <span class="sp-pct">${pct}%</span>` : '';
+    }
+
+    const el = document.createElement('div');
+    el.className = 'sp-item ' + cls;
+    el.dataset.idx = i;
+    el.innerHTML =
+      `<span class="sp-num">${i + 1}</span>` +
+      `<span class="sp-icon">${icon}</span>` +
+      escHtml(label) + pctLabel;
+    el.addEventListener('click', () => { saveDraft(false); renderSection(i); });
+    inner.appendChild(el);
+  });
+}
+
+// ── RENDER SECTION ─────────────────────────────────────────────────────────
+function renderSection(idx) {
+  currentIdx = idx;
+  localStorage.setItem(SESSION_KEY + '_idx', idx);
+
+  const area = areas[idx];
+
+  // — FINDINGS TAB —
+  if (area === '__findings__') {
+    renderFindingsSection(idx);
+    buildTabs();
+    return;
+  }
+
+  // — NORMAL SECTION —
+  const qs  = areaMap[area] || [];
+  const ans = qs.filter(q => (session[q.questionId] || {}).resp).length;
+  const pct = qs.length ? Math.round((ans / qs.length) * 100) : 0;
+
+  document.getElementById('sectionTitle').textContent = area;
+  document.getElementById('sectionDesc').textContent =
+    `Section ${idx + 1} of ${areas.length} · ${ans} of ${qs.length} items answered`;
+  updateRing(pct);
+
+  document.getElementById('footerSecNum').textContent = idx + 1;
+  const rem = qs.length - ans;
+  document.getElementById('footerUnanswered').textContent =
+    rem === 0 ? 'All items answered' : rem + ' item' + (rem !== 1 ? 's' : '') + ' remaining';
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  const nb = document.getElementById('nextBtn');
+  nb.innerHTML = `Next Section <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M4 8h8M9 4l4 4-4 4"/></svg>`;
+  nb.className = 'btn btn-primary';
+
+  const container = document.getElementById('itemsContainer');
+  container.innerHTML = '';
+  let lastSubArea = null;
+  qs.forEach(q => {
+    if (q.subArea && q.subArea !== lastSubArea) {
+      lastSubArea = q.subArea;
+      const subQs = qs.filter(x => x.subArea === q.subArea);
+      const allNA = subQs.length > 0 && subQs.every(x => (session[x.questionId]||{}).resp === 'NA');
+      const saKey = encodeURIComponent(q.subArea);
+      const hdr = document.createElement('div');
+      hdr.className = 'subarea-header';
+      hdr.id = 'subarea-hdr-' + saKey;
+      hdr.innerHTML = `
+        <span class="subarea-label">${escHtml(q.subArea)}</span>
+        <label class="subarea-na-toggle" title="Mark all questions in this section as Not Applicable">
+          <input type="checkbox" onchange="setSubAreaNA('${area}','${escHtml(q.subArea)}',this.checked)"${allNA?' checked':''}>
+          <span>N/A — Not Applicable</span>
+        </label>`;
+      container.appendChild(hdr);
+    }
+    container.appendChild(buildItemCard(q));
+  });
+
+  // show section finding bar
+  document.getElementById('sectionFindingBar').style.display = '';
+  renderSectionFindingBar();
+
+  buildTabs();
+  document.getElementById('checklistArea').scrollTop = 0;
+  updateStatus();
+}
+
+// ── FINDINGS TAB ───────────────────────────────────────────────────────────
+function renderFindingsSection(idx) {
+  const allFindings = getAllFindings();
+  const count       = allFindings.length;
+
+  // header
+  document.getElementById('sectionTitle').textContent = 'Additional Findings';
+  document.getElementById('sectionDesc').textContent =
+    `Section ${idx + 1} of ${areas.length} · ${count === 0 ? '0 of 0 items answered' : count + ' finding(s) captured'}`;
+  updateRing(count > 0 ? 100 : 0);
+
+  // footer
+  document.getElementById('footerSecNum').textContent = idx + 1;
+  document.getElementById('footerUnanswered').textContent =
+    count === 0 ? 'No findings captured yet' : count + ' finding(s) captured';
+
+  // buttons
+  document.getElementById('prevBtn').disabled = idx === 0;
+  const nb = document.getElementById('nextBtn');
+  nb.innerHTML = `Review &amp; Submit <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M2 8h10M8 4l4 4-4 4"/></svg>`;
+  nb.className = 'btn btn-finish';
+
+  // hide section finding bar
+  document.getElementById('sectionFindingBar').style.display = 'none';
+
+  // render findings content
+  const container = document.getElementById('itemsContainer');
+  container.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:var(--wh);letter-spacing:.4px;margin-bottom:3px">Additional Findings</div>
+        <div style="font-size:12px;color:var(--wh3)">Capture section-linked findings and general findings discovered during inspection.</div>
+      </div>
+      <button class="sfb-btn" onclick="openFindingModal(null, true)" style="flex-shrink:0">+ Add Finding</button>
+    </div>
+    <div id="allFindingsContainer"></div>`;
+
+  renderAllFindingsCards();
+  updateStatus();
+}
+
+function renderAllFindingsCards() {
+  const container = document.getElementById('allFindingsContainer');
+  if (!container) return;
+  const allFindings = getAllFindings();
+
+  if (allFindings.length === 0) {
+    container.innerHTML = `
+      <div style="border:1.5px dashed var(--border2);border-radius:8px;padding:20px 16px;color:var(--wh3);font-size:13px;max-width:540px">
+        No findings captured yet. Add section-linked findings from checklist sections or create general findings here.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = allFindings.map((f, globalIdx) => {
+    const score  = f.sev * f.lik;
+    const level  = getRiskLevel(score);
+    const dt     = f.addedAt ? new Date(f.addedAt).toLocaleString('en-GB') : '—';
+    const isLinked = Boolean(f.linkedSection);
+    const fid    = generateFindingId(globalIdx + 1);
+    return `
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:800;color:var(--or);font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">${escHtml(fid)}</span>
+          ${isLinked
+            ? `<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:#2F81F7;color:#fff;text-transform:uppercase;letter-spacing:.4px">Section-Linked Finding</span>`
+            : `<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:rgba(139,148,158,.2);color:var(--wh3);text-transform:uppercase;letter-spacing:.4px">General Finding</span>`}
+        </div>
+        <div style="font-size:13px;color:var(--wh);line-height:1.5;margin-bottom:10px">${escHtml(f.obs)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          ${isLinked ? `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Linked Section</div><div style="font-size:12px;color:var(--wh2)">${escHtml(f.linkedSection)}</div></div>` : ''}
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Risk</div><div style="font-size:12px;color:var(--wh2)">${score} <span class="risk-badge risk-${level}" style="font-size:9px;padding:1px 6px">${level}</span></div></div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Recommended Action</div><div style="font-size:12px;color:var(--wh2)">${escHtml(f.action)}</div></div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Attachments</div><div style="font-size:12px;color:var(--wh2)">${(f.files||[]).length} file(s)</div></div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Status</div><div style="font-size:12px;color:var(--wh2)">Open</div></div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px"><div style="font-size:9px;font-weight:700;color:var(--wh4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px">Captured</div><div style="font-size:12px;color:var(--wh2)">${escHtml(dt)}</div></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button onclick="editGlobalFinding(${globalIdx})" class="btn btn-ghost" style="padding:6px 14px;font-size:12px">Edit</button>
+          <button onclick="removeGlobalFinding(${globalIdx})" class="btn btn-ghost" style="padding:6px 14px;font-size:12px;color:var(--crit);border-color:rgba(218,54,51,.3)">Remove</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function getAllFindings() {
+  if (!session._findings) return [];
+  const out = [];
+  // Gather from all section areas (in order), then general
+  const checklistAreas = areas.filter(a => a !== '__findings__');
+  checklistAreas.forEach(area => {
+    (session._findings[area] || []).forEach(f => {
+      out.push({ ...f, linkedSection: area });
+    });
+  });
+  // General findings stored under '__general__'
+  (session._findings['__general__'] || []).forEach(f => {
+    out.push({ ...f, linkedSection: null });
+  });
+  return out;
+}
+
+function generateFindingId(n) {
+  const fac  = facility.facilityName || 'FAC';
+  const code = fac.replace(/[^A-Z0-9]/gi,'').substring(0,4).toUpperCase();
+  const d    = new Date();
+  const date = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  return `IRA-${date}-${code}-FND-${String(n).padStart(3,'0')}`;
+}
+
+function editGlobalFinding(globalIdx) {
+  const allFindings = getAllFindings();
+  const f = allFindings[globalIdx];
+  if (!f) return;
+  // find which area/section this belongs to
+  const fromGeneral = !f.linkedSection;
+  // open modal pre-filled
+  _editFindingGlobal = { globalIdx, area: f.linkedSection || '__general__', f };
+  openFindingModal(null, true, f);
+}
+
+let _editFindingGlobal = null;
+
+function removeGlobalFinding(globalIdx) {
+  const allFindings = getAllFindings();
+  const f = allFindings[globalIdx];
+  if (!f) return;
+  const area = f.linkedSection || '__general__';
+  if (!session._findings[area]) return;
+  // find index within that area's array
+  const areaFindings = session._findings[area];
+  const localIdx = areaFindings.indexOf(
+    areaFindings.find(x => x.obs === f.obs && x.addedAt === f.addedAt)
+  );
+  if (localIdx >= 0) areaFindings.splice(localIdx, 1);
+  saveDraft(false);
+  renderAllFindingsCards();
+  buildTabs();
+  const count = getAllFindings().length;
+  document.getElementById('footerUnanswered').textContent =
+    count === 0 ? 'No findings captured yet' : count + ' finding(s) captured';
+  document.getElementById('sectionDesc').textContent =
+    `Section ${currentIdx + 1} of ${areas.length} · ${count === 0 ? '0 of 0 items answered' : count + ' finding(s) captured'}`;
+  updateRing(count > 0 ? 100 : 0);
+}
+
+// ── BUILD ITEM CARD ────────────────────────────────────────────────────────
+function buildItemCard(q) {
+  const id  = q.questionId;
+  const s   = session[id] || {};
+  const resp = s.resp || '';
+  const show = resp === 'P' || resp === 'N';
+
+  // severity
+  const defaultSev = q.defaultSeverity || 3;
+  const effectiveSev = s.sevOverride != null ? s.sevOverride : defaultSev;
+  const sevEditing   = Boolean(s.sevEditing);
+
+  // likelihood — depends on response
+  const defaultLik   = resp === 'N' ? (q.likelihoodNonCompliant || q.defaultLikelihood || 3)
+                                    : (q.likelihoodPartial || q.defaultLikelihood || 3);
+  const effectiveLik = s.likOverride != null ? s.likOverride : defaultLik;
+  const likEditing   = Boolean(s.likEditing);
+
+  const riskScore = effectiveSev * effectiveLik;
+  const riskLevel = getRiskLevel(riskScore);
+
+  const sevWidget = sevEditing
+    ? `<div class="preset-spinner">
+         <button class="spin-btn" onclick="adjustSev('${id}',-1)" ${effectiveSev<=1?'disabled':''}>−</button>
+         <div class="spin-center">
+           <span class="spin-num">${effectiveSev}</span>
+           <span class="spin-label">${SEV_LABELS[effectiveSev]||''}</span>
+         </div>
+         <button class="spin-btn" onclick="adjustSev('${id}',1)" ${effectiveSev>=5?'disabled':''}>+</button>
+       </div>`
+    : `<div class="preset-tile" onclick="requestEdit('${id}','sev')">
+         <div class="preset-tile-num">${effectiveSev}</div>
+         <div class="preset-tile-right">
+           <div class="preset-tile-name">${SEV_LABELS[effectiveSev]||'Level '+effectiveSev}</div>
+           <div class="preset-tile-sub">Tap to edit</div>
+         </div>
+         <span class="preset-tile-lock">Lock</span>
+       </div>`;
+
+  const likWidget = likEditing
+    ? `<div class="preset-spinner">
+         <button class="spin-btn" onclick="adjustLik('${id}',-1)" ${effectiveLik<=1?'disabled':''}>−</button>
+         <div class="spin-center">
+           <span class="spin-num">${effectiveLik}</span>
+           <span class="spin-label">${LIK_LABELS[effectiveLik]||''}</span>
+         </div>
+         <button class="spin-btn" onclick="adjustLik('${id}',1)" ${effectiveLik>=5?'disabled':''}>+</button>
+       </div>`
+    : `<div class="preset-tile" onclick="requestEdit('${id}','lik')">
+         <div class="preset-tile-num">${effectiveLik}</div>
+         <div class="preset-tile-right">
+           <div class="preset-tile-name">${LIK_LABELS[effectiveLik]||'Level '+effectiveLik}</div>
+           <div class="preset-tile-sub">Tap to edit</div>
+         </div>
+         <span class="preset-tile-lock">Lock</span>
+       </div>`;
+
+  const files = s.files || [];
+  const fileChips = files.map((f,i) =>
+    `<div class="file-chip">${escHtml(f)}<span class="file-chip-remove" onclick="removeFile('${id}',${i})">×</span></div>`
+  ).join('');
+
+  const card = document.createElement('div');
+  card.className = 'cl-item' + (resp ? ' resp-' + resp : '');
+  card.id = 'item-' + id;
+
+  card.innerHTML = `
+    <div class="cl-item-main">
+      <div class="cl-item-meta">
+        <div class="cl-item-top">
+          <span class="cl-code">${escHtml(id)}</span>
+          ${q.criticalFlag ? '<span class="cl-crit-tag">Critical</span>' : ''}
+        </div>
+        <div class="cl-question">${escHtml(q.text)}</div>
+        ${q.subArea ? `<div class="cl-scope">${escHtml(q.subArea)}</div>` : ''}
+      </div>
+      <div class="cl-resp-btns">
+        ${['Y','P','N','NA'].map(v=>`
+          <button class="resp-btn${resp===v?' sel-'+v:''}"
+            onclick="setResp('${id}','${v}')"
+            title="${v==='Y'?'Compliant':v==='P'?'Partial':v==='N'?'Non-Compliant':'Not Applicable'}">${v}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="cl-detail${show?' show':''}" id="detail-${id}">
+      <div class="preset-row">
+        <div class="preset-group">
+          <div class="preset-label">
+            Severity
+            <span class="preset-hint">${sevEditing?'editing':'pre-set · tap to edit'}</span>
+          </div>
+          ${sevWidget}
+        </div>
+        <div class="preset-group">
+          <div class="preset-label">
+            Likelihood
+            <span class="preset-hint">${likEditing?'editing':'pre-set · tap to edit'}</span>
+          </div>
+          ${likWidget}
+        </div>
+      </div>
+
+      <div class="risk-result-bar">
+        <span class="risk-result-eq">Risk Score = ${effectiveSev} × ${effectiveLik}</span>
+        <span class="risk-result-score">${riskScore}</span>
+        <span class="risk-badge risk-${riskLevel}" style="margin-left:6px">${riskLevel}</span>
+      </div>
+
+      ${q.hazardStatement ? `<div class="hazard-text">Hazard: ${escHtml(q.hazardStatement)}</div>` : ''}
+      ${q.recommendation  ? `<div class="risk-action">Recommended Action: ${escHtml(q.recommendation)}</div>` : ''}
+
+      <div style="margin-top:10px">
+        <div class="detail-label">Observation / Comment <span class="detail-req">*</span></div>
+        <textarea class="detail-textarea" id="notes-${id}"
+          placeholder="Describe the observation, deficiency, or evidence reviewed…"
+          oninput="setNotes('${id}',this.value)">${escHtml(s.notes||'')}</textarea>
+      </div>
+
+      <div class="evidence-area">
+        <div class="evidence-label">Supporting Evidence (photos / documents)
+          <span style="color:var(--wh4);font-weight:400">– optional by default</span>
+        </div>
+        <div class="file-list" id="files-${id}">${fileChips}</div>
+        <div class="evidence-actions">
+          <button class="upload-btn" onclick="triggerUpload('${id}')">+ Upload Attachment</button>
+          <button class="upload-btn photo-only" onclick="triggerPhoto('${id}')">+ Take Photo</button>
+        </div>
+        <input type="file" multiple accept=".jpg,.jpeg,.png,.webp,.heic,.pdf" id="upload-${id}" onchange="handleUpload('${id}',this)">
+        <input type="file" accept="image/*" capture="environment" id="camera-${id}" onchange="handleUpload('${id}',this)">
+        <div class="evidence-hint">No supporting evidence attached? You may continue and add evidence if available.</div>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function refreshCard(id) {
+  const q = findQuestion(id);
+  if (!q) return;
+  const old = document.getElementById('item-' + id);
+  if (old) old.replaceWith(buildItemCard(q));
+  updateSectionProgress();
+}
+
+function findQuestion(id) {
+  for (const area of areas) {
+    const q = (areaMap[area]||[]).find(x => x.questionId === id);
+    if (q) return q;
+  }
+  return null;
+}
+
+// ── RESPONSE & DATA ────────────────────────────────────────────────────────
+function setResp(id, val) {
+  if (!session[id]) session[id] = {};
+  const prev = session[id].resp;
+  session[id].resp = val;
+
+  // when switching between P/N, likelihood preset changes — clear override so it recalculates
+  if (prev !== val && (val === 'P' || val === 'N') && session[id].likOverride == null) {
+    // no override yet, just refresh
+  }
+
+  scheduleSave();
+  refreshCard(id);
+}
+
+function setSubAreaNA(areaName, subAreaName, checked) {
+  const subQs = (areaMap[areaName] || []).filter(q => q.subArea === subAreaName);
+  subQs.forEach(q => {
+    if (!session[q.questionId]) session[q.questionId] = {};
+    session[q.questionId].resp = checked ? 'NA' : undefined;
+    refreshCard(q.questionId);
+  });
+  scheduleSave();
+  updateStatus();
+}
+
+function setNotes(id, val) {
+  if (!session[id]) session[id] = {};
+  session[id].notes = val;
+  scheduleSave();
+}
+
+function adjustSev(id, delta) {
+  if (!session[id]) session[id] = {};
+  const q = findQuestion(id);
+  const cur = session[id].sevOverride != null ? session[id].sevOverride : (q ? q.defaultSeverity || 3 : 3);
+  session[id].sevOverride = Math.max(1, Math.min(5, cur + delta));
+  scheduleSave();
+  refreshCard(id);
+}
+
+function adjustLik(id, delta) {
+  if (!session[id]) session[id] = {};
+  const q   = findQuestion(id);
+  const resp = (session[id].resp || 'P');
+  const def  = resp === 'N' ? (q ? q.likelihoodNonCompliant || 3 : 3) : (q ? q.likelihoodPartial || 3 : 3);
+  const cur  = session[id].likOverride != null ? session[id].likOverride : def;
+  session[id].likOverride = Math.max(1, Math.min(5, cur + delta));
+  scheduleSave();
+  refreshCard(id);
+}
+
+function triggerUpload(id) { document.getElementById('upload-' + id)?.click(); }
+function triggerPhoto(id)  { document.getElementById('camera-' + id)?.click(); }
+
+function handleUpload(id, input) {
+  if (!session[id]) session[id] = {};
+  const names = Array.from(input.files).map(f => f.name);
+  session[id].files = [...(session[id].files || []), ...names];
+  const fl = document.getElementById('files-' + id);
+  if (fl) fl.innerHTML = (session[id].files || []).map((f,i) =>
+    `<div class="file-chip">${escHtml(f)}<span class="file-chip-remove" onclick="removeFile('${id}',${i})">×</span></div>`
+  ).join('');
+  scheduleSave();
+}
+
+function removeFile(id, idx) {
+  if (!session[id]?.files) return;
+  session[id].files.splice(idx, 1);
+  const fl = document.getElementById('files-' + id);
+  if (fl) fl.innerHTML = (session[id].files || []).map((f,i) =>
+    `<div class="file-chip">${escHtml(f)}<span class="file-chip-remove" onclick="removeFile('${id}',${i})">×</span></div>`
+  ).join('');
+  scheduleSave();
+}
+
+// ── EDIT PRESET CONFIRM ────────────────────────────────────────────────────
+function requestEdit(id, field) {
+  ceCode  = id;
+  ceField = field;
+  document.getElementById('ceFieldChip').textContent = field === 'sev' ? 'Severity' : 'Likelihood';
+  document.getElementById('ceOverlay').classList.add('show');
+}
+
+function cancelEditConfirm() {
+  document.getElementById('ceOverlay').classList.remove('show');
+  ceCode = ceField = null;
+}
+
+function confirmEdit() {
+  document.getElementById('ceOverlay').classList.remove('show');
+  if (!ceCode || !ceField) return;
+  if (!session[ceCode]) session[ceCode] = {};
+  if (ceField === 'sev') session[ceCode].sevEditing = true;
+  else                   session[ceCode].likEditing = true;
+  refreshCard(ceCode);
+  ceCode = ceField = null;
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function navigate(dir) {
+  const next = currentIdx + dir;
+  if (next < 0) return;
+  // On Findings tab pressing Review & Submit
+  if (areas[currentIdx] === '__findings__' && dir === 1) { finishInspection(); return; }
+  if (next >= areas.length) { finishInspection(); return; }
+  saveDraft(false);
+  renderSection(next);
+}
+
+function finishInspection() {
+  const all = Object.values(areaMap).flat();
+  const rem = all.filter(q => !(session[q.questionId]||{}).resp).length;
+  if (rem > 0) {
+    if (!confirm(`${rem} item(s) unanswered. Finish inspection anyway?`)) return;
+  }
+  saveDraft(false);
+  showToast('Inspection progress saved.', 'success');
+  setTimeout(() => window.location.href = 'portal.html', 1800);
+}
+
+function goBack() {
+  saveDraft(false);
+  window.history.back();
+}
+
+// ── PROGRESS HELPERS ───────────────────────────────────────────────────────
+function updateSectionProgress() {
+  const area = areas[currentIdx];
+  const qs   = areaMap[area] || [];
+  const ans  = qs.filter(q => (session[q.questionId]||{}).resp).length;
+  const pct  = qs.length ? Math.round((ans / qs.length) * 100) : 0;
+  updateRing(pct);
+  document.getElementById('sectionDesc').textContent =
+    `Section ${currentIdx + 1} of ${areas.length} · ${ans} of ${qs.length} items answered`;
+  const rem = qs.length - ans;
+  document.getElementById('footerUnanswered').textContent = rem === 0 ? 'All items answered' : rem + ' item' + (rem !== 1 ? 's' : '') + ' remaining';
+  updateStatus();
+}
+
+function updateRing(pct) {
+  const offset = 138 - (pct / 100) * 138;
+  const fill   = document.getElementById('ringFill');
+  if (fill) {
+    fill.style.strokeDashoffset = offset;
+    fill.style.stroke = pct === 100 ? 'var(--low)' : pct > 0 ? 'var(--or)' : 'var(--bg5)';
+  }
+  const rt = document.getElementById('ringPct');
+  if (rt) rt.textContent = pct + '%';
+}
+
+function updateStatus() {
+  const all = Object.values(areaMap).flat();
+  const ans = all.filter(q => (session[q.questionId]||{}).resp).length;
+  const tot = all.length;
+  const badge = document.getElementById('statusBadge');
+  if (!badge) return;
+  if (ans === 0) { badge.className = 'status-badge status-draft'; badge.textContent = 'Draft'; }
+  else if (ans < tot) { badge.className = 'status-badge status-in-progress'; badge.textContent = 'In Progress'; }
+  else { badge.className = 'status-badge status-completed'; badge.textContent = 'Complete'; }
+}
+
+// ── SAVE ───────────────────────────────────────────────────────────────────
+let saveTimer = null;
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveDraft(false), 1500);
+}
+
+function saveDraft(explicit) {
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(SESSION_KEY + '_idx', currentIdx);
+    flashSave();
+    if (explicit) { showToast('Progress saved successfully.', 'success'); }
+  } catch(e) {
+    if (explicit) showToast('Save failed — storage may be full.', 'error');
+  }
+}
+
+function flashSave() {
+  const dot = document.getElementById('autosaveDot');
+  const txt = document.getElementById('autosaveText');
+  dot.className = 'autosave-dot saving';
+  txt.textContent = 'Saving…';
+  setTimeout(() => {
+    dot.className = 'autosave-dot saved';
+    txt.textContent = 'Saved';
+    setTimeout(() => { dot.className = 'autosave-dot'; }, 2500);
+  }, 600);
+}
+
+// ── UTILITIES ──────────────────────────────────────────────────────────────
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function supportsCameraCapture() {
+  return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+}
+
+function showToast(msg, type) {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || 'success');
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3200);
+}
+
+// ── SECTION FINDINGS ───────────────────────────────────────────────────────
+// stored under session._findings[areaName] = [ { id, obs, sev, lik, action } ]
+
+let editingFindingId = null; // null = new, number = index in area array
+
+function getFindingsForArea(area) {
+  if (!session._findings) session._findings = {};
+  if (!session._findings[area]) session._findings[area] = [];
+  return session._findings[area];
+}
+
+function renderSectionFindingBar() {
+  const area     = areas[currentIdx];
+  const findings = getFindingsForArea(area);
+  const count    = findings.length;
+
+  const countEl = document.getElementById('sfbCount');
+  if (countEl) {
+    countEl.textContent = count;
+    countEl.className = 'sfb-count' + (count > 0 ? ' show' : '');
+  }
+
+  const list = document.getElementById('sfbFindingsList');
+  if (!list) return;
+  if (count === 0) { list.innerHTML = ''; return; }
+
+  list.innerHTML = findings.map((f, i) => {
+    const score = f.sev * f.lik;
+    const level = getRiskLevel(score);
+    return `
+      <div class="sfb-finding-card">
+        <div class="sfb-fc-top">
+          <span class="sfb-fc-id">FIND-${area.replace(/[^A-Z]/gi,'').substring(0,3).toUpperCase()}-${String(i+1).padStart(2,'0')}</span>
+          <span class="risk-badge risk-${level}" style="font-size:9px;padding:2px 6px">${level}</span>
+          <span style="font-size:10px;color:var(--wh4)">S${f.sev} × L${f.lik} = ${score}</span>
+        </div>
+        <div class="sfb-fc-obs">${escHtml(f.obs)}</div>
+        ${f.action ? `<div style="font-size:11px;color:#7FB3D3;margin-top:3px">→ ${escHtml(f.action)}</div>` : ''}
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button onclick="editFinding(${i})" style="font-size:11px;font-weight:600;color:var(--or);background:none;border:1px solid rgba(244,121,32,.3);border-radius:4px;padding:2px 8px;cursor:pointer;">Edit</button>
+          <button class="sfb-fc-remove" onclick="removeFinding(${i})" title="Remove finding">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openFindingModal(editIdx, fromFindingsTab, prefillData) {
+  editingFindingId = (editIdx != null) ? editIdx : null;
+  _editFindingGlobal = null;
+
+  const area     = areas[currentIdx];
+  const findings = getFindingsForArea(area);
+  const isOnFindingsTab = fromFindingsTab === true || area === '__findings__';
+
+  // show/hide linked section field
+  const lw = document.getElementById('findLinkedWrap');
+  const ls = document.getElementById('findLinkedSection');
+  if (isOnFindingsTab) {
+    lw.style.display = '';
+    // populate section options
+    ls.innerHTML = '<option value="">General Finding (no specific section)</option>' +
+      areas.filter(a => a !== '__findings__')
+        .map(a => `<option value="${escHtml(a)}">${escHtml(a)}</option>`).join('');
+  } else {
+    lw.style.display = 'none';
+    ls.value = '';
+  }
+
+  // reset form
+  document.getElementById('findObs').value    = '';
+  document.getElementById('findSev').value    = '';
+  document.getElementById('findLik').value    = '';
+  document.getElementById('findAction').value = '';
+  document.getElementById('findError').classList.remove('show');
+  ['findObs','findSev','findLik','findAction'].forEach(id =>
+    document.getElementById(id).classList.remove('invalid'));
+
+  // reset pending files
+  _findPendingFiles = [];
+  renderFindFilePreviews();
+
+  const src = prefillData || (editIdx != null ? findings[editIdx] : null);
+  if (src) {
+    document.getElementById('findObs').value    = src.obs    || '';
+    document.getElementById('findSev').value    = src.sev    || '';
+    document.getElementById('findLik').value    = src.lik    || '';
+    document.getElementById('findAction').value = src.action || '';
+    if (isOnFindingsTab && src.linkedSection) ls.value = src.linkedSection;
+    _findPendingFiles = Array.isArray(src.files) ? [...src.files] : [];
+    renderFindFilePreviews();
+    document.getElementById('findModalTitle').textContent = 'Edit Finding';
+    if (prefillData) _editFindingGlobal = { area: src.linkedSection || '__general__', obs: src.obs, addedAt: src.addedAt };
+  } else {
+    document.getElementById('findModalTitle').textContent = 'Add Finding';
+  }
+
+  updateFindRisk();
+  document.getElementById('findOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('findObs').focus(), 100);
+}
+
+function editFinding(idx) { openFindingModal(idx); }
+
+function closeFindingModal() {
+  document.getElementById('findOverlay').classList.remove('show');
+  editingFindingId = null;
+  _findPendingFiles = [];
+}
+
+function updateFindRisk() {
+  const s = parseInt(document.getElementById('findSev').value, 10);
+  const l = parseInt(document.getElementById('findLik').value, 10);
+  const eqEl    = document.getElementById('findRiskEq');
+  const scoreEl = document.getElementById('findRiskScore');
+  const badge   = document.getElementById('findRiskBadge');
+
+  if (s && l) {
+    const score = s * l;
+    const level = getRiskLevel(score);
+    eqEl.textContent    = `Risk Score = ${s} × ${l}`;
+    scoreEl.textContent = score;
+    badge.className     = `risk-badge risk-${level}`;
+    badge.textContent   = level;
+    badge.style.display = '';
+  } else {
+    eqEl.textContent    = 'Risk Score = — × —';
+    scoreEl.textContent = '—';
+    badge.style.display = 'none';
+  }
+}
+
+function saveFinding() {
+  const obs    = document.getElementById('findObs').value.trim();
+  const sev    = parseInt(document.getElementById('findSev').value, 10);
+  const lik    = parseInt(document.getElementById('findLik').value, 10);
+  const action = document.getElementById('findAction').value.trim();
+
+  let valid = true;
+  [['findObs', !obs], ['findSev', !sev], ['findLik', !lik], ['findAction', !action]].forEach(([id, bad]) => {
+    document.getElementById(id).classList.toggle('invalid', bad);
+    if (bad) valid = false;
+  });
+  if (!valid) { document.getElementById('findError').classList.add('show'); return; }
+
+  const isOnFindingsTab = areas[currentIdx] === '__findings__';
+  const linkedSection   = isOnFindingsTab ? (document.getElementById('findLinkedSection').value || null) : null;
+  // If adding from findings tab with a linked section, store under that section area
+  const targetArea = isOnFindingsTab
+    ? (linkedSection || '__general__')
+    : areas[currentIdx];
+
+  const findings = getFindingsForArea(targetArea);
+  const entry    = { obs, sev, lik, action, files: [..._findPendingFiles], addedAt: new Date().toISOString() };
+  if (linkedSection) entry.linkedSection = linkedSection;
+
+  const isEdit = editingFindingId != null || _editFindingGlobal != null;
+
+  if (_editFindingGlobal) {
+    // global edit: find by obs+addedAt in stored area
+    const gArea = _editFindingGlobal.area;
+    const gFindings = getFindingsForArea(gArea);
+    const gi = gFindings.findIndex(x => x.obs === _editFindingGlobal.obs && x.addedAt === _editFindingGlobal.addedAt);
+    if (gi >= 0) gFindings[gi] = entry;
+    else gFindings.push(entry);
+  } else if (editingFindingId != null) {
+    findings[editingFindingId] = entry;
+  } else {
+    findings.push(entry);
+  }
+
+  saveDraft(false);
+  closeFindingModal();
+  buildTabs();
+
+  if (isOnFindingsTab) {
+    renderAllFindingsCards();
+    const count = getAllFindings().length;
+    document.getElementById('footerUnanswered').textContent = count + ' finding(s) captured';
+    updateRing(count > 0 ? 100 : 0);
+  } else {
+    renderSectionFindingBar();
+  }
+
+  showToast(isEdit ? 'Finding updated.' : 'Finding saved.', 'success');
+  editingFindingId = null;
+  _editFindingGlobal = null;
+}
+
+function removeFinding(idx) {
+  const area     = areas[currentIdx];
+  const findings = getFindingsForArea(area);
+  findings.splice(idx, 1);
+  saveDraft(false);
+  renderSectionFindingBar();
+}
+
+// ── FINDING MODAL EVIDENCE ─────────────────────────────────────────────────
+let _findPendingFiles = []; // file names staged in the modal before save
+
+function triggerFindUpload() { document.getElementById('findFileInput')?.click(); }
+function triggerFindPhoto()  { document.getElementById('findPhotoInput')?.click(); }
+
+function handleFindFiles(input) {
+  Array.from(input.files).forEach(f => {
+    if (!_findPendingFiles.includes(f.name)) _findPendingFiles.push(f.name);
+  });
+  renderFindFilePreviews();
+  input.value = ''; // reset so same file can be re-added
+}
+
+function renderFindFilePreviews() {
+  const list = document.getElementById('findFileList');
+  if (!list) return;
+  list.innerHTML = _findPendingFiles.map((name, i) =>
+    `<div class="file-chip">${escHtml(name)}<span class="file-chip-remove" onclick="removeFindFile(${i})">×</span></div>`
+  ).join('');
+}
+
+function removeFindFile(idx) {
+  _findPendingFiles.splice(idx, 1);
+  renderFindFilePreviews();
+}
+
+// close modal on backdrop click
+document.getElementById('findOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeFindingModal();
+});
+</script>
+</body>
+</html>

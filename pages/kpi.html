@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOIL HSSEQ | HSSEQ Program & KPI</title>
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="brand-kicker">GOIL HSSEQ Department</p>
+        <h1>HSSEQ Program &amp; KPI</h1>
+      </div>
+      <div class="topbar-actions">
+        <div class="user-chip"><span class="chip-label">User</span> <strong id="kpiUser">-</strong></div>
+        <a href="portal.html" class="btn btn-outline">Portal</a>
+        <button id="logoutBtn" class="btn btn-outline">Logout</button>
+      </div>
+    </header>
+
+    <main class="page-shell">
+      <section class="card placeholder-hero">
+        <h2>This module will be developed in the next phase.</h2>
+        <p class="muted-text">
+          Planned scope includes HSSEQ program targets, KPI baselines, trend dashboards,
+          and management review packs.
+        </p>
+      </section>
+
+      <section class="module-grid module-grid-single">
+        <article class="card kpi-card disabled">
+          <h3>Assessment Coverage KPI</h3>
+          <p class="muted-text">% of facilities assessed within cycle window.</p>
+          <div class="disabled-strip">Coming Soon</div>
+        </article>
+        <article class="card kpi-card disabled">
+          <h3>Action Closure Discipline</h3>
+          <p class="muted-text">High/Critical actions closed by target due dates.</p>
+          <div class="disabled-strip">Coming Soon</div>
+        </article>
+        <article class="card kpi-card disabled">
+          <h3>Repeated Issues Reduction</h3>
+          <p class="muted-text">Chronic and systemic recurrence monitoring.</p>
+          <div class="disabled-strip">Coming Soon</div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const user = JSON.parse(localStorage.getItem("goilUser") || "{}");
+        const node = document.getElementById("kpiUser");
+        if (node) node.textContent = user.username || "HSSEQ User";
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", function () {
+            localStorage.removeItem("goilAuth");
+            localStorage.removeItem("goilUser");
+            window.location.href = "../index.html";
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

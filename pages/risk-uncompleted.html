@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uncompleted Assessments | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep11" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep11" />
+  <style>
+    .rm-shell {
+      width: min(1680px, 98.5vw);
+    }
+
+    .uc-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .uc-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .uc-vsep {
+      width: 1px;
+      height: 24px;
+      background: var(--border2, rgba(255,255,255,.12));
+      flex: 0 0 auto;
+    }
+    .uc-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--wh2, #C9D1D9);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      letter-spacing: .45px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .uc-brand img {
+      width: 22px;
+      height: 22px;
+      filter: drop-shadow(0 0 4px rgba(244,121,32,.35));
+    }
+    .uc-page-title {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+    .uc-page-title h1 {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      color: var(--wh, #E6EDF3);
+    }
+    .uc-page-title p {
+      margin: 0;
+      color: var(--wh4, #484F58);
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .uc-primary {
+      min-width: 194px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .uc-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,0)) , var(--bg2, #161B22);
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      border-radius: 14px;
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+    }
+    .uc-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .uc-head-main { display: grid; gap: 6px; }
+    .uc-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--or, #F47920);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .uc-eyebrow::before {
+      content: '';
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--or, #F47920);
+    }
+    .uc-head-main h2 {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      line-height: 1;
+      color: var(--wh, #E6EDF3);
+    }
+    .uc-head-main p {
+      margin: 0;
+      color: var(--wh3, #8B949E);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .uc-export {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2, rgba(255,255,255,.12));
+      background: transparent;
+      color: var(--wh3, #8B949E);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .uc-export:hover {
+      border-color: var(--or, #F47920);
+      color: var(--or, #F47920);
+      background: rgba(244,121,32,.09);
+    }
+
+    .uc-alerts { display: grid; gap: 10px; }
+    .uc-alert {
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+    .uc-alert.pending {
+      border-color: rgba(224,125,35,.35);
+      background: linear-gradient(90deg, rgba(224,125,35,.08), rgba(224,125,35,.03));
+    }
+    .uc-alert.overdue {
+      border-color: rgba(218,54,51,.35);
+      background: linear-gradient(90deg, rgba(218,54,51,.12), rgba(218,54,51,.05));
+    }
+    .uc-alert .left {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--wh2, #C9D1D9);
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.4;
+      min-width: 0;
+    }
+    .uc-alert .icon { font-size: 15px; }
+    .uc-alert .btn {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 7px;
+      border: 1.5px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.15);
+      color: #ffb067;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .uc-alert.overdue .btn { color: #ff6f6f; }
+    .uc-alert .btn:hover { border-color: var(--or, #F47920); color: var(--or, #F47920); }
+    .uc-hide { display: none !important; }
+
+    .uc-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .uc-kpi {
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      border-radius: 12px;
+      background: var(--bg3, #1C2128);
+      padding: 18px 18px 16px;
+      position: relative;
+      display: grid;
+      gap: 6px;
+    }
+    .uc-kpi::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      border-radius: 12px 12px 0 0;
+      background: var(--wh4, #484F58);
+    }
+    .uc-kpi.total::before { background: var(--or, #F47920); }
+    .uc-kpi.draft::before { background: #D29922; }
+    .uc-kpi.pending::before { background: #E07D23; }
+    .uc-kpi.overdue::before { background: #DA3633; }
+    .uc-kpi .k {
+      color: var(--wh4, #484F58);
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .uc-kpi .v {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--or, #F47920);
+    }
+    .uc-kpi.draft .v { color: #D29922; }
+    .uc-kpi.pending .v { color: #E07D23; }
+    .uc-kpi.overdue .v { color: #ff4b4b; }
+    .uc-kpi .n {
+      font-size: 10px;
+      color: var(--wh4, #484F58);
+      line-height: 1.3;
+    }
+    .uc-kpi.overdue .n { color: #ff4b4b; font-weight: 600; }
+
+    .uc-stage-panel {
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg3, #1C2128);
+    }
+    .uc-stage-head {
+      border-bottom: 1px solid var(--border2, rgba(255,255,255,.12));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      flex-wrap: wrap;
+    }
+    .uc-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .uc-tab {
+      border: 0;
+      background: transparent;
+      color: var(--wh4, #484F58);
+      font-size: 13px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .45px;
+      padding: 10px 14px;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .uc-tab.active {
+      color: var(--or, #F47920);
+      border-bottom-color: var(--or, #F47920);
+    }
+    .uc-tab .count {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      background: rgba(255,255,255,.06);
+      color: var(--wh3, #8B949E);
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .uc-tab.active .count {
+      background: rgba(244,121,32,.18);
+      color: #ffb067;
+      border-color: rgba(244,121,32,.3);
+    }
+    .uc-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .uc-tools .rm-input,
+    .uc-tools .rm-select {
+      min-width: 190px;
+      height: 40px;
+      border-radius: 9px;
+    }
+    .uc-tools .rm-select { min-width: 145px; }
+
+    .uc-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .uc-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1300px;
+    }
+    .uc-table th,
+    .uc-table td {
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--border, rgba(255,255,255,.07));
+      text-align: left;
+      vertical-align: top;
+      font-size: 11px;
+      color: var(--wh2, #C9D1D9);
+    }
+    .uc-table th {
+      background: rgba(255,255,255,.015);
+      color: var(--wh4, #484F58);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .uc-table tbody tr:hover { background: rgba(255,255,255,.015); }
+    .uc-row-urgent td {
+      background: rgba(218,54,51,.03);
+      border-top: 1px solid rgba(218,54,51,.16);
+      border-bottom: 1px solid rgba(218,54,51,.16);
+    }
+
+    .uc-ref {
+      display: grid;
+      gap: 2px;
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+    .uc-ref .main {
+      color: var(--or, #F47920);
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .uc-ref .ver {
+      color: var(--wh4, #484F58);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: lowercase;
+    }
+
+    .uc-fac {
+      display: grid;
+      gap: 1px;
+    }
+    .uc-fac .main {
+      color: var(--wh, #E6EDF3);
+      font-size: 18px;
+      line-height: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .uc-fac .sub {
+      color: var(--wh4, #484F58);
+      font-size: 11px;
+    }
+    .uc-zone {
+      color: var(--wh3, #8B949E);
+      font-size: 13px;
+      line-height: 1.1;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .uc-status {
+      display: grid;
+      gap: 5px;
+    }
+    .uc-status-note {
+      color: #ff5b5b;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .uc-risk-dash {
+      width: 34px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      color: var(--wh4, #484F58);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .uc-stage-box {
+      border: 1px solid var(--border2, rgba(255,255,255,.12));
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: grid;
+      gap: 4px;
+      min-width: 150px;
+      background: rgba(255,255,255,.015);
+    }
+    .uc-stage-box .main {
+      color: var(--wh2, #C9D1D9);
+      font-size: 12px;
+      line-height: 1;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+    .uc-stage-box .sub {
+      color: var(--wh4, #484F58);
+      font-size: 11px;
+    }
+
+    .uc-progress {
+      display: grid;
+      gap: 5px;
+      min-width: 120px;
+    }
+    .uc-progress-line {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #2b3440;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .uc-progress-fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+    }
+    .uc-progress-fill.high { background: #3FB950; }
+    .uc-progress-fill.mid { background: #F47920; }
+    .uc-progress-fill.low { background: #D29922; }
+    .uc-progress .pct {
+      font-size: 11px;
+      color: var(--wh3, #8B949E);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .uc-updated {
+      display: grid;
+      gap: 2px;
+      color: var(--wh3, #8B949E);
+      font-size: 11px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .uc-updated .date { color: var(--wh2, #C9D1D9); }
+    .uc-updated .rel { color: var(--wh4, #484F58); }
+
+    .uc-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .uc-btn {
+      height: 36px;
+      border-radius: 9px;
+      border: 1.5px solid var(--border2, rgba(255,255,255,.12));
+      background: transparent;
+      color: var(--wh3, #8B949E);
+      font-size: 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      letter-spacing: .15px;
+      text-transform: capitalize;
+      padding: 0 16px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .uc-btn:hover { border-color: var(--or, #F47920); color: var(--or, #F47920); }
+    .uc-btn.corr {
+      background: linear-gradient(180deg, rgba(244,121,32,.95), rgba(212,97,16,.95));
+      border-color: rgba(244,121,32,.55);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(244,121,32,.32);
+      min-width: 140px;
+      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .uc-empty {
+      padding: 26px 10px;
+      text-align: center;
+      color: var(--wh3, #8B949E);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 1250px) {
+      .uc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .uc-page-title h1 { font-size: 21px; }
+      .uc-head-main h2 { font-size: 28px; }
+    }
+    @media (max-width: 980px) {
+      .uc-tools .rm-input, .uc-tools .rm-select { min-width: 160px; }
+      .uc-page-title p { display: none; }
+    }
+    @media (max-width: 760px) {
+      .uc-kpis { grid-template-columns: 1fr; }
+      .uc-head-main h2 { font-size: 24px; }
+      .uc-page-title h1 { font-size: 19px; }
+      .uc-vsep, .uc-brand { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="rm-topbar uc-topbar">
+    <div class="uc-left">
+      <button class="rm-back-btn" id="backLandingBtn">‹ Assessment Management Center</button>
+      <span class="uc-vsep"></span>
+      <div class="uc-brand">
+        GOIL HSSEQ
+      </div>
+      <span class="uc-vsep"></span>
+      <div class="uc-page-title">
+        <h1>Uncompleted Assessments</h1>
+        <p>Draft, in-progress, pending corrective action, and reopened records</p>
+      </div>
+    </div>
+    <button class="rm-primary-btn uc-primary" id="conductAssessmentBtn">+ Conduct Assessment</button>
+  </header>
+
+  <main class="rm-shell">
+    <section class="uc-card">
+      <div class="uc-head">
+        <div class="uc-head-main">
+          <span class="uc-eyebrow">Unpublished Register</span>
+          <h2>Uncompleted Assessments</h2>
+          <p>All assessments that have not yet been fully submitted and published to the register.</p>
+        </div>
+        <button class="uc-export" id="exportBtn">⇩ Export</button>
+      </div>
+
+      <div class="uc-alerts">
+        <article class="uc-alert pending" id="alertPending">
+          <div class="left">
+            <span class="icon">⚠</span>
+            <span id="alertPendingText">0 assessments are pending corrective action submission. Checklists submitted but corrective actions not yet finalised.</span>
+          </div>
+          <button class="btn" id="alertPendingBtn">View →</button>
+        </article>
+        <article class="uc-alert overdue" id="alertOverdue">
+          <div class="left">
+            <span class="icon">⦿</span>
+            <span id="alertOverdueText">0 overdue corrective actions across uncompleted assessments require immediate attention.</span>
+          </div>
+          <button class="btn" id="alertOverdueBtn">Review →</button>
+        </article>
+      </div>
+
+      <div class="uc-kpis">
+        <article class="uc-kpi total">
+          <span class="k">Total Unpublished</span>
+          <span class="v" id="kpiTotal">0</span>
+          <span class="n">Across all stages</span>
+        </article>
+        <article class="uc-kpi draft">
+          <span class="k">Draft / In Progress</span>
+          <span class="v" id="kpiDraft">0</span>
+          <span class="n">Awaiting completion</span>
+        </article>
+        <article class="uc-kpi pending">
+          <span class="k">Pending Corr. Action</span>
+          <span class="v" id="kpiPending">0</span>
+          <span class="n">Checklist submitted</span>
+        </article>
+      </div>
+
+      <section class="uc-stage-panel">
+        <div class="uc-stage-head">
+          <div class="uc-tabs" id="tabs">
+            <button class="uc-tab active" data-tab="all">All Unpublished <span class="count" id="tabAll">0</span></button>
+            <button class="uc-tab" data-tab="draft">Draft / In Progress <span class="count" id="tabDraft">0</span></button>
+            <button class="uc-tab" data-tab="pending">Pending Corr. Action <span class="count" id="tabPending">0</span></button>
+            <button class="uc-tab" data-tab="reopened">Reopened / Under Revision <span class="count" id="tabReopened">0</span></button>
+          </div>
+          <div class="uc-tools">
+            <input class="rm-input" id="fltSearch" placeholder="Search facility, ref, zone..." />
+            <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
+            <select class="rm-select" id="fltType"><option value="">All Types</option></select>
+          </div>
+        </div>
+
+        <div class="uc-table-wrap">
+          <table class="uc-table">
+            <thead>
+              <tr>
+                <th>Reference Number</th>
+                <th>Facility</th>
+                <th>Zone</th>
+                <th>Status</th>
+                <th>Risk</th>
+                <th>Current Stage</th>
+                <th>Progress</th>
+                <th>Last Updated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    const STATUS = RiskModuleUtils.STATUS();
+    const SECTION_ORDER = ['doc', 'hsse', 'elec', 'fire', 'fore', 'disp', 'tank', 'env', 'sec', 'wel', 'other'];
+
+    const state = {
+      activeTab: 'all',
+      overdueOnly: false,
+      allRows: [],
+      rows: []
+    };
+
+    function isCorrectiveActionStage(status) {
+      return status === STATUS.PENDING_CORRECTIVE
+        || status === STATUS.REVISED_CHECKLIST_SUBMITTED
+        || status === STATUS.REOPENED;
+    }
+
+    function rowsForTab(rows, tab) {
+      return (rows || []).filter(function (row) {
+        if (tab === 'draft') return row.status === STATUS.DRAFT || row.status === STATUS.IN_PROGRESS;
+        if (tab === 'pending') return row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED;
+        if (tab === 'reopened') return row.status === STATUS.REOPENED;
+        return true;
+      });
+    }
+
+    function rowsInFilterScope() {
+      let rows = rowsForTab(state.allRows, state.activeTab);
+      if (state.overdueOnly) rows = rows.filter(function (row) { return row.overdueCA > 0; });
+      return rows;
+    }
+
+    function masterRef(record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function') {
+        return String(RiskModuleUtils.getParentInspectionReference(record) || '').trim();
+      }
+      return String(record.inspectionRef || record.assessment_reference || '').trim();
+    }
+
+    function recordVersion(record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getRecordVersionNumber === 'function') {
+        return RiskModuleUtils.getRecordVersionNumber(record);
+      }
+      const n = Number(record.version || record.version_number || 1);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    }
+
+    function toMs(value) {
+      const ms = new Date(value || 0).getTime();
+      return Number.isFinite(ms) ? ms : 0;
+    }
+
+    function normalizeRiskLevel(level) {
+      const raw = String(level || '').toLowerCase();
+      if (raw === 'critical') return 'Critical';
+      if (raw === 'high') return 'High';
+      if (raw === 'medium' || raw === 'moderate') return 'Medium';
+      return 'Low';
+    }
+
+    function riskBadgeClass(level) {
+      const l = normalizeRiskLevel(level);
+      if (l === 'Critical') return 'b-overdue';
+      if (l === 'High') return 'b-high';
+      if (l === 'Medium') return 'b-pending';
+      return 'b-published';
+    }
+
+    function statusBadgeClass(status) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'b-pending';
+      if (status === STATUS.REOPENED) return 'b-reopen';
+      return 'b-draft';
+    }
+
+    function statusLabel(status) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'Pending Corr. Action';
+      if (status === STATUS.REOPENED) return 'Reopened / Under Revision';
+      return 'Draft / In Progress';
+    }
+
+    function statusPriority(status) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 3;
+      if (status === STATUS.DRAFT || status === STATUS.IN_PROGRESS) return 2;
+      if (status === STATUS.REOPENED) return 1;
+      return 0;
+    }
+
+    function zoneShort(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '-';
+      const cleaned = raw.replace(/^zonal office\s*/i, '');
+      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    }
+
+    function progressValue(record, status) {
+      const raw = Number(record.progress || record.progressPct || record.progress_percent || 0);
+      if (Number.isFinite(raw) && raw > 0) return Math.max(1, Math.min(100, Math.round(raw)));
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 100;
+      if (status === STATUS.REOPENED) return 78;
+      if (status === STATUS.DRAFT) return 22;
+      const section = String(record.current_section || record.currentSection || '').toLowerCase();
+      const idx = SECTION_ORDER.indexOf(section);
+      if (idx >= 0) return Math.max(18, Math.min(94, Math.round(((idx + 1) / SECTION_ORDER.length) * 100)));
+      return 68;
+    }
+
+    function stageDetails(record, status, progress) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) {
+        return { main: 'Corrective Action', sub: 'Review & Submit' };
+      }
+      if (status === STATUS.REOPENED) {
+        return { main: 'Review & Submit', sub: 'Under Revision' };
+      }
+      const section = String(record.current_section || record.currentSection || '').toLowerCase();
+      const idx = SECTION_ORDER.indexOf(section);
+      const step = idx >= 0 ? ('Section ' + (idx + 1) + ' of ' + SECTION_ORDER.length) : ('Section ' + Math.max(1, Math.round((progress / 100) * SECTION_ORDER.length)) + ' of ' + SECTION_ORDER.length);
+      return { main: 'Assessment Checklist', sub: step };
+    }
+
+    function actionsForRecord(record, allActions) {
+      return (allActions || []).filter(function (action) {
+        return window.RiskModuleUtils && typeof RiskModuleUtils.isActionForRecord === 'function'
+          ? RiskModuleUtils.isActionForRecord(action, record)
+          : String(action.inspectionRef || '') === String(record.inspectionRef || '');
+      });
+    }
+
+    function buildRows() {
+      const records = RiskModuleUtils.getRecords();
+      const actions = RiskModuleUtils.getActions();
+      const grouped = {};
+
+      records.forEach(function (record) {
+        const ref = String(masterRef(record) || '').trim().toUpperCase();
+        if (!ref) return;
+        if (!grouped[ref]) grouped[ref] = [];
+        grouped[ref].push(record);
+      });
+
+      const rows = Object.keys(grouped).map(function (refKey) {
+        const versionsAll = grouped[refKey].slice().sort(function (a, b) {
+          const v = recordVersion(b) - recordVersion(a);
+          if (v !== 0) return v;
+          return toMs(b.lastUpdatedAt || b.last_updated_at || b.updatedAt || b.createdAt) - toMs(a.lastUpdatedAt || a.last_updated_at || a.updatedAt || a.createdAt);
+        });
+        const latestOverall = versionsAll[0];
+        const latestStatus = String(latestOverall.status || latestOverall.assessment_status || '');
+
+        // Master-reference rule: only latest version decides queue membership.
+        if (latestStatus === STATUS.PUBLISHED) return null;
+
+        const ref = masterRef(latestOverall);
+        const versions = versionsAll;
+        const latest = latestOverall;
+        const status = String(latest.status || latest.assessment_status || '');
+        const progress = progressValue(latest, status);
+        const snap = RiskModuleUtils.getRiskSnapshotForRecord(latest, actions);
+        const riskLevel = normalizeRiskLevel(snap.residualLevel || latest.residualRiskLevel || latest.overallRiskLevel || 'Low');
+        const riskScore = Number(snap.residualScore || latest.residualRiskScore || latest.overallRiskScore || 0);
+        const stage = stageDetails(latest, status, progress);
+        const countCorrective = isCorrectiveActionStage(status);
+
+        const map = new Map();
+        if (countCorrective) {
+          actionsForRecord(latest, actions).forEach(function (action) {
+            const key = String(action.actionId || (action.inspectionRef || '') + '::' + (action.sourceCode || ''));
+            if (!map.has(key)) map.set(key, action);
+          });
+        }
+        let overdueCA = 0;
+        let openCA = 0;
+        map.forEach(function (action) {
+          const s = String(action.status || '').toLowerCase();
+          const closed = s === 'closed' || s === 'verified closed';
+          if (closed) return;
+          if (s === 'overdue') overdueCA += 1;
+          if (s === 'open' || s === 'in progress' || s === 'overdue' || s === 'closed pending verification') openCA += 1;
+        });
+
+        return {
+          masterRef: ref,
+          latestVersion: recordVersion(latest),
+          versionCount: versions.length,
+          status: status,
+          statusLabel: statusLabel(status),
+          facility: String(latest.facilityName || latest.facility_name || '-'),
+          facilityType: String(latest.facilityType || latest.facility_type || 'Fuel Station'),
+          zone: zoneShort(latest.location || latest.zone || '-'),
+          riskLevel: riskLevel,
+          riskScore: riskScore,
+          stageMain: stage.main,
+          stageSub: stage.sub,
+          progress: progress,
+          overdueCA: overdueCA,
+          openCA: openCA,
+          lastUpdated: latest.lastUpdatedAt || latest.last_updated_at || latest.updatedAt || latest.checklistSubmittedAt || latest.createdAt || '',
+          inspectionDate: latest.assessment_date || latest.inspectionDate || latest.createdAt || '',
+          latestRecord: latest
+        };
+      });
+
+      const cleanRows = rows.filter(Boolean);
+      cleanRows.sort(function (a, b) {
+        const urgentA = a.overdueCA > 0 ? 1 : 0;
+        const urgentB = b.overdueCA > 0 ? 1 : 0;
+        if (urgentA !== urgentB) return urgentB - urgentA;
+        const s = statusPriority(b.status) - statusPriority(a.status);
+        if (s !== 0) return s;
+        return toMs(b.lastUpdated) - toMs(a.lastUpdated);
+      });
+
+      return cleanRows;
+    }
+
+    function refreshTabsAndKpis(rows) {
+      const all = rows.length;
+      const draft = rows.filter(function (row) { return row.status === STATUS.DRAFT || row.status === STATUS.IN_PROGRESS; }).length;
+      const pending = rows.filter(function (row) { return row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED; }).length;
+      const reopened = rows.filter(function (row) { return row.status === STATUS.REOPENED; }).length;
+      const overdueGlobal = rows.reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
+      const overdueInActiveTab = rowsForTab(rows, state.activeTab).reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
+      const overdue = state.activeTab === 'all' ? overdueGlobal : overdueInActiveTab;
+
+      document.getElementById('tabAll').textContent = String(all);
+      document.getElementById('tabDraft').textContent = String(draft);
+      document.getElementById('tabPending').textContent = String(pending);
+      document.getElementById('tabReopened').textContent = String(reopened);
+
+      document.getElementById('kpiTotal').textContent = String(all);
+      document.getElementById('kpiDraft').textContent = String(draft);
+      document.getElementById('kpiPending').textContent = String(pending);
+      const kpiOverdue = document.getElementById('kpiOverdue');
+      if (kpiOverdue) kpiOverdue.textContent = String(overdue);
+    }
+
+    function refreshAlerts(rows) {
+      const pending = rows.filter(function (row) { return row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED; }).length;
+      const overdue = rows.reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
+
+      document.getElementById('alertPendingText').textContent = pending + ' assessments are pending corrective action submission. Checklists submitted but corrective actions not yet finalised.';
+      document.getElementById('alertOverdueText').textContent = overdue + ' overdue corrective actions across uncompleted assessments require immediate attention.';
+      document.getElementById('alertPending').classList.toggle('uc-hide', pending === 0);
+      document.getElementById('alertOverdue').classList.toggle('uc-hide', overdue === 0);
+    }
+
+    function populateFilters(rows) {
+      const zones = Array.from(new Set((rows || []).map(function (row) {
+        return String(row.zone || '').trim();
+      }).filter(function (value) {
+        return !!value && value !== '-' && value.toLowerCase() !== 'n/a';
+      }))).sort();
+
+      const types = Array.from(new Set((rows || []).map(function (row) {
+        return String(row.facilityType || '').trim();
+      }).filter(function (value) {
+        return !!value && value !== '-' && value.toLowerCase() !== 'n/a';
+      }))).sort();
+
+      const zoneNode = document.getElementById('fltZone');
+      const typeNode = document.getElementById('fltType');
+      const currentZone = zoneNode.value;
+      const currentType = typeNode.value;
+
+      zoneNode.innerHTML = ['<option value="">All Zones</option>'].concat(zones.map(function (zone) {
+        return '<option value="' + RiskModuleUtils.esc(zone) + '">' + RiskModuleUtils.esc(zone) + '</option>';
+      })).join('');
+      typeNode.innerHTML = ['<option value="">All Types</option>'].concat(types.map(function (type) {
+        return '<option value="' + RiskModuleUtils.esc(type) + '">' + RiskModuleUtils.esc(type) + '</option>';
+      })).join('');
+
+      if (zones.indexOf(currentZone) >= 0) zoneNode.value = currentZone;
+      if (types.indexOf(currentType) >= 0) typeNode.value = currentType;
+    }
+
+    function applyFilters() {
+      const search = String(document.getElementById('fltSearch').value || '').trim().toLowerCase();
+      const zone = String(document.getElementById('fltZone').value || '').trim().toLowerCase();
+      const type = String(document.getElementById('fltType').value || '').trim().toLowerCase();
+
+      const tabRows = rowsForTab(state.allRows, state.activeTab);
+
+      let rows = tabRows.filter(function (row) {
+        const hay = [row.masterRef, row.facility, row.zone, row.facilityType].join(' ').toLowerCase();
+        if (search && hay.indexOf(search) < 0) return false;
+        if (zone && row.zone.toLowerCase() !== zone) return false;
+        if (type && row.facilityType.toLowerCase() !== type) return false;
+        return true;
+      });
+
+      if (state.overdueOnly) rows = rows.filter(function (row) { return row.overdueCA > 0; });
+      state.rows = rows;
+    }
+
+    function fmtScore(score) {
+      const n = Number(score || 0);
+      return Number.isInteger(n) ? String(n) : n.toFixed(1);
+    }
+
+    function updatedParts(value) {
+      const dateObj = new Date(value || 0);
+      if (Number.isNaN(dateObj.getTime())) {
+        return { date: '-', time: '-', relative: '-' };
+      }
+      const date = dateObj.toLocaleDateString('en-GB');
+      const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      const now = new Date();
+      const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const startRow = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()).getTime();
+      const diffDays = Math.floor((startToday - startRow) / 86400000);
+      let rel = 'Today';
+      if (diffDays === 1) rel = 'Yesterday';
+      else if (diffDays > 1) rel = diffDays + ' days ago';
+      else if (diffDays < 0) rel = 'Today';
+      return { date: date, time: time, relative: rel };
+    }
+
+    function renderRows() {
+      const tbody = document.getElementById('tbody');
+      if (!state.rows.length) {
+        tbody.innerHTML = '<tr><td colspan="9"><div class="uc-empty">No records found for this stage/filter selection.</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = state.rows.map(function (row) {
+        const urgent = row.overdueCA > 0;
+        const riskText = row.riskScore > 0 ? (row.riskLevel + ' (' + fmtScore(row.riskScore) + ')') : '-';
+        const statusNote = urgent ? '<div class="uc-status-note">● Overdue CA</div>' : '';
+        const parts = updatedParts(row.lastUpdated);
+        let progressClass = 'mid';
+        if (row.progress >= 90) progressClass = 'high';
+        if (row.progress < 50) progressClass = 'low';
+        const secondAction = (row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED)
+          ? '<button class="uc-btn corr" data-action="corr" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '">⚠ Corr. Actions</button>'
+          : '';
+        return ''
+          + '<tr class="' + (urgent ? 'uc-row-urgent' : '') + '">'
+          + '<td><div class="uc-ref"><span class="main">' + RiskModuleUtils.esc(row.masterRef) + '</span><span class="ver">v' + RiskModuleUtils.esc(String(row.latestVersion)) + '</span></div></td>'
+          + '<td><div class="uc-fac"><span class="main">' + RiskModuleUtils.esc(row.facility) + '</span><span class="sub">' + RiskModuleUtils.esc(row.facilityType) + '</span></div></td>'
+          + '<td><span class="uc-zone">' + RiskModuleUtils.esc(row.zone) + '</span></td>'
+          + '<td><div class="uc-status"><span class="rm-badge ' + statusBadgeClass(row.status) + '">' + RiskModuleUtils.esc(row.statusLabel) + '</span>' + statusNote + '</div></td>'
+          + '<td>' + (row.riskScore > 0 ? '<span class="rm-badge ' + riskBadgeClass(row.riskLevel) + '">' + RiskModuleUtils.esc(riskText) + '</span>' : '<span class="uc-risk-dash">–</span>') + '</td>'
+          + '<td><div class="uc-stage-box"><span class="main">' + RiskModuleUtils.esc(row.stageMain) + '</span><span class="sub">' + RiskModuleUtils.esc(row.stageSub) + '</span></div></td>'
+          + '<td><div class="uc-progress"><div class="uc-progress-line"><span class="uc-progress-fill ' + progressClass + '" style="width:' + RiskModuleUtils.esc(String(row.progress)) + '%;"></span></div><span class="pct">' + RiskModuleUtils.esc(String(row.progress)) + '%</span></div></td>'
+          + '<td><div class="uc-updated"><span class="date">' + RiskModuleUtils.esc(parts.date) + ',</span><span>' + RiskModuleUtils.esc(parts.time) + '</span><span class="rel">' + RiskModuleUtils.esc(parts.relative) + '</span></div></td>'
+          + '<td><div class="uc-actions"><button class="uc-btn" data-action="view" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '">Continue</button>' + secondAction + '</div></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    function render() {
+      populateFilters(rowsInFilterScope());
+      refreshTabsAndKpis(state.allRows);
+      applyFilters();
+      renderRows();
+    }
+
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      document.querySelectorAll('#tabs .uc-tab').forEach(function (button) {
+        button.classList.toggle('active', button.getAttribute('data-tab') === state.activeTab);
+      });
+      render();
+    }
+
+    function bindEvents() {
+      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+
+      document.querySelectorAll('#tabs .uc-tab').forEach(function (button) {
+        button.addEventListener('click', function () {
+          state.overdueOnly = false;
+          setActiveTab(button.getAttribute('data-tab') || 'all');
+        });
+      });
+
+      ['fltSearch', 'fltZone', 'fltType'].forEach(function (id) {
+        const node = document.getElementById(id);
+        node.addEventListener('input', render);
+        node.addEventListener('change', render);
+      });
+
+      document.getElementById('alertPendingBtn').addEventListener('click', function () {
+        state.overdueOnly = false;
+        setActiveTab('pending');
+      });
+      document.getElementById('alertOverdueBtn').addEventListener('click', function () {
+        state.overdueOnly = true;
+        setActiveTab('all');
+      });
+
+      document.getElementById('tbody').addEventListener('click', function (event) {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.getAttribute('data-action');
+        const ref = button.getAttribute('data-ref');
+        const version = button.getAttribute('data-version');
+        if (action === 'corr') {
+          window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep11&ref=' + encodeURIComponent(ref) + '&version=' + encodeURIComponent(version);
+          return;
+        }
+        RiskModuleUtils.openAssessmentRecord(ref, version);
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', function () {
+        const headers = ['Reference Number', 'Version', 'Facility', 'Type', 'Zone', 'Status', 'Risk', 'Current Stage', 'Progress', 'Last Updated', 'Open CAs', 'Overdue CAs'];
+        const lines = [headers.map(function (v) { return '"' + v + '"'; }).join(',')];
+        state.rows.forEach(function (row) {
+          const stage = row.stageMain + ' - ' + row.stageSub;
+          lines.push([
+            row.masterRef,
+            'v' + row.latestVersion,
+            row.facility,
+            row.facilityType,
+            row.zone,
+            row.statusLabel,
+            row.riskScore > 0 ? (row.riskLevel + ' (' + fmtScore(row.riskScore) + ')') : '-',
+            stage,
+            row.progress + '%',
+            RiskModuleUtils.fmtDateTime(row.lastUpdated),
+            row.openCA,
+            row.overdueCA
+          ].map(function (val) { return '"' + String(val == null ? '' : val).replace(/"/g, '""') + '"'; }).join(','));
+        });
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'uncompleted-assessments.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    function initFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab === 'all' || tab === 'draft' || tab === 'pending' || tab === 'reopened') state.activeTab = tab;
+    }
+
+    function init() {
+      initFromQuery();
+      state.allRows = buildRows();
+      refreshTabsAndKpis(state.allRows);
+      refreshAlerts(state.allRows);
+      populateFilters(rowsInFilterScope());
+      bindEvents();
+      setActiveTab(state.activeTab);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

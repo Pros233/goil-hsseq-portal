@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOIL HSSEQ – Compliance &amp; Regulatory Unit</title>
+<script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:      #F47920;
+    --orange-deep: #C9600A;
+    --charcoal:    #1E1E1E;
+    --charcoal-2:  #252525;
+    --charcoal-3:  #2E2E2E;
+    --charcoal-4:  #3A3A3A;
+    --white:       #FFFFFF;
+    --muted:       #A0A0A0;
+    --muted-2:     #6A6A6A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: 'Barlow', sans-serif; background: var(--charcoal); color: var(--white); overflow-x: hidden; }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(20,20,20,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(244,121,32,0.3);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 62px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-dept { font-size: 10px; font-weight: 600; letter-spacing: 2.5px; color: var(--orange); text-transform: uppercase; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .user-info { text-align: right; }
+  .user-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .user-email { font-size: 13px; font-weight: 500; color: var(--white); }
+  .btn-logout {
+    background: transparent; border: 1.5px solid var(--orange); color: var(--orange);
+    padding: 7px 20px; border-radius: 4px; font-family: 'Barlow', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: .5px; cursor: pointer; transition: all .2s;
+  }
+  .btn-logout:hover { background: var(--orange); color: #fff; }
+
+  .page { min-height: 100vh; display: flex; flex-direction: column; padding-top: 62px; }
+
+  .hero {
+    flex: 0 0 auto; padding: 50px 60px 44px;
+    position: relative; overflow: hidden; background: var(--charcoal);
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(244,121,32,0.07) 0%, transparent 55%),
+      repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(244,121,32,0.025) 40px, rgba(244,121,32,0.025) 41px);
+    pointer-events: none;
+  }
+  .hero-shard {
+    position: absolute; right: -60px; top: 20px; width: 360px; height: 360px;
+    background: linear-gradient(145deg, rgba(244,121,32,0.1), rgba(244,121,32,0.01));
+    clip-path: polygon(30% 0%, 100% 0%, 100% 70%, 70% 100%, 0% 100%, 0% 30%);
+    border: 1px solid rgba(244,121,32,0.12);
+    animation: shardFloat 9s ease-in-out infinite;
+  }
+  @keyframes shardFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+  .hero-line { position: absolute; left: 60px; top: 0; bottom: 0; width: 3px; background: linear-gradient(to bottom, var(--orange), transparent 80%); opacity: .45; }
+  .hero-content { position: relative; z-index: 2; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--muted); text-transform: uppercase; text-decoration: none;
+    margin-bottom: 20px; transition: color .2s;
+  }
+  .back-link:hover { color: var(--orange); }
+  .back-link:hover svg { transform: translateX(-3px); }
+  .back-link svg { transition: transform .2s; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    color: var(--orange); text-transform: uppercase; margin-bottom: 14px;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 2px; background: var(--orange); }
+  .hero-welcome { font-family: 'Barlow Condensed', sans-serif; font-size: 64px; font-weight: 800; line-height: .93; letter-spacing: -1px; text-transform: uppercase; animation: fadeUp .65s ease both; }
+  .hero-welcome .accent { color: var(--orange); }
+  .hero-subtitle { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 400; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; animation: fadeUp .65s .12s ease both; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+
+  .modules-section {
+    flex: 1; background: var(--charcoal-2); padding: 56px 60px 70px; position: relative;
+  }
+  .modules-section::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, var(--orange) 30%, var(--orange) 70%, transparent);
+    opacity: .5;
+  }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--orange); text-transform: uppercase; margin-bottom: 6px; }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -.5px; text-transform: uppercase; line-height: 1; }
+
+  .empty-state {
+    background: var(--charcoal-3);
+    border: 1px dashed rgba(244,121,32,0.2);
+    border-radius: 8px;
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 20px; opacity: .5; }
+  .empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 10px; }
+  .empty-desc { font-size: 14px; color: var(--muted-2); line-height: 1.65; }
+
+  @media (max-width: 900px) {
+    .hero { padding: 40px 24px 32px; }
+    .modules-section { padding: 40px 24px 50px; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-left">
+    <img src="../assets/img/goil-logo.png" alt="GOIL Logo" style="height:38px;width:auto;display:block;" />
+    <div class="topbar-brand">
+      <span class="topbar-dept">GOIL HSSEQ Department</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-info">
+      <div class="user-label">Signed in as</div>
+      <div class="user-email" id="portalUserEmail">-</div>
+    </div>
+    <button class="btn-logout" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <section class="hero">
+    <div class="hero-line"></div>
+    <div class="hero-shard"></div>
+    <div class="hero-content">
+      <a class="back-link" href="portal.html">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to Workspaces
+      </a>
+      <div class="hero-eyebrow">GOIL HSSEQ Department</div>
+      <div class="hero-welcome"><span class="accent">Compliance</span> &amp; Regulatory</div>
+      <div class="hero-subtitle">Audit Management · Legal Obligations</div>
+    </div>
+  </section>
+
+  <section class="modules-section">
+    <div class="section-header">
+      <div>
+        <div class="section-label">Compliance &amp; Regulatory Modules</div>
+        <div class="section-title">Available Tools</div>
+      </div>
+    </div>
+
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No modules available yet</div>
+      <div class="empty-desc">Compliance &amp; Regulatory modules are currently in development and will appear here when ready.</div>
+    </div>
+  </section>
+
+</div>
+
+<script src="../assets/js/portal.js?v=20260319-portalclean1" defer></script>
+</body>
+</html>

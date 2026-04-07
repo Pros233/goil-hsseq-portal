@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Corrective Action - Integrated Risk Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+<style>
+:root{
+  --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.14);
+  --tx:#E6EDF3; --tx2:#C9D1D9; --tx3:#8B949E; --tx4:#6E7681;
+  --or:#F47920; --ok:#3FB950; --warn:#D29922; --bad:#DA3633; --info:#2F81F7;
+  --or-d:rgba(244,121,32,.14); --ok-d:rgba(63,185,80,.14); --warn-d:rgba(210,153,34,.14); --bad-d:rgba(218,54,51,.14); --info-d:rgba(47,129,247,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
+.page{min-height:100%;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,var(--bg2),#141a22);border-bottom:1px solid var(--bd2);padding:14px 20px;display:flex;align-items:center;gap:10px}
+.top h1{font-family:'Barlow Condensed',sans-serif;color:var(--tx);font-size:22px;letter-spacing:.3px}
+.top .sub{font-size:12px;color:var(--tx3)}
+.top .left{display:flex;flex-direction:column;gap:3px}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.badge{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.b-draft{background:rgba(139,148,158,.18);color:var(--tx3)}
+.b-progress{background:var(--warn-d);color:var(--warn)}
+.b-pending{background:var(--info-d);color:var(--info)}
+.b-pub{background:var(--ok-d);color:var(--ok)}
+.btn{border:1.5px solid var(--bd2);background:transparent;color:var(--tx2);border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.16s}
+.btn:hover{border-color:var(--or);color:var(--or)}
+.btn-primary{background:var(--or);border-color:var(--or);color:#fff}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.is-loading{position:relative;pointer-events:none}
+.btn.is-loading::before{
+  content:'';
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  display:inline-block;vertical-align:-2px;margin-right:8px;
+  animation:spin .7s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.main{width:min(1300px,100%);margin:18px auto;padding:0 14px 18px;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px}
+.panel h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--tx);letter-spacing:.3px;margin-bottom:10px}
+.meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.meta{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px}
+.meta .k{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--tx4)}
+.meta .v{font-size:13px;color:var(--tx);font-weight:600;margin-top:4px;word-break:break-word}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:12px}
+.kpi .n{font-family:'Barlow Condensed',sans-serif;font-size:24px;color:var(--tx);font-weight:800;line-height:1}
+.kpi .l{font-size:11px;color:var(--tx3);margin-top:5px;text-transform:uppercase;letter-spacing:.6px}
+
+.overall-risk{background:linear-gradient(180deg,rgba(244,121,32,.08),rgba(22,27,34,.55));border:1px solid var(--bd2);border-radius:10px;padding:12px}
+.risk-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.risk-k{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--tx4)}
+.risk-rating{font-size:17px;color:var(--tx);font-weight:700;margin-top:4px}
+.risk-note{font-size:11px;color:var(--tx3);margin-top:6px;line-height:1.35}
+.risk-score-wrap{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px;min-width:140px}
+.risk-score{font-family:'Barlow Condensed',sans-serif;font-size:34px;color:var(--tx);font-weight:800;line-height:1;margin-top:4px}
+.risk-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.risk-chip{padding:4px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px}
+.risk-low{background:var(--ok-d);color:var(--ok)}
+.risk-moderate{background:var(--warn-d);color:var(--warn)}
+.risk-high{background:rgba(224,125,35,.18);color:#E07D23}
+.risk-critical{background:var(--bad-d);color:var(--bad)}
+.risk-acceptable{background:var(--ok-d);color:var(--ok)}
+.risk-attention{background:var(--warn-d);color:var(--warn)}
+.risk-immediate{background:var(--bad-d);color:var(--bad)}
+.risk-chip-failed{background:rgba(139,148,158,.18);color:var(--tx2)}
+.risk-time{font-size:11px;color:var(--tx3);margin-left:auto}
+.risk-summary{margin-top:11px;font-size:13px;color:var(--tx2);line-height:1.45}
+
+.validation{display:none;border:1px solid rgba(218,54,51,.35);background:var(--bad-d);border-radius:9px;padding:12px}
+.validation.show{display:block}
+.validation h3{font-size:13px;color:#ffb0ad;margin-bottom:7px}
+.validation ul{display:flex;flex-direction:column;gap:5px;padding-left:18px}
+.validation li{font-size:12px;color:var(--tx2)}
+
+.action{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.action-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:11px 12px;background:var(--bg3);border-bottom:1px solid var(--bd)}
+.code{font-size:11px;color:var(--or);font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.5px}
+.answer{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.a-p{background:var(--warn-d);color:var(--warn)}
+.a-n{background:var(--bad-d);color:var(--bad)}
+.section-tag{font-size:11px;color:var(--tx3)}
+.change-tag{margin-left:auto;font-size:11px;color:var(--tx3)}
+.action-body{padding:12px;display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
+.source{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:10px}
+.source .k{font-size:10px;color:var(--tx4);text-transform:uppercase;letter-spacing:.7px}
+.source .v{font-size:13px;color:var(--tx);margin-top:5px;line-height:1.35}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f.full{grid-column:1 / -1}
+.f label{font-size:11px;color:var(--tx3);font-weight:600}
+.input,.select,.textarea{
+  background:var(--bg4);border:1px solid var(--bd2);border-radius:7px;color:var(--tx);
+  font-family:'Barlow',sans-serif;font-size:12px;outline:none
+}
+.input,.select{height:36px;padding:0 10px}
+.textarea{min-height:72px;padding:8px 10px;resize:vertical}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--or)}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.file{font-size:11px;color:var(--tx2);background:var(--bg4);border:1px solid var(--bd2);border-radius:6px;padding:4px 8px;display:flex;gap:6px;align-items:center}
+.file button{border:none;background:transparent;color:var(--bad);cursor:pointer;font-size:12px}
+.upload{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1.5px dashed var(--bd2);border-radius:7px;cursor:pointer;font-size:11px;color:var(--tx3)}
+.upload:hover{border-color:var(--or);color:var(--or)}
+.evidence-actions{display:flex;gap:8px;flex-wrap:wrap}
+.evidence-note{font-size:10px;color:var(--tx4);margin-top:6px;line-height:1.4}
+.photo-only{display:none}
+body.mobile-camera .photo-only{display:inline-flex}
+input[type=file]{display:none}
+
+.confirm{display:none;border:1px solid rgba(63,185,80,.35);background:var(--ok-d);border-radius:10px;padding:13px}
+.confirm.show{display:block}
+.confirm h3{color:#9ff0b2;font-size:14px;margin-bottom:8px}
+.confirm p{font-size:13px;color:var(--tx2)}
+
+.audit{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;padding-right:4px}
+.audit-item{border:1px solid var(--bd);background:var(--bg3);border-radius:7px;padding:8px}
+.audit-item .t{font-size:12px;color:var(--tx)}
+.audit-item .m{font-size:11px;color:var(--tx3);margin-top:3px}
+
+.footer{position:sticky;bottom:0;z-index:15;background:rgba(13,17,23,.95);backdrop-filter:blur(5px);border-top:1px solid var(--bd2);padding:10px 14px}
+.footer-inner{width:min(1300px,100%);margin:0 auto;display:flex;gap:9px;justify-content:flex-end}
+.toast-wrap{position:fixed;top:72px;right:18px;z-index:80;display:flex;flex-direction:column;gap:8px}
+.toast{padding:9px 12px;border-radius:7px;font-size:12px;font-weight:700;color:#fff;animation:in .2s ease}
+.toast.success{background:#065f46}.toast.info{background:#1e3a5f}.toast.warn{background:#78350f}.toast.error{background:#7f1d1d}
+@keyframes in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+@media (max-width:980px){
+  .meta-grid,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .action-body{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .top{padding:10px 12px}
+  .top h1{font-size:19px}
+  .meta-grid,.kpis{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .footer-inner{justify-content:stretch;flex-wrap:wrap}
+  .footer-inner .btn{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div class="left">
+      <h1>Corrective Action</h1>
+      <div class="sub">Review, revise, and submit corrective actions for publication</div>
+    </div>
+    <div class="right">
+      <span class="badge b-pending" id="statusBadge">Checklist Submitted / Pending Corrective Action</span>
+      <button class="btn" onclick="goHome()">Assessment Management Center</button>
+      <button class="btn" onclick="reopenForRevision()">Reopen for Revision</button>
+      <button class="btn" onclick="goBackToReview()">Back to Review</button>
+    </div>
+  </div>
+
+  <main class="main">
+    <section class="panel">
+      <h2>Inspection Summary</h2>
+      <div class="meta-grid" id="metaGrid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="kpis" id="kpiRow"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Overall Risk (From Checklist Submission)</h2>
+      <div class="overall-risk" id="overallRiskCard"></div>
+    </section>
+
+    <section class="panel validation" id="validationPanel">
+      <h3>Please resolve the following before final submission:</h3>
+      <ul id="validationList"></ul>
+    </section>
+
+    <section id="actionsWrap"></section>
+
+    <section class="panel confirm" id="confirmPanel">
+      <h3>Final submission completed successfully.</h3>
+      <p>
+        Published reference: <strong id="confirmRef">—</strong><br>
+        The inspection is now fully submitted and published to the register.<br>
+        <span id="confirmRedirectText">Redirecting to Assessment Management Center…</span>
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn" onclick="goPublishedRegister()">Go to Published Register</button>
+        <button class="btn" onclick="viewPublishedRecord()">View Published Record</button>
+        <button class="btn" onclick="startNewAssessment()">Start New Assessment</button>
+        <button class="btn btn-primary" onclick="goHome()">Return to Assessment Management Center</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Audit Trail</h2>
+      <div class="audit" id="auditList"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <button class="btn" onclick="goHome()">Assessment Management Center</button>
+      <button class="btn" onclick="goBackToReview()">Back</button>
+      <button class="btn" onclick="saveAndContinueLater()">Save and Continue Later</button>
+      <button class="btn btn-primary" id="finalSubmitBtn" onclick="finalSubmit()">Final Submit &amp; Publish</button>
+    </div>
+  </footer>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const FACILITY_KEY = 'goil_facility_details';
+const META_KEY = 'goil_inspection_meta';
+const CA_KEY = 'goil_corrective_action_session';
+const AUDIT_KEY = 'goil_audit_trail';
+const PUBLISH_FLASH_KEY = 'goil_publish_success_flash';
+
+const STATUS = {
+  DRAFT: 'Draft',
+  IN_PROGRESS: 'In Progress',
+  PENDING: 'Checklist Submitted / Pending Corrective Action',
+  REOPENED: 'Reopened for Revision',
+  REVISED_CHECKLIST_SUBMITTED: 'Revised Checklist Submitted',
+  REVISED_CORRECTIVE_SUBMITTED: 'Revised Corrective Action Submitted',
+  AWAITING_REVIEW: 'Awaiting Review',
+  PUBLISHED: 'Fully Submitted / Published to Register'
+};
+
+let facility = {};
+let inspectionMeta = {};
+let caSession = { items:[] };
+let overallRisk = null;
+let riskFlow = null;
+let autoSaveTimer = null;
+let readOnly = false;
+let correctiveDirty = false;
+let finalSubmitInProgress = false;
+const SUPPORTED_EVIDENCE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'application/pdf'
+];
+
+function supportsCameraCapture() {
+  const ua = navigator.userAgent || '';
+  const mobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || window.matchMedia('(pointer:coarse)').matches;
+  return mobileLike;
+}
+
+function applyCameraModeClass() {
+  document.body.classList.toggle('mobile-camera', supportsCameraCapture());
+}
+
+function isSupportedEvidenceFile(file) {
+  const type = String((file && file.type) || '').toLowerCase();
+  if (type && SUPPORTED_EVIDENCE_TYPES.indexOf(type) >= 0) return true;
+  const name = String((file && file.name) || '').toLowerCase();
+  return /\.(jpg|jpeg|png|webp|heic|pdf)$/.test(name);
+}
+
+function nowIso(){ return new Date().toISOString(); }
+function readJSON(key, fallback){ try{ const v=JSON.parse(localStorage.getItem(key)||'null'); return v==null?fallback:v; }catch(e){ return fallback; } }
+function writeJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+
+function appendAudit(action, details){
+  const list = readJSON(AUDIT_KEY, []);
+  list.push({
+    at: nowIso(),
+    action,
+    actor: facility.assessorName || 'Unknown User',
+    referenceNo: inspectionMeta.referenceNo || '',
+    ...(details || {})
+  });
+  writeJSON(AUDIT_KEY, list);
+}
+
+function setSubmittingState(isSubmitting){
+  finalSubmitInProgress = !!isSubmitting;
+  const btn = document.getElementById('finalSubmitBtn');
+  if (!btn) return;
+  if (isSubmitting){
+    btn.disabled = true;
+    btn.classList.add('is-loading');
+    btn.textContent = 'Publishing...';
+    return;
+  }
+  btn.classList.remove('is-loading');
+  btn.textContent = 'Final Submit & Publish';
+  btn.disabled = readOnly;
+}
+
+function buildPublishedReference(){
+  const ref = inspectionMeta.referenceNo || '—';
+  const version = Number(inspectionMeta.versionCurrent || 1);
+  return `${ref} (v${version})`;
+}
+
+function setPublishSuccessFlash(at){
+  writeJSON(PUBLISH_FLASH_KEY, {
+    referenceNo: inspectionMeta.referenceNo || '',
+    publishedReference: buildPublishedReference(),
+    version: Number(inspectionMeta.versionCurrent || 1),
+    submittedBy: facility.assessorName || 'Unknown User',
+    submittedAt: at || nowIso(),
+    message: `Assessment ${inspectionMeta.referenceNo || ''} was successfully published to the register.`
+  });
+}
+
+function statusBadgeClass(status){
+  if (status === STATUS.PENDING) return 'b-pending';
+  if (status === STATUS.REOPENED) return 'b-progress';
+  if (status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'b-pending';
+  if (status === STATUS.REVISED_CORRECTIVE_SUBMITTED) return 'b-progress';
+  if (status === STATUS.AWAITING_REVIEW) return 'b-progress';
+  if (status === STATUS.PUBLISHED) return 'b-pub';
+  if (status === STATUS.IN_PROGRESS) return 'b-progress';
+  return 'b-draft';
+}
+
+function answerPill(response){
+  if (response === 'N') return '<span class="answer a-n">Non-Compliant</span>';
+  return '<span class="answer a-p">Partial</span>';
+}
+
+function esc(v){
+  if (v == null) return '';
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');
+}
+
+function ensureMeta(){
+  const m = readJSON(META_KEY, {});
+  if (!m.referenceNo) {
+    const d = new Date();
+    const y = d.getFullYear();
+    const mo = String(d.getMonth()+1).padStart(2,'0');
+    const da = String(d.getDate()).padStart(2,'0');
+    const rand = Math.random().toString(36).slice(2,6).toUpperCase();
+    m.referenceNo = `IRA-${y}${mo}${da}-${rand}`;
+  }
+  if (!m.status) m.status = STATUS.PENDING;
+  m.lastPage = 'corrective';
+  m.lastSavedAt = nowIso();
+  writeJSON(META_KEY, m);
+  return m;
+}
+
+function loadOverallRisk() {
+  const fromCorrective = caSession && caSession.overallRisk && typeof caSession.overallRisk === 'object'
+    ? caSession.overallRisk
+    : null;
+  const fromMeta = inspectionMeta && inspectionMeta.overallRisk && typeof inspectionMeta.overallRisk === 'object'
+    ? inspectionMeta.overallRisk
+    : null;
+  overallRisk = fromCorrective || fromMeta || null;
+  riskFlow = getRiskFlowMetrics();
+}
+
+function riskChipClass(level){
+  if (level === 'Critical') return 'risk-critical';
+  if (level === 'High') return 'risk-high';
+  if (level === 'Moderate' || level === 'Medium') return 'risk-moderate';
+  return 'risk-low';
+}
+
+function getRiskFlowMetrics(){
+  const fallbackScore = Number(overallRisk && overallRisk.score ? overallRisk.score : 0);
+  const fallbackLevel = overallRisk && overallRisk.level ? overallRisk.level : 'Low';
+  const fallback = {
+    initialScore: fallbackScore,
+    initialLevel: fallbackLevel,
+    residualScore: fallbackScore,
+    residualLevel: fallbackLevel,
+    riskReduction: 0,
+    openCount: 0,
+    closedCount: 0
+  };
+  if (!window.RiskModuleUtils || !inspectionMeta || !inspectionMeta.referenceNo) return fallback;
+  const records = RiskModuleUtils.getRecords();
+  const ref = String(inspectionMeta.referenceNo || '').trim();
+  const version = Number(inspectionMeta.versionCurrent || 0);
+  const record = records.find(function (r) {
+    return String(r.inspectionRef || r.assessment_reference || '').trim() === ref &&
+      (!version || Number(r.version || r.version_number || 0) === version);
+  });
+  if (!record) return fallback;
+  return Object.assign({}, fallback, RiskModuleUtils.getRiskSnapshotForRecord(record));
+}
+
+function responseExpectationForLevel(level) {
+  const normalized = String(level || '').trim().toLowerCase();
+  if (normalized === 'critical') return 'Immediate escalation and intervention';
+  if (normalized === 'high') return 'Urgent action required with management attention';
+  if (normalized === 'medium' || normalized === 'moderate') return 'Plan corrective action and track closure';
+  return 'Monitor and correct through routine controls';
+}
+
+function renderOverallRisk() {
+  const card = document.getElementById('overallRiskCard');
+  const risk = overallRisk || {
+    score: 0,
+    level: 'Low',
+    rating: 'Low Risk',
+    disposition: 'Monitor and correct through routine controls',
+    failedCount: 0,
+    summary: 'Overall risk not available yet.',
+    calculatedAt: nowIso(),
+    source: 'System-generated based on checklist findings.'
+  };
+  const levelClass = riskChipClass(risk.level);
+  const levelToken = String(risk.level || '').trim().toLowerCase();
+  const dispositionClass = levelToken === 'critical'
+    ? 'risk-immediate'
+    : levelToken === 'high'
+      ? 'risk-high'
+      : (levelToken === 'medium' || levelToken === 'moderate')
+        ? 'risk-attention'
+        : 'risk-acceptable';
+  const dispositionText = responseExpectationForLevel(risk.level);
+  const flow = riskFlow || getRiskFlowMetrics();
+  const initialRiskText = `${flow.initialLevel || 'Low'} (${flow.initialScore || 0})`;
+  const residualRiskText = `${flow.residualLevel || 'Low'} (${flow.residualScore || 0})`;
+  card.innerHTML = `
+    <div class="risk-top">
+      <div>
+        <div class="risk-k">Overall Risk Rating</div>
+        <div class="risk-rating">${esc(risk.rating || `${risk.level} Risk`)}</div>
+        <div class="risk-note">${esc(risk.source || 'System-generated based on checklist findings.')}</div>
+      </div>
+      <div class="risk-score-wrap">
+        <div class="risk-k">Overall Risk Score</div>
+        <div class="risk-score">${esc(String(risk.score || 0))}</div>
+      </div>
+    </div>
+    <div class="risk-meta">
+      <span class="risk-chip ${levelClass}">${esc(risk.level || 'Low')}</span>
+      <span class="risk-chip ${dispositionClass}">${esc(dispositionText)}</span>
+      <span class="risk-chip ${riskChipClass(flow.initialLevel)}">Initial: ${esc(initialRiskText)}</span>
+      <span class="risk-chip ${riskChipClass(flow.residualLevel)}">Residual: ${esc(residualRiskText)}</span>
+      <span class="risk-chip risk-chip-failed">Risk Reduction: ${esc(String(flow.riskReduction || 0))}</span>
+      <span class="risk-chip risk-chip-failed">Open Actions: ${esc(String(flow.openCount || 0))} · Closed Actions: ${esc(String(flow.closedCount || 0))}</span>
+      <span class="risk-chip risk-chip-failed">${esc(String(risk.failedCount || 0))} Failed / Non-Compliant</span>
+      <span class="risk-time">Calculated: ${esc(new Date(risk.calculatedAt || nowIso()).toLocaleString())}</span>
+    </div>
+    <div class="risk-summary">${esc(risk.summary || 'Overall risk not available yet.')}</div>
+  `;
+}
+
+function init(){
+  applyCameraModeClass();
+  facility = readJSON(FACILITY_KEY, {});
+  inspectionMeta = window.GoilWorkflow ? window.GoilWorkflow.getMeta(facility) : ensureMeta();
+  if (window.GoilWorkflow) window.GoilWorkflow.refreshOverdueNotifications();
+  caSession = readJSON(CA_KEY, { items:[] });
+  if (!Array.isArray(caSession.items)) caSession.items = [];
+  loadOverallRisk();
+  readOnly = inspectionMeta.status === STATUS.PUBLISHED;
+
+  renderHeader();
+  renderKpis();
+  renderOverallRisk();
+  renderActions();
+  renderAudit();
+
+  if (!caSession.items.length) {
+    toast('No corrective actions found. Submit checklist from Review page first.', 'warn');
+  }
+
+  if (readOnly) {
+    document.getElementById('confirmPanel').classList.add('show');
+    document.getElementById('finalSubmitBtn').disabled = true;
+    document.getElementById('confirmRef').textContent = buildPublishedReference();
+  }
+
+  appendAudit('corrective_page_opened', { status: inspectionMeta.status, items: caSession.items.length });
+}
+
+function renderHeader(){
+  const statusBadge = document.getElementById('statusBadge');
+  statusBadge.className = 'badge ' + statusBadgeClass(inspectionMeta.status);
+  statusBadge.textContent = inspectionMeta.status;
+
+  const rows = [
+    { k:'Inspection Ref', v: inspectionMeta.referenceNo || '—' },
+    { k:'Version', v: inspectionMeta.versionCurrent || 0 },
+    { k:'Facility Name', v: facility.nameDisplay || '—' },
+    { k:'Facility Type', v: facility.facilityType || '—' },
+    { k:'Inspection Date', v: facility.assessmentDate || '—' },
+    { k:'Inspector', v: facility.assessorName || '—' },
+    { k:'Site / Location', v: [facility.zone || '', facility.nameDisplay || ''].filter(Boolean).join(' · ') || '—' },
+    { k:'Checklist Submitted At', v: inspectionMeta.checklistSubmittedAt ? new Date(inspectionMeta.checklistSubmittedAt).toLocaleString() : '—' },
+    { k:'Corrective Submitted At', v: inspectionMeta.correctiveSubmittedAt ? new Date(inspectionMeta.correctiveSubmittedAt).toLocaleString() : '—' },
+    { k:'Last Updated', v: inspectionMeta.lastUpdatedAt ? new Date(inspectionMeta.lastUpdatedAt).toLocaleString() : '—' }
+  ];
+
+  document.getElementById('metaGrid').innerHTML = rows.map(r => `
+    <div class="meta"><div class="k">${esc(r.k)}</div><div class="v">${esc(r.v)}</div></div>
+  `).join('');
+}
+
+function renderKpis(){
+  const total = caSession.items.length;
+  const completed = caSession.items.filter(i => i.correctiveAction && i.responsiblePerson && i.dueDate && i.priority).length;
+  const open = total - completed;
+  const edits = caSession.items.reduce((n, i) => n + ((i.changeHistory || []).length), 0);
+  document.getElementById('kpiRow').innerHTML = [
+    { n: total, l:'Prefilled Corrective Items' },
+    { n: completed, l:'Completed Actions' },
+    { n: open, l:'Open Actions' },
+    { n: edits, l:'Change Log Entries' }
+  ].map(k => `
+    <div class="kpi"><div class="n">${esc(String(k.n))}</div><div class="l">${esc(k.l)}</div></div>
+  `).join('');
+}
+
+function renderActions(){
+  const wrap = document.getElementById('actionsWrap');
+  if (!caSession.items.length) {
+    wrap.innerHTML = '<section class="panel"><h2>No Corrective Actions Yet</h2><p>Submit checklist from Review page to generate corrective actions.</p></section>';
+    return;
+  }
+
+  wrap.innerHTML = caSession.items.map((item, index) => {
+    const evidence = Array.isArray(item.evidence) ? item.evidence : [];
+    const dis = readOnly ? 'disabled' : '';
+    return `
+      <section class="action">
+        <div class="action-head">
+          <span class="code">${esc(item.sourceCode)}</span>
+          ${answerPill(item.sourceResponse || 'P')}
+          <span class="section-tag">${esc(item.sectionLabel || item.sectionId || 'Section')}</span>
+          <span class="change-tag">Changes: ${(item.changeHistory || []).length}</span>
+        </div>
+        <div class="action-body">
+          <div class="source">
+            <div class="k">Failed / Non-Compliant Checklist Item</div>
+            <div class="v">${esc(item.sourceQuestion || item.sourceCode)}</div>
+            <div class="k" style="margin-top:8px">Original Observation</div>
+            <div class="v">${esc(item.sourceComment || '—')}</div>
+          </div>
+
+          <div class="form-grid">
+            <div class="f full">
+              <label>Corrective Action Description</label>
+              <textarea class="textarea" ${dis} oninput="updateField(${index}, 'correctiveAction', this.value)">${esc(item.correctiveAction || '')}</textarea>
+            </div>
+            <div class="f">
+              <label>Responsible Person</label>
+              <input class="input" ${dis} value="${esc(item.responsiblePerson || '')}" oninput="updateField(${index}, 'responsiblePerson', this.value)">
+            </div>
+            <div class="f">
+              <label>Due Date</label>
+              <input type="date" class="input" ${dis} value="${esc(item.dueDate || '')}" onchange="updateField(${index}, 'dueDate', this.value)">
+            </div>
+            <div class="f">
+              <label>Severity / Priority</label>
+              <select class="select" ${dis} onchange="updateField(${index}, 'priority', this.value)">
+                ${['', 'Low', 'Medium', 'High', 'Critical'].map(p => `<option value="${p}" ${item.priority===p?'selected':''}>${p || 'Select priority...'}</option>`).join('')}
+              </select>
+            </div>
+            <div class="f full">
+              <label>Assessor Review Comments</label>
+              <textarea class="textarea" ${dis} oninput="updateField(${index}, 'assessorReviewComments', this.value)">${esc(item.assessorReviewComments || '')}</textarea>
+            </div>
+            <div class="f full">
+              <label>Evidence Upload</label>
+              <div class="files">
+                ${evidence.map((f, fi) => `<span class="file">${esc(f.name)}${f.caption ? ' - ' + esc(f.caption) : ''} ${readOnly ? '' : `<button onclick="removeEvidence(${index},${fi})" type="button">x</button>`}</span>`).join('') || '<span class="file">No files attached</span>'}
+              </div>
+              ${readOnly ? '' : `
+                <div class="evidence-actions">
+                  <label class="upload">+ Upload Attachment<input type="file" multiple accept=".jpg,.jpeg,.png,.webp,.heic,.pdf" onchange="attachEvidence(${index}, this, false)"></label>
+                  ${supportsCameraCapture() ? `<label class="upload photo-only">+ Take Photo<input type="file" accept="image/*" capture="environment" multiple onchange="attachEvidence(${index}, this, true)"></label>` : ''}
+                </div>
+                <div class="evidence-note">Evidence is optional. You may continue without uploads and add evidence if available.</div>
+              `}
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }).join('');
+}
+
+function pushChange(item, field, fromVal, toVal){
+  if ((fromVal || '') === (toVal || '')) return;
+  if (!Array.isArray(item.changeHistory)) item.changeHistory = [];
+  item.changeHistory.push({
+    at: nowIso(),
+    actor: facility.assessorName || 'Unknown User',
+    field,
+    from: fromVal || '',
+    to: toVal || ''
+  });
+}
+
+function updateField(index, field, value){
+  if (readOnly) return;
+  const item = caSession.items[index];
+  if (!item) return;
+  const oldVal = item[field] || '';
+  if (oldVal === value) return;
+  pushChange(item, field, oldVal, value);
+  item[field] = value;
+  item.updatedAt = nowIso();
+  correctiveDirty = true;
+  scheduleAutoSave();
+  renderKpis();
+}
+
+function attachEvidence(index, input, fromCamera){
+  if (readOnly) return;
+  const item = caSession.items[index];
+  if (!item) return;
+  if (!Array.isArray(item.evidence)) item.evidence = [];
+  const files = Array.from(input.files || []);
+  files.forEach(f => {
+    const type = String((f.type || '')).toLowerCase();
+    if (!isSupportedEvidenceFile(f)) {
+      toast(f.name + ': unsupported file type', 'error');
+      return;
+    }
+    item.evidence.push({
+      name:f.name,
+      size:f.size,
+      type:type,
+      caption: '',
+      uploadedAt: nowIso(),
+      isPhoto: !!fromCamera || type.indexOf('image/') === 0
+    });
+  });
+  item.updatedAt = nowIso();
+  pushChange(item, 'evidence', 'updated', `${files.length} file(s) attached`);
+  correctiveDirty = true;
+  input.value = '';
+  scheduleAutoSave();
+  renderActions();
+}
+
+function removeEvidence(index, fileIndex){
+  if (readOnly) return;
+  const item = caSession.items[index];
+  if (!item || !Array.isArray(item.evidence)) return;
+  const removed = item.evidence.splice(fileIndex, 1);
+  item.updatedAt = nowIso();
+  if (removed.length) pushChange(item, 'evidence', removed[0].name, 'removed');
+  correctiveDirty = true;
+  scheduleAutoSave();
+  renderActions();
+}
+
+function scheduleAutoSave(){
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveCorrectiveState(false), 900);
+}
+
+function saveCorrectiveState(showToast){
+  caSession.lastSavedAt = nowIso();
+  if (overallRisk) caSession.overallRisk = { ...overallRisk };
+  writeJSON(CA_KEY, caSession);
+  inspectionMeta.lastPage = 'corrective';
+  inspectionMeta.lastSavedAt = nowIso();
+  if (overallRisk) {
+    inspectionMeta.overallRisk = { ...overallRisk };
+    inspectionMeta.overallRiskCalculatedAt = overallRisk.calculatedAt || nowIso();
+  }
+  const preserveStatus = [STATUS.PUBLISHED, STATUS.REOPENED, STATUS.REVISED_CHECKLIST_SUBMITTED];
+  if (preserveStatus.indexOf(inspectionMeta.status) < 0) {
+    inspectionMeta.status = STATUS.PENDING;
+  }
+  writeJSON(META_KEY, inspectionMeta);
+  if (showToast) toast('Corrective action progress saved.', 'success');
+  correctiveDirty = false;
+}
+
+function saveAndContinueLater(){
+  saveCorrectiveState(true);
+  appendAudit('save_continue_later_corrective', { status: inspectionMeta.status, items: caSession.items.length });
+  renderHeader();
+}
+
+function getValidationErrors(){
+  const errors = [];
+  caSession.items.forEach(item => {
+    if (!String(item.correctiveAction || '').trim()) errors.push(`${item.sourceCode}: corrective action description is required.`);
+    if (!String(item.responsiblePerson || '').trim()) errors.push(`${item.sourceCode}: responsible person is required.`);
+    if (!String(item.dueDate || '').trim()) errors.push(`${item.sourceCode}: due date is required.`);
+    if (!String(item.priority || '').trim()) errors.push(`${item.sourceCode}: severity/priority is required.`);
+  });
+  return errors;
+}
+
+// Corrective-action evidence is never required for blocking validation.
+function isEvidenceRequiredForCorrectiveAction(){
+  return false;
+}
+
+function isEvidenceBlockingMessage(message){
+  const text = String(message || '').toLowerCase();
+  return (
+    text.includes('evidence') &&
+    (
+      text.includes('required') ||
+      text.includes('missing') ||
+      text.includes('high/critical') ||
+      text.includes('priority')
+    )
+  );
+}
+
+function sanitizeBlockingErrors(errors){
+  return (Array.isArray(errors) ? errors : []).filter(err => !isEvidenceBlockingMessage(err));
+}
+
+function getSoftWarnings(){
+  const warnings = [];
+  caSession.items.forEach(item => {
+    const priority = String(item.priority || '').trim().toLowerCase();
+    const isHighOrCritical = priority === 'high' || priority === 'critical';
+    const evidenceCount = Array.isArray(item.evidence) ? item.evidence.length : 0;
+    if (isHighOrCritical && evidenceCount === 0) {
+      warnings.push(`${item.sourceCode}: no supporting evidence attached for ${item.priority} priority action.`);
+    }
+  });
+  return warnings;
+}
+
+function showValidationErrors(errors){
+  const panel = document.getElementById('validationPanel');
+  const list = document.getElementById('validationList');
+  if (!errors.length){
+    panel.classList.remove('show');
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = errors.map(e => `<li>${esc(e)}</li>`).join('');
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function finalSubmit(){
+  if (readOnly || finalSubmitInProgress) return;
+  setSubmittingState(true);
+  try {
+    const rawErrors = getValidationErrors();
+    const errors = sanitizeBlockingErrors(rawErrors);
+    showValidationErrors(errors);
+    if (errors.length){
+      toast('Final submission blocked. Complete all corrective action fields.', 'error');
+      setSubmittingState(false);
+      return;
+    }
+
+    // Evidence is intentionally non-blocking for all priorities.
+    if (rawErrors.length !== errors.length) {
+      toast('No supporting evidence attached. You may still submit.', 'info');
+    }
+    const warnings = getSoftWarnings();
+    if (warnings.length) {
+      toast('No supporting evidence attached for one or more high/critical actions. You may still continue.', 'warn');
+      appendAudit('corrective_action_soft_warning', {
+        warningCount: warnings.length,
+        warnings
+      });
+    }
+
+    const at = nowIso();
+    caSession.status = window.GoilWorkflow ? window.GoilWorkflow.STATUS.PUBLISHED : STATUS.PUBLISHED;
+    caSession.finalSubmittedAt = at;
+    caSession.lastSavedAt = at;
+    writeJSON(CA_KEY, caSession);
+
+    if (window.GoilWorkflow) {
+      const result = window.GoilWorkflow.finalizeCorrectiveSubmission({
+        facility,
+        actor: facility.assessorName || 'Unknown User',
+        correctiveSession: caSession,
+        overallRisk
+      });
+      inspectionMeta = result.meta || inspectionMeta;
+    } else {
+      inspectionMeta.status = STATUS.PUBLISHED;
+      inspectionMeta.correctiveSubmittedAt = at;
+      inspectionMeta.publishedToRegisterAt = at;
+      inspectionMeta.lastPage = 'home';
+      inspectionMeta.lastSavedAt = at;
+      if (overallRisk) {
+        inspectionMeta.overallRisk = { ...overallRisk };
+        inspectionMeta.overallRiskCalculatedAt = overallRisk.calculatedAt || at;
+      }
+      writeJSON(META_KEY, inspectionMeta);
+    }
+
+    appendAudit('corrective_action_submitted', {
+      status: STATUS.PUBLISHED,
+      correctiveSubmittedAt: at,
+      publishedToRegisterAt: at,
+      items: caSession.items.length,
+      overallRiskLevel: overallRisk ? overallRisk.level : 'Low',
+      overallRiskScore: overallRisk ? overallRisk.score : 0
+    });
+
+    readOnly = true;
+    renderHeader();
+    renderKpis();
+    renderActions();
+    renderAudit();
+    setSubmittingState(false);
+    document.getElementById('finalSubmitBtn').disabled = true;
+    document.getElementById('confirmRef').textContent = buildPublishedReference();
+    document.getElementById('confirmPanel').classList.add('show');
+    document.getElementById('confirmPanel').scrollIntoView({ behavior:'smooth', block:'center' });
+    correctiveDirty = false;
+    setPublishSuccessFlash(at);
+    toast('Final submission completed successfully.', 'success');
+    setTimeout(() => goHome(), 1400);
+  } catch (error) {
+    setSubmittingState(false);
+    toast('Final submission failed. Please try again.', 'error');
+  }
+}
+
+function renderAudit(){
+  const events = readJSON(AUDIT_KEY, []).slice().reverse();
+  const wrap = document.getElementById('auditList');
+  if (!events.length){
+    wrap.innerHTML = '<div class="audit-item"><div class="t">No audit events recorded yet.</div></div>';
+    return;
+  }
+  wrap.innerHTML = events.slice(0, 60).map(ev => {
+    const when = new Date(ev.at).toLocaleString();
+    const title = `${ev.action} · ${ev.actor || 'Unknown User'}`;
+    return `<div class="audit-item"><div class="t">${esc(title)}</div><div class="m">${esc(when)}</div></div>`;
+  }).join('');
+}
+
+function confirmLeaveWithUnsaved(onContinue){
+  if (!correctiveDirty) {
+    onContinue();
+    return;
+  }
+  const answer = (window.prompt('You have unsaved changes. Type S to Save Draft, D to Discard, or C to Cancel.', 'S') || 'C').trim().toUpperCase();
+  if (answer === 'S') {
+    saveCorrectiveState(true);
+    onContinue();
+    return;
+  }
+  if (answer === 'D') {
+    correctiveDirty = false;
+    onContinue();
+  }
+}
+
+function reopenForRevision(){
+  const reason = (window.prompt('Enter reason for reopening this inspection for revision:', '') || '').trim();
+  if (!reason) return;
+  if (window.GoilWorkflow) {
+    const result = window.GoilWorkflow.reopenForRevision({
+      facility,
+      actor: facility.assessorName || 'Unknown User',
+      reason
+    });
+    if (!result.ok) {
+      toast(result.error || 'Unable to reopen inspection.', 'error');
+      return;
+    }
+    inspectionMeta = result.meta;
+  } else {
+    inspectionMeta.status = STATUS.REOPENED;
+    inspectionMeta.revisionOpen = true;
+    writeJSON(META_KEY, inspectionMeta);
+  }
+  appendAudit('inspection_reopened_for_revision', { reason, status: inspectionMeta.status });
+  toast('Inspection reopened for revision. Returning to checklist...', 'info');
+  setTimeout(() => {
+    window.location.href = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + Date.now();
+  }, 400);
+}
+
+function goBackToReview(){
+  confirmLeaveWithUnsaved(() => {
+    saveCorrectiveState(false);
+    window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6';
+  });
+}
+
+function goHome(){
+  if (finalSubmitInProgress) return;
+  confirmLeaveWithUnsaved(() => {
+    inspectionMeta.lastPage = 'home';
+    inspectionMeta.lastSavedAt = nowIso();
+    writeJSON(META_KEY, inspectionMeta);
+    window.location.href = 'risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now();
+  });
+}
+
+function goPublishedRegister(){
+  window.location.href = 'risk-published-register.html?v=20260318-masterrefdeep11&_=' + Date.now();
+}
+
+function viewPublishedRecord(){
+  const ref = encodeURIComponent(inspectionMeta.referenceNo || '');
+  window.location.href = `risk-published-register.html?v=20260318-masterrefdeep11&ref=${ref}&_=${Date.now()}`;
+}
+
+function startNewAssessment(){
+  window.location.href = 'GOIL_Facility_Details.html?v=20260318-masterrefdeep6&_=' + Date.now();
+}
+
+function toast(msg, type){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type === 'error' ? 'error' : type === 'warn' ? 'warn' : type === 'info' ? 'info' : 'success');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(10px)';
+    setTimeout(() => el.remove(), 240);
+  }, 3400);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('beforeunload', event => {
+  if (correctiveDirty) {
+    event.preventDefault();
+    event.returnValue = '';
+    return;
+  }
+  saveCorrectiveState(false);
+});
+</script>
+</body>
+</html>

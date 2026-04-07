@@ -1,0 +1,98 @@
+[
+  {
+    "facilityId": "FS-001",
+    "name": "Tema Motorway Fuel Station",
+    "type": "Fuel Station",
+    "zone": "Greater Accra",
+    "status": "Active",
+    "enabledModules": ["Lube Bay", "Shop", "Restaurant", "Wash Bay"],
+    "lastAssessmentDate": "2025-12-15",
+    "nextDueDate": "2026-03-15",
+    "openCriticalCount": 1,
+    "currentRiskClass": "High"
+  },
+  {
+    "facilityId": "FS-002",
+    "name": "Kumasi Ridge Fuel Station",
+    "type": "Fuel Station",
+    "zone": "Ashanti",
+    "status": "Active",
+    "enabledModules": ["Tyre Centre", "LPG Module", "Shop"],
+    "lastAssessmentDate": "2025-11-30",
+    "nextDueDate": "2026-02-28",
+    "openCriticalCount": 3,
+    "currentRiskClass": "Critical"
+  },
+  {
+    "facilityId": "FS-003",
+    "name": "Takoradi Harbour Fuel Station",
+    "type": "Fuel Station",
+    "zone": "Western",
+    "status": "Active",
+    "enabledModules": ["Lube Bay", "Wash Bay"],
+    "lastAssessmentDate": "2026-01-10",
+    "nextDueDate": "2026-04-10",
+    "openCriticalCount": 0,
+    "currentRiskClass": "Medium"
+  },
+  {
+    "facilityId": "LPG-001",
+    "name": "Tema LPG Bottling Plant",
+    "type": "LPG Plant",
+    "zone": "Greater Accra",
+    "status": "Active",
+    "enabledModules": ["Tank Farm", "Warehouse", "Office Block"],
+    "lastAssessmentDate": "2025-12-05",
+    "nextDueDate": "2026-03-05",
+    "openCriticalCount": 2,
+    "currentRiskClass": "High"
+  },
+  {
+    "facilityId": "LPG-002",
+    "name": "Kumasi AutoGas Plant",
+    "type": "LPG Plant",
+    "zone": "Ashanti",
+    "status": "Active",
+    "enabledModules": ["Auto Gas", "Office Block"],
+    "lastAssessmentDate": "2026-01-20",
+    "nextDueDate": "2026-04-20",
+    "openCriticalCount": 0,
+    "currentRiskClass": "Medium"
+  },
+  {
+    "facilityId": "OFF-001",
+    "name": "GOIL Head Office",
+    "type": "Office",
+    "zone": "Greater Accra",
+    "status": "Active",
+    "enabledModules": ["Office Block"],
+    "lastAssessmentDate": "2025-12-20",
+    "nextDueDate": "2026-03-20",
+    "openCriticalCount": 1,
+    "currentRiskClass": "Medium"
+  },
+  {
+    "facilityId": "ODP-001",
+    "name": "Takoradi Office & Depot Complex",
+    "type": "Office & Depot",
+    "zone": "Western",
+    "status": "Active",
+    "enabledModules": ["Warehouse", "Tank Farm", "Office Block"],
+    "lastAssessmentDate": "2025-12-10",
+    "nextDueDate": "2026-03-10",
+    "openCriticalCount": 2,
+    "currentRiskClass": "High"
+  },
+  {
+    "facilityId": "ODP-002",
+    "name": "Buipe Logistics Office & Depot",
+    "type": "Office & Depot",
+    "zone": "Northern",
+    "status": "Temporarily Closed",
+    "enabledModules": ["Warehouse", "Tank Farm", "Office Block"],
+    "lastAssessmentDate": "2025-10-01",
+    "nextDueDate": "2025-12-30",
+    "openCriticalCount": 4,
+    "currentRiskClass": "Critical"
+  }
+]

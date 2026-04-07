@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corrective Action Detail | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
+  <style>
+    body{
+      background:
+        radial-gradient(900px 420px at 0% -15%, rgba(47,129,247,.14), transparent 62%),
+        radial-gradient(900px 420px at 100% -15%, rgba(244,121,32,.12), transparent 62%),
+        var(--bg);
+    }
+    .rm-card{
+      border-color:rgba(255,255,255,.14);
+      box-shadow:0 14px 28px rgba(0,0,0,.28);
+      background:linear-gradient(180deg, rgba(22,27,34,.98), rgba(13,17,23,.98));
+    }
+    .ca-header-card{
+      display:grid;
+      grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+      gap:14px;
+      padding:14px 16px;
+      border:1px solid var(--border2);
+      border-left:4px solid var(--or);
+      border-radius:10px;
+      background:linear-gradient(125deg, rgba(244,121,32,.10), rgba(22,27,34,.92) 42%, rgba(13,17,23,.98));
+      box-shadow:0 10px 24px rgba(0,0,0,.24);
+    }
+    .ca-eyebrow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:1.2px;
+      text-transform:uppercase;
+      color:var(--or);
+      margin-bottom:6px;
+    }
+    .ca-eyebrow::before{
+      content:'';
+      width:20px;
+      height:2px;
+      border-radius:999px;
+      background:var(--or);
+      opacity:.9;
+      flex-shrink:0;
+    }
+    .ca-facility-title{
+      margin:0;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:30px;
+      font-weight:900;
+      line-height:1.05;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      color:var(--wh);
+      word-break:break-word;
+    }
+    .ca-facility-title .accent{color:var(--or)}
+    .ca-meta-strip{
+      margin-top:10px;
+      padding-top:9px;
+      border-top:1px solid rgba(255,255,255,.12);
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      font-size:11px;
+      color:var(--wh3);
+      line-height:1.4;
+    }
+    .ca-meta-strip .meta-item{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      color:var(--wh2);
+    }
+    .ca-meta-strip .meta-item::after{
+      content:'·';
+      color:var(--wh4);
+      margin-left:4px;
+    }
+    .ca-meta-strip .meta-item:last-child::after{content:'';margin:0}
+    .ca-meta-strip .meta-label{
+      color:var(--wh4);
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      font-size:10px;
+    }
+    .ca-header-note{
+      margin:0;
+      font-size:12px;
+      line-height:1.55;
+      color:var(--wh3);
+      font-style:italic;
+      background:rgba(13,17,23,.48);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:8px;
+      padding:10px 12px;
+      align-self:stretch;
+      display:flex;
+      align-items:center;
+    }
+    .rm-stat{
+      position:relative;
+      background:linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 8px 20px rgba(0,0,0,.2);
+      border-top:3px solid var(--border2);
+      overflow:hidden;
+    }
+    .rm-stat .rm-stat-k{
+      color:var(--wh3);
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      font-size:10px;
+      font-weight:700;
+    }
+    .rm-stat .rm-stat-v{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:28px;
+      font-weight:900;
+      line-height:1;
+      margin-top:4px;
+      color:var(--wh2);
+    }
+    .rm-stat .kpi-sub{
+      margin-top:6px;
+      font-size:10px;
+      color:var(--wh4);
+      line-height:1.3;
+      min-height:13px;
+    }
+    .rm-stat .kpi-chip{
+      margin-top:7px;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:700;
+      background:var(--low-dim);
+      color:var(--low);
+      border:1px solid rgba(63,185,80,.32);
+    }
+    .kpi-open{border-top-color:var(--crit)}
+    .kpi-open .rm-stat-v{color:var(--crit)}
+    .kpi-progress{border-top-color:var(--med)}
+    .kpi-progress .rm-stat-v{color:var(--med)}
+    .kpi-overdue{
+      border-top:3px solid transparent;
+      border-image:linear-gradient(90deg, var(--crit), #ff4444) 1;
+    }
+    .kpi-overdue .rm-stat-v{color:var(--crit)}
+    .kpi-overdue .kpi-sub{color:#f58f8d}
+    .kpi-closed{border-top-color:var(--low)}
+    .kpi-closed .rm-stat-v{color:var(--low)}
+    .kpi-initial{border-top-color:var(--wh4)}
+    .kpi-initial .rm-stat-v{color:var(--wh3)}
+    .kpi-residual{border-top-color:var(--or)}
+    .kpi-residual .rm-stat-v{color:var(--or)}
+    .kpi-reduction{border-top-color:var(--low)}
+    .kpi-reduction .rm-stat-v{color:var(--low)}
+    .rm-subtabs .rm-subtab{
+      border:1.5px solid var(--border2);
+      background:transparent;
+      color:var(--wh4);
+      transition:all .18s ease;
+      gap:8px;
+      align-items:center;
+    }
+    .rm-subtabs .rm-subtab:hover{
+      border-color:rgba(244,121,32,.55);
+      color:var(--wh2);
+    }
+    .rm-subtabs .rm-subtab.active{
+      background:var(--or);
+      border-color:var(--or);
+      color:#fff;
+      box-shadow:0 2px 10px var(--or-glow);
+    }
+    .tab-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:20px;
+      height:20px;
+      border-radius:999px;
+      padding:0 6px;
+      font-size:10px;
+      font-weight:700;
+      background:var(--bg5);
+      color:var(--wh2);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .rm-subtab.active .tab-badge{
+      background:rgba(255,255,255,.15);
+      color:#fff;
+      border-color:rgba(255,255,255,.2);
+    }
+    .ca-table{
+      min-width:1450px;
+      table-layout:auto;
+    }
+    .ca-table th,
+    .ca-table td{
+      vertical-align:top;
+      white-space:normal;
+      padding:10px 9px;
+    }
+    .ca-table th.reco-head,
+    .ca-table td.reco-cell{
+      width:42%;
+      min-width:520px;
+      white-space:normal !important;
+    }
+    .ca-table td.reco-cell{
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      padding-top:8px;
+      padding-bottom:8px;
+    }
+    tr.row-crit { border-left: 3px solid var(--crit); background: rgba(218,54,51,.02); }
+    tr.row-high { border-left: 3px solid var(--high); background: rgba(224,125,35,.02); }
+    tr.row-med  { border-left: 3px solid var(--med); }
+    tr.row-overdue { border-left: 3px solid var(--crit); background: rgba(218,54,51,.05); }
+    .ca-table tbody tr.row-crit td:first-child{border-left:3px solid var(--crit)}
+    .ca-table tbody tr.row-high td:first-child{border-left:3px solid var(--high)}
+    .ca-table tbody tr.row-med td:first-child{border-left:3px solid var(--med)}
+    .ca-table tbody tr.row-overdue td:first-child{border-left:3px solid var(--crit)}
+    .action-id-stack{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      font-family:'JetBrains Mono','Consolas','Menlo',monospace;
+      font-size:10px;
+      line-height:1.35;
+      color:var(--wh4);
+    }
+    .action-id-stack .aid-base{color:var(--wh4)}
+    .action-id-stack .aid-code{color:var(--or)}
+    .action-id-stack .overdue-flag{
+      margin-top:2px;
+      color:var(--crit);
+      font-family:'Barlow',sans-serif;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .risk-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      line-height:1;
+      border:1px solid transparent;
+    }
+    .risk-pill.critical{
+      background:var(--crit-dim);
+      color:var(--crit);
+      border:1px solid rgba(218,54,51,.35);
+      box-shadow:0 0 8px rgba(218,54,51,.2);
+    }
+    .risk-pill.high{
+      background:var(--high-dim);
+      color:var(--high);
+      border:1px solid rgba(224,125,35,.25);
+    }
+    .risk-pill.moderate{
+      background:var(--med-dim);
+      color:var(--med);
+      border:1px solid rgba(210,153,34,.25);
+    }
+    .risk-dot-icon{
+      width:8px;
+      height:8px;
+      fill:currentColor;
+      flex-shrink:0;
+    }
+    .priority-pill-cell{
+      display:inline-flex;
+      align-items:center;
+      padding:3px 9px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      border:1px solid transparent;
+      line-height:1;
+    }
+    .priority-pill-cell.low{background:var(--low-dim);color:var(--low);border-color:rgba(63,185,80,.25)}
+    .priority-pill-cell.moderate{background:var(--med-dim);color:var(--med);border-color:rgba(210,153,34,.25)}
+    .priority-pill-cell.high{background:var(--high-dim);color:var(--high);border-color:rgba(224,125,35,.25)}
+    .priority-pill-cell.critical{background:var(--crit-dim);color:var(--crit);border-color:rgba(218,54,51,.25)}
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      line-height:1;
+      border:1px solid transparent;
+      gap:5px;
+    }
+    .status-open{background:var(--blue-dim);border-color:rgba(47,129,247,.35);color:var(--blue)}
+    .status-progress{background:var(--med-dim);border-color:rgba(210,153,34,.35);color:var(--med)}
+    .status-overdue{
+      background:var(--crit-dim);
+      border-color:rgba(218,54,51,.35);
+      color:var(--crit);
+      animation: pulse-border 2s infinite;
+    }
+    .status-closed{
+      background:var(--low);
+      border-color:var(--low);
+      color:#fff;
+      box-shadow:0 0 0 1px rgba(63,185,80,.22) inset;
+    }
+    .status-pending-verify{background:var(--med-dim);border-color:rgba(210,153,34,.35);color:var(--med)}
+    @keyframes pulse-border {
+      0%,100% { box-shadow: 0 0 0 0 rgba(218,54,51,0) }
+      50% { box-shadow: 0 0 0 3px rgba(218,54,51,.2) }
+    }
+    .close-btn{
+      padding:7px 11px;
+      font-size:11px;
+      font-weight:700;
+      border-radius:6px;
+      border:1.5px solid var(--border2);
+      background:transparent;
+      color:var(--wh3);
+      transition:all .15s ease;
+    }
+    .close-btn:hover{
+      border-color:var(--low);
+      color:var(--low);
+      background:rgba(63,185,80,.12);
+    }
+    .close-btn.btn-overdue{
+      background:var(--or);
+      color:#fff;
+      border-color:var(--or);
+      box-shadow:0 1px 6px var(--or-glow);
+    }
+    .close-btn.btn-overdue:hover{
+      background:#e06b15;
+      border-color:#e06b15;
+      color:#fff;
+    }
+    .close-btn.btn-progress{
+      background:var(--med-dim);
+      color:var(--med);
+      border-color:rgba(210,153,34,.35);
+    }
+    .not-set{
+      font-size:10px;
+      color:var(--wh4);
+      font-style:italic;
+    }
+    .file-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      background:var(--bg3);
+      border:1px solid var(--border2);
+      border-radius:3px;
+      padding:2px 7px;
+      font-size:10px;
+      color:var(--wh2);
+    }
+    .rec-action {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--wh2);
+      line-height: 1.5;
+      white-space:normal;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+    tr.row-crit .rec-action{border-color:rgba(218,54,51,.15)}
+    tr.row-high .rec-action{border-color:rgba(224,125,35,.15)}
+    .reco-input{
+      width:100%;
+      min-height:78px;
+      resize:vertical;
+      border-radius:4px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(28,33,40,.95);
+      color:var(--wh);
+      padding:8px 9px;
+      font-family:'Barlow',sans-serif;
+      font-size:12px;
+      line-height:1.45;
+      outline:none;
+      transition:border-color .16s ease, box-shadow .16s ease;
+      white-space:normal;
+    }
+    .reco-input:focus{
+      border-color:rgba(244,121,32,.65);
+      box-shadow:0 0 0 2px rgba(244,121,32,.16);
+    }
+    .auth-note{
+      margin-top:6px;
+      font-size:10px;
+      color:#f3b9b8;
+      line-height:1.35;
+      max-width:220px;
+    }
+    .row-actions{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:6px;
+    }
+    .rm-btn[disabled]{opacity:.45;cursor:not-allowed}
+    .photo-only{display:none}
+    body.mobile-camera .photo-only{display:inline-flex}
+    body.modal-open{
+      overflow:hidden;
+      overscroll-behavior:contain;
+    }
+    #closeModal{
+      padding:14px;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+    }
+    #closeModal .rm-modal-box{
+      width:min(980px,100%);
+      max-height:min(89vh,1000px);
+      padding:0;
+      border-radius:var(--rl);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      gap:0;
+      border:1px solid var(--border2);
+      background:var(--bg2);
+      box-shadow:
+        0 20px 50px rgba(0,0,0,.45),
+        0 0 0 1px rgba(244,121,32,.08),
+        0 0 28px rgba(244,121,32,.10),
+        0 0 24px rgba(47,129,247,.08);
+    }
+    .close-modal-topbar{
+      position:sticky;
+      top:0;
+      z-index:3;
+      height:52px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:8px 12px;
+      background:var(--bg2);
+      border-bottom:1px solid var(--border2);
+      flex-shrink:0;
+    }
+    .close-top-left{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      overflow:hidden;
+    }
+    .close-top-link{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border:1.5px solid var(--border2);
+      border-radius:6px;
+      background:transparent;
+      color:var(--wh3);
+      font-size:11px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all var(--t);
+      white-space:nowrap;
+    }
+    .close-top-link:hover{border-color:var(--or);color:var(--or)}
+    .close-vsep{
+      width:1px;
+      height:22px;
+      background:rgba(255,255,255,.12);
+      flex-shrink:0;
+    }
+    .close-brand{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--wh2);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900;
+      letter-spacing:.4px;
+      white-space:nowrap;
+    }
+    .close-brand img{
+      width:18px;
+      height:18px;
+      object-fit:contain;
+      filter:drop-shadow(0 0 6px rgba(244,121,32,.35));
+    }
+    .close-crumbs{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      font-size:11px;
+      color:var(--wh4);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .close-crumbs a{
+      color:var(--wh4);
+      text-decoration:none;
+      transition:color var(--t);
+    }
+    .close-crumbs a:hover{color:var(--or)}
+    .close-crumbs .active{
+      color:var(--wh2);
+      font-weight:700;
+    }
+    .close-top-right .rm-primary-btn{
+      min-height:34px;
+      padding:7px 12px;
+      font-size:11px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .close-modal-body{
+      flex:1 1 auto;
+      min-height:0;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+      padding:14px 16px;
+      display:grid;
+      gap:12px;
+      scrollbar-width:thin;
+    }
+    .close-modal-body::-webkit-scrollbar{width:8px}
+    .close-modal-body::-webkit-scrollbar-thumb{
+      background:rgba(139,148,158,.5);
+      border-radius:8px;
+    }
+    .close-modal-body::-webkit-scrollbar-track{background:rgba(255,255,255,.03)}
+    .close-title-block{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:10px;
+      padding:10px 12px;
+      background:linear-gradient(120deg, rgba(244,121,32,.06), rgba(255,255,255,.02) 45%, rgba(13,17,23,.4));
+    }
+    .close-eyebrow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--or);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      margin-bottom:6px;
+    }
+    .close-eyebrow::before{
+      content:'';
+      width:16px;
+      height:2px;
+      border-radius:999px;
+      background:var(--or);
+      opacity:.9;
+    }
+    .close-title{
+      margin:0;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:32px;
+      font-weight:900;
+      text-transform:uppercase;
+      color:var(--wh);
+      line-height:1;
+      letter-spacing:.4px;
+    }
+    .close-title-meta{
+      margin:6px 0 0 0;
+      font-size:11px;
+      color:var(--wh4);
+      line-height:1.45;
+    }
+    .close-reference-card{
+      background:var(--bg2);
+      border:1px solid var(--border2);
+      border-left:4px solid var(--or);
+      border-radius:var(--rl);
+      padding:10px 12px;
+      display:grid;
+      gap:10px;
+    }
+    .close-reference-card.critical{
+      border-left-color:var(--crit);
+      box-shadow:0 0 6px rgba(218,54,51,.15);
+    }
+    .ref-top-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .action-id-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:var(--or-dim);
+      border:1px solid var(--or-glow);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:12px;
+      font-weight:700;
+      color:var(--or);
+      letter-spacing:.3px;
+      text-transform:uppercase;
+    }
+    .action-id-chip svg{
+      width:12px;
+      height:12px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.8;
+    }
+    .ref-risk-chips{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      flex-wrap:wrap;
+    }
+    .risk-chip-priority{
+      display:inline-flex;
+      align-items:center;
+      padding:3px 9px;
+      border-radius:999px;
+      background:var(--med-dim);
+      color:var(--med);
+      border:1px solid var(--med-glow);
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .risk-chip-priority.critical{
+      background:var(--crit-dim);
+      color:var(--crit);
+      border-color:rgba(218,54,51,.28);
+      box-shadow:0 0 6px rgba(218,54,51,.15);
+    }
+    .risk-chip-score{
+      display:inline-flex;
+      align-items:center;
+      padding:3px 9px;
+      border-radius:999px;
+      background:var(--bg3);
+      border:1px solid var(--border2);
+      color:var(--wh3);
+      font-size:11px;
+      font-weight:700;
+    }
+    .ref-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+      background:var(--bg3);
+      border-radius:6px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .ref-item .k{
+      font-size:10px;
+      color:var(--wh4);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+    .ref-item .v{
+      font-size:12px;
+      color:var(--wh2);
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .ref-item-reco{
+      border-left:3px solid var(--med);
+      padding-left:9px;
+    }
+    .ref-item-reco.critical{border-left-color:var(--crit)}
+    .close-summary-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .close-summary-links .rm-btn{
+      padding:7px 12px;
+      border-width:1.5px;
+      background:transparent;
+    }
+    .close-risk-preview{
+      border:1px solid var(--border2);
+      border-radius:var(--rl);
+      background:var(--bg2);
+      padding:10px 12px;
+      display:grid;
+      gap:10px;
+    }
+    .close-section-title{
+      margin:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--wh);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+    .close-section-title::before{
+      content:'';
+      width:3px;
+      height:16px;
+      border-radius:3px;
+      background:var(--or);
+      flex-shrink:0;
+    }
+    .risk-preview-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+    }
+    .risk-preview-item{
+      border:1px solid var(--border2);
+      border-top:3px solid var(--low);
+      border-radius:8px;
+      padding:8px;
+      background:rgba(13,17,23,.5);
+      display:grid;
+      gap:4px;
+    }
+    .risk-preview-item .k{
+      font-size:10px;
+      color:var(--wh4);
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      font-weight:800;
+    }
+    .risk-preview-item .v{
+      font-size:20px;
+      color:var(--low);
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900;
+      line-height:1;
+    }
+    .risk-preview-item .sub{
+      font-size:10px;
+      color:var(--wh4);
+    }
+    .risk-preview-item.risk-residual{border-top-color:var(--med)}
+    .risk-preview-item.risk-residual .v{color:var(--med)}
+    .risk-preview-item.risk-reduction{border-top-color:var(--low)}
+    .risk-preview-item.risk-reduction .v{color:var(--or)}
+    .risk-improve-chip{
+      margin-top:2px;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 7px;
+      border-radius:999px;
+      font-size:10px;
+      font-weight:700;
+      background:var(--low-dim);
+      color:var(--low);
+      border:1px solid rgba(63,185,80,.28);
+      width:max-content;
+    }
+    .closure-impact{
+      font-size:11px;
+      color:var(--or);
+      border:1px solid var(--or-glow);
+      padding:8px 10px;
+      background:var(--or-dim);
+      border-radius:6px;
+      line-height:1.45;
+    }
+    .close-form-card{
+      border:1px solid var(--border2);
+      border-radius:var(--rl);
+      background:var(--bg2);
+      padding:10px 12px;
+      display:grid;
+      gap:10px;
+    }
+    .close-form-title{
+      margin:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:var(--wh);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+    .close-form-title::before{
+      content:'';
+      width:3px;
+      height:16px;
+      border-radius:3px;
+      background:var(--or);
+      flex-shrink:0;
+    }
+    .close-fields-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px 12px;
+    }
+    .close-fields-grid .rm-label{
+      font-size:10px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      color:var(--wh3);
+      margin-bottom:5px;
+      display:block;
+    }
+    .close-fields-grid .req{color:var(--crit)}
+    .close-fields-grid .rm-input,
+    .close-fields-grid .rm-select,
+    .close-fields-grid .rm-textarea{
+      background:var(--bg3);
+      border:1.5px solid var(--border2);
+      border-radius:7px;
+      color:var(--wh2);
+      font-family:'Barlow',sans-serif;
+      font-size:12px;
+      outline:none;
+      transition:border-color var(--t), box-shadow var(--t);
+      width:100%;
+    }
+    .close-fields-grid .rm-input,
+    .close-fields-grid .rm-select{height:38px;padding:0 10px}
+    .close-fields-grid .rm-textarea{
+      min-height:110px;
+      padding:8px 10px;
+      resize:vertical;
+      line-height:1.45;
+    }
+    .close-fields-grid .rm-input:focus,
+    .close-fields-grid .rm-select:focus,
+    .close-fields-grid .rm-textarea:focus{
+      border-color:var(--or);
+      box-shadow:0 0 0 3px rgba(244,121,32,.1);
+    }
+    #closedBy{
+      background:var(--bg4);
+      color:var(--wh3);
+    }
+    #closureMethod.method-unset{
+      border-color:var(--med);
+      box-shadow:0 0 0 2px rgba(210,153,34,.16);
+    }
+    .method-hint{
+      margin-top:4px;
+      font-size:10px;
+      color:var(--med);
+      display:none;
+    }
+    .method-hint.show{display:block}
+    .close-evidence-wrap{grid-column:span 2}
+    .close-evidence-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .evidence-drop-zone{
+      margin-top:6px;
+      border:1.5px dashed var(--border2);
+      border-radius:8px;
+      padding:10px;
+      background:rgba(255,255,255,.01);
+      transition:border-color var(--t), background var(--t);
+    }
+    .evidence-drop-zone:hover{
+      border-color:var(--or);
+      background:rgba(244,121,32,.05);
+    }
+    .drop-title{
+      font-size:12px;
+      color:var(--wh2);
+      line-height:1.4;
+      margin-bottom:4px;
+    }
+    .drop-title .icon{
+      margin-right:6px;
+      color:var(--or);
+    }
+    .drop-help{
+      font-size:10px;
+      color:var(--wh4);
+      line-height:1.35;
+    }
+    .close-evidence-note{
+      font-size:11px;
+      color:var(--wh3);
+      margin-top:8px;
+      line-height:1.4;
+    }
+    .close-evidence-note.has-file{color:var(--low)}
+    .evidence-preview{
+      margin-top:8px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:8px;
+      padding:8px;
+      background:rgba(13,17,23,.45);
+    }
+    .evidence-preview.empty{display:none}
+    .evidence-preview-main{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+    .evidence-preview-main img{
+      width:56px;
+      height:56px;
+      object-fit:cover;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,.18);
+      flex-shrink:0;
+    }
+    .evidence-preview-file{
+      font-size:12px;
+      color:var(--wh2);
+      line-height:1.35;
+      word-break:break-word;
+    }
+    .evidence-preview-actions{
+      margin-top:7px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .evidence-preview-actions .rm-btn{
+      padding:6px 10px;
+      font-size:11px;
+    }
+    .close-textarea-wrap{grid-column:span 2}
+    .counter-row{
+      margin-top:4px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      font-size:10px;
+    }
+    .counter{
+      color:var(--wh4);
+      margin-left:auto;
+    }
+    .counter.low,
+    .counter-hint{
+      color:var(--crit);
+    }
+    .counter-hint{display:none}
+    .counter-hint.show{display:block}
+    .close-modal-foot{
+      position:sticky;
+      bottom:0;
+      z-index:3;
+      background:var(--bg2);
+      border-top:1px solid var(--border2);
+      padding:10px 14px;
+      min-height:66px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      flex-shrink:0;
+    }
+    .close-foot-note{
+      font-size:11px;
+      color:var(--wh3);
+      line-height:1.4;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .close-foot-note .icon{color:var(--or)}
+    .close-save-btn:hover{
+      border-color:var(--blue);
+      color:var(--blue);
+      background:var(--blue-dim);
+    }
+    .close-submit-wrap{
+      position:relative;
+      display:inline-flex;
+    }
+    .close-submit-tooltip{
+      position:absolute;
+      right:0;
+      bottom:calc(100% + 8px);
+      padding:6px 9px;
+      border-radius:6px;
+      background:var(--bg3);
+      border:1px solid var(--border2);
+      color:var(--wh2);
+      font-size:10px;
+      line-height:1.3;
+      white-space:nowrap;
+      opacity:0;
+      transform:translateY(4px);
+      transition:opacity var(--t), transform var(--t);
+      pointer-events:none;
+    }
+    .close-submit-wrap:hover .close-submit-tooltip{
+      opacity:1;
+      transform:translateY(0);
+    }
+    .rm-submit-close{
+      background:var(--low);
+      border-color:var(--low);
+      color:#fff;
+      box-shadow:0 2px 12px var(--low-glow);
+    }
+    .rm-submit-close:hover{
+      background:#2ea043;
+      border-color:#2ea043;
+      color:#fff;
+      transform:translateY(-1px);
+    }
+    .rm-modal-box-sm{max-width:430px}
+    .close-toast-wrap{
+      position:fixed;
+      top:76px;
+      right:20px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      z-index:1200;
+      pointer-events:none;
+    }
+    .close-toast{
+      padding:9px 12px;
+      border-radius:6px;
+      font-size:12px;
+      font-weight:600;
+      color:#fff;
+      pointer-events:auto;
+      border-left:3px solid transparent;
+      animation:ctIn .18s ease;
+      box-shadow:0 8px 16px rgba(0,0,0,.25);
+    }
+    .close-toast.success{background:#065f46;border-left-color:var(--low)}
+    .close-toast.warn{background:#78350f;border-left-color:var(--med)}
+    .close-toast.error{background:#7f1d1d;border-left-color:var(--crit)}
+    @keyframes ctIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+    @keyframes ctOut{from{opacity:1}to{opacity:0;transform:translateX(12px)}}
+    @media (max-width:980px){
+      .ca-header-card{grid-template-columns:1fr}
+      .close-crumbs{display:none}
+      .ref-grid{grid-template-columns:1fr}
+      .risk-preview-grid{grid-template-columns:1fr}
+      .close-fields-grid{grid-template-columns:1fr}
+      .close-evidence-wrap,
+      .close-textarea-wrap{grid-column:span 1}
+      .ca-table th.reco-head,
+      .ca-table td.reco-cell{min-width:360px}
+    }
+    @media (max-width:760px){
+      #closeModal{
+        padding:0;
+        align-items:stretch;
+      }
+      #closeModal .rm-modal-box{
+        width:100%;
+        max-height:100vh;
+        height:100vh;
+        border-radius:0;
+      }
+      .close-modal-topbar{
+        height:auto;
+        min-height:52px;
+        padding-top:max(8px, env(safe-area-inset-top));
+      }
+      .close-top-left{
+        flex-wrap:wrap;
+        gap:8px;
+      }
+      .close-vsep{display:none}
+      .close-top-right{
+        width:100%;
+        display:flex;
+        justify-content:flex-end;
+      }
+      .close-modal-foot{
+        padding-bottom:calc(10px + env(safe-area-inset-bottom));
+      }
+      .rm-modal-actions{
+        flex-wrap:wrap;
+      }
+      .rm-modal-actions .rm-btn{
+        flex:1 1 calc(50% - 4px);
+      }
+      .rm-modal-actions .close-submit-wrap{
+        flex:1 1 100%;
+      }
+      .rm-modal-actions .rm-primary-btn{
+        width:100%;
+      }
+      .close-submit-tooltip{
+        right:auto;
+        left:0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="rm-topbar">
+    <div class="rm-topbar-left">
+      <button class="rm-back-btn" id="backLandingBtn">← Assessment Management Center</button>
+      <div class="rm-title-wrap">
+        <h1 class="rm-title">Corrective Action Detail</h1>
+        <p class="rm-subtitle" id="detailSubtitle">Facility corrective action review and closure</p>
+      </div>
+    </div>
+    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
+  </header>
+
+  <main class="rm-shell">
+    <section class="rm-card">
+      <div class="ca-header-card">
+        <div>
+          <div class="ca-eyebrow">Facility Actions</div>
+          <h3 class="ca-facility-title" id="facilityHeading">FACILITY ACTIONS</h3>
+          <div class="ca-meta-strip">
+            <span class="meta-item"><span class="meta-label">Zone</span><span id="metaZone">-</span></span>
+            <span class="meta-item"><span class="meta-label">Facility Type</span><span id="metaFacilityType">-</span></span>
+            <span class="meta-item"><span class="meta-label">Inspection Ref</span><span id="metaInspectionRef">-</span></span>
+            <span class="meta-item"><span class="meta-label">Inspection Date</span><span id="metaInspectionDate">-</span></span>
+            <span class="meta-item"><span class="meta-label">Inspector</span><span id="metaInspector">-</span></span>
+          </div>
+        </div>
+        <p class="ca-header-note">Issue = what was found. Recommended Action = what should be done. Closure is restricted to the original assessor or authorised reviewers.</p>
+      </div>
+      <div class="rm-actions" style="margin-top:10px;">
+        <button class="rm-btn" id="backCorrectionsBtn">Back to Corrections &amp; Corrective Actions</button>
+      </div>
+
+      <div class="rm-stat-grid" style="margin-top:10px;">
+        <article class="rm-stat kpi-open">
+          <div class="rm-stat-k">Open Actions</div>
+          <div class="rm-stat-v" id="statOpen">0</div>
+          <div class="kpi-sub">&nbsp;</div>
+        </article>
+        <article class="rm-stat kpi-progress">
+          <div class="rm-stat-k">In Progress</div>
+          <div class="rm-stat-v" id="statInProgress">0</div>
+          <div class="kpi-sub">&nbsp;</div>
+        </article>
+        <article class="rm-stat kpi-overdue">
+          <div class="rm-stat-k">Overdue</div>
+          <div class="rm-stat-v" id="statOverdue">0</div>
+          <div class="kpi-sub">⚠ Past due date</div>
+        </article>
+        <article class="rm-stat kpi-closed">
+          <div class="rm-stat-k">Closed</div>
+          <div class="rm-stat-v" id="statClosed">0</div>
+          <div class="kpi-sub">&nbsp;</div>
+        </article>
+        <article class="rm-stat kpi-initial">
+          <div class="rm-stat-k">Initial Risk</div>
+          <div class="rm-stat-v" id="statInitialRisk">0</div>
+          <div class="kpi-sub">&nbsp;</div>
+        </article>
+        <article class="rm-stat kpi-residual">
+          <div class="rm-stat-k">Residual Risk</div>
+          <div class="rm-stat-v" id="statResidualRisk">0</div>
+          <div class="kpi-sub">&nbsp;</div>
+        </article>
+        <article class="rm-stat kpi-reduction">
+          <div class="rm-stat-k">Risk Reduction</div>
+          <div class="rm-stat-v" id="statRiskReduction">0</div>
+          <div class="kpi-chip" id="riskReductionChip">↓ 0% improved</div>
+        </article>
+      </div>
+
+      <div class="rm-subtabs" id="actionTabs" style="margin-top:10px;">
+        <button class="rm-subtab active" data-tab="open">Open Actions <span class="tab-badge" id="tabCountOpen">0</span></button>
+        <button class="rm-subtab" data-tab="closed">Closed Actions <span class="tab-badge" id="tabCountClosed">0</span></button>
+        <button class="rm-subtab" data-tab="all">All Actions <span class="tab-badge" id="tabCountAll">0</span></button>
+      </div>
+
+      <div class="rm-table-wrap" style="margin-top:10px;">
+        <table class="rm-table ca-table">
+          <thead>
+            <tr>
+              <th>Action ID</th>
+              <th>Inspection Ref</th>
+              <th class="reco-head">Recommended Action</th>
+              <th>Risk</th>
+              <th>Priority</th>
+              <th>Due Date</th>
+              <th>Status</th>
+            <th>Closure Date</th>
+            <th>Evidence</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody id="actionsTbody"></tbody>
+        </table>
+      </div>
+      <p class="rm-muted" id="actionHint" style="margin-top:10px;">Evidence is optional. Critical closures may move to Closed Pending Verification before full risk reduction.</p>
+    </section>
+  </main>
+
+  <div class="rm-modal" id="closeModal">
+    <div class="rm-modal-box">
+      <div class="close-modal-topbar">
+        <div class="close-top-left">
+          <button class="close-top-link" id="closeModalBackBtn">← Corrective Action Detail</button>
+          <span class="close-vsep"></span>
+          <div class="close-brand">
+            <span>GOIL HSSEQ</span>
+          </div>
+          <span class="close-vsep"></span>
+          <div class="close-crumbs">
+            <a href="#" id="crumbModule">Module</a>
+            <span>/</span>
+            <a href="#" id="crumbCorrections">Corrections &amp; CAs</a>
+            <span>/</span>
+            <span class="active" id="modalBreadcrumbFacility">Facility</span>
+            <span>/</span>
+            <span class="active">Close Action</span>
+          </div>
+        </div>
+        <div class="close-top-right">
+          <button class="rm-primary-btn" id="modalConductAssessmentBtn">Conduct Assessment</button>
+        </div>
+      </div>
+
+      <div class="close-modal-body">
+        <div class="close-title-block">
+          <div class="close-eyebrow">Corrective Action Closure</div>
+          <h4 class="close-title">Close Corrective Action</h4>
+          <p class="close-title-meta" id="closeActionMeta">[Action ID] · [Facility Name] · [Section]</p>
+        </div>
+
+        <div class="close-reference-card" id="closeReferenceCard">
+          <div class="ref-top-row">
+            <span class="action-id-chip" id="modalActionIdBadge">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h10v12H3z"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
+              <span>Action ID</span>
+            </span>
+            <div class="ref-risk-chips">
+              <span class="risk-chip-priority" id="modalPriorityPill">Priority</span>
+              <span class="risk-chip-score" id="modalRiskScorePill">Score 0</span>
+            </div>
+          </div>
+
+          <div class="ref-grid">
+            <div class="ref-item">
+              <div class="k">Issue</div>
+              <div class="v" id="modalSummaryIssueText">-</div>
+            </div>
+            <div class="ref-item ref-item-reco" id="refRecommendedCell">
+              <div class="k">Recommended Action</div>
+              <div class="v" id="modalSummaryRecoText">-</div>
+            </div>
+            <div class="ref-item">
+              <div class="k">Section / Source</div>
+              <div class="v" id="modalSummarySourceText">-</div>
+            </div>
+            <div class="ref-item">
+              <div class="k">Priority / Risk</div>
+              <div class="v" id="modalSummaryPriorityText">-</div>
+            </div>
+          </div>
+
+          <div class="close-summary-links">
+            <button class="rm-btn" id="viewSourceBtn" type="button">View Source Checklist Item</button>
+            <button class="rm-btn" id="viewAssessmentBtn" type="button">View Full Assessment Record</button>
+          </div>
+        </div>
+
+        <div class="close-risk-preview">
+          <h5 class="close-section-title">Residual Risk Preview</h5>
+          <div class="risk-preview-grid">
+            <div class="risk-preview-item risk-initial">
+              <div class="k">Initial Risk</div>
+              <div class="v" id="previewInitialRisk">-</div>
+              <div class="sub" id="previewInitialRiskLevel">-</div>
+            </div>
+            <div class="risk-preview-item risk-residual">
+              <div class="k">Residual Risk After Closure</div>
+              <div class="v" id="previewResidualRisk">-</div>
+              <div class="sub" id="previewResidualRiskLevel">-</div>
+            </div>
+            <div class="risk-preview-item risk-reduction">
+              <div class="k">Risk Reduction</div>
+              <div class="v" id="previewRiskReduction">-</div>
+              <span class="risk-improve-chip" id="previewRiskReductionChip">↓ 0% improved</span>
+            </div>
+          </div>
+          <div class="closure-impact" id="closureImpactNote">⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.</div>
+        </div>
+
+        <div class="close-form-card">
+          <h5 class="close-form-title">Closure Details</h5>
+          <div class="close-fields-grid">
+          <div>
+            <label class="rm-label" for="closureOutcome">Closure Outcome Status <span class="req">*</span></label>
+            <select class="rm-select" id="closureOutcome">
+              <option value="Closed">Closed</option>
+              <option value="Closed — Partially Resolved">Closed — Partially Resolved</option>
+              <option value="Closed — Risk Accepted">Closed — Risk Accepted</option>
+              <option value="Deferred with Approval">Deferred with Approval</option>
+            </select>
+          </div>
+          <div>
+            <label class="rm-label" for="closureMethod">Closure Method <span class="req">*</span></label>
+            <select class="rm-select" id="closureMethod">
+              <option value="">Select closure method</option>
+              <option value="Remediation Completed">Remediation Completed</option>
+              <option value="Compensating Control Implemented">Compensating Control Implemented</option>
+              <option value="Risk Accepted with Justification">Risk Accepted with Justification</option>
+              <option value="Third-Party Certification Obtained">Third-Party Certification Obtained</option>
+              <option value="Training & Awareness Completed">Training & Awareness Completed</option>
+              <option value="Deferred with Approval">Deferred with Approval</option>
+              <option value="Verified by Re-inspection">Verified by Re-inspection</option>
+            </select>
+            <div class="method-hint show" id="closureMethodHint">Required — select how this action was resolved</div>
+          </div>
+          <div>
+            <label class="rm-label" for="closureDate">Closure Date</label>
+            <input class="rm-input" id="closureDate" type="date" />
+          </div>
+          <div>
+            <label class="rm-label" for="closedBy">Closed By</label>
+            <input class="rm-input" id="closedBy" placeholder="Name / email" readonly />
+          </div>
+          <div>
+            <label class="rm-label" for="originalAssessorDisplay">Assessment Owner / Original Assessor</label>
+            <input class="rm-input" id="originalAssessorDisplay" readonly />
+          </div>
+          <div class="close-evidence-wrap">
+            <label class="rm-label" for="closureEvidence">Evidence Upload</label>
+            <input class="rm-input" id="closureEvidence" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" style="display:none" />
+            <input class="rm-input" id="closurePhoto" type="file" accept="image/*" capture="environment" style="display:none" />
+            <div class="evidence-drop-zone">
+              <div class="drop-title"><span class="icon">☁</span>Drop files here or click to upload</div>
+              <div class="drop-help">Photos, PDFs, certificates — max 20 MB each</div>
+              <div class="close-evidence-actions" style="margin-top:8px;">
+                <button class="rm-btn" id="closureUploadBtn" type="button">Upload Attachment</button>
+                <button class="rm-btn photo-only" id="closurePhotoBtn" type="button">Take Photo</button>
+              </div>
+            </div>
+            <div class="close-evidence-note" id="closureEvidenceName">No file selected. Evidence is optional and recommended.</div>
+            <div class="evidence-preview empty" id="closureEvidencePreview"></div>
+          </div>
+          <div class="close-textarea-wrap">
+            <label class="rm-label" for="closureDetails">Closure Details <span class="req">*</span></label>
+            <textarea class="rm-textarea" id="closureDetails" maxlength="500" placeholder="Describe what was corrected and how compliance was verified…"></textarea>
+            <div class="counter-row">
+              <span class="counter-hint" id="closureDetailsHint">30 more characters required</span>
+              <span class="counter" id="closureDetailsCounter">0 / 500</span>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="rm-list" id="closeErrorWrap" style="display:none;">
+          <div class="rm-list-item" style="border-left-color: var(--err);">
+            <div class="t">Missing required fields</div>
+            <div class="m" id="closeErrorText">Complete all required fields.</div>
+          </div>
+        </div>
+        <div class="rm-list" id="closeInfoWrap" style="display:none;">
+          <div class="rm-list-item" style="border-left-color: var(--ok);">
+            <div class="t">Saved</div>
+            <div class="m" id="closeInfoText">Draft saved.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="close-modal-foot">
+        <div class="close-foot-note"><span class="icon">⚡</span>Closing this action will update the residual risk for this assessment.</div>
+        <div class="rm-modal-actions">
+          <button class="rm-btn" id="cancelCloseBtn">Cancel</button>
+          <button class="rm-btn close-save-btn" id="saveCloseDraftBtn">Save Draft</button>
+          <div class="close-submit-wrap">
+            <button class="rm-primary-btn rm-submit-close" id="submitCloseBtn">🔒 Submit Closure</button>
+            <div class="close-submit-tooltip">This action cannot be undone once confirmed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rm-modal" id="confirmCloseModal">
+    <div class="rm-modal-box rm-modal-box-sm">
+      <h4>Confirm Corrective Action Closure</h4>
+      <p class="rm-muted" id="confirmCloseText">Are you sure you want to close this corrective action?</p>
+      <div class="rm-modal-actions">
+        <button class="rm-btn" id="cancelConfirmCloseBtn">Cancel</button>
+        <button class="rm-primary-btn rm-submit-close" id="confirmCloseSubmitBtn">Yes, Submit Closure</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="close-toast-wrap" id="closeToastWrap"></div>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    var activeTab = 'open';
+    var activeFacility = '';
+    var activeMasterRef = '';
+    var closeActionId = '';
+    var currentUser = {};
+    var closureDraftEvidenceName = '';
+    var closurePreviewUrl = '';
+    var pendingClosurePayload = null;
+    var authSession = {};
+
+    function supportsCameraCapture() {
+      var ua = navigator.userAgent || '';
+      var mobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || window.matchMedia('(pointer:coarse)').matches;
+      return mobileLike;
+    }
+
+    function applyCameraModeClass() {
+      document.body.classList.toggle('mobile-camera', supportsCameraCapture());
+    }
+
+    function readAuthSession() {
+      try {
+        authSession = JSON.parse(localStorage.getItem('goil_auth_session') || '{}') || {};
+      } catch (e) {
+        authSession = {};
+      }
+      return authSession;
+    }
+
+    function showCloseToast(message, type) {
+      var wrap = document.getElementById('closeToastWrap');
+      if (!wrap) return;
+      var toast = document.createElement('div');
+      toast.className = 'close-toast ' + (type || 'success');
+      toast.textContent = message;
+      wrap.appendChild(toast);
+      setTimeout(function () {
+        toast.style.animation = 'ctOut .2s ease forwards';
+        setTimeout(function () {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 220);
+      }, 3000);
+    }
+
+    function scrollToCloseField(fieldId) {
+      var field = document.getElementById(fieldId);
+      if (!field) return;
+      field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (typeof field.focus === 'function') field.focus();
+    }
+
+    function updateClosureMethodState(forceShowHint) {
+      var methodEl = document.getElementById('closureMethod');
+      var hint = document.getElementById('closureMethodHint');
+      if (!methodEl || !hint) return;
+      var hasValue = !!String(methodEl.value || '').trim();
+      methodEl.classList.toggle('method-unset', !hasValue);
+      hint.classList.toggle('show', forceShowHint || !hasValue);
+    }
+
+    function updateClosureDetailsCounter() {
+      var textarea = document.getElementById('closureDetails');
+      var counter = document.getElementById('closureDetailsCounter');
+      var hint = document.getElementById('closureDetailsHint');
+      if (!textarea || !counter || !hint) return;
+      var len = String(textarea.value || '').length;
+      var remaining = Math.max(0, 30 - len);
+      counter.textContent = len + ' / 500';
+      counter.classList.toggle('low', len < 30);
+      hint.textContent = remaining + ' more characters required';
+      hint.classList.toggle('show', len < 30);
+    }
+
+    function getActionIdFromContext() {
+      var params = new URLSearchParams(window.location.search);
+      var qp = (params.get('actionId') || params.get('caActionId') || '').trim();
+      if (qp) return qp;
+      try {
+        var ctx = JSON.parse(localStorage.getItem('goil_ca_context') || '{}') || {};
+        return String(ctx.actionId || ctx.caActionId || ctx.id || '').trim();
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function syncModalScrollLock() {
+      var closeOpen = document.getElementById('closeModal').classList.contains('show');
+      var confirmOpen = document.getElementById('confirmCloseModal').classList.contains('show');
+      document.body.classList.toggle('modal-open', closeOpen || confirmOpen);
+    }
+
+    function clearClosurePreviewUrl() {
+      if (closurePreviewUrl) {
+        URL.revokeObjectURL(closurePreviewUrl);
+        closurePreviewUrl = '';
+      }
+    }
+
+    function getSelectedClosureFile() {
+      var uploadInput = document.getElementById('closureEvidence');
+      var photoInput = document.getElementById('closurePhoto');
+      var photoFile = photoInput && photoInput.files && photoInput.files[0] ? photoInput.files[0] : null;
+      var uploadFile = uploadInput && uploadInput.files && uploadInput.files[0] ? uploadInput.files[0] : null;
+      return photoFile || uploadFile || null;
+    }
+
+    function clearSelectedClosureFiles() {
+      document.getElementById('closureEvidence').value = '';
+      document.getElementById('closurePhoto').value = '';
+      closureDraftEvidenceName = '';
+      clearClosurePreviewUrl();
+      updateClosureEvidenceName();
+    }
+
+    function removeClosureEvidence() {
+      clearSelectedClosureFiles();
+      hideCloseInfo();
+    }
+
+    function replaceClosureEvidence() {
+      document.getElementById('closureEvidence').click();
+    }
+
+    function updateClosureEvidencePreview(selected) {
+      var preview = document.getElementById('closureEvidencePreview');
+      if (!preview) return;
+      clearClosurePreviewUrl();
+
+      if (!selected) {
+        preview.className = 'evidence-preview empty';
+        preview.innerHTML = '';
+        return;
+      }
+
+      var imagePreview = '';
+      if (selected && String(selected.type || '').toLowerCase().indexOf('image/') === 0) {
+        closurePreviewUrl = URL.createObjectURL(selected);
+        imagePreview = '<img src="' + RiskModuleUtils.esc(closurePreviewUrl) + '" alt="Evidence preview" />';
+      }
+
+      preview.className = 'evidence-preview';
+      preview.innerHTML =
+        '<div class="evidence-preview-main">' +
+          imagePreview +
+          '<div class="evidence-preview-file">' + RiskModuleUtils.esc(selected.name || 'Unnamed file') + '</div>' +
+        '</div>' +
+        '<div class="evidence-preview-actions">' +
+          '<button class="rm-btn" type="button" onclick="replaceClosureEvidence()">Replace</button>' +
+          '<button class="rm-btn" type="button" onclick="removeClosureEvidence()">Remove</button>' +
+        '</div>';
+    }
+
+    function updateClosureEvidenceName() {
+      var label = document.getElementById('closureEvidenceName');
+      if (!label) return;
+      var selected = getSelectedClosureFile();
+      if (!selected) {
+        label.textContent = 'No file selected. Evidence is optional and recommended.';
+        label.classList.remove('has-file');
+        updateClosureEvidencePreview(null);
+        return;
+      }
+      var typeLabel = String(selected.type || '').toLowerCase().indexOf('image/') === 0 ? 'Photo' : 'Attachment';
+      label.textContent = typeLabel + ' selected: ' + selected.name;
+      label.classList.add('has-file');
+      updateClosureEvidencePreview(selected);
+    }
+
+    function normalizeRef(ref) {
+      return String(ref || '')
+        .trim()
+        .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+        .replace(/[-_ ]+$/, '')
+        .trim();
+    }
+
+    function actionMasterReference(action) {
+      var candidate = String(
+        action && (
+          action.master_reference ||
+          action.masterReference ||
+          action.parentReference ||
+          action.parent_reference ||
+          action.inspectionRef ||
+          action.assessment_reference ||
+          ''
+        ) || ''
+      ).trim();
+      if (candidate) return normalizeRef(candidate);
+      var actionId = String(action && action.actionId || '').trim();
+      if (!actionId) return '';
+      var match = actionId.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+      return normalizeRef(match && match[1] || actionId);
+    }
+
+    function recordMasterReference(record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function') {
+        return normalizeRef(RiskModuleUtils.getParentInspectionReference(record));
+      }
+      return normalizeRef((record && (record.assessment_reference || record.inspectionRef)) || '');
+    }
+
+    function getFacilityParam() {
+      var params = new URLSearchParams(window.location.search);
+      return (params.get('facility') || '').trim();
+    }
+
+    function getMasterRefParam() {
+      var params = new URLSearchParams(window.location.search);
+      return normalizeRef((params.get('ref') || params.get('masterRef') || '').trim());
+    }
+
+    function riskClass(level) {
+      var normalized = String(level || '').toLowerCase();
+      if (normalized === 'critical') return 'critical';
+      if (normalized === 'high') return 'high';
+      if (normalized === 'moderate' || normalized === 'medium') return 'moderate';
+      return 'low';
+    }
+
+    function statusClass(status) {
+      var normalized = String(status || '').toLowerCase();
+      if (normalized === 'open') return 'status-open';
+      if (normalized === 'in progress' || normalized === 'reopened') return 'status-progress';
+      if (normalized === 'overdue') return 'status-overdue';
+      if (normalized === 'closed pending verification') return 'status-pending-verify';
+      if (normalized === 'verified closed' || normalized === 'closed') return 'status-closed';
+      return 'status-open';
+    }
+
+    function priorityClass(level) {
+      var normalized = String(level || '').toLowerCase();
+      if (normalized === 'critical') return 'critical';
+      if (normalized === 'high') return 'high';
+      if (normalized === 'moderate' || normalized === 'medium') return 'moderate';
+      return 'low';
+    }
+
+    function statusPrefix(status) {
+      var normalized = String(status || '').toLowerCase();
+      if (normalized === 'open') return '●';
+      if (normalized === 'overdue') return '●';
+      if (normalized === 'verified closed' || normalized === 'closed') return '';
+      return '◑';
+    }
+
+    function formatStatusLabel(status) {
+      var normalized = String(status || '').toLowerCase();
+      if (normalized === 'closed pending verification') return 'In Progress';
+      if (normalized === 'verified closed') return 'Closed';
+      if (normalized === 'reopened') return 'In Progress';
+      return status || '-';
+    }
+
+    function rowRiskClass(action) {
+      var cls = 'row-med';
+      var level = String(action && (action.riskLevel || action.priority) || '').toLowerCase();
+      if (level === 'critical') cls = 'row-crit';
+      else if (level === 'high') cls = 'row-high';
+      if (String(action && action.status || '').toLowerCase() === 'overdue') cls += ' row-overdue';
+      return cls;
+    }
+
+    function parseActionIdParts(action) {
+      var actionId = String(action && action.actionId || '');
+      var sourceCode = String(action && action.sourceCode || '');
+      var base = actionId || '-';
+      var code = sourceCode || '';
+      if (!code) {
+        var regexMatch = actionId.match(/((?:V\d+-)?[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-\d+)$/);
+        if (regexMatch) code = regexMatch[1];
+      }
+      if (code) {
+        var suffix = '-' + code;
+        if (actionId.endsWith(suffix)) {
+          base = actionId.slice(0, -suffix.length) || action.inspectionRef || actionId;
+        }
+      }
+      return {
+        base: base || '-',
+        code: code || '-'
+      };
+    }
+
+    function actionIdCellHtml(action) {
+      var parsed = parseActionIdParts(action);
+      var isOverdue = String(action.status || '').toLowerCase() === 'overdue';
+      return '<div class="action-id-stack">' +
+        '<span class="aid-base">' + RiskModuleUtils.esc(parsed.base) + '</span>' +
+        '<span class="aid-code">' + RiskModuleUtils.esc(parsed.code) + '</span>' +
+        (isOverdue ? '<span class="overdue-flag">⚠ Overdue</span>' : '') +
+      '</div>';
+    }
+
+    function riskBadgeHtml(action) {
+      var klass = riskClass(action.riskLevel || action.priority || '');
+      var label = String(action.riskLevel || action.priority || 'Low');
+      var score = String(action.riskScore || 0);
+      var icon = '';
+      return '<span class="risk-pill ' + klass + '">' + icon + RiskModuleUtils.esc(label) + ' (' + RiskModuleUtils.esc(score) + ')</span>';
+    }
+
+    function priorityBadgeHtml(action) {
+      var level = String(action.priority || action.riskLevel || 'Low');
+      return '<span class="priority-pill-cell ' + priorityClass(level) + '">' + RiskModuleUtils.esc(level) + '</span>';
+    }
+
+    function statusBadgeHtml(action) {
+      var status = String(action.status || '');
+      var prefix = statusPrefix(status);
+      return '<span class="status-pill ' + statusClass(status) + '">' +
+        (prefix ? (RiskModuleUtils.esc(prefix) + ' ') : '') + RiskModuleUtils.esc(formatStatusLabel(status)) +
+      '</span>';
+    }
+
+    function dueDateCellHtml(action) {
+      var d = RiskModuleUtils.fmtDate(action.dueDate);
+      if (!d || d === '-') return '<span class="not-set">Not set</span>';
+      return RiskModuleUtils.esc(d);
+    }
+
+    function closureDateCellHtml(action) {
+      var d = RiskModuleUtils.fmtDate(action.closureDate);
+      if (!d || d === '-') return '<span class="not-set">Pending</span>';
+      return RiskModuleUtils.esc(d);
+    }
+
+    function evidenceCellHtml(action) {
+      if (!action.evidenceName) return '<span class="not-set">No files</span>';
+      var titleText = action.evidenceUploadedAt
+        ? (String(action.evidenceName) + ' · ' + RiskModuleUtils.fmtDateTime(action.evidenceUploadedAt))
+        : String(action.evidenceName);
+      return '<span class="file-chip" title="' + RiskModuleUtils.esc(titleText) + '">📄 1 file</span>';
+    }
+
+    function recommendationCellHtml(action, canEdit) {
+      var recommendation = action.recommendedAction || action.description || '-';
+      if (!canEdit) {
+        return '<div class="rec-action">' + RiskModuleUtils.esc(recommendation) + '</div>';
+      }
+      return '<div class="rec-action"><textarea class="reco-input" data-reco="' + RiskModuleUtils.esc(action.actionId) + '">' +
+        RiskModuleUtils.esc(recommendation) + '</textarea></div>';
+    }
+
+    function setTabCounts(actions) {
+      var openCount = actions.filter(function (action) {
+        return action.status === 'Open' || action.status === 'In Progress' || action.status === 'Overdue' || action.status === 'Reopened' || action.status === 'Closed Pending Verification';
+      }).length;
+      var closedCount = actions.filter(function (action) {
+        return action.status === 'Verified Closed' || action.status === 'Closed';
+      }).length;
+      document.getElementById('tabCountOpen').textContent = String(openCount);
+      document.getElementById('tabCountClosed').textContent = String(closedCount);
+      document.getElementById('tabCountAll').textContent = String(actions.length);
+    }
+
+    function metaValue(value) {
+      var text = String(value || '').trim();
+      return text ? text : '-';
+    }
+
+    function facilityTitleHtml(name) {
+      var words = String(name || '').trim().split(/\s+/).filter(Boolean);
+      if (!words.length) return 'FACILITY ACTIONS';
+      return words.map(function (word, idx) {
+        if (idx === 1) return '<span class="accent">' + RiskModuleUtils.esc(word) + '</span>';
+        return RiskModuleUtils.esc(word);
+      }).join(' ');
+    }
+
+    function setFacilityHeader(actions) {
+      var records = allFacilityRecords();
+      var latestRecord = records[0] || {};
+      var firstAction = actions[0] || {};
+      var facilityDetails = RiskModuleUtils.readJSON('goil_facility_details', {});
+
+      var facilityName = activeFacility || firstAction.facilityName || latestRecord.facilityName || latestRecord.facility_name || 'Facility Actions';
+      document.getElementById('facilityHeading').innerHTML = facilityTitleHtml(facilityName);
+
+      var zone = latestRecord.location || firstAction.location || facilityDetails.zone || '';
+      var facilityType = latestRecord.facilityType || latestRecord.facility_type || facilityDetails.facilityType || '';
+      var inspectionRef = activeMasterRef || latestRecord.inspectionRef || latestRecord.assessment_reference || firstAction.inspectionRef || '';
+      var inspectionVersion = Number(latestRecord.version || latestRecord.version_number || actionVersionFromId(firstAction.actionId) || 1);
+      if (!Number.isFinite(inspectionVersion) || inspectionVersion < 1) inspectionVersion = 1;
+      var inspectionDisplayRef = activeMasterRef ? activeMasterRef : displayReference(inspectionRef, inspectionVersion);
+      var inspectionDateRaw = latestRecord.inspectionDate || latestRecord.assessment_date || firstAction.latestAssessmentDate || '';
+      var inspectionDate = RiskModuleUtils.fmtDate(inspectionDateRaw);
+      var inspector = latestRecord.assessor_name || latestRecord.inspector || firstAction.originalAssessor || facilityDetails.assessorName || '';
+
+      document.getElementById('metaZone').textContent = metaValue(zone);
+      document.getElementById('metaFacilityType').textContent = metaValue(facilityType);
+      document.getElementById('metaInspectionRef').textContent = metaValue(inspectionDisplayRef);
+      document.getElementById('metaInspectionDate').textContent = metaValue(inspectionDate === '-' ? '' : inspectionDate);
+      document.getElementById('metaInspector').textContent = metaValue(inspector);
+
+      var subtitle = facilityName + ' corrective action register';
+      if (activeMasterRef) subtitle = subtitle + ' · ' + activeMasterRef;
+      document.getElementById('detailSubtitle').textContent = subtitle;
+    }
+
+    function sourceBadgeClass(sourceType) {
+      if (sourceType === 'checklist') return 'b-source-checklist';
+      if (sourceType === 'finding') return 'b-source-finding';
+      return 'b-source-summary';
+    }
+
+    function sourceLabel(action) {
+      if (action.sourceType === 'checklist') return 'From Checklist';
+      if (action.sourceType === 'finding') return 'From Additional Finding';
+      return 'From Assessment Summary';
+    }
+
+    function allFacilityActions() {
+      var actions = RiskModuleUtils.getPublishedActions
+        ? RiskModuleUtils.getPublishedActions({ latestByMaster: true })
+        : RiskModuleUtils.getActions();
+      if (activeMasterRef) {
+        return actions.filter(function (action) {
+          return actionMasterReference(action) === activeMasterRef;
+        });
+      }
+      if (!activeFacility) return actions;
+      return actions.filter(function (action) {
+        return String(action.facilityName || '') === activeFacility;
+      });
+    }
+
+    function allFacilityRecords() {
+      var records = RiskModuleUtils.getPublishedLatestRecordsByMaster
+        ? RiskModuleUtils.getPublishedLatestRecordsByMaster(RiskModuleUtils.getRecords())
+        : RiskModuleUtils.getRecords();
+      if (activeMasterRef) {
+        return records.filter(function (record) {
+          return recordMasterReference(record) === activeMasterRef;
+        });
+      }
+      if (!activeFacility) return records;
+      return records.filter(function (record) {
+        return String(record.facilityName || '') === activeFacility;
+      });
+    }
+
+    function tabFilteredActions() {
+      var actions = allFacilityActions();
+      if (activeTab === 'open') {
+        return actions.filter(function (action) {
+          return action.status === 'Open' || action.status === 'In Progress' || action.status === 'Overdue' || action.status === 'Reopened' || action.status === 'Closed Pending Verification';
+        });
+      }
+      if (activeTab === 'closed') {
+        return actions.filter(function (action) {
+          return action.status === 'Verified Closed' || action.status === 'Closed';
+        });
+      }
+      return actions;
+    }
+
+    function canCloseStatus(status) {
+      return status === 'Open' || status === 'In Progress' || status === 'Overdue' || status === 'Reopened';
+    }
+
+    function canVerifyStatus(status) {
+      return status === 'Closed Pending Verification';
+    }
+
+    function canEditRecommendation(action) {
+      if (!action) return false;
+      if (action.status === 'Verified Closed' || action.status === 'Closed') return false;
+      return RiskModuleUtils.canUserCloseAction(action, currentUser) || RiskModuleUtils.canUserVerifyAction(action, currentUser);
+    }
+
+    function setStats(actions) {
+      var open = actions.filter(function (action) { return action.status === 'Open'; }).length;
+      var inProgress = actions.filter(function (action) { return action.status === 'In Progress' || action.status === 'Reopened' || action.status === 'Closed Pending Verification'; }).length;
+      var overdue = actions.filter(function (action) { return action.status === 'Overdue'; }).length;
+      var closed = actions.filter(function (action) { return action.status === 'Verified Closed' || action.status === 'Closed'; }).length;
+
+      var records = allFacilityRecords();
+      var initial = 0;
+      var residual = 0;
+      records.forEach(function (record) {
+        var snap = RiskModuleUtils.getRiskSnapshotForRecord(record, actions);
+        initial += Number(snap.initialScore || 0);
+        residual += Number(snap.residualScore || 0);
+      });
+      initial = Math.round(initial * 10) / 10;
+      residual = Math.round(residual * 10) / 10;
+      var reduction = Math.max(0, Math.round((initial - residual) * 10) / 10);
+
+      document.getElementById('statOpen').textContent = String(open);
+      document.getElementById('statInProgress').textContent = String(inProgress);
+      document.getElementById('statOverdue').textContent = String(overdue);
+      document.getElementById('statClosed').textContent = String(closed);
+      document.getElementById('statInitialRisk').textContent = String(initial);
+      document.getElementById('statResidualRisk').textContent = String(residual);
+      document.getElementById('statRiskReduction').textContent = String(reduction);
+      var reductionPct = initial > 0 ? Math.round((reduction / initial) * 100) : 0;
+      document.getElementById('riskReductionChip').textContent = '↓ ' + String(reductionPct) + '% improved';
+    }
+
+    function findActionById(actionId) {
+      var actions = allFacilityActions();
+      return actions.find(function (action) { return action.actionId === actionId; }) || null;
+    }
+
+    function outcomeToStatus(action, outcome) {
+      if (outcome === 'Deferred with Approval') return 'In Progress';
+      if (action && action.priority === 'Critical') return 'Closed Pending Verification';
+      return 'Verified Closed';
+    }
+
+    function actionVersionFromId(actionId) {
+      var match = String(actionId || '').match(/-V(\d+)-/i);
+      if (!match) return null;
+      var n = Number(match[1]);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function displayReference(referenceNo, versionNumber) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.formatDisplayReference === 'function') {
+        return RiskModuleUtils.formatDisplayReference(referenceNo, versionNumber);
+      }
+      var base = String(referenceNo || '-');
+      var version = Number(versionNumber);
+      if (!Number.isFinite(version) || version < 1) version = 1;
+      return base + '-v' + String(version);
+    }
+
+    function displayReferenceForAction(action) {
+      if (!action) return '-';
+      var ref = action.inspectionRef || '-';
+      var version = actionVersionFromId(action.actionId);
+      if (!Number.isFinite(Number(version)) || Number(version) < 1) version = 1;
+      return displayReference(ref, version);
+    }
+
+    function getRecordForAction(action) {
+      if (!action) return null;
+      var version = actionVersionFromId(action.actionId);
+      var records = RiskModuleUtils.getPublishedLatestRecordsByMaster
+        ? RiskModuleUtils.getPublishedLatestRecordsByMaster(RiskModuleUtils.getRecords())
+        : RiskModuleUtils.getRecords();
+      var ref = String(action.inspectionRef || '');
+      return records.find(function (record) {
+        var recRef = String(record.inspectionRef || record.assessment_reference || '');
+        var recVersion = Number(record.version || record.version_number || 0);
+        if (recRef !== ref) return false;
+        if (version == null) return true;
+        return recVersion === version;
+      }) || null;
+    }
+
+    function renderRiskPreview(action) {
+      var initialNode = document.getElementById('previewInitialRisk');
+      var initialLevelNode = document.getElementById('previewInitialRiskLevel');
+      var residualNode = document.getElementById('previewResidualRisk');
+      var residualLevelNode = document.getElementById('previewResidualRiskLevel');
+      var reductionNode = document.getElementById('previewRiskReduction');
+      var reductionChipNode = document.getElementById('previewRiskReductionChip');
+      var impactNode = document.getElementById('closureImpactNote');
+
+      if (!action) {
+        initialNode.textContent = '-';
+        if (initialLevelNode) initialLevelNode.textContent = '-';
+        residualNode.textContent = '-';
+        if (residualLevelNode) residualLevelNode.textContent = '-';
+        reductionNode.textContent = '-';
+        if (reductionChipNode) reductionChipNode.textContent = '↓ 0% improved';
+        impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
+        return;
+      }
+
+      var outcome = (document.getElementById('closureOutcome').value || 'Closed').trim();
+      var nextStatus = outcomeToStatus(action, outcome);
+      var record = getRecordForAction(action);
+      if (!record) {
+        initialNode.textContent = '-';
+        if (initialLevelNode) initialLevelNode.textContent = '-';
+        residualNode.textContent = '-';
+        if (residualLevelNode) residualLevelNode.textContent = '-';
+        reductionNode.textContent = '-';
+        if (reductionChipNode) reductionChipNode.textContent = '↓ 0% improved';
+        impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
+        return;
+      }
+
+      var currentActions = RiskModuleUtils.getPublishedActions
+        ? RiskModuleUtils.getPublishedActions({ latestByMaster: true })
+        : RiskModuleUtils.getActions();
+      var projectedActions = currentActions.map(function (row) {
+        if (row.actionId !== action.actionId) return Object.assign({}, row);
+        var clone = Object.assign({}, row);
+        clone.status = nextStatus;
+        return clone;
+      });
+
+      var baseline = RiskModuleUtils.getRiskSnapshotForRecord(record, currentActions);
+      var projected = RiskModuleUtils.getRiskSnapshotForRecord(record, projectedActions);
+      var initialScore = Number(baseline.initialScore || 0);
+      var projectedResidual = Number(projected.residualScore || 0);
+      var reduction = Math.max(0, Math.round((initialScore - projectedResidual) * 10) / 10);
+      var reductionPct = initialScore > 0 ? Math.round((reduction / initialScore) * 100) : 0;
+
+      initialNode.textContent = String(initialScore);
+      if (initialLevelNode) initialLevelNode.textContent = baseline.initialLevel || 'Low';
+      residualNode.textContent = String(projectedResidual);
+      if (residualLevelNode) residualLevelNode.textContent = projected.residualLevel || 'Low';
+      reductionNode.textContent = String(reduction);
+      if (reductionChipNode) reductionChipNode.textContent = '↓ ' + String(reductionPct) + '% improved';
+      impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
+    }
+
+    function openCloseModal(actionId) {
+      var resolvedActionId = String(actionId || '').trim() || getActionIdFromContext();
+      var current = findActionById(resolvedActionId);
+      if (!current) return;
+
+      if (!RiskModuleUtils.canUserCloseAction(current, currentUser)) {
+        showCloseError('Only the original assessor or an authorized reviewer can close this corrective action.');
+        return;
+      }
+      closeActionId = current.actionId;
+
+      var user = currentUser || {};
+      var auth = readAuthSession();
+      var defaultCloser = String(auth.email || user.email || user.username || user.fullName || '').trim();
+      var draft = current.closureDraft || {};
+      var sectionText = current.sectionLabel || current.sectionId || '-';
+      var facilityText = current.facilityName || activeFacility || 'Facility';
+      var scoreText = String(current.riskScore || 0);
+      var levelText = String(current.riskLevel || current.priority || 'Low');
+      var priorityText = String(current.priority || levelText);
+      var isCritical = String(levelText).toLowerCase() === 'critical' || String(priorityText).toLowerCase() === 'critical';
+
+      document.getElementById('closeActionMeta').textContent = (current.actionId || '-') + ' · ' + facilityText + ' · ' + sectionText;
+      document.getElementById('modalBreadcrumbFacility').textContent = facilityText;
+      document.getElementById('modalActionIdBadge').innerHTML =
+        '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h10v12H3z"/><path d="M5 5h6M5 8h6M5 11h4"/></svg><span>' + RiskModuleUtils.esc(current.actionId || 'Action') + '</span>';
+      document.getElementById('modalPriorityPill').textContent = priorityText;
+      document.getElementById('modalPriorityPill').className = 'risk-chip-priority' + (isCritical ? ' critical' : '');
+      document.getElementById('modalRiskScorePill').textContent = 'Score ' + scoreText;
+      document.getElementById('closeReferenceCard').classList.toggle('critical', isCritical);
+      document.getElementById('refRecommendedCell').classList.toggle('critical', isCritical);
+
+      document.getElementById('modalSummaryIssueText').textContent = current.issue || current.sourceComment || current.sourceCode || '-';
+      document.getElementById('modalSummaryRecoText').textContent = current.recommendedAction || current.description || '-';
+      document.getElementById('modalSummarySourceText').textContent = [sectionText, sourceLabel(current)].filter(Boolean).join(' · ');
+      document.getElementById('modalSummaryPriorityText').textContent = priorityText + ' · ' + levelText + ' · Score ' + scoreText;
+
+      document.getElementById('closureOutcome').value = draft.outcomeStatus || 'Closed';
+      document.getElementById('closureMethod').value = draft.method || '';
+      document.getElementById('closureDate').value = draft.date || new Date().toISOString().slice(0, 10);
+      document.getElementById('closedBy').value = draft.by || defaultCloser;
+      document.getElementById('originalAssessorDisplay').value = current.originalAssessor || 'Unknown Assessor';
+      document.getElementById('closureEvidence').value = '';
+      document.getElementById('closurePhoto').value = '';
+      document.getElementById('closureDetails').value = draft.details || '';
+      closureDraftEvidenceName = draft.evidenceName || '';
+      clearClosurePreviewUrl();
+      hideCloseError();
+      hideCloseInfo();
+      updateClosureEvidenceName();
+      updateClosureMethodState(false);
+      updateClosureDetailsCounter();
+      renderRiskPreview(current);
+      pendingClosurePayload = null;
+
+      document.getElementById('closeModal').classList.add('show');
+      var scrollArea = document.querySelector('#closeModal .close-modal-body');
+      if (scrollArea) scrollArea.scrollTop = 0;
+      syncModalScrollLock();
+    }
+
+    function hideCloseModal() {
+      document.getElementById('closeModal').classList.remove('show');
+      document.getElementById('confirmCloseModal').classList.remove('show');
+      clearClosurePreviewUrl();
+      closeActionId = '';
+      pendingClosurePayload = null;
+      hideCloseError();
+      hideCloseInfo();
+      syncModalScrollLock();
+    }
+
+    function showCloseError(message) {
+      document.getElementById('closeErrorText').textContent = message;
+      document.getElementById('closeErrorWrap').style.display = 'grid';
+    }
+
+    function hideCloseError() {
+      document.getElementById('closeErrorWrap').style.display = 'none';
+      document.getElementById('closeErrorText').textContent = 'Complete all required fields.';
+    }
+
+    function showCloseInfo(message) {
+      document.getElementById('closeInfoText').textContent = message;
+      document.getElementById('closeInfoWrap').style.display = 'grid';
+    }
+
+    function hideCloseInfo() {
+      document.getElementById('closeInfoWrap').style.display = 'none';
+      document.getElementById('closeInfoText').textContent = 'Draft saved.';
+    }
+
+    function collectClosurePayload() {
+      return {
+        outcomeStatus: (document.getElementById('closureOutcome').value || 'Closed').trim(),
+        method: (document.getElementById('closureMethod').value || '').trim(),
+        date: (document.getElementById('closureDate').value || '').trim(),
+        by: (document.getElementById('closedBy').value || '').trim(),
+        details: (document.getElementById('closureDetails').value || '').trim(),
+        file: getSelectedClosureFile()
+      };
+    }
+
+    function validateClosurePayload(payload) {
+      if (!payload.outcomeStatus) {
+        return { ok: false, fieldId: 'closureOutcome', message: 'Please set a closure outcome status' };
+      }
+      if (!payload.method) {
+        updateClosureMethodState(true);
+        return { ok: false, fieldId: 'closureMethod', message: 'Please select a closure method' };
+      }
+      if (!payload.date) {
+        return { ok: false, fieldId: 'closureDate', message: 'Please set a closure date' };
+      }
+      if (String(payload.details || '').length < 30) {
+        return { ok: false, fieldId: 'closureDetails', message: 'Closure details must be at least 30 characters' };
+      }
+      return { ok: true };
+    }
+
+    function saveCloseDraft() {
+      if (!closeActionId) return;
+      var current = findActionById(closeActionId);
+      if (!current) return;
+      if (!RiskModuleUtils.canUserCloseAction(current, currentUser)) {
+        showCloseError('Only the original assessor or an authorized reviewer can close this corrective action.');
+        return;
+      }
+
+      var payload = collectClosurePayload();
+      var now = new Date().toISOString();
+      var actions = RiskModuleUtils.getActions();
+      var updated = false;
+
+      actions.forEach(function (action) {
+        if (action.actionId !== closeActionId) return;
+        action.closureDraft = {
+          outcomeStatus: payload.outcomeStatus || 'Closed',
+          method: payload.method || '',
+          date: payload.date || '',
+          by: payload.by || '',
+          details: payload.details || '',
+          evidenceName: payload.file ? payload.file.name : '',
+          savedAt: now
+        };
+        updated = true;
+      });
+
+      if (!updated) return;
+      RiskModuleUtils.saveActions(actions);
+      showCloseInfo('Closure draft saved. You can continue later without losing your entries.');
+      showCloseToast('Draft saved — you can continue later', 'success');
+      hideCloseError();
+      if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
+        window.GoilWorkflow.appendAudit('corrective_action_closure_draft_saved', currentUser.email || currentUser.username || 'Unknown User', {
+          actionId: closeActionId,
+          facilityName: activeFacility
+        });
+      }
+    }
+
+    function updateRecommendedAction(actionId, value) {
+      var actions = RiskModuleUtils.getActions();
+      var changed = false;
+      actions.forEach(function (action) {
+        if (action.actionId !== actionId) return;
+        if (!canEditRecommendation(action)) return;
+        action.recommendedAction = value || '';
+        action.description = value || '';
+        changed = true;
+      });
+      if (!changed) return;
+      RiskModuleUtils.saveActions(actions);
+      if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
+        window.GoilWorkflow.appendAudit('corrective_action_recommended_action_updated', currentUser.email || currentUser.username || 'Unknown User', {
+          actionId: actionId,
+          facilityName: activeFacility
+        });
+      }
+    }
+
+    function viewSourceChecklistItem() {
+      var current = findActionById(closeActionId);
+      if (!current) return;
+      try {
+        var checklist = RiskModuleUtils.readJSON('goil_checklist_session', {});
+        var sections = Array.isArray(checklist.sectionsMeta) ? checklist.sectionsMeta : [];
+        var sectionId = current.sectionId || '';
+        var idx = sections.findIndex(function (section) { return section && section.id === sectionId; });
+        if (idx >= 0) localStorage.setItem('goil_current_section', String(idx));
+        if (current.sourceCode) localStorage.setItem('goil_focus_item_code', String(current.sourceCode));
+      } catch (error) {}
+      window.location.href = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + Date.now();
+    }
+
+    function viewFullAssessmentRecord() {
+      window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6&_=' + Date.now();
+    }
+
+    function requestSubmitClosure() {
+      if (!closeActionId) return;
+      var current = findActionById(closeActionId);
+      if (!current) {
+        showCloseError('Action no longer exists. Refresh and try again.');
+        return;
+      }
+      if (!RiskModuleUtils.canUserCloseAction(current, currentUser)) {
+        showCloseError('Only the original assessor or an authorized reviewer can close this corrective action.');
+        return;
+      }
+
+      var payload = collectClosurePayload();
+      updateClosureMethodState(false);
+      updateClosureDetailsCounter();
+      var validation = validateClosurePayload(payload);
+      if (!validation.ok) {
+        showCloseError(validation.message);
+        showCloseToast(validation.message, 'warn');
+        if (validation.fieldId) scrollToCloseField(validation.fieldId);
+        return;
+      }
+
+      hideCloseError();
+      hideCloseInfo();
+      pendingClosurePayload = payload;
+      var confirmText = 'Are you sure you want to close this corrective action?';
+      if (payload.outcomeStatus === 'Deferred with Approval') {
+        confirmText = 'Are you sure you want to defer this corrective action with approval?';
+      }
+      document.getElementById('confirmCloseText').textContent = confirmText;
+      document.getElementById('confirmCloseModal').classList.add('show');
+      syncModalScrollLock();
+    }
+
+    function submitClosure() {
+      if (!closeActionId || !pendingClosurePayload) return;
+      var current = findActionById(closeActionId);
+      if (!current) {
+        showCloseError('Action no longer exists. Refresh and try again.');
+        document.getElementById('confirmCloseModal').classList.remove('show');
+        pendingClosurePayload = null;
+        syncModalScrollLock();
+        return;
+      }
+
+      var payload = pendingClosurePayload;
+      var actions = RiskModuleUtils.getActions();
+      var updated = false;
+      var now = new Date().toISOString();
+      var actualCloser = currentUser.email || currentUser.username || currentUser.fullName || payload.by || 'Unknown User';
+
+      actions.forEach(function (action) {
+        if (action.actionId !== closeActionId) return;
+        var nextStatus = outcomeToStatus(action, payload.outcomeStatus);
+        action.status = nextStatus;
+        action.closureOutcome = payload.outcomeStatus;
+        action.closureMethod = payload.method;
+        action.closureMethodOther = '';
+        action.closedHow = payload.method;
+        action.responsiblePerson = payload.by;
+        action.closureComments = payload.details;
+        if (payload.outcomeStatus === 'Deferred with Approval') {
+          action.closureDate = '';
+          action.closedBy = '';
+          action.reopenedAt = now;
+          action.reopenedBy = actualCloser;
+          action.verifiedClosedBy = '';
+          action.verifiedClosedAt = '';
+        } else {
+          action.closureDate = payload.date;
+          action.closedBy = actualCloser;
+          if (nextStatus === 'Verified Closed') {
+            action.verifiedClosedBy = actualCloser;
+            action.verifiedClosedAt = now;
+          } else {
+            action.verifiedClosedBy = action.verifiedClosedBy || '';
+            action.verifiedClosedAt = action.verifiedClosedAt || '';
+          }
+        }
+        action.evidenceName = payload.file ? payload.file.name : (action.evidenceName || '');
+        action.evidenceUploadedAt = payload.file ? now : (action.evidenceUploadedAt || '');
+        action.closureDraft = null;
+        updated = true;
+      });
+
+      if (!updated) {
+        showCloseError('Action no longer exists. Refresh and try again.');
+        document.getElementById('confirmCloseModal').classList.remove('show');
+        pendingClosurePayload = null;
+        syncModalScrollLock();
+        return;
+      }
+
+      RiskModuleUtils.saveActions(actions);
+
+      if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
+        window.GoilWorkflow.appendAudit('corrective_action_closed', actualCloser, {
+          actionId: closeActionId,
+          facilityName: activeFacility,
+          closureDate: payload.date,
+          closureMethod: payload.method,
+          responsiblePerson: payload.by,
+          actualCloser: actualCloser,
+          closureOutcome: payload.outcomeStatus,
+          evidenceName: payload.file ? payload.file.name : '',
+          originalAssessor: current.originalAssessor || '',
+          correctiveCreatedBy: current.correctiveCreatedBy || ''
+        });
+      }
+
+      document.getElementById('confirmCloseModal').classList.remove('show');
+      pendingClosurePayload = null;
+      hideCloseModal();
+      showCloseToast('Corrective action closed successfully. Residual risk updated. ✓', 'success');
+      render();
+    }
+
+    function verifyAction(actionId) {
+      var current = findActionById(actionId);
+      if (!current) return;
+      if (!RiskModuleUtils.canUserVerifyAction(current, currentUser)) return;
+
+      var verifier = (currentUser.email || currentUser.username || currentUser.fullName || 'Authorized Reviewer');
+      var now = new Date().toISOString();
+      var actions = RiskModuleUtils.getActions();
+      var updated = false;
+
+      actions.forEach(function (action) {
+        if (action.actionId !== actionId) return;
+        action.status = 'Verified Closed';
+        action.verifiedClosedBy = verifier;
+        action.verifiedClosedAt = now;
+        action.closureDate = action.closureDate || now.slice(0, 10);
+        action.closedBy = action.closedBy || verifier;
+        updated = true;
+      });
+      if (!updated) return;
+      RiskModuleUtils.saveActions(actions);
+      if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
+        window.GoilWorkflow.appendAudit('corrective_action_verified_closed', verifier, {
+          actionId: actionId,
+          facilityName: activeFacility,
+          verifiedClosedAt: now
+        });
+      }
+      render();
+    }
+
+    function render() {
+      var facilityActions = allFacilityActions();
+      setFacilityHeader(facilityActions);
+      setTabCounts(facilityActions);
+      setStats(facilityActions);
+
+      var rows = tabFilteredActions();
+      var tbody = document.getElementById('actionsTbody');
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="10">No actions in this tab.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(function (action) {
+        var canClose = canCloseStatus(action.status) && RiskModuleUtils.canUserCloseAction(action, currentUser);
+        var canVerify = canVerifyStatus(action.status) && RiskModuleUtils.canUserVerifyAction(action, currentUser);
+        var canEdit = canEditRecommendation(action);
+        var normalizedStatus = String(action.status || '').toLowerCase();
+
+        var actionsHtml = '';
+        if (canCloseStatus(action.status)) {
+          var closeLabel = 'Close Action';
+          var closeClass = 'close-btn btn-open';
+          if (normalizedStatus === 'overdue') {
+            closeLabel = '⚠ Close Action';
+            closeClass = 'close-btn btn-overdue';
+          } else if (normalizedStatus === 'in progress' || normalizedStatus === 'reopened') {
+            closeLabel = 'Complete Action';
+            closeClass = 'close-btn btn-progress';
+          }
+          if (canClose) {
+            actionsHtml = '<div class="row-actions"><button class="' + closeClass + '" data-close="' + RiskModuleUtils.esc(action.actionId) + '">' + closeLabel + '</button></div>';
+          } else {
+            actionsHtml = '<div class="row-actions"><button class="' + closeClass + '" disabled>' + closeLabel + '</button><div class="auth-note">Only the original assessor or an authorized reviewer can close this corrective action.</div></div>';
+          }
+        } else if (canVerifyStatus(action.status)) {
+          if (canVerify) {
+            actionsHtml = '<div class="row-actions"><button class="close-btn btn-progress" data-verify="' + RiskModuleUtils.esc(action.actionId) + '">Verify Close</button></div>';
+          } else {
+            actionsHtml = '<div class="row-actions"><span class="status-pill status-pending-verify">◑ In Progress</span><div class="auth-note">Only an authorized reviewer can verify this closure.</div></div>';
+          }
+        } else {
+          actionsHtml = '<div class="row-actions"><span class="status-pill status-closed">Closed</span></div>';
+        }
+
+        return '<tr class="' + rowRiskClass(action) + '">' +
+          '<td>' + actionIdCellHtml(action) + '</td>' +
+          '<td title="Parent Reference: ' + RiskModuleUtils.esc(action.inspectionRef || '-') + '">' + RiskModuleUtils.esc(displayReferenceForAction(action)) + '</td>' +
+          '<td class="reco-cell">' + recommendationCellHtml(action, canEdit) + '</td>' +
+          '<td>' + riskBadgeHtml(action) + '</td>' +
+          '<td>' + priorityBadgeHtml(action) + '</td>' +
+          '<td>' + dueDateCellHtml(action) + '</td>' +
+          '<td>' + statusBadgeHtml(action) + '</td>' +
+          '<td>' + closureDateCellHtml(action) + '</td>' +
+          '<td>' + evidenceCellHtml(action) + '</td>' +
+          '<td>' + actionsHtml + '</td>' +
+        '</tr>';
+      }).join('');
+
+      Array.from(tbody.querySelectorAll('button[data-close]')).forEach(function (button) {
+        button.addEventListener('click', function () {
+          openCloseModal(button.getAttribute('data-close'));
+        });
+      });
+      Array.from(tbody.querySelectorAll('button[data-verify]')).forEach(function (button) {
+        button.addEventListener('click', function () {
+          verifyAction(button.getAttribute('data-verify'));
+        });
+      });
+      Array.from(tbody.querySelectorAll('textarea[data-reco]')).forEach(function (input) {
+        input.addEventListener('change', function () {
+          updateRecommendedAction(input.getAttribute('data-reco'), input.value);
+        });
+      });
+
+      var role = String(currentUser.role || currentUser.userRole || currentUser.accessRole || 'Assessor');
+      document.getElementById('actionHint').textContent = 'Issue and Source context are available in the Close Action popup. Logged in as: ' + role + '. Evidence remains optional.';
+    }
+
+    function bindTabs() {
+      Array.from(document.querySelectorAll('#actionTabs .rm-subtab')).forEach(function (button) {
+        button.addEventListener('click', function () {
+          activeTab = button.getAttribute('data-tab') || 'open';
+          Array.from(document.querySelectorAll('#actionTabs .rm-subtab')).forEach(function (tabButton) {
+            tabButton.classList.toggle('active', tabButton === button);
+          });
+          render();
+        });
+      });
+    }
+
+    function init() {
+      applyCameraModeClass();
+      currentUser = RiskModuleUtils.getCurrentUser();
+      readAuthSession();
+      if (RiskModuleUtils.purgeUnpublishedActions) {
+        RiskModuleUtils.purgeUnpublishedActions({ latestByMaster: true });
+      }
+      activeMasterRef = getMasterRefParam();
+      activeFacility = getFacilityParam();
+
+      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
+      document.getElementById('backCorrectionsBtn').addEventListener('click', function () {
+        window.location.href = 'risk-corrections.html?v=20260319-corrwidth1';
+      });
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      document.getElementById('closeModalBackBtn').addEventListener('click', hideCloseModal);
+      document.getElementById('modalConductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      document.getElementById('crumbModule').addEventListener('click', function (event) {
+        event.preventDefault();
+        RiskModuleUtils.goLanding();
+      });
+      document.getElementById('crumbCorrections').addEventListener('click', function (event) {
+        event.preventDefault();
+        window.location.href = 'risk-corrections.html?v=20260319-corrwidth1';
+      });
+      document.getElementById('closureUploadBtn').addEventListener('click', function () {
+        document.getElementById('closureEvidence').click();
+      });
+      document.getElementById('closurePhotoBtn').addEventListener('click', function () {
+        document.getElementById('closurePhoto').click();
+      });
+      document.getElementById('closureEvidence').addEventListener('change', function () {
+        closureDraftEvidenceName = '';
+        updateClosureEvidenceName();
+        hideCloseInfo();
+      });
+      document.getElementById('closurePhoto').addEventListener('change', function () {
+        closureDraftEvidenceName = '';
+        updateClosureEvidenceName();
+        hideCloseInfo();
+      });
+      document.getElementById('closureMethod').addEventListener('change', function () {
+        updateClosureMethodState(false);
+      });
+      document.getElementById('closureOutcome').addEventListener('change', function () {
+        var action = findActionById(closeActionId);
+        if (action) renderRiskPreview(action);
+      });
+      document.getElementById('closureDetails').addEventListener('input', updateClosureDetailsCounter);
+      document.getElementById('viewSourceBtn').addEventListener('click', viewSourceChecklistItem);
+      document.getElementById('viewAssessmentBtn').addEventListener('click', viewFullAssessmentRecord);
+
+      document.getElementById('cancelCloseBtn').addEventListener('click', hideCloseModal);
+      document.getElementById('saveCloseDraftBtn').addEventListener('click', saveCloseDraft);
+      document.getElementById('submitCloseBtn').addEventListener('click', requestSubmitClosure);
+      document.getElementById('cancelConfirmCloseBtn').addEventListener('click', function () {
+        document.getElementById('confirmCloseModal').classList.remove('show');
+        pendingClosurePayload = null;
+        syncModalScrollLock();
+      });
+      document.getElementById('confirmCloseSubmitBtn').addEventListener('click', submitClosure);
+      document.getElementById('closeModal').addEventListener('click', function (event) {
+        if (event.target.id === 'closeModal') hideCloseModal();
+      });
+      document.getElementById('confirmCloseModal').addEventListener('click', function (event) {
+        if (event.target.id === 'confirmCloseModal') {
+          document.getElementById('confirmCloseModal').classList.remove('show');
+          pendingClosurePayload = null;
+          syncModalScrollLock();
+        }
+      });
+
+      bindTabs();
+      render();
+      updateClosureMethodState(false);
+      updateClosureDetailsCounter();
+      var contextActionId = getActionIdFromContext();
+      if (contextActionId) openCloseModal(contextActionId);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

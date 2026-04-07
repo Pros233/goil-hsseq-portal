@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review & Submit - Integrated Risk Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+<style>
+:root{
+  --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D; --bg5:#30363D;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.14);
+  --tx:#E6EDF3; --tx2:#C9D1D9; --tx3:#8B949E; --tx4:#6E7681;
+  --or:#F47920; --or-s:#e06b14; --or-d:rgba(244,121,32,.14); --or-d2:rgba(244,121,32,.22);
+  --ok:#3FB950; --ok-d:rgba(63,185,80,.14);
+  --warn:#D29922; --warn-d:rgba(210,153,34,.14);
+  --bad:#DA3633; --bad-d:rgba(218,54,51,.14);
+  --info:#2F81F7; --info-d:rgba(47,129,247,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
+.page{min-height:100%;display:flex;flex-direction:column}
+
+/* ── Top bar ── */
+.top{
+  position:sticky;top:0;z-index:30;
+  background:linear-gradient(180deg,#1a1f28,#12161e);
+  border-bottom:2px solid var(--or);
+  padding:0 20px;display:flex;gap:12px;align-items:stretch;
+  min-height:58px;
+}
+.top-brand{
+  display:flex;align-items:center;
+  border-right:1px solid rgba(244,121,32,.3);
+  padding-right:16px;margin-right:4px;
+}
+.top-brand-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--or);
+  box-shadow:0 0 8px var(--or);margin-right:10px;flex-shrink:0;
+}
+.top h1{
+  font-family:'Barlow Condensed',sans-serif;font-size:22px;
+  color:var(--tx);letter-spacing:.3px;font-weight:800;
+}
+.top .sub{font-size:11px;color:var(--tx3);letter-spacing:.2px}
+.top .left{display:flex;flex-direction:column;gap:2px;justify-content:center}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+/* ── Buttons ── */
+.btn{
+  border:1.5px solid var(--bd2);background:transparent;color:var(--tx2);border-radius:7px;
+  padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:border-color .16s,color .16s,background .16s;
+}
+.btn:hover{border-color:var(--or);color:var(--or)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--or),var(--or-s));
+  border-color:transparent;color:#fff;
+  box-shadow:0 2px 10px rgba(244,121,32,.35);
+}
+.btn-primary:hover{filter:brightness(1.08);box-shadow:0 3px 14px rgba(244,121,32,.45)}
+.btn-flash-red{
+  background:var(--bad);border-color:var(--bad);color:#fff;
+  box-shadow:0 2px 10px rgba(218,54,51,.5);
+  animation:flash-red 1.1s ease-in-out infinite;
+}
+.btn-flash-red:hover{filter:brightness(1.1);animation-play-state:paused}
+@keyframes flash-red{
+  0%,100%{background:var(--bad);box-shadow:0 2px 14px rgba(218,54,51,.55)}
+  50%{background:#b02a28;box-shadow:0 2px 24px rgba(218,54,51,.9),0 0 0 4px rgba(218,54,51,.25)}
+}
+.badge{
+  padding:5px 10px;border-radius:999px;
+  font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;
+}
+.b-draft{background:rgba(139,148,158,.18);color:var(--tx3)}
+.b-progress{background:var(--warn-d);color:var(--warn);border:1px solid rgba(210,153,34,.3)}
+.b-pending{background:var(--info-d);color:var(--info)}
+.b-pub{background:var(--ok-d);color:var(--ok)}
+
+/* ── Main layout ── */
+.main{width:min(1300px,100%);margin:20px auto 24px;padding:0 16px;display:flex;flex-direction:column;gap:16px}
+
+/* ── Panels ── */
+.panel{
+  background:var(--bg2);
+  border:1px solid var(--bd2);
+  border-radius:12px;
+  padding:18px;
+}
+.panel h2{
+  font-family:'Barlow Condensed',sans-serif;font-size:21px;font-weight:800;
+  color:var(--tx);margin-bottom:14px;letter-spacing:.3px;
+  display:flex;align-items:center;gap:10px;
+}
+.panel h2::before{
+  content:'';display:inline-block;width:4px;height:20px;
+  background:linear-gradient(180deg,var(--or),var(--or-s));
+  border-radius:3px;flex-shrink:0;
+}
+
+/* ── Inspection Summary ── */
+.meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.meta-item{
+  background:var(--bg3);
+  border:1px solid var(--bd);
+  border-top:2px solid var(--or-d2);
+  border-radius:8px;padding:11px;
+  transition:border-color .16s;
+}
+.meta-item:hover{border-top-color:var(--or)}
+.meta-item .k{font-size:10px;text-transform:uppercase;color:var(--tx4);letter-spacing:.8px;font-weight:700}
+.meta-item .v{font-size:13px;color:var(--tx);font-weight:600;margin-top:5px;word-break:break-word}
+
+/* ── KPI Cards ── */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{
+  background:linear-gradient(135deg,var(--bg3),var(--bg4));
+  border:1px solid var(--bd2);border-radius:10px;padding:16px;
+  position:relative;overflow:hidden;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--or),var(--or-s));
+}
+.kpi .n{
+  font-size:30px;color:var(--or);
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;line-height:1;
+}
+.kpi .l{
+  font-size:10px;color:var(--tx3);margin-top:7px;
+  text-transform:uppercase;letter-spacing:.8px;font-weight:700;
+}
+
+/* ── Overall Risk ── */
+.overall-risk{
+  background:linear-gradient(135deg,rgba(244,121,32,.1),rgba(22,27,34,.6));
+  border:1px solid rgba(244,121,32,.3);
+  border-radius:10px;padding:16px;
+}
+.risk-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.risk-k{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--tx4);font-weight:700}
+.risk-rating{font-size:20px;color:var(--or);font-weight:800;margin-top:4px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.3px}
+.risk-note{font-size:11px;color:var(--tx3);margin-top:6px;line-height:1.4}
+.risk-score-wrap{
+  border-radius:10px;padding:12px 18px;min-width:160px;text-align:center;
+  border:1px solid var(--bd);background:var(--bg3);
+}
+.risk-score{
+  font-family:'Barlow Condensed',sans-serif;font-size:42px;
+  font-weight:900;line-height:1;margin-top:4px;
+}
+.risk-time{font-size:11px;color:var(--tx4);margin-top:10px}
+.risk-summary{margin-top:12px;font-size:13px;color:var(--tx2);line-height:1.5;padding-top:10px;border-top:1px solid rgba(244,121,32,.15)}
+.risk-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.risk-list-item{
+  background:var(--or-d);border:1px solid rgba(244,121,32,.25);
+  border-radius:20px;padding:5px 11px;font-size:11px;color:var(--or);font-weight:600;
+}
+.risk-muted{font-size:12px;color:var(--tx3);margin-top:8px}
+
+/* ── Validation ── */
+.validation{display:none;border:1px solid rgba(218,54,51,.35);background:var(--bad-d);border-radius:10px;padding:14px}
+.validation.show{display:block}
+.validation h3{font-size:13px;color:#ffb0ad;margin-bottom:7px;font-weight:700}
+.validation ul{display:flex;flex-direction:column;gap:5px;padding-left:18px}
+.validation li{font-size:12px;color:var(--tx2)}
+
+/* ── Declaration ── */
+.decl{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--or-d);border:1px solid rgba(244,121,32,.25);
+  border-radius:9px;padding:13px;
+}
+.decl input{margin-top:2px;accent-color:var(--or)}
+.decl label{font-size:13px;color:var(--tx2);line-height:1.45}
+
+/* ── Checklist sections ── */
+.section{background:var(--bg2);border:1px solid var(--bd2);border-radius:11px;overflow:hidden}
+.section-head{
+  display:flex;align-items:center;gap:10px;padding:13px 15px;
+  background:linear-gradient(90deg,rgba(244,121,32,.1),var(--bg3));
+  border-bottom:1px solid var(--bd);cursor:pointer;
+}
+.section-head:hover{background:linear-gradient(90deg,rgba(244,121,32,.16),var(--bg4))}
+.section-icon{font-size:16px;flex-shrink:0}
+.section-title{font-size:15px;color:var(--tx);font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:.3px}
+.section-sub{font-size:11px;color:var(--tx3)}
+.section-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.status-pill{padding:4px 10px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.s-not{background:rgba(139,148,158,.18);color:var(--tx3)}
+.s-prog{background:var(--warn-d);color:var(--warn)}
+.s-done{background:var(--ok-d);color:var(--ok)}
+.s-fail{background:var(--bad-d);color:var(--bad)}
+
+.items{display:none}
+.items.show{display:block}
+.item{padding:12px 15px;border-top:1px solid var(--bd)}
+.item.flag-failed{background:rgba(218,54,51,.06);border-left:3px solid var(--bad)}
+.item.flag-miss{background:rgba(210,153,34,.06);border-left:3px solid var(--warn)}
+.item-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.code{font-size:11px;color:var(--or);font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.6px}
+.q{font-size:13px;color:var(--tx);line-height:1.35}
+.ans{padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+.a-y{background:var(--ok-d);color:var(--ok)}
+.a-p{background:var(--warn-d);color:var(--warn)}
+.a-n{background:var(--bad-d);color:var(--bad)}
+.a-na{background:rgba(139,148,158,.2);color:var(--tx3)}
+.a-none{background:rgba(139,148,158,.15);color:var(--tx4)}
+.item-grid{margin-top:9px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
+.cell{background:var(--bg3);border:1px solid var(--bd);border-radius:7px;padding:9px}
+.cell .k{font-size:10px;color:var(--tx4);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+.cell .v{font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.35;word-break:break-word}
+
+/* ── Confirm panel ── */
+.confirm{display:none;border:1px solid rgba(47,129,247,.35);background:var(--info-d);border-radius:10px;padding:14px}
+.confirm.show{display:block}
+.confirm h3{color:#9ec9ff;font-size:14px;margin-bottom:8px;font-weight:700}
+.confirm p{font-size:13px;color:var(--tx2);margin-bottom:12px}
+
+/* ── Audit ── */
+.audit-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;padding-right:4px}
+.audit-item{border:1px solid var(--bd);background:var(--bg3);border-left:3px solid var(--or-d2);border-radius:7px;padding:9px 11px}
+.audit-item .t{font-size:12px;color:var(--tx);font-weight:600}
+.audit-item .m{font-size:11px;color:var(--tx3);margin-top:3px}
+
+/* ── Footer ── */
+.footer{
+  position:sticky;bottom:0;z-index:25;
+  background:linear-gradient(0deg,rgba(13,17,23,.98),rgba(13,17,23,.92));
+  backdrop-filter:blur(6px);
+  border-top:2px solid var(--or);
+  padding:10px 16px;
+}
+.footer-inner{width:min(1300px,100%);margin:0 auto;display:flex;gap:9px;justify-content:flex-end}
+
+/* ── Toast ── */
+.toast-wrap{position:fixed;top:72px;right:18px;z-index:80;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:700;color:#fff;animation:in .2s ease}
+.toast.success{background:#065f46}.toast.info{background:#1e3a5f}.toast.warn{background:#78350f}.toast.error{background:#7f1d1d}
+@keyframes in{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+@media (max-width:960px){
+  .meta-grid,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .item-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .top{padding:10px 12px}
+  .top h1{font-size:19px}
+  .meta-grid,.kpis{grid-template-columns:1fr}
+  .section-actions{width:100%;margin-left:0;justify-content:flex-start;flex-wrap:wrap}
+  .footer-inner{justify-content:stretch;flex-wrap:wrap}
+  .footer-inner .btn{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div class="top-brand">
+      <div class="top-brand-dot"></div>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--or);letter-spacing:1px;text-transform:uppercase">GOIL</span>
+    </div>
+    <div class="left">
+      <h1>Review &amp; Submit</h1>
+      <div class="sub">HSSEQ Integrated Risk Assessment &amp; Facility Inspection</div>
+    </div>
+    <div class="right">
+      <span class="badge b-draft" id="statusBadge">Draft</span>
+      <button class="btn" onclick="goHome()">Home</button>
+      <button class="btn" onclick="reopenForRevision()">Reopen for Revision</button>
+      <button class="btn btn-primary" onclick="goBackToChecklist()">Back to Checklist</button>
+    </div>
+  </div>
+
+  <main class="main">
+    <section class="panel">
+      <h2>Inspection Summary</h2>
+      <div class="meta-grid" id="metaGrid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="kpis" id="kpiRow"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Overall Risk</h2>
+      <div class="overall-risk" id="overallRiskCard"></div>
+    </section>
+
+    <section class="panel validation" id="validationPanel">
+      <h3>Please resolve the following before checklist submission:</h3>
+      <ul id="validationList"></ul>
+    </section>
+
+    <section class="panel">
+      <div class="decl">
+        <input type="checkbox" id="declarationChk" onchange="onDeclarationChange()">
+        <label for="declarationChk">I confirm that the inspection information entered is accurate to the best of my knowledge.</label>
+      </div>
+    </section>
+
+    <section id="sectionsWrap"></section>
+    <section id="findingsWrap"></section>
+
+    <section class="panel confirm" id="confirmPanel">
+      <h3>Checklist submitted successfully. Proceed to the Corrective Action page for final submission.</h3>
+      <p>The checklist is now in <strong>Checklist Submitted / Pending Corrective Action</strong> status and is not yet published to the register.</p>
+      <button class="btn btn-flash-red" onclick="goToCorrectivePage()">Go to Corrective Action Page</button>
+    </section>
+
+    <section class="panel">
+      <h2>Audit Trail</h2>
+      <div class="audit-list" id="auditList"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <button class="btn" onclick="goBackToChecklist()">Back</button>
+      <button class="btn" onclick="saveAndContinueLater()">Save and Continue Later</button>
+      <button class="btn btn-primary" onclick="submitChecklistPartial()">Submit Checklist</button>
+    </div>
+  </footer>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const SAVE_KEY = 'goil_checklist_session';
+const FACILITY_KEY = 'goil_facility_details';
+const CURRENT_SEC_KEY = 'goil_current_section';
+const META_KEY = 'goil_inspection_meta';
+const CA_KEY = 'goil_corrective_action_session';
+const AUDIT_KEY = 'goil_audit_trail';
+const REVIEW_STATE_KEY = 'goil_review_state';
+
+const STATUS = {
+  DRAFT: 'Draft',
+  IN_PROGRESS: 'In Progress',
+  PENDING: 'Checklist Submitted / Pending Corrective Action',
+  REOPENED: 'Reopened for Revision',
+  REVISED_CHECKLIST_SUBMITTED: 'Revised Checklist Submitted',
+  REVISED_CORRECTIVE_SUBMITTED: 'Revised Corrective Action Submitted',
+  AWAITING_REVIEW: 'Awaiting Review',
+  PUBLISHED: 'Fully Submitted / Published to Register'
+};
+
+const SECTION_ORDER = [
+  { id:'doc', label:'Documentation' },
+  { id:'hsse', label:'HSSE Management' },
+  { id:'elec', label:'Electrical Room' },
+  { id:'fire', label:'Fire & Emergency' },
+  { id:'fore', label:'Forecourt & Traffic' },
+  { id:'disp', label:'Dispensing & Tanks' },
+  { id:'tank', label:'Tank Farm Area' },
+  { id:'sec', label:'Security' },
+  { id:'env', label:'Environmental Protection & Waste Management' },
+  { id:'ppe', label:'Welfare' },
+  { id:'oth', label:'Other Services' }
+];
+
+const ANSWER_META = {
+  Y: { label:'Compliant', cls:'a-y' },
+  P: { label:'Partial', cls:'a-p' },
+  N: { label:'Non-Compliant', cls:'a-n' },
+  NA:{ label:'Not Applicable', cls:'a-na' }
+};
+
+let facility = {};
+let checklist = {};
+let sectionStates = {};
+let catalog = {};
+let sectionsMeta = [];
+let inspectionMeta = {};
+let reviewState = { declaration:false };
+let sectionsSnapshot = [];
+let findings = [];
+let overallRisk = null;
+let reviewDirty = false;
+
+function nowIso() { return new Date().toISOString(); }
+
+function generateReferenceNo() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `IRA-${y}${m}${day}-${rand}`;
+}
+
+function readJSON(key, fallback) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key) || 'null');
+    return v == null ? fallback : v;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function writeJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function ensureInspectionMeta() {
+  const meta = readJSON(META_KEY, {});
+  if (!meta.referenceNo) meta.referenceNo = generateReferenceNo();
+  if (!meta.status) meta.status = STATUS.DRAFT;
+  if (!meta.createdAt) meta.createdAt = nowIso();
+  meta.lastPage = 'review';
+  meta.lastSavedAt = nowIso();
+  meta.facilityName = facility.nameDisplay || '';
+  meta.facilityType = facility.facilityType || '';
+  meta.inspectorName = facility.assessorName || '';
+  writeJSON(META_KEY, meta);
+  return meta;
+}
+
+function appendAudit(action, details) {
+  const list = readJSON(AUDIT_KEY, []);
+  list.push({
+    at: nowIso(),
+    action,
+    actor: facility.assessorName || 'Unknown User',
+    referenceNo: inspectionMeta.referenceNo || '',
+    ...(details || {})
+  });
+  writeJSON(AUDIT_KEY, list);
+}
+
+function statusBadgeClass(status) {
+  if (status === STATUS.PENDING) return 'b-pending';
+  if (status === STATUS.REOPENED) return 'b-progress';
+  if (status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'b-pending';
+  if (status === STATUS.REVISED_CORRECTIVE_SUBMITTED) return 'b-progress';
+  if (status === STATUS.AWAITING_REVIEW) return 'b-progress';
+  if (status === STATUS.PUBLISHED) return 'b-pub';
+  if (status === STATUS.IN_PROGRESS) return 'b-progress';
+  return 'b-draft';
+}
+
+function getSectionsMeta() {
+  const fromSaved = Array.isArray(checklist.sectionsMeta) ? checklist.sectionsMeta : [];
+  if (fromSaved.length) {
+    const merged = [];
+    fromSaved.forEach(s => {
+      const fallback = SECTION_ORDER.find(d => d.id === s.id) || { id: s.id, label: s.label || s.id };
+      merged.push({ id: s.id, label: s.label || fallback.label });
+    });
+    SECTION_ORDER.forEach(s => {
+      if (!merged.find(m => m.id === s.id)) merged.push({ id: s.id, label: s.label });
+    });
+    return merged;
+  }
+  return SECTION_ORDER.map(s => ({ id: s.id, label: s.label }));
+}
+
+function getSectionItems(sectionId) {
+  const values = Object.values(catalog || {});
+  const mapped = values
+    .filter(item => item.sectionId === sectionId)
+    .sort((a, b) => a.code.localeCompare(b.code));
+
+  if (mapped.length) return mapped;
+
+  const ss = sectionStates[sectionId] || {};
+  return Object.keys(ss.responses || {}).sort().map(code => ({
+    code,
+    question: code,
+    sectionId,
+    sectionLabel: sectionId,
+    sub: 'Checklist Items',
+    crit: false,
+    action: ''
+  }));
+}
+
+function reloadChecklistState() {
+  checklist = readJSON(SAVE_KEY, checklist || {});
+  sectionStates = checklist.sectionStates || {};
+  catalog = checklist.catalog || {};
+  findings = Array.isArray(checklist.findings) ? checklist.findings : [];
+  sectionsMeta = getSectionsMeta();
+  buildSnapshot();
+}
+
+function buildSnapshot() {
+  sectionsSnapshot = sectionsMeta.map((section, index) => {
+    const items = getSectionItems(section.id);
+    const ss = sectionStates[section.id] || { responses:{}, comments:{}, files:{} };
+    const answered = items.filter(i => ss.responses[i.code]).length;
+    const failedItems = items.filter(i => ['N', 'P'].includes(ss.responses[i.code] || ''));
+    const status = answered === 0 ? 'Not Started' : answered === items.length ? 'Completed' : 'In Progress';
+    return {
+      index,
+      id: section.id,
+      label: section.label,
+      items,
+      state: ss,
+      total: items.length,
+      answered,
+      failedCount: failedItems.length,
+      failedItems,
+      status
+    };
+  });
+  overallRisk = calculateOverallRisk();
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function toNumber(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function calculateOverallRisk() {
+  const riskScores = [];
+  let checklistFailedCount = 0;
+
+  // Build a code→item lookup from catalog for sev/likP/likN values
+  const catalogLookup = {};
+  Object.values(catalog || {}).forEach(item => { catalogLookup[item.code] = item; });
+
+  const perSection = sectionsSnapshot.map(section => {
+    let sectionScore = 0;
+
+    // Iterate responses directly — avoids any code mismatch between catalog and sectionState
+    const responses   = section.state.responses   || {};
+    const sevOverride = section.state.sevOverride  || {};
+    const likOverride = section.state.likOverride  || {};
+
+    Object.keys(responses).forEach(code => {
+      const response = responses[code];
+      if (response !== 'N' && response !== 'P') return;
+
+      // Get item metadata from catalog; fall back to defaults if missing
+      const meta = catalogLookup[code] || {};
+      const baseSev = clamp(toNumber(meta.sev, 3), 1, 5);
+      const effectiveSev = sevOverride[code] != null ? clamp(Number(sevOverride[code]), 1, 5) : baseSev;
+
+      let itemScore;
+      if (response === 'N') {
+        const baseLik = clamp(toNumber(meta.likN, 3), 1, 5);
+        const effectiveLik = likOverride[code] != null ? clamp(Number(likOverride[code]), 1, 5) : baseLik;
+        itemScore = effectiveSev * effectiveLik;
+      } else {
+        const baseLik = clamp(toNumber(meta.likP, 2), 1, 5);
+        const effectiveLik = likOverride[code] != null ? clamp(Number(likOverride[code]), 1, 5) : baseLik;
+        itemScore = effectiveSev * effectiveLik;
+      }
+
+      riskScores.push(itemScore);
+      sectionScore += itemScore;
+      checklistFailedCount += 1;
+    });
+
+    return {
+      id: section.id,
+      label: section.label,
+      failedCount: section.failedCount,
+      score: sectionScore
+    };
+  });
+
+  // Average of all P and N item risk scores (scale 1–25)
+  const checklistAvg = riskScores.length
+    ? riskScores.reduce((a, b) => a + b, 0) / riskScores.length
+    : 0;
+
+  // Additional findings contribute their average risk score
+  const validFindingScores = findings
+    .map(finding => Number(finding.riskScore || 0))
+    .filter(s => Number.isFinite(s) && s > 0);
+  const findingsAvg = validFindingScores.length
+    ? validFindingScores.reduce((a, b) => a + b, 0) / validFindingScores.length
+    : 0;
+
+  // Overall = average of checklist avg and findings avg (if findings exist), else checklist avg
+  const rawScore = validFindingScores.length
+    ? (checklistAvg + findingsAvg) / 2
+    : checklistAvg;
+
+  const score = riskScores.length === 0 && validFindingScores.length === 0
+    ? 0
+    : Math.max(0.1, Math.min(25, Math.round(rawScore * 10) / 10));
+
+  const level = score >= 17 ? 'Critical' : score >= 10 ? 'High' : score >= 5 ? 'Medium' : 'Low';
+  const disposition = level === 'Critical'
+    ? 'Unacceptable — stop activity until controls are implemented'
+    : level === 'High'
+      ? 'Requires immediate action and management attention'
+      : level === 'Medium'
+        ? 'Needs attention and planned control measures'
+        : 'Acceptable — manage through routine controls';
+
+  const sectionContributors = perSection
+    .filter(section => section.failedCount > 0)
+    .map(section => ({
+      id: section.id,
+      label: section.label,
+      failedCount: section.failedCount,
+      score: section.score
+    }));
+
+  const findingContributorsMap = {};
+  findings.forEach(finding => {
+    const key = finding.linkedSectionLabel || 'General Findings';
+    if (!findingContributorsMap[key]) findingContributorsMap[key] = 0;
+    findingContributorsMap[key] += 1;
+  });
+  const findingContributors = Object.keys(findingContributorsMap).map(label => ({
+    id: label.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    label,
+    failedCount: findingContributorsMap[label],
+    score: findingContributorsMap[label] * 10
+  }));
+
+  const contributingSections = sectionContributors
+    .concat(findingContributors)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map(section => ({
+      id: section.id,
+      label: section.label,
+      failedCount: section.failedCount
+    }));
+
+  const totalContributingFindings = checklistFailedCount + findings.length;
+  const topSections = contributingSections.slice(0, 2).map(section => section.label).join(', ');
+  let summary;
+  if (!totalContributingFindings) {
+    summary = 'No failed, non-compliant, or additional findings were recorded. Monitor and correct through routine controls.';
+  } else if (level === 'Critical') {
+    summary = `Critical risk exposure is driven by ${totalContributingFindings} contributing finding(s)${topSections ? `, especially in ${topSections}` : ''}. Immediate escalation and intervention is required.`;
+  } else if (level === 'High') {
+    summary = `High risk conditions are present with ${totalContributingFindings} contributing finding(s)${topSections ? ` concentrated in ${topSections}` : ''}. Urgent action required with management attention.`;
+  } else if (level === 'Medium') {
+    summary = `Medium risk detected from ${totalContributingFindings} contributing finding(s)${topSections ? ` across ${topSections}` : ''}. Plan corrective action and track closure.`;
+  } else {
+    summary = `Low overall risk with ${totalContributingFindings} contributing finding(s); monitor and correct through routine controls.`;
+  }
+
+  return {
+    score,
+    level,
+    rating: `${level} Risk`,
+    disposition,
+    failedCount: totalContributingFindings,
+    checklistFailedCount,
+    additionalFindingsCount: findings.length,
+    contributingSections,
+    summary,
+    calculatedAt: nowIso(),
+    source: 'System-generated based on checklist findings and additional findings.'
+  };
+}
+
+function getRiskFlowMetrics() {
+  const fallbackScore = Number(overallRisk && overallRisk.score ? overallRisk.score : 0);
+  const fallbackLevel = overallRisk && overallRisk.level ? overallRisk.level : 'Low';
+  const fallback = {
+    initialScore: fallbackScore,
+    initialLevel: fallbackLevel,
+    residualScore: fallbackScore,
+    residualLevel: fallbackLevel,
+    riskReduction: 0,
+    openCount: 0,
+    closedCount: 0
+  };
+
+  if (!window.RiskModuleUtils || !inspectionMeta || !inspectionMeta.referenceNo) return fallback;
+  const records = RiskModuleUtils.getRecords();
+  const ref = String(inspectionMeta.referenceNo || '').trim();
+  const version = Number(inspectionMeta.versionCurrent || 0);
+  const record = records.find(r => (
+    String(r.inspectionRef || r.assessment_reference || '').trim() === ref &&
+    (!version || Number(r.version || r.version_number || 0) === version)
+  ));
+  if (!record) return fallback;
+  return Object.assign({}, fallback, RiskModuleUtils.getRiskSnapshotForRecord(record));
+}
+
+function renderOverallRisk() {
+  const card = document.getElementById('overallRiskCard');
+  const risk = overallRisk || {
+    score: 0,
+    level: 'Low',
+    rating: 'Low Risk',
+    disposition: 'Monitor and correct through routine controls',
+    failedCount: 0,
+    checklistFailedCount: 0,
+    additionalFindingsCount: 0,
+    contributingSections: [],
+    summary: 'No findings available yet.',
+    calculatedAt: nowIso(),
+    source: 'System-generated based on checklist findings and additional findings.'
+  };
+  const contributing = risk.contributingSections.length
+    ? `<div class="risk-list">${risk.contributingSections.map(section => (
+      `<span class="risk-list-item">${esc(section.label)} · ${esc(String(section.failedCount))} finding(s)</span>`
+    )).join('')}</div>`
+    : `<div class="risk-muted">No failed sections are currently contributing to overall risk.</div>`;
+
+  const levelColour = { Low: 'var(--ok)', Medium: 'var(--warn)', High: 'var(--or)', Critical: 'var(--bad)' }[risk.level] || 'var(--tx)';
+  const levelBg     = { Low: 'var(--ok-d)', Medium: 'var(--warn-d)', High: 'var(--or-d)', Critical: 'var(--bad-d)' }[risk.level] || 'var(--bg3)';
+
+  card.innerHTML = `
+    <div class="risk-top">
+      <div>
+        <div class="risk-k">Overall Risk Rating</div>
+        <div class="risk-rating" style="color:${levelColour}">${esc(risk.rating)}</div>
+        <div class="risk-note">${esc(risk.source)}</div>
+      </div>
+      <div class="risk-score-wrap" style="background:${levelBg};border-color:${levelColour}">
+        <div class="risk-k">Overall Risk Score</div>
+        <div class="risk-score" style="color:${levelColour}">${esc(String(risk.score))}</div>
+      </div>
+    </div>
+    <div class="risk-time" style="margin-top:10px;margin-left:0">Calculated: ${esc(new Date(risk.calculatedAt).toLocaleString())}</div>
+    <div class="risk-summary">${esc(risk.summary)}</div>
+    <div class="risk-k" style="margin-top:10px">Contributing Sections</div>
+    ${contributing}
+  `;
+}
+
+function renderHeaderMeta() {
+  const ref = inspectionMeta.referenceNo || '—';
+  const date = facility.assessmentDate || '—';
+  const site = [facility.zone || '', facility.nameDisplay || ''].filter(Boolean).join(' · ') || '—';
+  const metaRows = [
+    { k:'Inspection Ref', v: ref },
+    { k:'Version', v: inspectionMeta.versionCurrent || 0 },
+    { k:'Facility Name', v: facility.nameDisplay || '—' },
+    { k:'Facility Type', v: facility.facilityType || '—' },
+    { k:'Inspection Date', v: date },
+    { k:'Inspector', v: facility.assessorName || '—' },
+    { k:'Site / Location', v: site },
+    { k:'Checklist Submitted', v: inspectionMeta.checklistSubmittedAt ? new Date(inspectionMeta.checklistSubmittedAt).toLocaleString() : '—' },
+    { k:'Last Updated', v: inspectionMeta.lastUpdatedAt ? new Date(inspectionMeta.lastUpdatedAt).toLocaleString() : '—' },
+    { k:'Current Status', v: inspectionMeta.status || STATUS.DRAFT }
+  ];
+
+  const metaGrid = document.getElementById('metaGrid');
+  metaGrid.innerHTML = metaRows.map(row => `
+    <div class="meta-item">
+      <div class="k">${esc(row.k)}</div>
+      <div class="v">${esc(row.v)}</div>
+    </div>
+  `).join('');
+
+  const statusBadge = document.getElementById('statusBadge');
+  statusBadge.className = 'badge ' + statusBadgeClass(inspectionMeta.status);
+  statusBadge.textContent = inspectionMeta.status;
+}
+
+function renderKpis() {
+  const totalItems = sectionsSnapshot.reduce((a, s) => a + s.total, 0);
+  const answered = sectionsSnapshot.reduce((a, s) => a + s.answered, 0);
+  const failed = sectionsSnapshot.reduce((a, s) => a + s.failedCount, 0);
+  const findingCount = findings.length;
+  const correctiveCandidates = failed + findingCount;
+  const kpiRow = document.getElementById('kpiRow');
+  kpiRow.innerHTML = [
+    { n: totalItems, l:'Total Checklist Items' },
+    { n: answered, l:'Items Answered' },
+    { n: findingCount, l:'Additional Findings' },
+    { n: correctiveCandidates, l:'Corrective Items to Generate' }
+  ].map(k => `
+    <div class="kpi">
+      <div class="n">${esc(String(k.n))}</div>
+      <div class="l">${esc(k.l)}</div>
+    </div>
+  `).join('');
+}
+
+function answerPill(answer) {
+  const meta = ANSWER_META[answer] || { label:'Not Answered', cls:'a-none' };
+  return `<span class="ans ${meta.cls}">${esc(meta.label)}</span>`;
+}
+
+function sectionStatusPill(s) {
+  if (s.failedCount > 0) return '<span class="status-pill s-fail">Has Failed Items</span>';
+  if (s.status === 'Completed') return '<span class="status-pill s-done">Completed</span>';
+  if (s.status === 'In Progress') return '<span class="status-pill s-prog">In Progress</span>';
+  return '<span class="status-pill s-not">Not Started</span>';
+}
+
+function renderSections() {
+  const wrap = document.getElementById('sectionsWrap');
+  wrap.innerHTML = sectionsSnapshot.map((section, idx) => {
+    const summary = `${section.answered}/${section.total} completed · ${section.failedCount} failed/non-compliant`;
+    const itemsHtml = section.items.map(item => {
+      const response = section.state.responses[item.code] || '';
+      const failed = response === 'N' || response === 'P';
+      const missing = !response;
+      const cls = failed ? 'flag-failed' : (missing ? 'flag-miss' : '');
+      const comment = section.state.comments[item.code] || '';
+      const evidence = (section.state.files[item.code] || []).length;
+      const expiry = (section.state.expiryDates && section.state.expiryDates[item.code]) || (section.state.expiry && section.state.expiry[item.code]) || '—';
+      return `
+        <div class="item ${cls}">
+          <div class="item-top">
+            <span class="code">${esc(item.code)}</span>
+            ${answerPill(response)}
+            <span class="q">${esc(item.question || item.code)}</span>
+          </div>
+          <div class="item-grid">
+            <div class="cell"><div class="k">Comments / Observations</div><div class="v">${esc(comment || '—')}</div></div>
+            <div class="cell"><div class="k">Evidence</div><div class="v">${evidence} file(s)</div></div>
+            <div class="cell"><div class="k">Expiry Date</div><div class="v">${esc(expiry)}</div></div>
+          </div>
+        </div>
+      `;
+    }).join('') || '<div class="item"><div class="q">No items available for this section.</div></div>';
+
+    return `
+      <section class="section">
+        <div class="section-head" onclick="toggleItems(${idx})">
+          <div class="section-icon" style="width:28px;height:28px;border-radius:50%;background:var(--or-d);border:1px solid rgba(244,121,32,.35);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--or);flex-shrink:0">${idx + 1}</div>
+          <div>
+            <div class="section-title">${esc(section.label)}</div>
+            <div class="section-sub">${esc(summary)}</div>
+          </div>
+          <div class="section-actions">
+            ${sectionStatusPill(section)}
+            <button class="btn" onclick="event.stopPropagation();editSection('${esc(section.id)}')">Edit</button>
+            <button class="btn" id="toggleBtn-${idx}">▾ Items</button>
+          </div>
+        </div>
+        <div class="items" id="items-${idx}">${itemsHtml}</div>
+      </section>
+    `;
+  }).join('');
+}
+
+function renderFindings() {
+  const wrap = document.getElementById('findingsWrap');
+  if (!wrap) return;
+
+  if (!findings.length) {
+    wrap.innerHTML = `
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Additional Findings</div>
+            <div class="section-sub">No section-linked or general findings were captured.</div>
+          </div>
+        </div>
+        <div class="items show">
+          <div class="item">
+            <div class="q">No additional findings available.</div>
+          </div>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  const sorted = findings.slice().sort((a, b) => new Date(b.capturedAt || 0) - new Date(a.capturedAt || 0));
+  const findingsHtml = sorted.map(finding => {
+    const linkedLabel = finding.linkedSectionLabel || 'General Finding';
+    const findingType = finding.findingType || (finding.linkedSectionId ? 'Section-Linked Finding' : 'General Finding');
+    const evidenceCount = Array.isArray(finding.attachments) ? finding.attachments.length : 0;
+    const capturedAt = finding.capturedAt ? new Date(finding.capturedAt).toLocaleString() : '—';
+    const levelClass = finding.riskLevel === 'Critical'
+      ? 'a-n'
+      : finding.riskLevel === 'High'
+        ? 'a-p'
+        : 'a-na';
+    return `
+      <div class="item ${finding.riskLevel === 'Critical' || finding.riskLevel === 'High' ? 'flag-failed' : ''}">
+        <div class="item-top">
+          <span class="code">${esc(finding.findingId || '-')}</span>
+          <span class="ans ${levelClass}">${esc(finding.riskLevel || 'Low')}</span>
+          <span class="q">${esc(finding.observation || '-')}</span>
+        </div>
+        <div class="item-grid">
+          <div class="cell"><div class="k">Type / Linked Section</div><div class="v">${esc(findingType)} · ${esc(linkedLabel)}</div></div>
+          <div class="cell"><div class="k">Risk Score</div><div class="v">${esc(String(finding.riskScore || 0))}</div></div>
+          <div class="cell"><div class="k">Captured</div><div class="v">${esc(capturedAt)}</div></div>
+          <div class="cell"><div class="k">Recommended Action</div><div class="v">${esc(finding.recommendedAction || '—')}</div></div>
+          <div class="cell"><div class="k">Evidence</div><div class="v">${evidenceCount} file(s)</div></div>
+          <div class="cell"><div class="k">Status</div><div class="v">${esc(finding.status || 'Open')}</div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  wrap.innerHTML = `
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Additional Findings</div>
+          <div class="section-sub">${findings.length} finding(s) captured during inspection.</div>
+        </div>
+        <div class="section-actions">
+          <span class="status-pill s-prog">${findings.length} Findings</span>
+          <button class="btn" onclick="editSection('af')">Edit Findings</button>
+        </div>
+      </div>
+      <div class="items show">${findingsHtml}</div>
+    </section>
+  `;
+}
+
+function toggleItems(index) {
+  const body = document.getElementById('items-' + index);
+  const btn = document.getElementById('toggleBtn-' + index);
+  if (!body || !btn) return;
+  const open = body.classList.toggle('show');
+  btn.textContent = open ? 'Hide Items' : 'View Items';
+}
+
+function getValidationErrors() {
+  const errors = [];
+
+  sectionsSnapshot.forEach(section => {
+    if (section.total > 0 && section.answered < section.total) {
+      errors.push(`${section.label}: ${section.total - section.answered} checklist item(s) are still unanswered.`);
+    }
+
+    section.failedItems.forEach(item => {
+      const comment = (section.state.comments[item.code] || '').trim();
+      if (!comment) errors.push(`${item.code}: mandatory comment is missing for failed/non-compliant response.`);
+    });
+  });
+
+  findings.forEach(finding => {
+    const id = finding.findingId || 'Finding';
+    if (!String(finding.observation || '').trim()) errors.push(`${id}: observation/comment is required.`);
+    if (!Number(finding.severity || 0)) errors.push(`${id}: severity is required.`);
+    if (!Number(finding.likelihood || 0)) errors.push(`${id}: likelihood is required.`);
+    if (!String(finding.recommendedAction || '').trim()) errors.push(`${id}: recommended action is required.`);
+  });
+
+  if (!document.getElementById('declarationChk').checked) {
+    errors.push('Declaration checkbox must be confirmed before checklist submission.');
+  }
+
+  return errors;
+}
+
+function showValidationErrors(errors) {
+  const panel = document.getElementById('validationPanel');
+  const list = document.getElementById('validationList');
+  if (!errors.length) {
+    panel.classList.remove('show');
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = errors.map(e => `<li>${esc(e)}</li>`).join('');
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function onDeclarationChange() {
+  reviewDirty = true;
+  saveReviewState();
+}
+
+function saveReviewState() {
+  reviewState.declaration = document.getElementById('declarationChk').checked;
+  writeJSON(REVIEW_STATE_KEY, reviewState);
+  if (overallRisk) {
+    inspectionMeta.overallRisk = { ...overallRisk };
+    inspectionMeta.overallRiskCalculatedAt = overallRisk.calculatedAt;
+  }
+  inspectionMeta.lastPage = 'review';
+  inspectionMeta.lastSavedAt = nowIso();
+  writeJSON(META_KEY, inspectionMeta);
+  reviewDirty = false;
+}
+
+function saveAndContinueLater() {
+  saveReviewState();
+  const answeredAny = sectionsSnapshot.some(s => s.answered > 0);
+  const preserveStatus = [STATUS.PENDING, STATUS.REOPENED, STATUS.REVISED_CHECKLIST_SUBMITTED, STATUS.PUBLISHED];
+  if (preserveStatus.indexOf(inspectionMeta.status) < 0) {
+    inspectionMeta.status = answeredAny ? STATUS.IN_PROGRESS : STATUS.DRAFT;
+  }
+  inspectionMeta.lastPage = 'review';
+  inspectionMeta.lastSavedAt = nowIso();
+  writeJSON(META_KEY, inspectionMeta);
+  appendAudit('save_continue_later_review', { status: inspectionMeta.status });
+  renderHeaderMeta();
+  toast('Review progress saved. You can continue later.', 'success');
+}
+
+function buildCorrectiveActionPrefill() {
+  const now = nowIso();
+  const actor = facility.assessorName || 'Unknown User';
+  const items = [];
+  sectionsSnapshot.forEach(section => {
+    section.failedItems.forEach(item => {
+      const response = section.state.responses[item.code] || '';
+      const priority = response === 'N' ? 'High' : 'Medium';
+      items.push({
+        id: `CA-${String(items.length + 1).padStart(3, '0')}`,
+        sourceCode: item.code,
+        sourceQuestion: item.question || item.code,
+        sectionId: section.id,
+        sectionLabel: section.label,
+        sourceResponse: response,
+        sourceComment: section.state.comments[item.code] || '',
+        correctiveAction: item.action || '',
+        responsiblePerson: '',
+        dueDate: '',
+        priority,
+        assessorReviewComments: '',
+        evidence: [],
+        createdAt: now,
+        updatedAt: now,
+        changeHistory: [{ at: now, actor, field:'prefill', from:'', to:'Generated from failed/non-compliant checklist item' }]
+      });
+    });
+  });
+
+  findings.forEach(finding => {
+    const attachmentEvidence = Array.isArray(finding.attachments)
+      ? finding.attachments.map(file => ({
+          name: file.name || 'Attachment',
+          size: file.size || 0,
+          type: file.type || '',
+          caption: file.caption || 'Captured from Additional Findings',
+          uploadedAt: file.uploadedAt || now,
+          isPhoto: !!(file.type && String(file.type).indexOf('image/') === 0)
+        }))
+      : [];
+
+    const priority = finding.riskLevel === 'Critical'
+      ? 'Critical'
+      : finding.riskLevel === 'High'
+        ? 'High'
+        : finding.riskLevel === 'Medium'
+          ? 'Medium'
+          : 'Low';
+
+    items.push({
+      id: `CA-${String(items.length + 1).padStart(3, '0')}`,
+      sourceCode: finding.findingId || `FND-${String(items.length + 1).padStart(3, '0')}`,
+      sourceQuestion: finding.observation || 'Additional finding',
+      sectionId: finding.linkedSectionId || 'general',
+      sectionLabel: finding.linkedSectionLabel || 'General Finding',
+      sourceResponse: (finding.riskLevel === 'High' || finding.riskLevel === 'Critical') ? 'N' : 'P',
+      sourceComment: finding.observation || '',
+      correctiveAction: finding.recommendedAction || '',
+      responsiblePerson: '',
+      dueDate: '',
+      priority,
+      assessorReviewComments: '',
+      evidence: attachmentEvidence,
+      createdAt: now,
+      updatedAt: now,
+      changeHistory: [{ at: now, actor, field:'prefill', from:'', to:'Generated from additional finding' }]
+    });
+  });
+
+  return {
+    createdAt: now,
+    lastSavedAt: now,
+    sourceChecklistSubmittedAt: now,
+    status: STATUS.PENDING,
+    overallRisk: overallRisk ? { ...overallRisk } : null,
+    items
+  };
+}
+
+function submitChecklistPartial() {
+  reloadChecklistState();
+  renderKpis();
+  renderOverallRisk();
+  renderSections();
+  renderFindings();
+  const errors = getValidationErrors();
+  showValidationErrors(errors);
+  if (errors.length) {
+    toast('Checklist submission blocked. Resolve validation items first.', 'error');
+    return;
+  }
+
+  const caPayload = buildCorrectiveActionPrefill();
+  let submittedAt = nowIso();
+  if (window.GoilWorkflow) {
+    const lockResult = window.GoilWorkflow.lockChecklistSnapshot({
+      facility,
+      actor: facility.assessorName || 'Unknown User',
+      checklistSession: {
+        sectionStates,
+        catalog,
+        sectionsMeta,
+        findings,
+        lastSaved: checklist.lastSaved || nowIso()
+      },
+      overallRisk,
+      failedCount: caPayload.items.length,
+      correctiveItems: caPayload.items
+    });
+    inspectionMeta = lockResult.meta || inspectionMeta;
+    submittedAt = inspectionMeta.checklistSubmittedAt || submittedAt;
+    caPayload.sourceSnapshotId = lockResult.snapshot ? lockResult.snapshot.snapshotId : '';
+    caPayload.version = lockResult.version || inspectionMeta.versionCurrent || 1;
+  } else {
+    inspectionMeta.status = STATUS.PENDING;
+    inspectionMeta.checklistSubmittedAt = submittedAt;
+    inspectionMeta.lastPage = 'corrective';
+    inspectionMeta.lastSavedAt = submittedAt;
+    if (overallRisk) {
+      inspectionMeta.overallRisk = { ...overallRisk };
+      inspectionMeta.overallRiskCalculatedAt = overallRisk.calculatedAt;
+    }
+    writeJSON(META_KEY, inspectionMeta);
+  }
+  writeJSON(CA_KEY, caPayload);
+
+  appendAudit('checklist_partially_submitted', {
+    status: inspectionMeta.status || STATUS.PENDING,
+    failedItems: caPayload.items.length,
+    additionalFindings: findings.length,
+    checklistSubmittedAt: submittedAt,
+    overallRiskLevel: overallRisk ? overallRisk.level : 'Low',
+    overallRiskScore: overallRisk ? overallRisk.score : 0,
+    version: inspectionMeta.versionCurrent || caPayload.version || 1
+  });
+
+  reviewDirty = false;
+  renderHeaderMeta();
+  document.getElementById('confirmPanel').classList.add('show');
+  document.getElementById('confirmPanel').scrollIntoView({ behavior:'smooth', block:'center' });
+  toast('Checklist submitted successfully.', 'success');
+}
+
+function goToCorrectivePage() {
+  window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep6';
+}
+
+function sectionIndexById(id) {
+  if (id === 'af') return SECTION_ORDER.length;
+  const idx = SECTION_ORDER.findIndex(s => s.id === id);
+  return idx < 0 ? 0 : idx;
+}
+
+function confirmLeaveWithUnsaved(onContinue) {
+  if (!reviewDirty) {
+    onContinue();
+    return;
+  }
+  const answer = (window.prompt('You have unsaved changes. Type S to Save Draft, D to Discard, or C to Cancel.', 'S') || 'C').trim().toUpperCase();
+  if (answer === 'S') {
+    saveAndContinueLater();
+    onContinue();
+    return;
+  }
+  if (answer === 'D') {
+    reviewDirty = false;
+    onContinue();
+  }
+}
+
+function reopenForRevision() {
+  const reason = (window.prompt('Enter reason for reopening this inspection for revision:', '') || '').trim();
+  if (!reason) return;
+  if (window.GoilWorkflow) {
+    const result = window.GoilWorkflow.reopenForRevision({
+      facility,
+      actor: facility.assessorName || 'Unknown User',
+      reason
+    });
+    if (!result.ok) {
+      toast(result.error || 'Unable to reopen inspection.', 'error');
+      return;
+    }
+    inspectionMeta = result.meta;
+  } else {
+    inspectionMeta.status = STATUS.REOPENED;
+    inspectionMeta.revisionOpen = true;
+    writeJSON(META_KEY, inspectionMeta);
+  }
+  appendAudit('inspection_reopened_for_revision', { reason, status: inspectionMeta.status });
+  renderHeaderMeta();
+  toast('Inspection reopened for revision. Checklist is now editable.', 'info');
+}
+
+function editSection(sectionId) {
+  confirmLeaveWithUnsaved(() => {
+    saveReviewState();
+    localStorage.setItem(CURRENT_SEC_KEY, String(sectionIndexById(sectionId)));
+    appendAudit('edit_section_from_review', { sectionId });
+    window.location.href = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + Date.now();
+  });
+}
+
+function goBackToChecklist() {
+  confirmLeaveWithUnsaved(() => {
+    saveReviewState();
+    inspectionMeta.lastPage = 'checklist';
+    inspectionMeta.lastSavedAt = nowIso();
+    writeJSON(META_KEY, inspectionMeta);
+    window.location.href = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + Date.now();
+  });
+}
+
+function goHome() {
+  saveReviewState();
+  inspectionMeta.lastPage = 'home';
+  inspectionMeta.lastSavedAt = nowIso();
+  writeJSON(META_KEY, inspectionMeta);
+  window.location.href = 'portal.html';
+}
+
+function renderAudit() {
+  const list = readJSON(AUDIT_KEY, []).slice().reverse();
+  const wrap = document.getElementById('auditList');
+  if (!list.length) {
+    wrap.innerHTML = '<div class="audit-item"><div class="t">No audit events recorded yet.</div></div>';
+    return;
+  }
+  wrap.innerHTML = list.slice(0, 50).map(ev => {
+    const when = new Date(ev.at).toLocaleString();
+    const msg = `${ev.action} · ${ev.actor || 'Unknown User'}`;
+    return `<div class="audit-item"><div class="t">${esc(msg)}</div><div class="m">${esc(when)}</div></div>`;
+  }).join('');
+}
+
+function esc(v) {
+  if (v == null) return '';
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');
+}
+
+function toast(msg, type) {
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type === 'error' ? 'error' : type === 'warn' ? 'warn' : type === 'info' ? 'info' : 'success');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(10px)';
+    setTimeout(() => el.remove(), 240);
+  }, 3400);
+}
+
+function init() {
+  facility = readJSON(FACILITY_KEY, {});
+  checklist = readJSON(SAVE_KEY, {});
+  reviewState = readJSON(REVIEW_STATE_KEY, { declaration:false });
+  inspectionMeta = window.GoilWorkflow ? window.GoilWorkflow.getMeta(facility) : ensureInspectionMeta();
+  if (window.GoilWorkflow) window.GoilWorkflow.refreshOverdueNotifications();
+  reloadChecklistState();
+
+  renderHeaderMeta();
+  renderKpis();
+  renderOverallRisk();
+  renderSections();
+  renderFindings();
+  renderAudit();
+  document.getElementById('declarationChk').checked = !!reviewState.declaration;
+
+  if (inspectionMeta.status === STATUS.PENDING || inspectionMeta.status === STATUS.REVISED_CHECKLIST_SUBMITTED) {
+    document.getElementById('confirmPanel').classList.add('show');
+  }
+
+  appendAudit('review_page_opened', { status: inspectionMeta.status });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('beforeunload', event => {
+  if (reviewDirty) {
+    event.preventDefault();
+    event.returnValue = '';
+    return;
+  }
+  saveReviewState();
+});
+window.addEventListener('storage', event => {
+  if (event.key === SAVE_KEY) {
+    reloadChecklistState();
+    renderKpis();
+    renderOverallRisk();
+    renderSections();
+    renderFindings();
+  } else if (event.key === META_KEY) {
+    inspectionMeta = ensureInspectionMeta();
+    renderHeaderMeta();
+  }
+});
+</script>
+</body>
+</html>

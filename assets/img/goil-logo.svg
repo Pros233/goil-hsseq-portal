@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" role="img" aria-label="GOIL Good energy logo">
+  <defs>
+    <path id="blade" d="M220 26c55 0 106 22 143 59-48 7-92 34-121 72-12-27-20-79-22-131z" fill="#F45A28"/>
+  </defs>
+  <g transform="translate(0 0)">
+    <use href="#blade"/>
+    <use href="#blade" transform="rotate(30 220 220)"/>
+    <use href="#blade" transform="rotate(60 220 220)"/>
+    <use href="#blade" transform="rotate(90 220 220)"/>
+    <use href="#blade" transform="rotate(120 220 220)"/>
+    <use href="#blade" transform="rotate(150 220 220)"/>
+    <use href="#blade" transform="rotate(180 220 220)"/>
+    <use href="#blade" transform="rotate(210 220 220)"/>
+    <use href="#blade" transform="rotate(240 220 220)"/>
+    <use href="#blade" transform="rotate(270 220 220)"/>
+    <use href="#blade" transform="rotate(300 220 220)"/>
+    <use href="#blade" transform="rotate(330 220 220)"/>
+  </g>
+  <g fill="#585C5A" font-family="Barlow, Arial, sans-serif">
+    <text x="34" y="490" font-size="188" font-weight="700" letter-spacing="4">GOIL</text>
+    <text x="56" y="574" font-size="92" font-weight="700" letter-spacing="1">Good energy</text>
+  </g>
+</svg>

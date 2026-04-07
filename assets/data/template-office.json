@@ -1,0 +1,35 @@
+{
+  "templateId": "TPL-OFFICE",
+  "versionNo": "1.0.0",
+  "state": "Published",
+  "effectiveDate": "2026-03-01",
+  "facilityType": "Office",
+  "areaOrder": [
+    "Office / Admin",
+    "Electrical Room",
+    "Forecourt"
+  ],
+  "includedCategories": [
+    "Documentation & Compliance",
+    "First Aid",
+    "Occupational Health",
+    "Electrical Safety",
+    "Access Control",
+    "Housekeeping",
+    "Emergency Preparedness"
+  ],
+  "baseQuestionIds": [
+    "Q-OFF-001",
+    "Q-OFF-002",
+    "Q-OFF-004",
+    "Q-OFF-005",
+    "Q-EL-001",
+    "Q-EL-002",
+    "Q-EL-003",
+    "Q-EL-004",
+    "Q-FC-004"
+  ],
+  "moduleQuestionIds": {
+    "Office Block": ["Q-OFF-003", "Q-OFF-001", "Q-OFF-002"]
+  }
+}

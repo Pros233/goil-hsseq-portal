@@ -1,0 +1,3009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facility Profile | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep9" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep9" />
+  <style>
+    :root {
+      --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D; --bg5:#30363D;
+      --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.12);
+      --or:#F47920; --or-dim:rgba(244,121,32,.1); --or-glow:rgba(244,121,32,.28);
+      --wh:#E6EDF3; --wh2:#C9D1D9; --wh3:#8B949E; --wh4:#484F58;
+      --low:#3FB950; --low-dim:rgba(63,185,80,.1); --low-glow:rgba(63,185,80,.25);
+      --med:#D29922; --med-dim:rgba(210,153,34,.1); --med-glow:rgba(210,153,34,.25);
+      --high:#E07D23; --high-dim:rgba(224,125,35,.1);
+      --crit:#DA3633; --crit-dim:rgba(218,54,51,.1); --crit-glow:rgba(218,54,51,.28);
+      --blue:#3498DB; --blue-dim:rgba(52,152,219,.1);
+      --t:.18s ease; --r:8px; --rl:12px;
+    }
+
+    body.fp-body {
+      margin: 0;
+      font-family: 'Barlow', sans-serif;
+      color: var(--wh2);
+      background:
+        radial-gradient(1200px 500px at 80% -40%, rgba(52,152,219,.08), transparent 60%),
+        radial-gradient(900px 420px at 20% -30%, rgba(244,121,32,.1), transparent 70%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .fp-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 54px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0 16px;
+    }
+
+    .fp-top-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .fp-vsep {
+      width: 1px;
+      height: 22px;
+      background: var(--border2);
+      flex-shrink: 0;
+    }
+
+    .fp-back-btn {
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .fp-back-btn:hover {
+      border-color: var(--or);
+      color: var(--wh);
+    }
+
+    .fp-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .fp-logo-mark {
+      width: 24px;
+      height: 24px;
+      filter: drop-shadow(0 0 8px rgba(244,121,32,.3));
+      flex-shrink: 0;
+    }
+
+    .fp-brand-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: .5px;
+      color: var(--wh);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .fp-title-wrap {
+      min-width: 0;
+      display: grid;
+      gap: 0;
+    }
+
+    .fp-page-title {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 17px;
+      color: var(--wh);
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .fp-page-subtitle {
+      margin: 0;
+      font-size: 10px;
+      color: var(--wh4);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 520px;
+    }
+
+    .fp-conduct-btn {
+      height: 36px;
+      border: none;
+      border-radius: 7px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: #fff;
+      background: var(--or);
+      box-shadow: 0 2px 10px var(--or-glow);
+      cursor: pointer;
+      transition: all var(--t);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .fp-conduct-btn:hover {
+      transform: translateY(-1px);
+      background: #e46d18;
+    }
+
+    .fp-content {
+      width: min(1550px, 96vw);
+      margin: 70px auto 28px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .fp-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--rl);
+      padding: 18px 20px;
+    }
+
+    .fp-sec-head {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .fp-sec-title {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 17px;
+      color: var(--wh);
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .fp-sec-title::before {
+      content: '';
+      width: 3px;
+      height: 15px;
+      background: var(--or);
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    .fp-sec-sub {
+      margin: 0;
+      font-size: 11px;
+      color: var(--wh3);
+      line-height: 1.45;
+    }
+
+    .fp-selector-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .fp-filter-row {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr)) auto auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fp-filter-note {
+      margin: 8px 0 0;
+      font-size: 10px;
+      color: var(--wh4);
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .fp-date {
+      width: 100%;
+      height: 40px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2);
+      background: var(--bg3);
+      color: var(--wh2);
+      font-size: 12px;
+      padding: 0 10px;
+      outline: none;
+      transition: all var(--t);
+    }
+
+    .fp-date:focus {
+      border-color: var(--or);
+      box-shadow: 0 0 0 3px rgba(244,121,32,.1);
+    }
+
+    .fp-toggle-wrap {
+      height: 40px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2);
+      background: var(--bg3);
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .fp-toggle-wrap input {
+      accent-color: var(--or);
+    }
+
+    .fp-toggle-label {
+      font-size: 11px;
+      color: var(--wh3);
+      font-weight: 600;
+    }
+
+    .fp-reset-btn {
+      height: 40px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--t);
+      white-space: nowrap;
+    }
+
+    .fp-reset-btn:hover {
+      color: var(--or);
+      border-color: var(--or);
+      background: var(--or-dim);
+    }
+
+    .fp-select {
+      width: 100%;
+      height: 46px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2);
+      background:
+        linear-gradient(45deg, transparent 50%, var(--wh4) 50%) calc(100% - 18px) calc(50% + 2px) / 8px 8px no-repeat,
+        linear-gradient(135deg, var(--wh4) 50%, transparent 50%) calc(100% - 13px) calc(50% + 2px) / 8px 8px no-repeat,
+        var(--bg3);
+      color: var(--wh2);
+      font-size: 13px;
+      padding: 0 42px 0 12px;
+      appearance: none;
+      outline: none;
+      transition: all var(--t);
+    }
+
+    .fp-select:focus {
+      border-color: var(--or);
+      box-shadow: 0 0 0 3px rgba(244,121,32,.1);
+    }
+
+    .fp-refresh-btn {
+      height: 46px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t);
+      white-space: nowrap;
+    }
+
+    .fp-refresh-btn:hover {
+      border-color: var(--or);
+      color: var(--or);
+      background: var(--or-dim);
+    }
+
+    .fp-identity {
+      border-left: 4px solid var(--or);
+      background: var(--bg3);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .fp-ident-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .fp-ident-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 9px;
+      border: 1px solid var(--or-glow);
+      background: var(--or-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .fp-ident-name {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 22px;
+      color: var(--wh);
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      line-height: 1;
+    }
+
+    .fp-ident-meta {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--wh4);
+      line-height: 1.4;
+    }
+
+    .fp-ident-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .fp-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .fp-kpi-card {
+      position: relative;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 16px 18px 14px;
+      min-height: 124px;
+      display: grid;
+      align-content: start;
+      gap: 9px;
+      overflow: hidden;
+    }
+
+    .fp-kpi-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: var(--or);
+    }
+
+    .fp-kpi-card.k-assess::before { background: var(--or); }
+    .fp-kpi-card.k-status::before { background: var(--low); }
+    .fp-kpi-card.k-latest-risk::before { background: var(--low); }
+    .fp-kpi-card.k-risk::before { background: var(--crit); }
+    .fp-kpi-card.k-open::before { background: var(--crit); }
+    .fp-kpi-card.k-overdue::before { background: var(--med); }
+    .fp-kpi-card.k-avg::before { background: var(--wh4); }
+
+    .fp-kpi-label {
+      font-size: 10px;
+      color: var(--wh3);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .fp-kpi-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 34px;
+      line-height: .95;
+      color: var(--wh2);
+      font-weight: 900;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+
+    .fp-kpi-card.k-assess .fp-kpi-value { color: var(--or); }
+    .fp-kpi-card.k-status .fp-kpi-value { color: var(--low); }
+    .fp-kpi-card.k-latest-risk .fp-kpi-value { color: var(--low); }
+    .fp-kpi-card.k-risk .fp-kpi-value { color: var(--crit); }
+    .fp-kpi-card.k-open .fp-kpi-value { color: var(--crit); }
+    .fp-kpi-card.k-overdue .fp-kpi-value { color: var(--med); }
+    .fp-kpi-card.k-avg .fp-kpi-value { color: var(--wh3); }
+
+    .fp-kpi-card.k-risk.risk-low::before { background: var(--low); }
+    .fp-kpi-card.k-risk.risk-low .fp-kpi-value { color: var(--low); }
+    .fp-kpi-card.k-risk.risk-medium::before { background: var(--med); }
+    .fp-kpi-card.k-risk.risk-medium .fp-kpi-value { color: var(--med); }
+    .fp-kpi-card.k-risk.risk-high::before { background: var(--high); }
+    .fp-kpi-card.k-risk.risk-high .fp-kpi-value { color: var(--high); }
+    .fp-kpi-card.k-risk.risk-critical::before { background: var(--crit); }
+    .fp-kpi-card.k-risk.risk-critical .fp-kpi-value { color: var(--crit); }
+    .fp-kpi-card.k-risk.risk-none::before { background: var(--wh4); }
+    .fp-kpi-card.k-risk.risk-none .fp-kpi-value { color: var(--wh3); }
+
+    .fp-kpi-card.k-latest-risk.risk-low::before { background: var(--low); }
+    .fp-kpi-card.k-latest-risk.risk-low .fp-kpi-value { color: var(--low); }
+    .fp-kpi-card.k-latest-risk.risk-medium::before { background: var(--med); }
+    .fp-kpi-card.k-latest-risk.risk-medium .fp-kpi-value { color: var(--med); }
+    .fp-kpi-card.k-latest-risk.risk-high::before { background: var(--high); }
+    .fp-kpi-card.k-latest-risk.risk-high .fp-kpi-value { color: var(--high); }
+    .fp-kpi-card.k-latest-risk.risk-critical::before { background: var(--crit); }
+    .fp-kpi-card.k-latest-risk.risk-critical .fp-kpi-value { color: var(--crit); }
+    .fp-kpi-card.k-latest-risk.risk-none::before { background: var(--wh4); }
+    .fp-kpi-card.k-latest-risk.risk-none .fp-kpi-value { color: var(--wh3); }
+    .fp-kpi-card.k-avg.risk-low::before { background: var(--low); }
+    .fp-kpi-card.k-avg.risk-low .fp-kpi-value { color: var(--low); }
+    .fp-kpi-card.k-avg.risk-medium::before { background: var(--med); }
+    .fp-kpi-card.k-avg.risk-medium .fp-kpi-value { color: var(--med); }
+    .fp-kpi-card.k-avg.risk-high::before { background: var(--high); }
+    .fp-kpi-card.k-avg.risk-high .fp-kpi-value { color: var(--high); }
+    .fp-kpi-card.k-avg.risk-critical::before { background: var(--crit); }
+    .fp-kpi-card.k-avg.risk-critical .fp-kpi-value { color: var(--crit); }
+    .fp-kpi-card.k-avg.risk-none::before { background: var(--wh4); }
+    .fp-kpi-card.k-avg.risk-none .fp-kpi-value { color: var(--wh3); }
+    .fp-kpi-card.k-latest-risk .fp-kpi-value,
+    .fp-kpi-card.k-avg .fp-kpi-value { text-transform: none; }
+
+    .fp-kpi-note {
+      font-size: 11px;
+      color: var(--wh4);
+      font-weight: 600;
+      letter-spacing: .15px;
+      line-height: 1.35;
+    }
+
+    .fp-kpi-debug {
+      margin: 8px 2px 2px;
+      padding: 7px 10px;
+      border: 1px dashed var(--border2);
+      border-radius: 7px;
+      background: var(--bg3);
+      color: var(--wh3);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 10px;
+      line-height: 1.45;
+      letter-spacing: .12px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .fp-two-col {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 14px;
+    }
+
+    .fp-trend-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .fp-version-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--wh3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 2px 8px;
+      background: var(--bg3);
+      white-space: nowrap;
+    }
+
+    .fp-comp-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      background: var(--bg3);
+      padding: 2px;
+      flex-shrink: 0;
+    }
+
+    .fp-comp-toggle-btn {
+      border: none;
+      background: transparent;
+      color: var(--wh3);
+      height: 28px;
+      min-width: 72px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--t);
+      padding: 0 12px;
+    }
+
+    .fp-comp-toggle-btn.active {
+      background: var(--or);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--or-glow);
+    }
+
+    .fp-comp-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .fp-comp-row {
+      display: grid;
+      grid-template-columns: 190px 1fr 48px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .fp-comp-label {
+      font-size: 14px;
+      letter-spacing: .15px;
+      color: var(--wh3);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fp-comp-track {
+      height: 24px;
+      border-radius: 8px;
+      background: #2f3742;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.04);
+    }
+
+    .fp-comp-fill {
+      height: 100%;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 8px;
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      min-width: 52px;
+      white-space: nowrap;
+      transition: width .25s ease;
+    }
+
+    .fp-comp-fill.neutral {
+      background: rgba(139,148,158,.25) !important;
+      color: var(--wh3);
+    }
+
+    .fp-comp-val {
+      text-align: right;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #5f6672;
+      line-height: 1;
+    }
+
+    .fp-comp-val.na {
+      color: var(--wh4);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .fp-chart-wrap {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: linear-gradient(180deg, rgba(255,255,255,.01), transparent), var(--bg3);
+      padding: 12px 12px 10px;
+    }
+
+    .fp-chart-title {
+      margin: 0 0 8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .2px;
+      color: var(--wh3);
+    }
+
+    .fp-chart {
+      width: 100%;
+      height: 190px;
+      display: block;
+    }
+
+    .fp-legend {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .fp-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--wh3);
+      letter-spacing: .1px;
+      font-weight: 600;
+    }
+
+    .fp-line-swatch {
+      width: 26px;
+      height: 0;
+      border-top: 3px solid var(--wh3);
+      border-radius: 999px;
+      flex-shrink: 0;
+      display: inline-block;
+      transform: translateY(-1px);
+    }
+
+    .fp-line-swatch.initial {
+      border-top-color: var(--crit);
+      border-top-style: dashed;
+    }
+
+    .fp-line-swatch.residual {
+      border-top-color: var(--low);
+      border-top-style: solid;
+    }
+
+    .fp-dot-latest {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--or);
+      box-shadow: 0 0 0 3px rgba(244,121,32,.18);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .fp-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .fp-rec-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .fp-rec-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .fp-rec-item.r-critical { border-left-color: var(--crit); }
+    .fp-rec-item.r-high { border-left-color: var(--high); }
+    .fp-rec-item.r-med { border-left-color: var(--med); }
+    .fp-rec-item.r-low { border-left-color: var(--low); }
+
+    .fp-rec-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .fp-rec-title {
+      margin: 0;
+      font-size: 12px;
+      color: var(--wh2);
+      font-weight: 600;
+      line-height: 1.35;
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .fp-rec-meta {
+      margin: 0;
+      font-size: 10px;
+      color: var(--wh3);
+      line-height: 1.4;
+    }
+
+    .fp-rec-badges {
+      display: inline-flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .fp-rec-summary {
+      margin-top: 9px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+      padding: 8px 10px;
+      font-size: 10px;
+      color: var(--wh3);
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .fp-table-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--rl);
+      overflow: hidden;
+    }
+
+    .fp-table-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fp-table-head-left {
+      display: grid;
+      gap: 3px;
+    }
+
+    .fp-table-head-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fp-export-btn {
+      height: 30px;
+      padding: 0 11px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .fp-export-btn:hover {
+      border-color: var(--or);
+      color: var(--or);
+      background: var(--or-dim);
+    }
+
+    .fp-table-wrap {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    .fp-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+    }
+
+    .fp-table th,
+    .fp-table td {
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--wh2);
+      white-space: normal;
+    }
+
+    .fp-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--bg3);
+      color: var(--wh3);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .55px;
+      font-weight: 700;
+    }
+
+    .fp-table tbody tr:hover {
+      background: rgba(255,255,255,.02);
+    }
+
+    .fp-view-btn {
+      height: 26px;
+      padding: 0 9px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .fp-view-btn:hover {
+      border-color: var(--or);
+      color: var(--or);
+    }
+
+    .fp-ref-toggle {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: var(--or);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .fp-ref-toggle:hover {
+      opacity: .9;
+    }
+
+    .fp-version-row td {
+      background: rgba(255,255,255,.02);
+      border-top: 0;
+      padding-top: 8px;
+      padding-bottom: 10px;
+    }
+
+    .fp-version-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .fp-version-list {
+      min-width: 1180px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .fp-version-head,
+    .fp-version-line {
+      display: grid;
+      grid-template-columns: 32px minmax(180px, 1.2fr) 110px 130px 130px 95px 120px minmax(180px, 1fr) 145px 72px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .fp-version-head {
+      padding: 0 8px;
+      color: var(--wh4);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .45px;
+    }
+
+    .fp-version-line {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+    }
+
+    .fp-version-line .v-seq {
+      color: var(--wh3);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .fp-version-line .v-ref {
+      color: var(--or);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .fp-version-meta {
+      color: var(--wh3);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .fp-version-view {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .fp-version-view:hover {
+      border-color: var(--or);
+      color: var(--or);
+    }
+
+    .fp-ca-ref-toggle {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: var(--or);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .fp-ca-ref-toggle:hover {
+      opacity: .9;
+    }
+
+    .fp-ca-group-row td {
+      background: rgba(255,255,255,.02);
+      border-top: 0;
+      padding-top: 8px;
+      padding-bottom: 10px;
+    }
+
+    .fp-ca-group-shell {
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      background: var(--bg3);
+      overflow: hidden;
+    }
+
+    .fp-ca-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      background: rgba(255,255,255,.01);
+    }
+
+    .fp-ca-tab-btn {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 7px;
+      border: 1.5px solid var(--border2);
+      background: transparent;
+      color: var(--wh3);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .fp-ca-tab-btn:hover {
+      border-color: var(--or);
+      color: var(--or);
+    }
+
+    .fp-ca-tab-btn.active {
+      border-color: var(--or);
+      color: var(--or);
+      background: var(--or-dim);
+      box-shadow: inset 0 0 0 1px var(--or-glow);
+    }
+
+    .fp-ca-panel {
+      display: none;
+    }
+
+    .fp-ca-panel.active {
+      display: block;
+    }
+
+    .fp-ca-inner-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .fp-ca-inner-table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: collapse;
+    }
+
+    .fp-ca-inner-table th,
+    .fp-ca-inner-table td {
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+      font-size: 11px;
+      color: var(--wh2);
+    }
+
+    .fp-ca-inner-table th {
+      background: var(--bg4);
+      color: var(--wh3);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-weight: 700;
+    }
+
+    .fp-ca-empty {
+      padding: 12px 10px;
+      font-size: 11px;
+      color: var(--wh3);
+    }
+
+    .fp-ev-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      background: var(--bg3);
+      color: var(--wh3);
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .fp-not-set {
+      font-size: 10px;
+      color: var(--wh4);
+      font-style: italic;
+    }
+
+    .fp-muted {
+      color: var(--wh4);
+    }
+
+    .fp-no-data {
+      padding: 12px;
+      border: 1px dashed var(--border2);
+      border-radius: 8px;
+      background: var(--bg3);
+      color: var(--wh3);
+      font-size: 12px;
+    }
+
+    .fp-toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: var(--bg2);
+      color: var(--wh2);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--or);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      z-index: 140;
+      animation: fpIn .18s ease;
+    }
+
+    @keyframes fpIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fp-badge,
+    .b-pub, .b-pca, .b-prog, .b-draft,
+    .b-crit, .b-high, .b-med, .b-low {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+
+    .b-pub   { background:var(--low-dim);  color:var(--low);  border:1px solid rgba(63,185,80,.2)  }
+    .b-pca   { background:var(--high-dim); color:var(--high); border:1px solid rgba(224,125,35,.2) }
+    .b-prog  { background:var(--med-dim);  color:var(--med);  border:1px solid rgba(210,153,34,.2) }
+    .b-draft { background:rgba(139,148,158,.15); color:var(--wh3); border:1px solid var(--border2) }
+    .b-crit  { background:var(--crit-dim); color:var(--crit); border:1px solid rgba(218,54,51,.2)  }
+    .b-high  { background:var(--high-dim); color:var(--high); border:1px solid rgba(224,125,35,.2) }
+    .b-med   { background:var(--med-dim);  color:var(--med);  border:1px solid rgba(210,153,34,.2) }
+    .b-low   { background:var(--low-dim);  color:var(--low);  border:1px solid rgba(63,185,80,.2)  }
+
+    @media (max-width: 1100px) {
+      .fp-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .fp-two-col {
+        grid-template-columns: 1fr;
+      }
+      .fp-filter-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 840px) {
+      .fp-topbar {
+        padding-inline: 10px;
+      }
+      .fp-page-subtitle,
+      .fp-vsep.hide-sm {
+        display: none;
+      }
+      .fp-title-wrap {
+        max-width: 280px;
+      }
+      .fp-selector-row {
+        grid-template-columns: 1fr;
+      }
+      .fp-filter-row {
+        grid-template-columns: 1fr 1fr;
+      }
+      .fp-identity {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .fp-ident-right {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .fp-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .fp-filter-row {
+        grid-template-columns: 1fr;
+      }
+      .fp-conduct-btn {
+        padding-inline: 10px;
+      }
+      .fp-comp-row {
+        grid-template-columns: 1fr;
+      }
+      .fp-comp-val {
+        text-align: right;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body class="fp-body">
+  <header class="fp-topbar">
+    <div class="fp-top-left">
+      <button class="fp-back-btn" id="backLandingBtn">← Assessment Management Center</button>
+      <span class="fp-vsep"></span>
+      <div class="fp-brand">
+        <img src="../assets/img/goil-logo.png" alt="GOIL Logo" class="fp-logo-mark" />
+        <div class="fp-brand-text">GOIL HSSEQ</div>
+      </div>
+      <span class="fp-vsep hide-sm"></span>
+      <div class="fp-title-wrap">
+        <h1 class="fp-page-title">Facility Profile</h1>
+        <p class="fp-page-subtitle">Facility-level performance, history, trend, and recurring findings</p>
+      </div>
+    </div>
+    <button class="fp-conduct-btn" id="conductAssessmentBtn">⚡ Conduct Assessment</button>
+  </header>
+
+  <main class="fp-content">
+    <section class="fp-card">
+      <div class="fp-sec-head">
+        <h2 class="fp-sec-title">Facility Selection</h2>
+        <p class="fp-sec-sub">Choose a facility to review live published assessment history, risk movement, recurring findings, and corrective action performance.</p>
+      </div>
+      <div class="fp-selector-row">
+        <select id="facilitySelect" class="fp-select" aria-label="Facility Select"></select>
+        <button id="refreshProfileBtn" class="fp-refresh-btn">↻ Refresh Data</button>
+      </div>
+      <div class="fp-filter-row">
+        <select id="filterZone" class="fp-select" aria-label="Filter Zone">
+          <option value="">All Zones</option>
+        </select>
+        <select id="filterFacilityType" class="fp-select" aria-label="Filter Facility Type">
+          <option value="">All Facility Types</option>
+        </select>
+        <select id="filterRiskLevel" class="fp-select" aria-label="Filter Risk Level">
+          <option value="">All Risk Levels</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <select id="filterAssessmentStatus" class="fp-select" aria-label="Filter Assessment Status">
+          <option value="">All Statuses</option>
+        </select>
+        <input id="filterDateFrom" class="fp-date" type="date" aria-label="Date From" />
+        <input id="filterDateTo" class="fp-date" type="date" aria-label="Date To" />
+        <select id="filterOpenCA" class="fp-select" aria-label="Filter Open Corrective Actions">
+          <option value="">Open Corrective Actions: Any</option>
+          <option value="yes">Has Open Actions</option>
+          <option value="no">No Open Actions</option>
+        </select>
+        <label class="fp-toggle-wrap" for="filterIncludeUnpublished">
+          <input id="filterIncludeUnpublished" type="checkbox" />
+          <span class="fp-toggle-label">Include Unpublished</span>
+        </label>
+        <button id="clearFiltersBtn" class="fp-reset-btn">Clear Filters</button>
+      </div>
+      <p class="fp-filter-note" id="profileScopeNote">Showing published assessments only</p>
+    </section>
+
+    <section class="fp-identity" id="facilityIdentityBar">
+      <div class="fp-ident-left">
+        <div class="fp-ident-icon">⛽</div>
+        <div>
+          <h2 class="fp-ident-name" id="facilityNameTitle">-</h2>
+          <p class="fp-ident-meta" id="facilityMetaLine">-</p>
+        </div>
+      </div>
+      <div class="fp-ident-right">
+        <span id="facilityStatusBadge" class="fp-badge b-draft">Draft</span>
+        <span id="facilityRiskBadge" class="fp-badge b-low">Low</span>
+      </div>
+    </section>
+
+    <section class="fp-kpi-grid">
+      <article class="fp-kpi-card k-assess">
+        <div class="fp-kpi-label">Assessments</div>
+        <div id="kpiAssessments" class="fp-kpi-value">0</div>
+        <div class="fp-kpi-note">Total conducted</div>
+      </article>
+      <article id="kpiLatestRiskCard" class="fp-kpi-card k-latest-risk risk-none">
+        <div class="fp-kpi-label">Latest Risk Score</div>
+        <div id="kpiLatestRisk" class="fp-kpi-value">N/A</div>
+        <div id="kpiLatestRiskNote" class="fp-kpi-note">No published assessment</div>
+      </article>
+      <article id="kpiRiskCard" class="fp-kpi-card k-risk risk-none">
+        <div class="fp-kpi-label">Residual Risk Score</div>
+        <div id="kpiResidualRisk" class="fp-kpi-value">N/A</div>
+        <div class="fp-kpi-note">Latest published assessment</div>
+      </article>
+      <article class="fp-kpi-card k-open">
+        <div class="fp-kpi-label">Open Actions</div>
+        <div id="kpiOpenActions" class="fp-kpi-value">0</div>
+        <div class="fp-kpi-note">Require closure</div>
+      </article>
+      <article class="fp-kpi-card k-overdue">
+        <div class="fp-kpi-label">Overdue Actions</div>
+        <div id="kpiOverdueActions" class="fp-kpi-value">0</div>
+        <div class="fp-kpi-note">Past due date</div>
+      </article>
+      <article id="kpiAvgRiskCard" class="fp-kpi-card k-avg risk-none">
+        <div class="fp-kpi-label">Avg Risk Score</div>
+        <div id="kpiAvgRisk" class="fp-kpi-value">N/A</div>
+        <div class="fp-kpi-note">Across versions</div>
+      </article>
+    </section>
+    <div id="kpiRiskDebugLine" class="fp-kpi-debug">Debug: waiting for facility selection.</div>
+
+    <section class="fp-two-col">
+      <article class="fp-card">
+        <div class="fp-trend-head">
+          <div class="fp-sec-head" style="margin-bottom:0;">
+            <h2 class="fp-sec-title">Compliance Trend</h2>
+            <p class="fp-sec-sub">Current and historical compliance performance across all inspection sections.</p>
+          </div>
+          <div class="fp-comp-toggle" role="tablist" aria-label="Compliance view mode">
+            <button id="complianceCurrentBtn" class="fp-comp-toggle-btn active" type="button" role="tab" aria-selected="true">Current</button>
+            <button id="complianceAllBtn" class="fp-comp-toggle-btn" type="button" role="tab" aria-selected="false">All</button>
+          </div>
+        </div>
+        <div id="complianceBars" class="fp-comp-list"></div>
+        <div class="fp-chart-wrap">
+          <h3 class="fp-chart-title">Risk Score Over Time</h3>
+          <svg class="fp-chart" id="riskTrendChart" viewBox="0 0 560 190" preserveAspectRatio="none"></svg>
+          <div class="fp-legend">
+            <span class="fp-legend-item"><span class="fp-line-swatch initial"></span>Initial Risk Score</span>
+            <span class="fp-legend-item"><span class="fp-line-swatch residual"></span>Residual Risk Score</span>
+            <span class="fp-legend-item"><span class="fp-dot-latest"></span>Latest</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="fp-card">
+        <div class="fp-sec-head">
+          <h2 class="fp-sec-title">Recurring Findings</h2>
+          <p class="fp-sec-sub">Repeated themes requiring sustained control and closure quality.</p>
+        </div>
+        <div id="recurringFindingsList" class="fp-rec-list"></div>
+        <div id="recurringSummaryStrip" class="fp-rec-summary"></div>
+      </article>
+    </section>
+
+    <section class="fp-table-card">
+      <div class="fp-table-head">
+        <div class="fp-table-head-left">
+          <h2 class="fp-sec-title" style="margin-bottom:0;">Assessment History</h2>
+          <p class="fp-sec-sub">Versioned inspection records for this facility.</p>
+        </div>
+        <div class="fp-table-head-right">
+          <button id="exportAssessmentsBtn" class="fp-export-btn">Export</button>
+        </div>
+      </div>
+      <div class="fp-table-wrap">
+        <table class="fp-table">
+          <thead>
+            <tr>
+              <th>Reference Number</th>
+              <th>Version</th>
+              <th>Inspection Date</th>
+              <th>Initial Risk</th>
+              <th>Residual Risk</th>
+              <th>Risk Reduction</th>
+              <th>Status</th>
+              <th>Inspector</th>
+              <th>Last Updated</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody id="assessmentHistoryTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="fp-table-card">
+      <div class="fp-table-head">
+        <div class="fp-table-head-left">
+          <h2 class="fp-sec-title" style="margin-bottom:0;">Corrective Action History</h2>
+          <p class="fp-sec-sub">Linked corrective actions from checklist and additional findings.</p>
+        </div>
+        <div class="fp-table-head-right">
+          <span id="summaryOpenBadge" class="fp-badge b-pca">0 Open</span>
+          <span id="summaryOverdueBadge" class="fp-badge b-crit">0 Overdue</span>
+          <span id="summaryClosedBadge" class="fp-badge b-pub">0 Closed</span>
+        </div>
+      </div>
+      <div class="fp-table-wrap">
+        <table class="fp-table">
+          <thead>
+            <tr>
+              <th>Master Reference</th>
+              <th>Total Actions</th>
+              <th>Open</th>
+              <th>Overdue</th>
+              <th>Closed</th>
+              <th>Highest Risk</th>
+              <th>Last Updated</th>
+              <th>Original Assessor</th>
+              <th>Latest Status</th>
+              <th>Evidence</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="actionHistoryTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    const auth = JSON.parse(localStorage.getItem('goil_auth_session') || '{}');
+    const STATUS = window.RiskModuleUtils && typeof RiskModuleUtils.STATUS === 'function'
+      ? RiskModuleUtils.STATUS()
+      : {
+          DRAFT: 'Draft',
+          IN_PROGRESS: 'In Progress',
+          PENDING_CORRECTIVE: 'Checklist Submitted / Pending Corrective Action',
+          REOPENED: 'Reopened for Revision',
+          REVISED_CHECKLIST_SUBMITTED: 'Revised Checklist Submitted',
+          PUBLISHED: 'Fully Submitted / Published to Register'
+        };
+
+    const STATUS_BADGE = {
+      'Published': 'b-pub',
+      'Pending CA': 'b-pca',
+      'In Progress': 'b-prog',
+      'Draft': 'b-draft',
+      'Reopened': 'b-prog',
+      'Awaiting Review': 'b-prog'
+    };
+    const RISK_BADGE = { Critical: 'b-crit', High: 'b-high', Medium: 'b-med', Moderate: 'b-med', Low: 'b-low' };
+
+    const filterState = {
+      zone: '',
+      facilityType: '',
+      riskLevel: '',
+      assessmentStatus: '',
+      dateFrom: '',
+      dateTo: '',
+      hasOpenActions: '',
+      includeUnpublished: false
+    };
+
+    let allRecords = [];
+    let allActions = [];
+    let allSnapshots = [];
+    let snapshotIndex = {};
+    let filteredRecords = [];
+    let activeFacility = '';
+    let visibleAssessmentRows = [];
+    let complianceMode = 'current';
+
+    const COMPLIANCE_CATEGORIES = [
+      'Documentation',
+      'HSSE Management',
+      'Electrical Room',
+      'Fire & Emergency',
+      'Tank Farm Area',
+      'Environment',
+      'Dispensing & Tanks',
+      'Forecourt & Traffic',
+      'Emergency Response',
+      'Security',
+      'Housekeeping',
+      'Environmental Compliance',
+      'Other Services'
+    ];
+
+    function esc(value) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.esc === 'function') return RiskModuleUtils.esc(value);
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function toDate(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function fmtDate(value) {
+      if (!value) return '-';
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.fmtDate === 'function') return RiskModuleUtils.fmtDate(value);
+      const d = toDate(value);
+      if (!d) return String(value);
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function fmtDateTime(value) {
+      if (!value) return '-';
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.fmtDateTime === 'function') return RiskModuleUtils.fmtDateTime(value);
+      const d = toDate(value);
+      if (!d) return String(value);
+      return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function pickFacilityNameFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return String(params.get('facility') || '').trim();
+    }
+
+    function normalizeLevel(level) {
+      const value = String(level || '').trim();
+      if (value === 'Moderate') return 'Medium';
+      return value || 'Low';
+    }
+
+    function showToast(msg) {
+      const el = document.createElement('div');
+      el.className = 'fp-toast';
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(function () {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(3px)';
+        setTimeout(function () { el.remove(); }, 200);
+      }, 2000);
+    }
+
+    function mapStatus(status) {
+      const value = String(status || '').trim();
+      if (value === STATUS.PUBLISHED || value === 'Fully Submitted / Published to Register' || value === 'Published') return 'Published';
+      if (value === STATUS.PENDING_CORRECTIVE || value === STATUS.REVISED_CHECKLIST_SUBMITTED || value === 'Checklist Submitted / Pending Corrective Action' || value === 'Pending CA') return 'Pending CA';
+      if (value === STATUS.REOPENED || value === 'Reopened for Revision' || value === 'Reopened') return 'Reopened';
+      if (value === STATUS.IN_PROGRESS || value === 'In Progress') return 'In Progress';
+      if (value === STATUS.DRAFT || value === 'Draft') return 'Draft';
+      if (value === 'Awaiting Review') return 'Awaiting Review';
+      return value || 'Draft';
+    }
+
+    function statusBadgeClass(status) {
+      return STATUS_BADGE[mapStatus(status)] || 'b-draft';
+    }
+
+    function riskBadgeClass(level) {
+      return RISK_BADGE[normalizeLevel(level)] || 'b-low';
+    }
+
+    function riskTileClass(level) {
+      const normalized = normalizeLevel(level);
+      if (normalized === 'Critical' || normalized === 'Critical') return 'risk-critical';
+      if (normalized === 'High') return 'risk-high';
+      if (normalized === 'Medium') return 'risk-medium';
+      return 'risk-low';
+    }
+
+    function riskLevelFromScore(score) {
+      const n = Number(score || 0);
+      if (n >= 17) return 'Critical';
+      if (n >= 10) return 'High';
+      if (n >= 5) return 'Medium';
+      return 'Low';
+    }
+
+    function riskScoreFromRecord(record) {
+      if (!record || typeof record !== 'object') return null;
+
+      const snapshot = getSnapshotForRecord(record);
+      const scoreCandidates = [
+        record.overall_risk_score,
+        record.overallRiskScore,
+        record.overallRisk && record.overallRisk.score,
+        record.risk_score,
+        record.riskScore,
+        record.residual_risk_score,
+        record.residualRiskScore,
+        snapshot && snapshot.overallRisk && snapshot.overallRisk.score,
+        snapshot && snapshot.checklist && snapshot.checklist.overallRisk && snapshot.checklist.overallRisk.score
+      ];
+
+      for (let i = 0; i < scoreCandidates.length; i += 1) {
+        const n = Number(scoreCandidates[i]);
+        if (Number.isFinite(n) && n > 0) return n;
+      }
+
+      const snapRisk = riskSnapshotForRecord(record);
+      const snapInitial = Number(snapRisk && snapRisk.initialScore);
+      if (Number.isFinite(snapInitial) && snapInitial > 0) return snapInitial;
+
+      const level = normalizeLevel(
+        record.overall_risk_level ||
+        record.overallRiskLevel ||
+        record.risk_level ||
+        record.riskLevel ||
+        record.residual_risk_level ||
+        record.residualRiskLevel ||
+        ''
+      );
+
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.scoreFromRiskLevel === 'function') {
+        return RiskModuleUtils.scoreFromRiskLevel(level);
+      }
+      if (level === 'Critical' || level === 'Critical') return 17;
+      if (level === 'High') return 10;
+      if (level === 'Medium') return 5;
+      if (level === 'Low') return 1;
+      return null;
+    }
+
+    function facilityKey(value) {
+      return String(value || '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, ' ');
+    }
+
+    function masterReferenceForRecord(record) {
+      if (!record || typeof record !== 'object') return '';
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function') {
+        return String(RiskModuleUtils.getParentInspectionReference(record) || '').trim();
+      }
+      return String(record.master_reference || record.assessment_family_reference || record.assessment_reference || record.inspectionRef || '').trim();
+    }
+
+    function distinctMasterCount(records) {
+      const set = new Set();
+      (records || []).forEach(function (record, idx) {
+        const key = masterReferenceForRecord(record) || ('UNREF-' + String(idx));
+        set.add(key);
+      });
+      return set.size;
+    }
+
+    function recordFacility(record) {
+      return String(record.facilityName || record.facility_name || '').trim();
+    }
+
+    function recordZone(record) {
+      return String(record.location || record.zone || '').trim();
+    }
+
+    function recordFacilityType(record) {
+      return String(record.facilityType || record.facility_type || '').trim();
+    }
+
+    function recordDate(record) {
+      return record.inspectionDate || record.assessment_date || record.lastUpdatedAt || record.last_updated_at || '';
+    }
+
+    function recordSortTimestamp(record) {
+      return (
+        record.final_submitted_at ||
+        record.publishedAt ||
+        record.corrective_action_submitted_at ||
+        record.correctiveSubmittedAt ||
+        record.checklist_submitted_at ||
+        record.checklistSubmittedAt ||
+        record.last_updated_at ||
+        record.lastUpdatedAt ||
+        record.assessment_date ||
+        record.inspectionDate ||
+        ''
+      );
+    }
+
+    function recordVersion(record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getRecordVersionNumber === 'function') {
+        return RiskModuleUtils.getRecordVersionNumber(record || {});
+      }
+      const n = Number(record && (record.version_number || record.version || record.versionCurrent || 1));
+      if (Number.isFinite(n) && n > 0) return Math.floor(n);
+      const token = String((record && (record.version_number || record.version || record.assessment_version_id || record.display_reference || '')) || '');
+      const match = token.match(/(?:^|[^A-Z0-9])V(?:ERSION)?[-_ ]?(\d+)(?:$|[^0-9])/i) || token.match(/-v(\d+)$/i);
+      if (!match) return 1;
+      const parsed = Number(match[1]);
+      return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1;
+    }
+
+    function stripVersionSuffix(ref) {
+      return String(ref || '')
+        .trim()
+        .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+        .replace(/[-_ ]+$/, '')
+        .trim();
+    }
+
+    function compareRecordRecency(a, b) {
+      const aTime = new Date(recordSortTimestamp(a) || 0).getTime();
+      const bTime = new Date(recordSortTimestamp(b) || 0).getTime();
+      if (aTime !== bTime) return bTime - aTime;
+      return recordVersion(b) - recordVersion(a);
+    }
+
+    function isPublishedRecord(record) {
+      if (!record) return false;
+      if (record.is_published === true) return true;
+      if (mapStatus(record.status || record.assessment_status) === 'Published') return true;
+      return String(record.status || record.assessment_status || '') === STATUS.PUBLISHED;
+    }
+
+    function snapshotKey(ref, version) {
+      return String(ref || '') + '::' + String(recordVersion({ version: version }));
+    }
+
+    function rebuildSnapshotIndex() {
+      snapshotIndex = {};
+      allSnapshots.forEach(function (snapshot) {
+        const key = snapshotKey(snapshot.inspectionRef, snapshot.version);
+        if (!snapshotIndex[key]) snapshotIndex[key] = snapshot;
+      });
+    }
+
+    function getSnapshotForRecord(record) {
+      const ref = record.inspectionRef || record.assessment_reference || '';
+      const version = recordVersion(record);
+      return snapshotIndex[snapshotKey(ref, version)] || null;
+    }
+
+    function isActionForRecord(action, record) {
+      if (!action || !record) return false;
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.isActionForRecord === 'function') {
+        return RiskModuleUtils.isActionForRecord(action, record);
+      }
+      return String(action.inspectionRef || '') === String(record.inspectionRef || '');
+    }
+
+    function actionStatus(action) {
+      const raw = String(action.status || '').trim();
+      if (raw) return raw;
+      const due = toDate(action.dueDate);
+      const now = new Date();
+      if (due && due < now) return 'Overdue';
+      return 'Open';
+    }
+
+    function actionIsClosed(status) {
+      const normalized = String(status || '').toLowerCase();
+      return normalized === 'closed' || normalized === 'verified closed';
+    }
+
+    function actionIsOpen(status) {
+      const normalized = String(status || '').toLowerCase();
+      return normalized === 'open' || normalized === 'in progress' || normalized === 'overdue' || normalized === 'closed pending verification';
+    }
+
+    function riskSnapshotForRecord(record) {
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getRiskSnapshotForRecord === 'function') {
+        return RiskModuleUtils.getRiskSnapshotForRecord(record, allActions);
+      }
+      const initialScore = Number(record.overallRiskScore || 0);
+      const residualScore = Number(record.residualRiskScore || initialScore);
+      return {
+        initialScore: initialScore,
+        initialLevel: normalizeLevel(record.overallRiskLevel || 'Low'),
+        residualScore: residualScore,
+        residualLevel: normalizeLevel(record.residualRiskLevel || record.overallRiskLevel || 'Low'),
+        riskReduction: Math.max(0, Math.round((initialScore - residualScore) * 10) / 10)
+      };
+    }
+
+    function actionsForRecord(record) {
+      return allActions.filter(function (action) {
+        return isActionForRecord(action, record);
+      });
+    }
+
+    function linkedActionsForRecords(records) {
+      const map = new Map();
+      (records || []).forEach(function (record) {
+        actionsForRecord(record).forEach(function (action) {
+          const key = String(action.actionId || action.inspectionRef + '-' + action.sourceCode || '');
+          if (!map.has(key)) map.set(key, action);
+        });
+      });
+      return Array.from(map.values());
+    }
+
+    function recordHasOpenAction(record) {
+      return actionsForRecord(record).some(function (action) {
+        return actionIsOpen(actionStatus(action)) && !actionIsClosed(actionStatus(action));
+      });
+    }
+
+    function uniqueSorted(values) {
+      return Array.from(new Set(values.filter(Boolean).map(function (v) { return String(v).trim(); })))
+        .filter(Boolean)
+        .sort();
+    }
+
+    function setSelectOptions(selectId, values, allLabel, selectedValue) {
+      const node = document.getElementById(selectId);
+      const options = ['<option value="">' + esc(allLabel) + '</option>']
+        .concat(values.map(function (value) {
+          const selected = String(value) === String(selectedValue || '') ? ' selected' : '';
+          return '<option value="' + esc(value) + '"' + selected + '>' + esc(value) + '</option>';
+        }));
+      node.innerHTML = options.join('');
+      if (selectedValue && values.indexOf(selectedValue) < 0) node.value = '';
+    }
+
+    function readFiltersFromUI() {
+      filterState.zone = document.getElementById('filterZone').value || '';
+      filterState.facilityType = document.getElementById('filterFacilityType').value || '';
+      filterState.riskLevel = document.getElementById('filterRiskLevel').value || '';
+      filterState.assessmentStatus = document.getElementById('filterAssessmentStatus').value || '';
+      filterState.dateFrom = document.getElementById('filterDateFrom').value || '';
+      filterState.dateTo = document.getElementById('filterDateTo').value || '';
+      filterState.hasOpenActions = document.getElementById('filterOpenCA').value || '';
+      filterState.includeUnpublished = !!document.getElementById('filterIncludeUnpublished').checked;
+    }
+
+    function applyFiltersToUI() {
+      document.getElementById('filterDateFrom').value = filterState.dateFrom || '';
+      document.getElementById('filterDateTo').value = filterState.dateTo || '';
+      document.getElementById('filterOpenCA').value = filterState.hasOpenActions || '';
+      document.getElementById('filterIncludeUnpublished').checked = !!filterState.includeUnpublished;
+      document.getElementById('filterRiskLevel').value = filterState.riskLevel || '';
+    }
+
+    function scopedRecords() {
+      return allRecords.filter(function (record) {
+        if (filterState.includeUnpublished) return true;
+        return isPublishedRecord(record);
+      });
+    }
+
+    function filteredByControls(records) {
+      let rows = (records || []).slice();
+
+      if (filterState.zone) {
+        rows = rows.filter(function (record) { return recordZone(record) === filterState.zone; });
+      }
+      if (filterState.facilityType) {
+        rows = rows.filter(function (record) { return recordFacilityType(record) === filterState.facilityType; });
+      }
+      if (filterState.riskLevel) {
+        rows = rows.filter(function (record) {
+          const snap = riskSnapshotForRecord(record);
+          return normalizeLevel(snap.residualLevel) === filterState.riskLevel;
+        });
+      }
+      if (filterState.assessmentStatus) {
+        rows = rows.filter(function (record) {
+          return mapStatus(record.status || record.assessment_status) === filterState.assessmentStatus;
+        });
+      }
+      if (filterState.dateFrom) {
+        const from = toDate(filterState.dateFrom);
+        rows = rows.filter(function (record) {
+          const d = toDate(recordDate(record));
+          return !from || (d && d >= from);
+        });
+      }
+      if (filterState.dateTo) {
+        const to = toDate(filterState.dateTo);
+        if (to) to.setHours(23, 59, 59, 999);
+        rows = rows.filter(function (record) {
+          const d = toDate(recordDate(record));
+          return !to || (d && d <= to);
+        });
+      }
+      if (filterState.hasOpenActions === 'yes') {
+        rows = rows.filter(recordHasOpenAction);
+      } else if (filterState.hasOpenActions === 'no') {
+        rows = rows.filter(function (record) { return !recordHasOpenAction(record); });
+      }
+
+      return rows.sort(compareRecordRecency);
+    }
+
+    function populateFilterOptions() {
+      const scope = scopedRecords();
+      const zones = uniqueSorted(scope.map(recordZone));
+      const types = uniqueSorted(scope.map(recordFacilityType));
+      const statuses = uniqueSorted(scope.map(function (record) { return mapStatus(record.status || record.assessment_status); }));
+
+      setSelectOptions('filterZone', zones, 'All Zones', filterState.zone);
+      setSelectOptions('filterFacilityType', types, 'All Facility Types', filterState.facilityType);
+      setSelectOptions('filterAssessmentStatus', statuses, 'All Statuses', filterState.assessmentStatus);
+      applyFiltersToUI();
+    }
+
+    function refreshFacilityOptions(records, preferredFacility) {
+      const select = document.getElementById('facilitySelect');
+      const facilities = uniqueSorted((records || []).map(recordFacility));
+      if (!facilities.length) {
+        select.innerHTML = '<option value="">No facilities match filters</option>';
+        activeFacility = '';
+        return;
+      }
+
+      const pick = preferredFacility && facilities.indexOf(preferredFacility) >= 0
+        ? preferredFacility
+        : (facilities.indexOf(activeFacility) >= 0 ? activeFacility : facilities[0]);
+      activeFacility = pick;
+
+      select.innerHTML = facilities.map(function (facility) {
+        const selected = facility === activeFacility ? ' selected' : '';
+        return '<option value="' + esc(facility) + '"' + selected + '>' + esc(facility) + '</option>';
+      }).join('');
+    }
+
+    function updateScopeNote(records) {
+      const rows = Array.isArray(records) ? records : [];
+      const recordCount = rows.length;
+      const assessmentCount = distinctMasterCount(rows);
+      const msg = filterState.includeUnpublished
+        ? 'Showing published + unpublished assessments (' + assessmentCount + ' assessment families, ' + recordCount + ' version records)'
+        : 'Showing published assessments only (' + assessmentCount + ' assessment families, ' + recordCount + ' version records)';
+      document.getElementById('profileScopeNote').textContent = msg;
+    }
+
+    function defaultIdentity() {
+      document.getElementById('facilityNameTitle').textContent = 'No Facility Selected';
+      document.getElementById('facilityMetaLine').textContent = 'Adjust filters to find facilities with published assessments.';
+      document.getElementById('facilityStatusBadge').className = 'fp-badge b-draft';
+      document.getElementById('facilityStatusBadge').textContent = 'Draft';
+      document.getElementById('facilityRiskBadge').className = 'fp-badge b-low';
+      document.getElementById('facilityRiskBadge').textContent = 'Low';
+      document.getElementById('kpiAssessments').textContent = '0';
+      document.getElementById('kpiLatestRisk').textContent = 'N/A';
+      document.getElementById('kpiLatestRiskNote').textContent = 'No published assessment';
+      document.getElementById('kpiLatestRiskCard').className = 'fp-kpi-card k-latest-risk risk-none';
+      document.getElementById('kpiResidualRisk').textContent = 'N/A';
+      document.getElementById('kpiRiskCard').className = 'fp-kpi-card k-risk risk-none';
+      document.getElementById('kpiOpenActions').textContent = '0';
+      document.getElementById('kpiOverdueActions').textContent = '0';
+      document.getElementById('kpiAvgRisk').textContent = 'N/A';
+      document.getElementById('kpiAvgRiskCard').className = 'fp-kpi-card k-avg risk-none';
+      document.getElementById('kpiRiskDebugLine').textContent = 'Debug: no facility scope; published records used = 0.';
+    }
+
+    function renderIdentityAndKpis(records, actions) {
+      if (!records.length) {
+        defaultIdentity();
+        return;
+      }
+
+      const sorted = records.slice().sort(compareRecordRecency);
+      const latest = sorted[0];
+      const historyRows = Array.isArray(visibleAssessmentRows) ? visibleAssessmentRows.slice() : [];
+      const publishedHistoryRows = historyRows.filter(function (row) {
+        return isPublishedRecord(row && row._record);
+      });
+      const publishedRowsSorted = publishedHistoryRows.slice().sort(function (a, b) {
+        const aInspectionTs = toDate(a && a.inspectionDate) ? toDate(a.inspectionDate).getTime() : 0;
+        const bInspectionTs = toDate(b && b.inspectionDate) ? toDate(b.inspectionDate).getTime() : 0;
+        if (bInspectionTs !== aInspectionTs) return bInspectionTs - aInspectionTs;
+
+        const aVersion = Number(a && a.version || 1);
+        const bVersion = Number(b && b.version || 1);
+        if (bVersion !== aVersion) return bVersion - aVersion;
+
+        return compareRecordRecency(a && a._record || {}, b && b._record || {});
+      });
+      const latestPublishedRow = publishedRowsSorted[0] || null;
+      const publishedInitialScores = publishedHistoryRows
+        .map(function (row) { return Number(row.initialScore); })
+        .filter(function (score) { return Number.isFinite(score); });
+      const publishedResidualLevels = publishedHistoryRows.map(function (row) {
+        return normalizeLevel(riskLevelFromScore(Number(row.residualScore || 0)));
+      });
+      const residualLevels = publishedResidualLevels.length ? publishedResidualLevels : sorted.map(function (record) {
+        return normalizeLevel(riskSnapshotForRecord(record).residualLevel || 'Low');
+      });
+      const highestRisk = window.RiskModuleUtils && typeof RiskModuleUtils.highestRisk === 'function'
+        ? normalizeLevel(RiskModuleUtils.highestRisk(residualLevels))
+        : residualLevels.sort(function (a, b) { return (a > b ? -1 : 1); })[0];
+      const avgRiskRaw = publishedInitialScores.length
+        ? (publishedInitialScores.reduce(function (acc, val) { return acc + val; }, 0) / publishedInitialScores.length)
+        : null;
+      const avgRisk = avgRiskRaw == null ? null : Math.round(avgRiskRaw * 10) / 10;
+      const avgRiskLevel = avgRisk == null ? 'N/A' : riskLevelFromScore(avgRisk);
+
+      const openActions = actions.filter(function (action) {
+        const st = actionStatus(action);
+        return actionIsOpen(st) && !actionIsClosed(st);
+      }).length;
+      const overdueActions = actions.filter(function (action) {
+        return String(actionStatus(action)).toLowerCase() === 'overdue';
+      }).length;
+
+      const assessmentFamilies = distinctMasterCount(
+        publishedHistoryRows.map(function (row) { return row._record; })
+      );
+
+      const latestMetaRecord = latestPublishedRow && latestPublishedRow._record ? latestPublishedRow._record : latest;
+      document.getElementById('facilityNameTitle').textContent = activeFacility;
+      document.getElementById('facilityMetaLine').textContent =
+        recordFacilityType(latestMetaRecord) + ' · ' + recordZone(latestMetaRecord) + ' · ' + assessmentFamilies + ' assessments · Last assessed ' + fmtDate(recordDate(latestMetaRecord));
+
+      const latestStatus = mapStatus(latest.status || latest.assessment_status);
+      const statusBadge = document.getElementById('facilityStatusBadge');
+      statusBadge.className = 'fp-badge ' + statusBadgeClass(latestStatus);
+      statusBadge.textContent = latestStatus;
+
+      const riskBadge = document.getElementById('facilityRiskBadge');
+      riskBadge.className = 'fp-badge ' + riskBadgeClass(highestRisk);
+      riskBadge.textContent = highestRisk;
+
+      const latestRiskScore = latestPublishedRow ? Number(latestPublishedRow.initialScore || 0) : null;
+      const latestRiskLevel = latestRiskScore == null ? 'N/A' : riskLevelFromScore(latestRiskScore);
+      const latestRiskDisplay = latestRiskScore == null ? 'N/A' : (fmtRiskValue(latestRiskScore) + ' (' + latestRiskLevel + ')');
+      const latestResidualRiskScore = latestPublishedRow ? Number(latestPublishedRow.residualScore || 0) : null;
+      const latestResidualRiskLevel = latestResidualRiskScore == null ? 'N/A' : riskLevelFromScore(latestResidualRiskScore);
+      const latestResidualRiskDisplay = latestResidualRiskScore == null ? 'N/A' : (fmtRiskValue(latestResidualRiskScore) + ' (' + latestResidualRiskLevel + ')');
+      const avgRiskDisplay = avgRisk == null ? 'N/A' : (fmtRiskValue(avgRisk) + ' (' + avgRiskLevel + ')');
+
+      document.getElementById('kpiAssessments').textContent = String(assessmentFamilies);
+      document.getElementById('kpiLatestRisk').textContent = latestRiskDisplay;
+      document.getElementById('kpiLatestRiskNote').textContent = latestPublishedRow
+        ? 'Latest published assessment'
+        : 'No published assessment';
+      document.getElementById('kpiLatestRiskCard').className = 'fp-kpi-card k-latest-risk ' + (latestRiskScore != null ? riskTileClass(latestRiskLevel) : 'risk-none');
+      document.getElementById('kpiResidualRisk').textContent = latestResidualRiskDisplay;
+      document.getElementById('kpiRiskCard').className = 'fp-kpi-card k-risk ' + (latestResidualRiskScore != null ? riskTileClass(latestResidualRiskLevel) : 'risk-none');
+      document.getElementById('kpiOpenActions').textContent = String(openActions);
+      document.getElementById('kpiOverdueActions').textContent = String(overdueActions);
+      document.getElementById('kpiAvgRisk').textContent = avgRiskDisplay;
+      document.getElementById('kpiAvgRiskCard').className = 'fp-kpi-card k-avg ' + (avgRisk != null ? riskTileClass(avgRiskLevel) : 'risk-none');
+
+      const debugRows = publishedRowsSorted.map(function (row) {
+        return row.displayReference + ':I' + fmtRiskValue(row.initialScore) + '/R' + fmtRiskValue(row.residualScore);
+      });
+      const debugLatestRef = latestPublishedRow
+        ? latestPublishedRow.displayReference
+        : 'N/A';
+      const debugText = 'Debug: published history rows used=' + publishedHistoryRows.length
+        + ' | avg source rows=' + publishedInitialScores.length
+        + ' | latest=' + debugLatestRef + ':' + (latestRiskScore == null ? 'N/A' : fmtRiskValue(latestRiskScore))
+        + ' | avg=' + (avgRisk == null ? 'N/A' : fmtRiskValue(avgRisk))
+        + (debugRows.length ? ' | all=[' + debugRows.join(', ') + ']' : '');
+      document.getElementById('kpiRiskDebugLine').textContent = debugText;
+    }
+
+    function riskToneClass(level) {
+      const norm = normalizeLevel(level);
+      if (norm === 'Critical' || norm === 'Critical') return 'r-critical';
+      if (norm === 'High') return 'r-high';
+      if (norm === 'Medium') return 'r-med';
+      return 'r-low';
+    }
+
+    function sourceLabel(action) {
+      if (action.sectionLabel) return action.sectionLabel;
+      if (action.sourceType === 'checklist') return 'Checklist';
+      if (action.sourceType === 'finding') return 'Additional Finding';
+      return action.sourceCode || 'Assessment Finding';
+    }
+
+    function classifyComplianceCategoryTokens(labelInput, codeInput) {
+      const label = String(labelInput || '').toLowerCase();
+      const code = String(codeInput || '').toUpperCase();
+
+      if (label.indexOf('documentation') >= 0 || code.indexOf('DOC-') === 0) return 'Documentation';
+      if (label.indexOf('hsse') >= 0 || code.indexOf('HSSE-') === 0) return 'HSSE Management';
+      if (label.indexOf('electrical') >= 0 || code.indexOf('ELEC-') === 0) return 'Electrical Room';
+      if (label.indexOf('fire') >= 0 || code.indexOf('FIR-') === 0) return 'Fire & Emergency';
+      if (label.indexOf('emergency response') >= 0 || code.indexOf('EMR-') === 0) return 'Emergency Response';
+      if (label.indexOf('tank farm') >= 0 || code.indexOf('TANK-') === 0) return 'Tank Farm Area';
+      if (label.indexOf('environmental compliance') >= 0) return 'Environmental Compliance';
+      if (label.indexOf('environment') >= 0 || code.indexOf('ENV-') === 0) return 'Environment';
+      if (label.indexOf('dispensing') >= 0 || code.indexOf('DSP-') === 0) return 'Dispensing & Tanks';
+      if (label.indexOf('forecourt') >= 0 || code.indexOf('FRC-') === 0) return 'Forecourt & Traffic';
+      if (label.indexOf('security') >= 0 || code.indexOf('SEC-') === 0) return 'Security';
+      if (label.indexOf('housekeeping') >= 0 || code.indexOf('WEL-') === 0) return 'Housekeeping';
+      if (
+        label.indexOf('other services') >= 0 ||
+        label.indexOf('lube') >= 0 ||
+        label.indexOf('tyre') >= 0 ||
+        label.indexOf('go cafe') >= 0 ||
+        label.indexOf('car wash') >= 0 ||
+        code.indexOf('LUBE-') === 0 ||
+        code.indexOf('TYRE-') === 0 ||
+        code.indexOf('LPG-CX-') === 0 ||
+        code.indexOf('PUB-') === 0 ||
+        code.indexOf('ATM-') === 0 ||
+        code.indexOf('CARW-') === 0
+      ) return 'Other Services';
+      return null;
+    }
+
+    function complianceColor(score, hasData) {
+      if (!hasData) return 'var(--wh4)';
+      if (score >= 80) return 'var(--low)';
+      if (score >= 65) return 'var(--or)';
+      if (score >= 45) return 'var(--med)';
+      return 'var(--crit)';
+    }
+
+    function publishedRecordsForActiveFacility() {
+      if (!activeFacility) return [];
+      const activeKey = facilityKey(activeFacility);
+      return allRecords.filter(function (record) {
+        return facilityKey(recordFacility(record)) === activeKey && isPublishedRecord(record);
+      }).sort(compareRecordRecency);
+    }
+
+    function publishedLatestByMasterForActiveFacility() {
+      const published = publishedRecordsForActiveFacility();
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.getLatestRecordsByMaster === 'function') {
+        return RiskModuleUtils.getLatestRecordsByMaster(published).sort(compareRecordRecency);
+      }
+      return published;
+    }
+
+    function emptyComplianceBuckets() {
+      const out = {};
+      COMPLIANCE_CATEGORIES.forEach(function (category) {
+        out[category] = { applicable: 0, compliant: 0 };
+      });
+      return out;
+    }
+
+    function normalizeResponseValue(value) {
+      return String(value || '').trim().toUpperCase();
+    }
+
+    function complianceBucketsFromRecords(records) {
+      const buckets = emptyComplianceBuckets();
+
+      (records || []).forEach(function (record) {
+        const snapshot = getSnapshotForRecord(record);
+        if (!snapshot || !snapshot.checklist || typeof snapshot.checklist !== 'object') return;
+
+        const checklist = snapshot.checklist || {};
+        const sectionStates = checklist.sectionStates && typeof checklist.sectionStates === 'object' ? checklist.sectionStates : {};
+        const catalog = checklist.catalog && typeof checklist.catalog === 'object' ? checklist.catalog : {};
+        const sectionsMeta = Array.isArray(checklist.sectionsMeta) ? checklist.sectionsMeta : [];
+        const sectionLabelById = {};
+        sectionsMeta.forEach(function (section) {
+          if (!section || !section.id) return;
+          sectionLabelById[section.id] = section.label || section.short || section.id;
+        });
+
+        Object.keys(sectionStates).forEach(function (sectionId) {
+          const state = sectionStates[sectionId] || {};
+          const responses = state.responses && typeof state.responses === 'object' ? state.responses : {};
+          Object.keys(responses).forEach(function (code) {
+            const response = normalizeResponseValue(responses[code]);
+            if (response !== 'Y' && response !== 'P' && response !== 'N' && response !== 'NA') return;
+
+            const meta = catalog[code] || {};
+            const labelHint = meta.sectionLabel || sectionLabelById[meta.sectionId || sectionId] || meta.sub || sectionId;
+            const category = classifyComplianceCategoryTokens(labelHint, code);
+            if (!category || !buckets[category]) return;
+
+            if (response === 'NA') return;
+            buckets[category].applicable += 1;
+            if (response === 'Y') buckets[category].compliant += 1;
+          });
+        });
+      });
+
+      return buckets;
+    }
+
+    function renderCompliance() {
+      const node = document.getElementById('complianceBars');
+      const publishedRecords = publishedRecordsForActiveFacility();
+      const sourceRecords = complianceMode === 'current'
+        ? (publishedRecords[0] ? [publishedRecords[0]] : [])
+        : publishedRecords;
+      const buckets = complianceBucketsFromRecords(sourceRecords);
+
+      const rows = COMPLIANCE_CATEGORIES.map(function (category) {
+        const info = buckets[category] || { applicable: 0, compliant: 0 };
+        const hasData = info.applicable > 0;
+        const pct = hasData ? Math.round((info.compliant / info.applicable) * 100) : 0;
+        const width = hasData ? Math.max(pct, 8) : 12;
+        return {
+          label: category,
+          pct: pct,
+          width: width,
+          hasData: hasData,
+          color: complianceColor(pct, hasData),
+          valueText: hasData ? (pct + '%') : 'N/A'
+        };
+      });
+
+      node.innerHTML = rows.map(function (row) {
+        return '<div class="fp-comp-row">' +
+          '<div class="fp-comp-label">' + esc(row.label) + '</div>' +
+          '<div class="fp-comp-track"><div class="fp-comp-fill' + (row.hasData ? '' : ' neutral') + '" style="width:' + row.width + '%;background:' + row.color + ';"><span>' + row.valueText + '</span></div></div>' +
+          '<div class="fp-comp-val' + (row.hasData ? '' : ' na') + '">' + row.valueText + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function buildTrendLinePath(points, yFn, valueKey) {
+      return points.map(function (point, idx) {
+        const y = yFn(point[valueKey]);
+        return (idx === 0 ? 'M' : 'L') + point.x + ' ' + y;
+      }).join(' ');
+    }
+
+    function buildTrendAreaToBaselinePath(points, yFn, valueKey, yBase) {
+      if (!points.length) return '';
+      let d = 'M ' + points[0].x + ' ' + yBase;
+      points.forEach(function (point) {
+        d += ' L ' + point.x + ' ' + yFn(point[valueKey]);
+      });
+      d += ' L ' + points[points.length - 1].x + ' ' + yBase + ' Z';
+      return d;
+    }
+
+    function buildTrendBandPath(points, yFn, upperKey, lowerKey) {
+      if (!points.length) return '';
+      let d = 'M ' + points[0].x + ' ' + yFn(points[0][upperKey]);
+      points.forEach(function (point) {
+        d += ' L ' + point.x + ' ' + yFn(point[upperKey]);
+      });
+      points.slice().reverse().forEach(function (point) {
+        d += ' L ' + point.x + ' ' + yFn(point[lowerKey]);
+      });
+      d += ' Z';
+      return d;
+    }
+
+    function fmtRiskValue(value) {
+      const n = Number(value || 0);
+      return Number.isInteger(n) ? String(n) : n.toFixed(1);
+    }
+
+    function renderTrendChart(records) {
+      const svg = document.getElementById('riskTrendChart');
+      if (!records.length) {
+        svg.innerHTML = '<text x="280" y="95" text-anchor="middle" fill="var(--wh4)" style="font-size:12px;font-family:Barlow;">No published trend data for current filters</text>';
+        return;
+      }
+
+      const sorted = records.slice().sort(function (a, b) {
+        return compareRecordRecency(b, a);
+      });
+
+      const chartRecords = sorted.slice(-4);
+      const steps = chartRecords.length > 1 ? chartRecords.length - 1 : 1;
+      const xMin = 50;
+      const xMax = 528;
+      const yTop = 28;
+      const yBase = 138;
+      const span = yBase - yTop;
+
+      const rawLabels = chartRecords.map(function (record) {
+        const dt = toDate(recordDate(record));
+        return dt ? dt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '';
+      });
+      let periodLabels = rawLabels.slice();
+      const labelSet = new Set(rawLabels.filter(Boolean));
+      if (!periodLabels.length) periodLabels = [];
+      if (!labelSet.size || labelSet.size < chartRecords.length) {
+        const baseRecordDate = toDate(recordDate(chartRecords[chartRecords.length - 1])) || new Date();
+        const stepMonths = chartRecords.length >= 4 ? 2 : 1;
+        periodLabels = chartRecords.map(function (_record, idx) {
+          const monthsBack = (chartRecords.length - 1 - idx) * stepMonths;
+          const d = new Date(baseRecordDate.getFullYear(), baseRecordDate.getMonth() - monthsBack, 1);
+          return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+      }
+
+      const points = chartRecords.map(function (record, idx) {
+        const snap = riskSnapshotForRecord(record);
+        const label = periodLabels[idx] || fmtDate(recordDate(record));
+        return {
+          x: xMin + (idx * ((xMax - xMin) / steps)),
+          label: label,
+          initial: Number(snap.initialScore || 0),
+          residual: Number(snap.residualScore || 0)
+        };
+      });
+
+      const maxValue = Math.max.apply(null, points.map(function (point) {
+        return Math.max(point.initial, point.residual, 1);
+      }));
+      const paddedMax = Math.max(1, Math.ceil(maxValue * 1.15 * 10) / 10);
+      function yFor(value) {
+        const n = Number(value || 0);
+        return yBase - ((Math.max(0, n) / paddedMax) * span);
+      }
+
+      const initialPath = buildTrendLinePath(points, yFor, 'initial');
+      const residualPath = buildTrendLinePath(points, yFor, 'residual');
+      const initialAreaPath = buildTrendAreaToBaselinePath(points, yFor, 'initial', yBase);
+      const residualAreaPath = buildTrendAreaToBaselinePath(points, yFor, 'residual', yBase);
+      const bandPath = buildTrendBandPath(points, yFor, 'initial', 'residual');
+
+      const circlesInitial = points.map(function (point) {
+        const y = yFor(point.initial);
+        return '<circle cx="' + point.x + '" cy="' + y + '" r="4.2" fill="var(--crit)" stroke="var(--bg)" stroke-width="1.6" />';
+      }).join('');
+      const circlesResidual = points.map(function (point, idx) {
+        const y = yFor(point.residual);
+        const isLatest = idx === points.length - 1;
+        if (isLatest) {
+          return ''
+            + '<circle cx="' + point.x + '" cy="' + y + '" r="8.8" fill="none" stroke="rgba(244,121,32,.42)" stroke-width="2.2" />'
+            + '<circle cx="' + point.x + '" cy="' + y + '" r="5.6" fill="var(--or)" stroke="var(--wh)" stroke-width="1.5" />';
+        }
+        return '<circle cx="' + point.x + '" cy="' + y + '" r="4.2" fill="var(--low)" stroke="var(--bg)" stroke-width="1.6" />';
+      }).join('');
+
+      const valueLabels = points.map(function (point, idx) {
+        const initialY = yFor(point.initial);
+        const residualY = yFor(point.residual);
+        const latest = idx === points.length - 1;
+        const initSize = latest ? '11.5' : '10';
+        const resSize = latest ? '11.5' : '10';
+        const initWeight = latest ? '900' : '700';
+        const resWeight = latest ? '900' : '700';
+        const residualFill = latest ? 'var(--or)' : 'var(--low)';
+        return ''
+          + '<text x="' + point.x + '" y="' + (initialY - 10) + '" text-anchor="middle" fill="var(--crit)" style="font-size:' + initSize + 'px;font-family:Barlow;font-weight:' + initWeight + ';">' + esc(fmtRiskValue(point.initial)) + '</text>'
+          + '<text x="' + point.x + '" y="' + (residualY + 18) + '" text-anchor="middle" fill="' + residualFill + '" style="font-size:' + resSize + 'px;font-family:Barlow;font-weight:' + resWeight + ';">' + esc(fmtRiskValue(point.residual)) + '</text>';
+      }).join('');
+
+      const labels = points.map(function (point) {
+        return '<text x="' + point.x + '" y="170" text-anchor="middle" fill="var(--wh4)" style="font-size:10.5px;font-family:Barlow;font-weight:600;">' + esc(point.label) + '</text>';
+      }).join('');
+
+      svg.innerHTML = ''
+        + '<defs>'
+          + '<linearGradient id="fpTrendRedFill" x1="0" y1="' + yTop + '" x2="0" y2="' + yBase + '">'
+            + '<stop offset="0%" stop-color="rgba(218,54,51,.20)" />'
+            + '<stop offset="100%" stop-color="rgba(218,54,51,0)" />'
+          + '</linearGradient>'
+          + '<linearGradient id="fpTrendGreenFill" x1="0" y1="' + yTop + '" x2="0" y2="' + yBase + '">'
+            + '<stop offset="0%" stop-color="rgba(63,185,80,.18)" />'
+            + '<stop offset="100%" stop-color="rgba(63,185,80,0)" />'
+          + '</linearGradient>'
+          + '<linearGradient id="fpTrendBandFill" x1="0" y1="' + yTop + '" x2="0" y2="' + yBase + '">'
+            + '<stop offset="0%" stop-color="rgba(218,54,51,.17)" />'
+            + '<stop offset="45%" stop-color="rgba(224,125,35,.12)" />'
+            + '<stop offset="100%" stop-color="rgba(63,185,80,.07)" />'
+          + '</linearGradient>'
+        + '</defs>'
+        + '<line x1="40" y1="' + yTop + '" x2="40" y2="' + yBase + '" stroke="var(--border2)" />'
+        + '<line x1="40" y1="' + yBase + '" x2="536" y2="' + yBase + '" stroke="var(--border2)" />'
+        + '<line x1="40" y1="' + (yTop + (span * 0.33)) + '" x2="536" y2="' + (yTop + (span * 0.33)) + '" stroke="var(--border)" />'
+        + '<line x1="40" y1="' + (yTop + (span * 0.66)) + '" x2="536" y2="' + (yTop + (span * 0.66)) + '" stroke="var(--border)" />'
+        + '<path d="' + initialAreaPath + '" fill="url(#fpTrendRedFill)" />'
+        + '<path d="' + residualAreaPath + '" fill="url(#fpTrendGreenFill)" />'
+        + '<path d="' + bandPath + '" fill="url(#fpTrendBandFill)" opacity=".9" />'
+        + '<path d="' + initialPath + '" stroke="var(--crit)" stroke-width="3" stroke-linecap="round" stroke-dasharray="8 6" fill="none" />'
+        + '<path d="' + residualPath + '" stroke="var(--low)" stroke-width="3.2" stroke-linecap="round" fill="none" />'
+        + circlesInitial + circlesResidual + valueLabels + labels;
+    }
+
+    function renderRecurringFindings(actions) {
+      const node = document.getElementById('recurringFindingsList');
+      const summary = document.getElementById('recurringSummaryStrip');
+
+      if (!actions.length) {
+        node.innerHTML = '<div class="fp-no-data">No recurring failed/non-compliant findings found in selected published assessments.</div>';
+        summary.textContent = 'Recurring Themes: 0 · Open Actions: 0 · Overdue: 0';
+        return;
+      }
+
+      const grouped = {};
+      actions.forEach(function (action) {
+        const key = String(action.sourceCode || action.issue || action.recommendedAction || action.actionId || '').trim().toUpperCase();
+        if (!key) return;
+        if (!grouped[key]) {
+          grouped[key] = {
+            issue: action.issue || action.sourceComment || action.recommendedAction || action.sourceCode || 'Finding',
+            section: sourceLabel(action),
+            count: 0,
+            open: 0,
+            highest: normalizeLevel(action.riskLevel || action.priority || 'Low')
+          };
+        }
+        grouped[key].count += 1;
+        if (actionIsOpen(actionStatus(action)) && !actionIsClosed(actionStatus(action))) grouped[key].open += 1;
+        const level = normalizeLevel(action.riskLevel || action.priority || 'Low');
+        if ((window.RiskModuleUtils && RiskModuleUtils.riskRank && RiskModuleUtils.riskRank(level) > RiskModuleUtils.riskRank(grouped[key].highest))
+          || (!window.RiskModuleUtils && level > grouped[key].highest)) {
+          grouped[key].highest = level;
+        }
+      });
+
+      let rows = Object.keys(grouped).map(function (key) { return grouped[key]; })
+        .sort(function (a, b) { return b.count - a.count || b.open - a.open; });
+      rows = rows.filter(function (row) { return row.count > 1; });
+      if (!rows.length) {
+        rows = Object.keys(grouped).map(function (key) { return grouped[key]; })
+          .sort(function (a, b) { return b.open - a.open || b.count - a.count; })
+          .slice(0, 4);
+      } else {
+        rows = rows.slice(0, 4);
+      }
+
+      const totalOpen = actions.filter(function (action) {
+        return actionIsOpen(actionStatus(action)) && !actionIsClosed(actionStatus(action));
+      }).length;
+      const totalOverdue = actions.filter(function (action) {
+        return String(actionStatus(action)).toLowerCase() === 'overdue';
+      }).length;
+
+      node.innerHTML = rows.map(function (row) {
+        return '<article class="fp-rec-item ' + riskToneClass(row.highest) + '">' +
+          '<div class="fp-rec-top">' +
+            '<h4 class="fp-rec-title"><span>•</span><span>' + esc(row.issue) + '</span></h4>' +
+            '<div class="fp-rec-badges">' +
+              '<span class="fp-badge b-draft">' + esc(row.count + 'x repeated') + '</span>' +
+              '<span class="fp-badge ' + riskBadgeClass(row.highest) + '">' + esc(row.highest) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<p class="fp-rec-meta">' + esc(row.section + ' · Open actions: ' + row.open) + '</p>' +
+        '</article>';
+      }).join('');
+
+      summary.textContent = 'Recurring Themes: ' + rows.length + ' · Open Actions: ' + totalOpen + ' · Overdue: ' + totalOverdue;
+    }
+
+    function renderAssessmentHistory(records) {
+      const tbody = document.getElementById('assessmentHistoryTbody');
+      if (!records.length) {
+        visibleAssessmentRows = [];
+        tbody.innerHTML = '<tr><td colspan="10" class="fp-muted">No assessment history found for this facility under current filters.</td></tr>';
+        return;
+      }
+
+      visibleAssessmentRows = records.slice().sort(function (a, b) {
+        return compareRecordRecency(a, b);
+      }).map(function (record) {
+        const snapshot = riskSnapshotForRecord(record);
+        const parentReferenceRaw = window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function'
+          ? (RiskModuleUtils.getParentInspectionReference(record) || '-')
+          : (record.inspectionRef || record.assessment_reference || '-');
+        const parentReference = stripVersionSuffix(parentReferenceRaw) || '-';
+        const version = recordVersion(record);
+        const displayReference = parentReference + '/V' + String(version);
+        return {
+          parentReference: parentReference,
+          displayReference: displayReference,
+          version: version,
+          inspectionDate: recordDate(record),
+          initialLevel: normalizeLevel(snapshot.initialLevel),
+          initialScore: Number(snapshot.initialScore || 0),
+          residualLevel: normalizeLevel(snapshot.residualLevel),
+          residualScore: Number(snapshot.residualScore || 0),
+          reduction: Number(snapshot.riskReduction || 0),
+          status: mapStatus(record.status || record.assessment_status),
+          inspector: record.inspector || record.assessor_name || auth.email || '-',
+          updatedAt: record.lastUpdatedAt || record.last_updated_at || recordDate(record),
+          _record: record
+        };
+      });
+
+      const grouped = {};
+      visibleAssessmentRows.forEach(function (row) {
+        if (!grouped[row.parentReference]) grouped[row.parentReference] = [];
+        grouped[row.parentReference].push(row);
+      });
+
+      Object.keys(grouped).forEach(function (key) {
+        grouped[key].sort(function (a, b) {
+          if (b.version !== a.version) return b.version - a.version;
+          return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+        });
+      });
+
+      const groups = Object.keys(grouped).map(function (key) {
+        const versions = grouped[key];
+        return {
+          parentReference: key,
+          latest: versions[0],
+          versions: versions
+        };
+      }).sort(function (a, b) {
+        return new Date(b.latest.updatedAt || 0) - new Date(a.latest.updatedAt || 0);
+      });
+
+      tbody.innerHTML = groups.map(function (group) {
+        const row = group.latest;
+        const detailRowId = 'fp-versions-' + esc(group.parentReference).replace(/[^a-zA-Z0-9]+/g, '-');
+        const versionsSorted = group.versions.slice().sort(function (a, b) { return a.version - b.version; });
+        const versionsHead = ''
+          + '<div class="fp-version-head">'
+          + '<span>#</span>'
+          + '<span>Reference Number</span>'
+          + '<span>Inspection Date</span>'
+          + '<span>Initial Risk</span>'
+          + '<span>Residual Risk</span>'
+          + '<span>Risk Reduction</span>'
+          + '<span>Status</span>'
+          + '<span>Inspector</span>'
+          + '<span>Last Updated</span>'
+          + '<span>View</span>'
+          + '</div>';
+        const versionsHtml = versionsSorted.map(function (v, idx) {
+          return ''
+            + '<div class="fp-version-line">'
+            +   '<span class="v-seq">' + esc(String(idx + 1) + '.') + '</span>'
+            +   '<span class="v-ref">' + esc(v.displayReference) + '</span>'
+            +   '<span>' + esc(fmtDate(v.inspectionDate)) + '</span>'
+            +   '<span><span class="fp-badge ' + riskBadgeClass(v.initialLevel) + '">' + esc(v.initialLevel + ' (' + v.initialScore + ')') + '</span></span>'
+            +   '<span><span class="fp-badge ' + riskBadgeClass(v.residualLevel) + '">' + esc(v.residualLevel + ' (' + v.residualScore + ')') + '</span></span>'
+            +   '<span>' + esc(String(v.reduction)) + '</span>'
+            +   '<span><span class="fp-badge ' + statusBadgeClass(v.status) + '">' + esc(v.status) + '</span></span>'
+            +   '<span>' + esc(v.inspector) + '</span>'
+            +   '<span>' + esc(fmtDateTime(v.updatedAt)) + '</span>'
+            +   '<span><button class="fp-version-view" data-ref="' + esc(v.parentReference) + '" data-ver="' + esc(v.version) + '">View</button></span>'
+            + '</div>';
+        }).join('');
+        return '<tr>' +
+          '<td><button class="fp-ref-toggle" data-target="' + detailRowId + '">' + esc(group.parentReference) + '</button></td>' +
+          '<td>v' + esc(row.version) + (group.versions.length > 1 ? ' <span class="fp-version-meta">(' + esc(group.versions.length) + ' versions)</span>' : '') + '</td>' +
+          '<td>' + esc(fmtDate(row.inspectionDate)) + '</td>' +
+          '<td><span class="fp-badge ' + riskBadgeClass(row.initialLevel) + '">' + esc(row.initialLevel + ' (' + row.initialScore + ')') + '</span></td>' +
+          '<td><span class="fp-badge ' + riskBadgeClass(row.residualLevel) + '">' + esc(row.residualLevel + ' (' + row.residualScore + ')') + '</span></td>' +
+          '<td>' + esc(String(row.reduction)) + '</td>' +
+          '<td><span class="fp-badge ' + statusBadgeClass(row.status) + '">' + esc(row.status) + '</span></td>' +
+          '<td>' + esc(row.inspector) + '</td>' +
+          '<td>' + esc(fmtDateTime(row.updatedAt)) + '</td>' +
+          '<td><button class="fp-view-btn" data-ref="' + esc(row.parentReference) + '" data-ver="' + esc(row.version) + '">View</button></td>' +
+        '</tr>' +
+        '<tr id="' + detailRowId + '" class="fp-version-row" style="display:none;">' +
+          '<td colspan="10"><div class="fp-version-scroll"><div class="fp-version-list">' + versionsHead + versionsHtml + '</div></div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderActionSummaryBadges(actions) {
+      const open = actions.filter(function (action) {
+        return actionIsOpen(actionStatus(action)) && !actionIsClosed(actionStatus(action));
+      }).length;
+      const overdue = actions.filter(function (action) {
+        return String(actionStatus(action)).toLowerCase() === 'overdue';
+      }).length;
+      const closed = actions.filter(function (action) {
+        return actionIsClosed(actionStatus(action));
+      }).length;
+
+      document.getElementById('summaryOpenBadge').textContent = open + ' Open';
+      document.getElementById('summaryOverdueBadge').textContent = overdue + ' Overdue';
+      document.getElementById('summaryClosedBadge').textContent = closed + ' Closed';
+    }
+
+    function riskRankValue(level) {
+      const norm = normalizeLevel(level);
+      if (window.RiskModuleUtils && typeof RiskModuleUtils.riskRank === 'function') {
+        return Number(RiskModuleUtils.riskRank(norm) || 0);
+      }
+      if (norm === 'Critical' || norm === 'Critical') return 4;
+      if (norm === 'High') return 3;
+      if (norm === 'Medium') return 2;
+      return 1;
+    }
+
+    function masterReferenceForAction(action) {
+      const raw = String(
+        action.master_reference ||
+        action.masterReference ||
+        action.parentReference ||
+        action.parent_reference ||
+        action.inspectionRef ||
+        action.assessment_reference ||
+        ''
+      ).trim();
+      if (raw) return stripVersionSuffix(raw) || raw;
+      const actionId = String(action.actionId || '').trim();
+      if (!actionId) return '-';
+      const match = actionId.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+      if (match && match[1]) return stripVersionSuffix(match[1]) || match[1];
+      return stripVersionSuffix(actionId) || actionId;
+    }
+
+    function actionTimestampValue(action) {
+      const source = (
+        action.lastUpdatedAt ||
+        action.last_updated_at ||
+        action.updatedAt ||
+        action.updated_at ||
+        action.closedAt ||
+        action.closureDate ||
+        action.createdAt ||
+        action.created_at ||
+        action.latestAssessmentDate ||
+        action.dueDate ||
+        ''
+      );
+      const time = new Date(source || 0).getTime();
+      return Number.isFinite(time) ? time : 0;
+    }
+
+    function actionEvidenceCount(action) {
+      let count = 0;
+      if (Array.isArray(action.evidenceFiles)) count += action.evidenceFiles.length;
+      if (Array.isArray(action.evidence_files)) count += action.evidence_files.length;
+      if (Array.isArray(action.evidence)) count += action.evidence.length;
+      if (!count && (action.evidenceName || action.evidenceUrl || action.evidence_file || action.attachmentName || action.fileName)) {
+        count = 1;
+      }
+      return count;
+    }
+
+    function actionStatusClass(status) {
+      if (actionIsClosed(status)) return 'b-pub';
+      const normalized = String(status || '').toLowerCase();
+      if (normalized === 'overdue') return 'b-crit';
+      if (normalized === 'in progress') return 'b-prog';
+      return 'b-pca';
+    }
+
+    function renderActionDetailTableRows(actions) {
+      if (!actions.length) return '<div class="fp-ca-empty">No corrective actions in this tab.</div>';
+      const rows = actions.slice().sort(function (a, b) {
+        const tsDiff = actionTimestampValue(b) - actionTimestampValue(a);
+        if (tsDiff !== 0) return tsDiff;
+        return String(a.actionId || '').localeCompare(String(b.actionId || ''));
+      });
+      return '<div class="fp-ca-inner-wrap"><table class="fp-ca-inner-table"><thead><tr>'
+        + '<th>Action ID</th>'
+        + '<th>Source</th>'
+        + '<th>Original Assessor</th>'
+        + '<th>Status</th>'
+        + '<th>Risk</th>'
+        + '<th>Priority</th>'
+        + '<th>Due Date</th>'
+        + '<th>Closure Date</th>'
+        + '<th>Closed By</th>'
+        + '<th>Evidence</th>'
+        + '</tr></thead><tbody>'
+        + rows.map(function (action) {
+          const status = actionStatus(action);
+          const riskLevel = normalizeLevel(action.riskLevel || action.priority || 'Low');
+          const dueText = action.dueDate ? fmtDate(action.dueDate) : '<span class="fp-not-set">Not set</span>';
+          const closureText = action.closureDate ? fmtDate(action.closureDate) : '<span class="fp-not-set">Pending</span>';
+          const closedByText = action.closedBy ? esc(action.closedBy) : '<span class="fp-not-set">Pending</span>';
+          const evidenceCount = actionEvidenceCount(action);
+          const evidenceText = evidenceCount
+            ? '<span class="fp-ev-chip">📄 ' + esc(String(evidenceCount) + (evidenceCount === 1 ? ' file' : ' files')) + '</span>'
+            : '<span class="fp-not-set">No files</span>';
+          return '<tr>'
+            + '<td>' + esc(action.actionId || '-') + '</td>'
+            + '<td>' + esc(sourceLabel(action)) + '</td>'
+            + '<td>' + esc(action.originalAssessor || action.correctiveCreatedBy || '-') + '</td>'
+            + '<td><span class="fp-badge ' + actionStatusClass(status) + '">' + esc(status) + '</span></td>'
+            + '<td><span class="fp-badge ' + riskBadgeClass(riskLevel) + '">' + esc(riskLevel) + '</span></td>'
+            + '<td>' + esc(action.priority || riskLevel || '-') + '</td>'
+            + '<td>' + dueText + '</td>'
+            + '<td>' + closureText + '</td>'
+            + '<td>' + closedByText + '</td>'
+            + '<td>' + evidenceText + '</td>'
+            + '</tr>';
+        }).join('')
+        + '</tbody></table></div>';
+    }
+
+    function renderActionHistory(actions) {
+      const tbody = document.getElementById('actionHistoryTbody');
+      renderActionSummaryBadges(actions);
+
+      if (!actions.length) {
+        tbody.innerHTML = '<tr><td colspan="11" class="fp-muted">No corrective actions linked to selected facility records.</td></tr>';
+        return;
+      }
+
+      const groupsMap = {};
+      actions.forEach(function (action) {
+        const masterRef = masterReferenceForAction(action);
+        if (!groupsMap[masterRef]) groupsMap[masterRef] = [];
+        groupsMap[masterRef].push(action);
+      });
+
+      const groups = Object.keys(groupsMap).map(function (masterRef) {
+        const items = groupsMap[masterRef].slice();
+        const sortedByRecent = items.slice().sort(function (a, b) { return actionTimestampValue(b) - actionTimestampValue(a); });
+        const latest = sortedByRecent[0] || {};
+        const openItems = items.filter(function (action) {
+          const st = actionStatus(action);
+          return actionIsOpen(st) && !actionIsClosed(st);
+        });
+        const closedItems = items.filter(function (action) {
+          return actionIsClosed(actionStatus(action));
+        });
+        const overdueCount = items.filter(function (action) {
+          return String(actionStatus(action)).toLowerCase() === 'overdue';
+        }).length;
+        const highestRisk = items.reduce(function (best, action) {
+          const current = normalizeLevel(action.riskLevel || action.priority || 'Low');
+          return riskRankValue(current) > riskRankValue(best) ? current : best;
+        }, 'Low');
+        const evidenceTotal = items.reduce(function (sum, action) {
+          return sum + actionEvidenceCount(action);
+        }, 0);
+        return {
+          masterRef: masterRef,
+          items: items,
+          latest: latest,
+          openItems: openItems,
+          closedItems: closedItems,
+          overdueCount: overdueCount,
+          highestRisk: highestRisk,
+          evidenceTotal: evidenceTotal,
+          latestStatus: actionStatus(latest),
+          originalAssessor: latest.originalAssessor || latest.correctiveCreatedBy || '-',
+          lastUpdatedAt: actionTimestampValue(latest) > 0
+            ? (latest.lastUpdatedAt || latest.last_updated_at || latest.updatedAt || latest.updated_at || latest.closureDate || latest.latestAssessmentDate || latest.dueDate)
+            : ''
+        };
+      }).sort(function (a, b) {
+        return actionTimestampValue(b.latest || {}) - actionTimestampValue(a.latest || {});
+      });
+
+      tbody.innerHTML = groups.map(function (group) {
+        const detailRowId = 'fp-ca-' + esc(group.masterRef).replace(/[^a-zA-Z0-9]+/g, '-');
+        const allPanelId = detailRowId + '-all';
+        const openPanelId = detailRowId + '-open';
+        const closedPanelId = detailRowId + '-closed';
+        const evidenceText = group.evidenceTotal
+          ? '<span class="fp-ev-chip">📄 ' + esc(String(group.evidenceTotal) + (group.evidenceTotal === 1 ? ' file' : ' files')) + '</span>'
+          : '<span class="fp-not-set">No files</span>';
+
+        return '<tr>'
+          + '<td><button class="fp-ca-ref-toggle" data-target="' + detailRowId + '">' + esc(group.masterRef) + '</button></td>'
+          + '<td>' + esc(String(group.items.length)) + '</td>'
+          + '<td><span class="fp-badge b-pca">' + esc(String(group.openItems.length)) + '</span></td>'
+          + '<td><span class="fp-badge b-crit">' + esc(String(group.overdueCount)) + '</span></td>'
+          + '<td><span class="fp-badge b-pub">' + esc(String(group.closedItems.length)) + '</span></td>'
+          + '<td><span class="fp-badge ' + riskBadgeClass(group.highestRisk) + '">' + esc(group.highestRisk) + '</span></td>'
+          + '<td>' + (group.lastUpdatedAt ? esc(fmtDateTime(group.lastUpdatedAt)) : '<span class="fp-not-set">Pending</span>') + '</td>'
+          + '<td>' + esc(group.originalAssessor) + '</td>'
+          + '<td><span class="fp-badge ' + actionStatusClass(group.latestStatus) + '">' + esc(group.latestStatus) + '</span></td>'
+          + '<td>' + evidenceText + '</td>'
+          + '<td><button class="fp-view-btn fp-ca-open-btn" data-target="' + detailRowId + '">View</button></td>'
+          + '</tr>'
+          + '<tr id="' + detailRowId + '" class="fp-ca-group-row" style="display:none;">'
+          + '<td colspan="11"><div class="fp-ca-group-shell">'
+          + '<div class="fp-ca-tabs">'
+          + '<button class="fp-ca-tab-btn active" data-group="' + detailRowId + '" data-panel="' + allPanelId + '">All (' + esc(String(group.items.length)) + ')</button>'
+          + '<button class="fp-ca-tab-btn" data-group="' + detailRowId + '" data-panel="' + openPanelId + '">Open (' + esc(String(group.openItems.length)) + ')</button>'
+          + '<button class="fp-ca-tab-btn" data-group="' + detailRowId + '" data-panel="' + closedPanelId + '">Closed (' + esc(String(group.closedItems.length)) + ')</button>'
+          + '</div>'
+          + '<div id="' + allPanelId + '" class="fp-ca-panel active">' + renderActionDetailTableRows(group.items) + '</div>'
+          + '<div id="' + openPanelId + '" class="fp-ca-panel">' + renderActionDetailTableRows(group.openItems) + '</div>'
+          + '<div id="' + closedPanelId + '" class="fp-ca-panel">' + renderActionDetailTableRows(group.closedItems) + '</div>'
+          + '</div></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    function renderFacilityViews() {
+      if (!activeFacility) {
+        defaultIdentity();
+        renderCompliance();
+        renderTrendChart([]);
+        renderRecurringFindings([]);
+        renderAssessmentHistory([]);
+        renderActionHistory([]);
+        return;
+      }
+
+      const facilityRecords = filteredRecords.filter(function (record) {
+        return facilityKey(recordFacility(record)) === facilityKey(activeFacility);
+      });
+      const facilityActions = linkedActionsForRecords(facilityRecords);
+
+      renderAssessmentHistory(facilityRecords);
+      renderIdentityAndKpis(facilityRecords, facilityActions);
+      renderCompliance();
+      renderTrendChart(facilityRecords);
+      renderRecurringFindings(facilityActions);
+      renderActionHistory(facilityActions);
+    }
+
+    function applyFiltersAndRender(preferredFacility) {
+      readFiltersFromUI();
+      populateFilterOptions();
+      filteredRecords = filteredByControls(scopedRecords());
+      refreshFacilityOptions(filteredRecords, preferredFacility);
+      updateScopeNote(filteredRecords);
+      renderFacilityViews();
+    }
+
+    function clearFilters() {
+      filterState.zone = '';
+      filterState.facilityType = '';
+      filterState.riskLevel = '';
+      filterState.assessmentStatus = '';
+      filterState.dateFrom = '';
+      filterState.dateTo = '';
+      filterState.hasOpenActions = '';
+      filterState.includeUnpublished = false;
+      applyFiltersToUI();
+      applyFiltersAndRender(activeFacility);
+    }
+
+    function exportAssessments() {
+      if (!visibleAssessmentRows.length) {
+        showToast('No assessment rows available to export.');
+        return;
+      }
+
+      const headers = ['Reference Number', 'Version', 'Inspection Date', 'Initial Risk', 'Residual Risk', 'Risk Reduction', 'Status', 'Inspector', 'Last Updated'];
+      const lines = [headers.join(',')];
+
+      visibleAssessmentRows.forEach(function (row) {
+        const cols = [
+          row.parentReference,
+          'v' + row.version,
+          fmtDate(row.inspectionDate),
+          row.initialLevel + ' (' + row.initialScore + ')',
+          row.residualLevel + ' (' + row.residualScore + ')',
+          row.reduction,
+          row.status,
+          row.inspector,
+          fmtDateTime(row.updatedAt)
+        ].map(function (val) {
+          return '"' + String(val == null ? '' : val).replace(/"/g, '""') + '"';
+        });
+        lines.push(cols.join(','));
+      });
+
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'facility-profile-' + (activeFacility || 'filtered').replace(/\s+/g, '-').toLowerCase() + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Assessment history exported.');
+    }
+
+    function bindFilterListeners() {
+      [
+        'filterZone',
+        'filterFacilityType',
+        'filterRiskLevel',
+        'filterAssessmentStatus',
+        'filterDateFrom',
+        'filterDateTo',
+        'filterOpenCA',
+        'filterIncludeUnpublished'
+      ].forEach(function (id) {
+        const node = document.getElementById(id);
+        const eventName = node && (node.tagName === 'INPUT') ? 'change' : 'change';
+        if (!node) return;
+        node.addEventListener(eventName, function () {
+          applyFiltersAndRender(activeFacility);
+        });
+      });
+    }
+
+    function setComplianceMode(mode) {
+      complianceMode = mode === 'all' ? 'all' : 'current';
+      const currentBtn = document.getElementById('complianceCurrentBtn');
+      const allBtn = document.getElementById('complianceAllBtn');
+      currentBtn.classList.toggle('active', complianceMode === 'current');
+      allBtn.classList.toggle('active', complianceMode === 'all');
+      currentBtn.setAttribute('aria-selected', complianceMode === 'current' ? 'true' : 'false');
+      allBtn.setAttribute('aria-selected', complianceMode === 'all' ? 'true' : 'false');
+      renderFacilityViews();
+    }
+
+    function init() {
+      allRecords = window.RiskModuleUtils && typeof RiskModuleUtils.getRecords === 'function' ? RiskModuleUtils.getRecords() : [];
+      allActions = window.RiskModuleUtils && typeof RiskModuleUtils.getActions === 'function' ? RiskModuleUtils.getActions() : [];
+      allSnapshots = window.RiskModuleUtils && typeof RiskModuleUtils.getSnapshots === 'function' ? RiskModuleUtils.getSnapshots() : [];
+      rebuildSnapshotIndex();
+
+      applyFiltersToUI();
+      bindFilterListeners();
+      document.getElementById('complianceCurrentBtn').addEventListener('click', function () {
+        setComplianceMode('current');
+      });
+      document.getElementById('complianceAllBtn').addEventListener('click', function () {
+        setComplianceMode('all');
+      });
+
+      const byQuery = pickFacilityNameFromQuery();
+      applyFiltersAndRender(byQuery);
+
+      document.getElementById('facilitySelect').addEventListener('change', function (event) {
+        activeFacility = String(event.target.value || '');
+        renderFacilityViews();
+      });
+
+      document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+      document.getElementById('refreshProfileBtn').addEventListener('click', function () {
+        allRecords = window.RiskModuleUtils && typeof RiskModuleUtils.getRecords === 'function' ? RiskModuleUtils.getRecords() : [];
+        allActions = window.RiskModuleUtils && typeof RiskModuleUtils.getActions === 'function' ? RiskModuleUtils.getActions() : [];
+        allSnapshots = window.RiskModuleUtils && typeof RiskModuleUtils.getSnapshots === 'function' ? RiskModuleUtils.getSnapshots() : [];
+        rebuildSnapshotIndex();
+        applyFiltersAndRender(activeFacility);
+        showToast('Facility profile refreshed.');
+      });
+
+      document.getElementById('assessmentHistoryTbody').addEventListener('click', function (event) {
+        const toggle = event.target.closest('.fp-ref-toggle');
+        if (toggle) {
+          const id = toggle.getAttribute('data-target') || '';
+          const row = id ? document.getElementById(id) : null;
+          if (row) {
+            const open = row.style.display !== 'none';
+            row.style.display = open ? 'none' : '';
+          }
+          return;
+        }
+
+        const versionBtn = event.target.closest('.fp-version-view');
+        if (versionBtn) {
+          const ref = versionBtn.getAttribute('data-ref') || '';
+          const ver = Number(versionBtn.getAttribute('data-ver') || 1);
+          if (window.RiskModuleUtils && typeof RiskModuleUtils.openAssessmentRecord === 'function') {
+            RiskModuleUtils.openAssessmentRecord(ref, ver);
+          }
+          return;
+        }
+
+        const btn = event.target.closest('.fp-view-btn');
+        if (btn) {
+          const ref = btn.getAttribute('data-ref') || '';
+          const ver = Number(btn.getAttribute('data-ver') || 1);
+          if (window.RiskModuleUtils && typeof RiskModuleUtils.openAssessmentRecord === 'function') {
+            RiskModuleUtils.openAssessmentRecord(ref, ver);
+          }
+        }
+      });
+
+      document.getElementById('actionHistoryTbody').addEventListener('click', function (event) {
+        const toggle = event.target.closest('.fp-ca-ref-toggle, .fp-ca-open-btn');
+        if (toggle) {
+          const id = toggle.getAttribute('data-target') || '';
+          const row = id ? document.getElementById(id) : null;
+          if (row) {
+            const open = row.style.display !== 'none';
+            row.style.display = open ? 'none' : '';
+          }
+          return;
+        }
+
+        const tab = event.target.closest('.fp-ca-tab-btn');
+        if (!tab) return;
+        const groupId = tab.getAttribute('data-group') || '';
+        const panelId = tab.getAttribute('data-panel') || '';
+        if (!groupId || !panelId) return;
+        const groupRow = document.getElementById(groupId);
+        if (!groupRow) return;
+        const shell = groupRow.querySelector('.fp-ca-group-shell');
+        if (!shell) return;
+        shell.querySelectorAll('.fp-ca-tab-btn').forEach(function (btn) {
+          btn.classList.toggle('active', btn === tab);
+        });
+        shell.querySelectorAll('.fp-ca-panel').forEach(function (panel) {
+          panel.classList.toggle('active', panel.id === panelId);
+        });
+      });
+
+      document.getElementById('backLandingBtn').addEventListener('click', function () {
+        if (window.RiskModuleUtils && typeof RiskModuleUtils.goLanding === 'function') {
+          RiskModuleUtils.goLanding();
+          return;
+        }
+        window.location.href = 'risk-inspection.html';
+      });
+
+      document.getElementById('conductAssessmentBtn').addEventListener('click', function () {
+        if (window.RiskModuleUtils && typeof RiskModuleUtils.goFacilityDetails === 'function') {
+          RiskModuleUtils.goFacilityDetails();
+          return;
+        }
+        window.location.href = 'facility-details.html';
+      });
+
+      document.getElementById('exportAssessmentsBtn').addEventListener('click', exportAssessments);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

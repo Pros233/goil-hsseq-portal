@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Risk Assessment & Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
+  <style>
+    .db-shell {
+      width: min(1720px, 98.4vw);
+      margin: 16px auto 30px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .db-hero {
+      padding: 16px 18px;
+      background:
+        radial-gradient(1200px 240px at 15% -20%, rgba(244,121,32,.17), transparent 60%),
+        linear-gradient(160deg, rgba(255,255,255,.015), rgba(255,255,255,.005)),
+        var(--bg2);
+      border-radius: 14px;
+      border: 1px solid var(--line2);
+      display: grid;
+      gap: 12px;
+    }
+
+    .db-hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .db-hero-main {
+      display: grid;
+      gap: 4px;
+      min-width: 280px;
+    }
+
+    .db-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--or);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .db-eyebrow::before {
+      content: '';
+      width: 18px;
+      height: 2px;
+      border-radius: 999px;
+      background: var(--or);
+    }
+
+    .db-hero-main h2 {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(36px, 4vw, 54px);
+      line-height: .9;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--wh);
+    }
+
+    .db-hero-main p {
+      margin: 0;
+      color: var(--wh3);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 920px;
+    }
+
+    .db-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .db-kpi {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg3);
+      border: 1px solid var(--line2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: grid;
+      gap: 5px;
+      min-height: 102px;
+    }
+
+    .db-kpi::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      background: var(--line2);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .db-kpi .k {
+      font-size: 10px;
+      color: var(--wh4);
+      letter-spacing: .85px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .db-kpi .v {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 39px;
+      line-height: .86;
+      color: var(--wh);
+      font-weight: 900;
+    }
+
+    .db-kpi .n {
+      font-size: 11px;
+      color: var(--wh4);
+    }
+
+    .db-kpi.published::before { background: var(--or); }
+    .db-kpi.published .v { color: var(--or); }
+    .db-kpi.facilities::before { background: var(--ok); }
+    .db-kpi.facilities .v { color: var(--ok); }
+    .db-kpi.open::before { background: var(--high); }
+    .db-kpi.open .v { color: var(--high); }
+    .db-kpi.overdue::before { background: var(--err); }
+    .db-kpi.overdue .v { color: var(--err); }
+    .db-kpi.avg::before { background: var(--warn); }
+    .db-kpi.avg .v { color: var(--warn); font-size: 33px; }
+    .db-kpi.highcrit::before { background: var(--info); }
+    .db-kpi.highcrit .v { color: var(--info); }
+
+    .db-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .db-panel {
+      background: var(--bg2);
+      border: 1px solid var(--line2);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      min-height: 290px;
+    }
+
+    .db-panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 7px;
+    }
+
+    .db-panel-head h3 {
+      margin: 0;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 24px;
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--wh);
+      letter-spacing: .2px;
+    }
+
+    .db-panel-head p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--wh3);
+      text-align: right;
+      max-width: 58%;
+      line-height: 1.35;
+    }
+
+    .db-assessor-head {
+      align-items: center;
+    }
+
+    .db-assessor-main {
+      min-width: 260px;
+      display: grid;
+      gap: 0;
+      flex: 1 1 auto;
+    }
+
+    .db-assessor-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .db-assessor-select {
+      height: 32px;
+      min-width: 112px;
+      border-radius: 8px;
+      border: 1px solid var(--line2);
+      background: var(--bg3);
+      color: var(--wh2);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    .db-assessor-select:focus {
+      border-color: var(--or);
+      box-shadow: 0 0 0 2px rgba(244,121,32,.16);
+    }
+
+    .db-assessor-toggle {
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--line2);
+      background: var(--bg3);
+      color: var(--wh3);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: var(--t);
+    }
+
+    .db-assessor-toggle.active {
+      background: rgba(244,121,32,.14);
+      border-color: var(--or);
+      color: var(--or);
+      box-shadow: 0 2px 8px rgba(244,121,32,.18);
+    }
+
+    .db-mini-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .db-mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 620px;
+    }
+
+    .db-mini-table th,
+    .db-mini-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 10px;
+      font-size: 12px;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .db-mini-table th {
+      font-size: 10px;
+      color: var(--wh4);
+      text-transform: uppercase;
+      letter-spacing: .82px;
+      background: rgba(255,255,255,.02);
+      font-weight: 700;
+    }
+
+    .db-mini-table td .main {
+      color: var(--wh2);
+      font-weight: 600;
+      display: block;
+    }
+
+    .db-mini-table td .sub {
+      color: var(--wh4);
+      font-size: 11px;
+      display: block;
+      margin-top: 1px;
+    }
+
+    .db-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--line2);
+      padding: 0 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .db-pill.low { background: rgba(63,185,80,.14); color: var(--ok); border-color: rgba(63,185,80,.4); }
+    .db-pill.medium { background: rgba(210,153,34,.14); color: var(--warn); border-color: rgba(210,153,34,.45); }
+    .db-pill.high { background: rgba(224,125,35,.14); color: var(--high); border-color: rgba(224,125,35,.45); }
+    .db-pill.critical { background: rgba(218,54,51,.14); color: var(--err); border-color: rgba(218,54,51,.45); }
+    .db-pill.neutral { background: rgba(139,148,158,.14); color: var(--wh3); border-color: rgba(139,148,158,.42); }
+    .db-pill.trend-up { background: rgba(218,54,51,.14); color: var(--err); border-color: rgba(218,54,51,.45); }
+    .db-pill.trend-down { background: rgba(63,185,80,.14); color: var(--ok); border-color: rgba(63,185,80,.45); }
+    .db-pill.trend-flat { background: rgba(139,148,158,.14); color: var(--wh3); border-color: rgba(139,148,158,.42); }
+
+    .db-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      line-height: .95;
+      color: var(--wh);
+    }
+
+    .db-issue {
+      max-width: 430px;
+      white-space: normal;
+      line-height: 1.35;
+      color: var(--wh2);
+    }
+
+    .db-zone-chart {
+      display: grid;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .db-zone-bar-wrap {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg3);
+      overflow: auto;
+      padding: 8px 10px 10px;
+    }
+
+    .db-zone-bar-svg {
+      width: 100%;
+      min-width: 680px;
+      height: 250px;
+      display: block;
+    }
+
+    .db-zone-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .db-zone-row-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--wh2);
+    }
+
+    .db-zone-row-head .meta {
+      font-size: 11px;
+      color: var(--wh4);
+    }
+
+    .db-zone-track {
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .db-zone-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .db-zone-fill.facilities {
+      background: linear-gradient(90deg, rgba(63,185,80,.9), rgba(63,185,80,.52));
+    }
+
+    .db-zone-fill.assessments {
+      background: linear-gradient(90deg, rgba(47,129,247,.95), rgba(47,129,247,.56));
+    }
+
+    .db-chart-legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+      color: var(--wh3);
+      font-size: 11px;
+    }
+
+    .db-chart-legend .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 6px;
+      transform: translateY(1px);
+    }
+
+    .db-riskmix-wrap {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 14px;
+      align-items: center;
+      min-height: 220px;
+    }
+
+    .db-donut {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      position: relative;
+      margin: 0 auto;
+      border: 1px solid var(--line2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .db-donut::after {
+      content: '';
+      position: absolute;
+      inset: 30px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--line2);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .db-donut-center {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .db-donut-center .v {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px;
+      line-height: .86;
+      font-weight: 900;
+      color: var(--wh);
+    }
+
+    .db-donut-center .k {
+      font-size: 10px;
+      color: var(--wh4);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .db-riskmix-legend {
+      display: grid;
+      gap: 8px;
+    }
+
+    .db-riskmix-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg3);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--wh2);
+    }
+
+    .db-riskmix-item .left {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .db-riskmix-item .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .db-riskmix-item .v {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      line-height: .9;
+      font-weight: 800;
+      color: var(--wh);
+    }
+
+    .db-trend-wrap {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg3);
+      overflow: auto;
+      padding: 8px;
+      min-height: 220px;
+    }
+
+    .db-trend-svg {
+      width: 100%;
+      min-width: 700px;
+      height: 250px;
+      display: block;
+    }
+
+    .db-trend-legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      color: var(--wh3);
+      font-size: 11px;
+    }
+
+    .db-trend-legend .line {
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 6px;
+      transform: translateY(-2px);
+    }
+
+    .db-trend-legend .bar {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-right: 6px;
+      transform: translateY(1px);
+    }
+
+    .db-assessor-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .db-assessor-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    .db-assessor-table th,
+    .db-assessor-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      text-align: left;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .db-assessor-table th {
+      font-size: 10px;
+      color: var(--wh4);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .db-month-cell {
+      min-width: 78px;
+    }
+
+    .db-month-chip {
+      border: 1px solid var(--line2);
+      border-radius: 6px;
+      background: var(--bg3);
+      padding: 4px 7px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .db-month-chip .m {
+      font-size: 10px;
+      color: var(--wh4);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      line-height: 1;
+    }
+
+    .db-month-chip .v {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      line-height: .9;
+      color: var(--wh2);
+      font-weight: 800;
+    }
+
+    .db-month-chip .b {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+    }
+
+    .db-month-chip .b > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(244,121,32,.92), rgba(244,121,32,.54));
+    }
+
+    .db-empty {
+      border: 1px dashed var(--line2);
+      border-radius: 10px;
+      padding: 14px;
+      color: var(--wh3);
+      font-size: 12px;
+      text-align: center;
+      background: rgba(255,255,255,.01);
+    }
+
+    .db-highrisk-bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .db-highrisk-row {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg3);
+      padding: 9px 10px;
+      display: grid;
+      grid-template-columns: minmax(190px, 1fr) minmax(220px, 1.45fr) minmax(180px, auto);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .db-highrisk-name {
+      display: grid;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .db-highrisk-name .main {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--wh);
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .db-highrisk-name .sub {
+      font-size: 11px;
+      color: var(--wh4);
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .db-highrisk-track {
+      width: 100%;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+
+    .db-highrisk-fill {
+      height: 100%;
+      border-radius: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .3px;
+      transition: width .25s ease;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .db-highrisk-fill.low {
+      background: linear-gradient(90deg, rgba(63,185,80,.95), rgba(63,185,80,.62));
+    }
+
+    .db-highrisk-fill.medium {
+      background: linear-gradient(90deg, rgba(210,153,34,.95), rgba(210,153,34,.62));
+    }
+
+    .db-highrisk-fill.high {
+      background: linear-gradient(90deg, rgba(224,125,35,.95), rgba(224,125,35,.62));
+    }
+
+    .db-highrisk-fill.critical {
+      background: linear-gradient(90deg, rgba(218,54,51,.95), rgba(218,54,51,.62));
+    }
+
+    .db-highrisk-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1580px) {
+      .db-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 1240px) {
+      .db-grid-2 { grid-template-columns: 1fr; }
+      .db-panel-head p { max-width: none; text-align: left; }
+    }
+
+    @media (max-width: 760px) {
+      .db-shell { width: 95vw; margin: 12px auto 24px; }
+      .db-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .db-hero-main h2 { font-size: 34px; }
+      .db-mini-table { min-width: 560px; }
+      .db-riskmix-wrap { grid-template-columns: 1fr; }
+      .db-donut { width: 150px; height: 150px; }
+      .db-donut::after { inset: 26px; }
+      .db-highrisk-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .db-highrisk-meta {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="rm-topbar">
+    <div class="rm-topbar-left">
+      <button class="rm-back-btn" id="backLandingBtn">← Assessment Management Center</button>
+      <div class="rm-title-wrap">
+        <h1 class="rm-title">Dashboard</h1>
+        <p class="rm-subtitle">Executive risk and operations control center for published inspection intelligence</p>
+      </div>
+    </div>
+    <button class="rm-primary-btn" id="conductAssessmentBtn">+ Conduct Assessment</button>
+  </header>
+
+  <main class="db-shell">
+    <section class="db-hero">
+      <div class="db-hero-top">
+        <div class="db-hero-main">
+          <span class="db-eyebrow">Executive Command View</span>
+          <h2>Dashboard</h2>
+          <p>Live published-assessment intelligence for risk posture, recurring issues, zone performance, and corrective-action movement.</p>
+          <p>All sections on this page are driven by published inspection workflow records and linked corrective actions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="db-kpi-grid">
+      <article class="db-kpi published">
+        <span class="k">Total Published Assessments</span>
+        <strong class="v" id="kPublishedAssessments">0</strong>
+        <span class="n">Distinct master references</span>
+      </article>
+      <article class="db-kpi facilities">
+        <span class="k">Total Facilities Assessed</span>
+        <strong class="v" id="kFacilitiesAssessed">0</strong>
+        <span class="n">Facilities with published records</span>
+      </article>
+      <article class="db-kpi open">
+        <span class="k">Total Open Corrective Actions</span>
+        <strong class="v" id="kOpenActions">0</strong>
+        <span class="n">Open + in-progress + pending verification</span>
+      </article>
+      <article class="db-kpi overdue">
+        <span class="k">Total Overdue Corrective Actions</span>
+        <strong class="v" id="kOverdueActions">0</strong>
+        <span class="n">Past due and not closed</span>
+      </article>
+      <article class="db-kpi avg">
+        <span class="k">Average System Risk Score</span>
+        <strong class="v" id="kAvgSystemRisk">0</strong>
+        <span class="n" id="kAvgSystemRiskMeta">Based on latest published facility records</span>
+      </article>
+      <article class="db-kpi highcrit">
+        <span class="k">High / Critical Facilities</span>
+        <strong class="v" id="kHighCriticalFacilities">0</strong>
+        <span class="n">Latest published residual risk level</span>
+      </article>
+    </section>
+
+    <section class="db-grid-2">
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Highest-Risk Facilities</h3>
+          <p>Ranked by latest published risk score (0–25 scale).</p>
+        </div>
+        <div id="topHighFacilitiesChart" class="db-highrisk-bars"></div>
+      </article>
+
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Highest-Risk Zones</h3>
+          <p>Ranked by average published risk score (0–25 scale).</p>
+        </div>
+        <div id="topHighZonesChart" class="db-highrisk-bars"></div>
+      </article>
+    </section>
+
+    <section class="db-grid-2">
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Lowest-Risk Facilities</h3>
+          <p>Ranked by lowest non-zero published risk score (0–25 scale).</p>
+        </div>
+        <div id="topLowFacilitiesChart" class="db-highrisk-bars"></div>
+      </article>
+
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Lowest-Risk Zones</h3>
+          <p>Ranked by lowest non-zero average published risk score (0–25 scale).</p>
+        </div>
+        <div id="topLowZonesChart" class="db-highrisk-bars"></div>
+      </article>
+    </section>
+
+    <section class="db-panel">
+      <div class="db-panel-head">
+        <h3>Highest Issues Across All Facilities</h3>
+        <p>Most recurring and/or highest-risk issues derived from published corrective-action issue history.</p>
+      </div>
+      <div class="db-mini-wrap">
+        <table class="db-mini-table">
+          <thead>
+            <tr>
+              <th>Issue</th>
+              <th>Number of facilities involved</th>
+              <th>Number Recorded</th>
+              <th>Related Risk</th>
+            </tr>
+          </thead>
+          <tbody id="topIssuesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="db-grid-2">
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Published Assessments by Zones</h3>
+          <p>Zone-level view of published assessment volume.</p>
+        </div>
+        <div id="zonePublicationChart" class="db-zone-chart"></div>
+        <div class="db-chart-legend">
+          <span><span class="dot" style="background:#2F81F7;"></span>Published assessments</span>
+        </div>
+      </article>
+
+      <article class="db-panel">
+        <div class="db-panel-head db-assessor-head">
+          <div class="db-assessor-main">
+            <h3>Publications by Assessor per Month</h3>
+          </div>
+          <div class="db-assessor-controls">
+            <select id="assessorMonthSelect" class="db-assessor-select" aria-label="Select month">
+              <option value="1">Jan</option>
+              <option value="2">Feb</option>
+              <option value="3">Mar</option>
+              <option value="4">Apr</option>
+              <option value="5">May</option>
+              <option value="6">Jun</option>
+              <option value="7">Jul</option>
+              <option value="8">Aug</option>
+              <option value="9">Sep</option>
+              <option value="10">Oct</option>
+              <option value="11">Nov</option>
+              <option value="12">Dec</option>
+            </select>
+            <button id="assessorAllToggle" class="db-assessor-toggle" type="button" aria-pressed="false">All</button>
+          </div>
+        </div>
+        <div id="assessorPublicationWrap" class="db-assessor-wrap"></div>
+      </article>
+    </section>
+
+    <section class="db-grid-2">
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Facilities With Most Open Corrective Actions</h3>
+          <p>Facilities requiring immediate corrective-action focus.</p>
+        </div>
+        <div class="db-mini-wrap">
+          <table class="db-mini-table">
+            <thead>
+              <tr>
+                <th>Facility</th>
+                <th>Zone</th>
+                <th>Open CAs</th>
+                <th>Overdue CAs</th>
+                <th>Latest Risk</th>
+              </tr>
+            </thead>
+            <tbody id="topOpenFacilitiesBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="db-panel">
+        <div class="db-panel-head">
+          <h3>Top 5 Facilities With Most Closed Corrective Actions</h3>
+          <p>Closure leaders with risk movement indicators after action completion.</p>
+        </div>
+        <div class="db-mini-wrap">
+          <table class="db-mini-table">
+            <thead>
+              <tr>
+                <th>Facility</th>
+                <th>Zone</th>
+                <th>Closed CAs</th>
+                <th>Latest Risk</th>
+                <th>Improvement</th>
+              </tr>
+            </thead>
+            <tbody id="topClosedFacilitiesBody"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="db-panel">
+      <div class="db-panel-head">
+        <h3>Urgent Attention Items</h3>
+        <p>Priority alerts generated from high-risk facility posture and overdue corrective actions.</p>
+      </div>
+      <div class="rm-list" id="urgentList"></div>
+    </section>
+  </main>
+
+  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script>
+    function esc(value) {
+      return RiskModuleUtils.esc(value);
+    }
+
+    function normalizeRef(value) {
+      return String(value == null ? '' : value)
+        .trim()
+        .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+        .replace(/[-_ ]+$/, '')
+        .trim();
+    }
+
+    function toMs(value) {
+      const ms = new Date(value || 0).getTime();
+      return Number.isFinite(ms) ? ms : 0;
+    }
+
+    function fmtDate(value) {
+      return RiskModuleUtils.fmtDate(value);
+    }
+
+    function fmtScore(value) {
+      const n = Number(value || 0);
+      if (!Number.isFinite(n)) return '0';
+      const rounded = Math.round(n * 10) / 10;
+      return Number.isInteger(rounded) ? String(Math.trunc(rounded)) : String(rounded);
+    }
+
+    function riskLevelFromScore(score) {
+      const n = Number(score || 0);
+      if (n >= 17) return 'Critical';
+      if (n >= 10) return 'High';
+      if (n >= 5) return 'Medium';
+      return 'Low';
+    }
+
+    function normalizeRiskLevel(level) {
+      const token = String(level || '').trim().toLowerCase();
+      if (token === 'critical' ) return 'Critical';
+      if (token === 'high') return 'High';
+      if (token === 'moderate' || token === 'medium') return 'Medium';
+      return 'Low';
+    }
+
+    function resolvedRiskLevel(level, score) {
+      const n = Number(score);
+      if (Number.isFinite(n) && n > 0) return riskLevelFromScore(n);
+      return normalizeRiskLevel(level);
+    }
+
+    function scoreFromRiskLevel(level) {
+      const normalized = normalizeRiskLevel(level);
+      if (normalized === 'Critical') return 17;
+      if (normalized === 'High') return 10;
+      if (normalized === 'Medium') return 5;
+      if (normalized === 'Low') return 1;
+      return 0;
+    }
+
+    function riskRank(level) {
+      const v = normalizeRiskLevel(level);
+      if (v === 'Critical') return 4;
+      if (v === 'High') return 3;
+      if (v === 'Medium') return 2;
+      return 1;
+    }
+
+    function riskCss(level) {
+      const normalized = normalizeRiskLevel(level).toLowerCase();
+      return normalized === 'critical' ? 'critical'
+        : normalized === 'critical' ? 'critical'
+        : normalized === 'high' ? 'high'
+          : normalized === 'medium' ? 'medium'
+            : 'low';
+    }
+
+    function parseRecordVersion(record) {
+      if (RiskModuleUtils.getRecordVersionNumber) return RiskModuleUtils.getRecordVersionNumber(record);
+      const n = Number(record.version_number || record.version || 1);
+      if (Number.isFinite(n) && n > 0) return Math.floor(n);
+      return 1;
+    }
+
+    function recordMasterRef(record) {
+      if (RiskModuleUtils.getParentInspectionReference) {
+        const ref = RiskModuleUtils.getParentInspectionReference(record);
+        if (ref) return normalizeRef(ref);
+      }
+      return normalizeRef(
+        record.master_reference ||
+        record.assessment_reference ||
+        record.inspectionRef ||
+        ''
+      );
+    }
+
+    function recordKey(record) {
+      const ref = recordMasterRef(record);
+      const version = parseRecordVersion(record);
+      if (!ref) return '';
+      return ref + '::' + String(version);
+    }
+
+    function actionRecordKey(action) {
+      let ref = normalizeRef(
+        action.master_reference ||
+        action.masterReference ||
+        action.inspectionRef ||
+        action.assessment_reference ||
+        ''
+      );
+      if (!ref) {
+        const idToken = String(action.actionId || '');
+        const matchRef = idToken.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+        if (matchRef) ref = normalizeRef(matchRef[1]);
+      }
+      let version = 1;
+      const token = String(action.actionId || '');
+      const match = token.match(/-V(\d+)-/i);
+      if (match) {
+        const parsed = Number(match[1]);
+        if (Number.isFinite(parsed) && parsed > 0) version = Math.floor(parsed);
+      }
+      if (!ref) return '';
+      return ref + '::' + String(version);
+    }
+
+    function actionStatus(action) {
+      const raw = String(action.status || '').trim().toLowerCase();
+      if (raw) return raw;
+      const dueTs = toMs(action.dueDate);
+      if (dueTs && dueTs < Date.now()) return 'overdue';
+      return 'open';
+    }
+
+    function actionMasterRef(action) {
+      const direct = normalizeRef(
+        action.master_reference ||
+        action.masterReference ||
+        action.inspectionRef ||
+        action.assessment_reference ||
+        ''
+      );
+      if (direct) return direct;
+      const idToken = String(action.actionId || '');
+      const matchRef = idToken.match(/^([A-Z]+-\d{8}-[A-Z0-9]+)/i);
+      return normalizeRef(matchRef && matchRef[1] || '');
+    }
+
+    function actionSourceToken(action) {
+      const direct = String(action.sourceCode || '').trim();
+      if (direct) return direct.toUpperCase();
+      const token = String(action.actionId || '');
+      const match = token.match(/-V\d+-(.+)$/i);
+      if (match && match[1]) return String(match[1]).toUpperCase();
+      return token ? token.toUpperCase() : 'GENERAL';
+    }
+
+    function actionUnitState(status) {
+      const normalized = String(status || '').toLowerCase();
+      if (normalized === 'overdue') return 'overdue';
+      if (normalized === 'open' || normalized === 'in progress' || normalized === 'closed pending verification') return 'open';
+      return 'closed';
+    }
+
+    function mergeUnitState(prev, next) {
+      if (prev === 'overdue' || next === 'overdue') return 'overdue';
+      if (prev === 'open' || next === 'open') return 'open';
+      return 'closed';
+    }
+
+    function isClosedAction(status) {
+      return status === 'closed' || status === 'verified closed';
+    }
+
+    function isOpenAction(status) {
+      return status === 'open' || status === 'in progress' || status === 'overdue' || status === 'closed pending verification';
+    }
+
+    function isPublishedRecord(record) {
+      const statusObj = RiskModuleUtils.STATUS ? RiskModuleUtils.STATUS() : {};
+      const status = String(record.assessment_status || record.status || '');
+      return record.is_published === true || status === statusObj.PUBLISHED || status === 'Fully Submitted / Published to Register';
+    }
+
+    function getPublishedTimestamp(record) {
+      return toMs(
+        record.final_submitted_at ||
+        record.publishedAt ||
+        record.corrective_action_submitted_at ||
+        record.correctiveSubmittedAt ||
+        record.last_updated_at ||
+        record.lastUpdatedAt ||
+        record.assessment_date ||
+        record.inspectionDate
+      );
+    }
+
+    function getRecordDateLabel(record) {
+      return record.assessment_date || record.inspectionDate || record.final_submitted_at || record.publishedAt || '';
+    }
+
+    function relativeAgeLabel(value) {
+      const ts = toMs(value);
+      if (!ts) return '-';
+      const now = Date.now();
+      const diff = Math.max(0, now - ts);
+      const day = 1000 * 60 * 60 * 24;
+      const days = Math.floor(diff / day);
+      if (days <= 0) return 'Today';
+      if (days === 1) return 'Yesterday';
+      return days + ' days ago';
+    }
+
+    function monthKeyFromTs(ts) {
+      const d = new Date(ts || 0);
+      if (Number.isNaN(d.getTime())) return '';
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      return String(y) + '-' + m;
+    }
+
+    function monthLabel(key) {
+      if (!key) return '-';
+      const parts = key.split('-');
+      if (parts.length !== 2) return key;
+      const y = Number(parts[0]);
+      const m = Number(parts[1]);
+      const d = new Date(y, m - 1, 1);
+      if (Number.isNaN(d.getTime())) return key;
+      return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+    }
+
+    let assessorViewMode = 'month';
+    let assessorMonth = new Date().getMonth() + 1;
+
+    function computeDashboardData() {
+      const allRecords = RiskModuleUtils.getRecords();
+      const publishedRecords = allRecords.filter(isPublishedRecord);
+      const allActions = RiskModuleUtils.getActions();
+
+      const publishedRecordMap = new Map();
+      publishedRecords.forEach((record) => {
+        const key = recordKey(record);
+        if (!key) return;
+        publishedRecordMap.set(key, record);
+      });
+
+      const linkedActions = allActions.filter((action) => {
+        const key = actionRecordKey(action);
+        return !!(key && publishedRecordMap.has(key));
+      });
+
+      const actionsByRecord = new Map();
+      linkedActions.forEach((action) => {
+        const key = actionRecordKey(action);
+        if (!key) return;
+        if (!actionsByRecord.has(key)) actionsByRecord.set(key, []);
+        actionsByRecord.get(key).push(action);
+      });
+
+      const publishedRows = publishedRecords.map((record) => {
+        const key = recordKey(record);
+        const actions = actionsByRecord.get(key) || [];
+        const snapshot = RiskModuleUtils.getRiskSnapshotForRecord(record);
+        const initialCandidates = [
+          record.overall_risk_score,
+          record.overallRiskScore,
+          record.overallRisk && record.overallRisk.score
+        ];
+        let initialScore = 0;
+        for (let i = 0; i < initialCandidates.length; i += 1) {
+          const n = Number(initialCandidates[i]);
+          if (Number.isFinite(n) && n >= 0) {
+            initialScore = n;
+            break;
+          }
+        }
+        const residualCandidates = [
+          record.residual_risk_score,
+          record.residualRiskScore,
+          record.residualRisk && record.residualRisk.score,
+          initialScore
+        ];
+        let residualScore = initialScore;
+        for (let i = 0; i < residualCandidates.length; i += 1) {
+          const n = Number(residualCandidates[i]);
+          if (Number.isFinite(n) && n >= 0) {
+            residualScore = n;
+            break;
+          }
+        }
+        const initialLevel = resolvedRiskLevel(
+          record.overall_risk_level || record.overallRiskLevel || (snapshot && snapshot.initialLevel) || 'Low',
+          initialScore
+        );
+        const residualLevel = resolvedRiskLevel(
+          record.residual_risk_level || record.residualRiskLevel || (snapshot && snapshot.residualLevel) || initialLevel,
+          residualScore
+        );
+        const actionStats = { open: 0, overdue: 0, closed: 0, total: 0 };
+
+        actions.forEach((action) => {
+          const st = actionStatus(action);
+          actionStats.total += 1;
+          if (isClosedAction(st)) {
+            actionStats.closed += 1;
+            return;
+          }
+          if (st === 'overdue') actionStats.overdue += 1;
+          if (isOpenAction(st)) actionStats.open += 1;
+        });
+
+        const facilityName = String(record.facility_name || record.facilityName || 'Unknown Facility');
+        const zone = String(record.location || record.zone || 'Unspecified Zone');
+        const assessor = String(record.assessor_name || record.inspector || 'Unassigned');
+        const publishedTs = getPublishedTimestamp(record);
+        const version = parseRecordVersion(record);
+
+        return {
+          key,
+          record,
+          version,
+          masterReference: recordMasterRef(record),
+          facilityName,
+          zone,
+          facilityType: String(record.facility_type || record.facilityType || '-'),
+          assessor,
+          publishedTs,
+          publishedDate: record.final_submitted_at || record.publishedAt || record.corrective_action_submitted_at || record.correctiveSubmittedAt || record.last_updated_at || record.lastUpdatedAt || '',
+          inspectionDate: getRecordDateLabel(record),
+          initialScore,
+          initialLevel,
+          residualScore,
+          residualLevel,
+          rankingScore: initialScore,
+          rankingLevel: initialLevel,
+          riskReduction: Math.max(0, Math.round((initialScore - residualScore) * 10) / 10),
+          actionStats
+        };
+      });
+
+      const publishedByMaster = new Map();
+      publishedRows.forEach((row) => {
+        const key = String(row.masterReference || '').trim();
+        if (!key) return;
+        if (!publishedByMaster.has(key)) {
+          publishedByMaster.set(key, row);
+          return;
+        }
+        const prev = publishedByMaster.get(key);
+        // Match Published Register master-row rule:
+        // latest version first, then latest submission timestamp.
+        if (Number(row.version || 0) > Number(prev.version || 0)) {
+          publishedByMaster.set(key, row);
+          return;
+        }
+        if (Number(row.version || 0) === Number(prev.version || 0) && row.publishedTs > prev.publishedTs) {
+          publishedByMaster.set(key, row);
+        }
+      });
+      const publishedMasterRows = Array.from(publishedByMaster.values());
+      const masterReferenceCount = publishedMasterRows.length;
+
+      const latestByFacility = new Map();
+      publishedMasterRows.forEach((row) => {
+        const key = row.facilityName.toLowerCase();
+        const prev = latestByFacility.get(key);
+        if (!prev) {
+          latestByFacility.set(key, row);
+          return;
+        }
+        if (row.publishedTs > prev.publishedTs) {
+          latestByFacility.set(key, row);
+          return;
+        }
+        if (row.publishedTs === prev.publishedTs && row.version > prev.version) {
+          latestByFacility.set(key, row);
+        }
+      });
+      const latestFacilityRows = Array.from(latestByFacility.values());
+
+      // Published-only source of truth for ranking charts:
+      // keep fallback pool aligned with published latest facility rows.
+      const allFacilityRowsForRanking = latestFacilityRows.slice();
+
+      const facilityActionAgg = new Map();
+      publishedRows.forEach((row) => {
+        const key = row.facilityName.toLowerCase();
+        if (!facilityActionAgg.has(key)) {
+          facilityActionAgg.set(key, {
+            facilityName: row.facilityName,
+            zone: row.zone,
+            open: 0,
+            overdue: 0,
+            closed: 0,
+            total: 0,
+            latest: latestByFacility.get(key) || row
+          });
+        }
+        const agg = facilityActionAgg.get(key);
+        agg.open += row.actionStats.open;
+        agg.overdue += row.actionStats.overdue;
+        agg.closed += row.actionStats.closed;
+        agg.total += row.actionStats.total;
+      });
+      const facilityActionRows = Array.from(facilityActionAgg.values());
+
+      const latestContextByFacility = new Map();
+      allFacilityRowsForRanking.forEach((row) => {
+        latestContextByFacility.set(String(row.facilityName || '').toLowerCase(), row);
+      });
+      latestFacilityRows.forEach((row) => {
+        latestContextByFacility.set(String(row.facilityName || '').toLowerCase(), row);
+      });
+
+      // De-duplicate corrective actions by (facility + master reference + source token)
+      // so v1/v2/v3 revisions of the same action family do not inflate counts.
+      const actionUnitMap = new Map();
+      allActions.forEach((action) => {
+        const facilityName = String(action.facilityName || '').trim();
+        if (!facilityName) return;
+        const facilityKey = facilityName.toLowerCase();
+        const masterRef = actionMasterRef(action) || 'UNREF';
+        const sourceToken = actionSourceToken(action);
+        const unitKey = facilityKey + '::' + masterRef + '::' + sourceToken;
+        const state = actionUnitState(actionStatus(action));
+        if (!actionUnitMap.has(unitKey)) {
+          actionUnitMap.set(unitKey, {
+            facilityKey,
+            facilityName,
+            state
+          });
+          return;
+        }
+        const existing = actionUnitMap.get(unitKey);
+        existing.state = mergeUnitState(existing.state, state);
+      });
+
+      const allFacilityActionAgg = new Map();
+      Array.from(actionUnitMap.values()).forEach((unit) => {
+        const context = latestContextByFacility.get(unit.facilityKey) || {};
+        if (!allFacilityActionAgg.has(unit.facilityKey)) {
+          const fallbackScore = Number.isFinite(Number(context.residualScore))
+            ? Number(context.residualScore)
+            : 0;
+          allFacilityActionAgg.set(unit.facilityKey, {
+            facilityName: unit.facilityName,
+            zone: context.zone || 'Unspecified Zone',
+            open: 0,
+            overdue: 0,
+            closed: 0,
+            total: 0,
+            latest: context && Object.keys(context).length
+              ? context
+              : {
+                  residualScore: fallbackScore,
+                  residualLevel: resolvedRiskLevel(context.residualLevel || context.overallRiskLevel || 'Low', fallbackScore),
+                  riskReduction: 0
+                }
+          });
+        }
+        const agg = allFacilityActionAgg.get(unit.facilityKey);
+        if (unit.state === 'overdue') agg.overdue += 1;
+        else if (unit.state === 'open') agg.open += 1;
+        else agg.closed += 1;
+        agg.total += 1;
+      });
+      const allFacilityActionRows = Array.from(allFacilityActionAgg.values());
+
+      const zoneMap = new Map();
+      latestFacilityRows.forEach((row) => {
+        const zoneKey = row.zone || 'Unspecified Zone';
+        if (!zoneMap.has(zoneKey)) {
+          zoneMap.set(zoneKey, {
+            zone: zoneKey,
+            facilitySet: new Set(),
+            scoreSum: 0,
+            scoreCount: 0,
+            highestRisk: 'Low',
+            openActions: 0,
+            publishedAssessments: 0,
+            publishedFacilitySet: new Set()
+          });
+        }
+        const zone = zoneMap.get(zoneKey);
+        zone.facilitySet.add(row.facilityName);
+        zone.scoreSum += Number(row.rankingScore || row.residualScore || 0);
+        zone.scoreCount += 1;
+        zone.highestRisk = riskRank(row.rankingLevel || row.residualLevel) > riskRank(zone.highestRisk) ? (row.rankingLevel || row.residualLevel) : zone.highestRisk;
+        zone.openActions += Number(row.actionStats.open || 0);
+      });
+      publishedMasterRows.forEach((row) => {
+        const zoneKey = row.zone || 'Unspecified Zone';
+        if (!zoneMap.has(zoneKey)) {
+          zoneMap.set(zoneKey, {
+            zone: zoneKey,
+            facilitySet: new Set(),
+            scoreSum: 0,
+            scoreCount: 0,
+            highestRisk: 'Low',
+            openActions: 0,
+            publishedAssessments: 0,
+            publishedFacilitySet: new Set()
+          });
+        }
+        const zone = zoneMap.get(zoneKey);
+        zone.publishedAssessments += 1;
+        zone.publishedFacilitySet.add(row.facilityName);
+      });
+
+      const zoneRows = Array.from(zoneMap.values()).map((zone) => {
+        const avgScore = zone.scoreCount > 0 ? (zone.scoreSum / zone.scoreCount) : 0;
+        return {
+          zone: zone.zone,
+          facilities: zone.facilitySet.size,
+          avgScore,
+          avgLevel: riskLevelFromScore(avgScore),
+          highestRisk: normalizeRiskLevel(zone.highestRisk),
+          openActions: zone.openActions,
+          publishedAssessments: zone.publishedAssessments,
+          publishedFacilities: zone.publishedFacilitySet.size
+        };
+      });
+
+      const facilityOpenByName = new Map();
+      facilityActionRows.forEach((row) => {
+        facilityOpenByName.set(String(row.facilityName || '').toLowerCase(), Number(row.open || 0));
+      });
+      // Published-only source of truth for zone ranking charts as well.
+      const zoneRowsAll = zoneRows.slice();
+
+      const issueMap = new Map();
+      const rowByKey = new Map(publishedRows.map((row) => [row.key, row]));
+      linkedActions.forEach((action) => {
+        const key = actionRecordKey(action);
+        const row = rowByKey.get(key);
+        const issue = String(action.issue || action.sourceComment || action.sourceCode || 'Unspecified Issue').trim() || 'Unspecified Issue';
+        const issueKey = issue.toLowerCase();
+        if (!issueMap.has(issueKey)) {
+          issueMap.set(issueKey, {
+            issue,
+            facilities: new Set(),
+            masterRefs: new Set(),
+            highestRisk: 'Low'
+          });
+        }
+        const item = issueMap.get(issueKey);
+        item.highestRisk = riskRank(action.riskLevel || action.priority) > riskRank(item.highestRisk) ? normalizeRiskLevel(action.riskLevel || action.priority) : item.highestRisk;
+        if (row) {
+          item.facilities.add(row.facilityName);
+          if (row.masterReference) item.masterRefs.add(row.masterReference);
+        } else {
+          const actionMaster = normalizeRef(
+            action.master_reference ||
+            action.masterReference ||
+            action.inspectionRef ||
+            action.assessment_reference ||
+            ''
+          );
+          if (actionMaster) item.masterRefs.add(actionMaster);
+          const actionFacility = String(action.facilityName || '').trim();
+          if (actionFacility) item.facilities.add(actionFacility);
+        }
+      });
+
+      const issueRows = Array.from(issueMap.values()).map((item) => ({
+        issue: item.issue,
+        facilitiesAffected: item.facilities.size,
+        masterRefsRecorded: item.masterRefs.size,
+        riskLevel: item.highestRisk
+      }));
+
+      const monthSet = new Set();
+      publishedMasterRows.forEach((row) => {
+        monthSet.add(monthKeyFromTs(row.publishedTs));
+      });
+      const monthKeys = Array.from(monthSet).filter(Boolean).sort().slice(-6);
+      const yearCandidates = publishedMasterRows
+        .map((row) => new Date(row.publishedTs || 0).getFullYear())
+        .filter((year) => Number.isFinite(year) && year > 0);
+      const assessorYear = yearCandidates.length ? Math.max.apply(null, yearCandidates) : new Date().getFullYear();
+      const monthMaxSeed = {};
+      monthKeys.forEach((key) => { monthMaxSeed[key] = 0; });
+
+      const assessorMap = new Map();
+      publishedMasterRows.forEach((row) => {
+        const key = row.assessor || 'Unassigned';
+        const month = monthKeyFromTs(row.publishedTs);
+        if (!assessorMap.has(key)) {
+          assessorMap.set(key, {
+            assessor: key,
+            monthCounts: {},
+            monthRiskSum: {},
+            monthRiskCount: {},
+            total: 0,
+            scoreSum: 0,
+            scoreCount: 0,
+            yearTotal: 0
+          });
+        }
+        const item = assessorMap.get(key);
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        item.total += 1;
+        item.scoreSum += score;
+        item.scoreCount += 1;
+        if (month) {
+          item.monthCounts[month] = (item.monthCounts[month] || 0) + 1;
+          item.monthRiskSum[month] = (item.monthRiskSum[month] || 0) + score;
+          item.monthRiskCount[month] = (item.monthRiskCount[month] || 0) + 1;
+          if (monthMaxSeed[month] < item.monthCounts[month]) monthMaxSeed[month] = item.monthCounts[month];
+        }
+        const yr = new Date(row.publishedTs || 0).getFullYear();
+        if (Number.isFinite(yr) && yr === assessorYear) item.yearTotal += 1;
+      });
+
+      const assessorRows = Array.from(assessorMap.values()).map((item) => {
+        const avgScore = item.scoreCount ? (item.scoreSum / item.scoreCount) : 0;
+        return {
+          assessor: item.assessor,
+          monthCounts: item.monthCounts,
+          monthRiskSum: item.monthRiskSum,
+          monthRiskCount: item.monthRiskCount,
+          total: item.total,
+          yearTotal: item.yearTotal,
+          avgScore,
+          avgLevel: riskLevelFromScore(avgScore)
+        };
+      }).sort((a, b) => b.total - a.total || a.assessor.localeCompare(b.assessor));
+
+      const totalOpen = linkedActions.reduce((sum, action) => {
+        const st = actionStatus(action);
+        if (isClosedAction(st)) return sum;
+        if (isOpenAction(st)) return sum + 1;
+        return sum;
+      }, 0);
+
+      const totalOverdue = linkedActions.reduce((sum, action) => {
+        const st = actionStatus(action);
+        return st === 'overdue' ? sum + 1 : sum;
+      }, 0);
+
+      const avgSystemRisk = latestFacilityRows.length
+        ? (latestFacilityRows.reduce((sum, row) => sum + Number(row.rankingScore || row.residualScore || 0), 0) / latestFacilityRows.length)
+        : 0;
+      const avgSystemLevel = riskLevelFromScore(avgSystemRisk);
+      const highCriticalFacilities = latestFacilityRows.filter((row) => {
+        const level = normalizeRiskLevel(row.rankingLevel || row.residualLevel);
+        return level === 'High' || level === 'Critical';
+      }).length;
+
+      const riskMix = { Low: 0, Medium: 0, High: 0, Critical: 0 };
+      latestFacilityRows.forEach((row) => {
+        const level = resolvedRiskLevel(row.rankingLevel || row.residualLevel, row.rankingScore || row.residualScore);
+        riskMix[level] = (riskMix[level] || 0) + 1;
+      });
+
+      const monthlyAggMap = new Map();
+      publishedMasterRows.forEach((row) => {
+        const key = monthKeyFromTs(row.publishedTs);
+        if (!key) return;
+        if (!monthlyAggMap.has(key)) {
+          monthlyAggMap.set(key, {
+            month: key,
+            publishedCount: 0,
+            riskSum: 0,
+            riskCount: 0
+          });
+        }
+        const item = monthlyAggMap.get(key);
+        item.publishedCount += 1;
+        item.riskSum += Number(row.rankingScore || row.residualScore || 0);
+        item.riskCount += 1;
+      });
+      const monthlyTrendRows = Array.from(monthlyAggMap.values())
+        .sort((a, b) => a.month.localeCompare(b.month))
+        .slice(-8)
+        .map((item) => ({
+          month: item.month,
+          publishedCount: item.publishedCount,
+          avgResidualRisk: item.riskCount > 0 ? (item.riskSum / item.riskCount) : 0
+        }));
+
+      return {
+        masterReferenceCount,
+        publishedRecordsCount: publishedRows.length,
+        latestFacilityRows,
+        allFacilityRowsForRanking,
+        facilityActionRows,
+        allFacilityActionRows,
+        zoneRows,
+        zoneRowsAll,
+        issueRows,
+        assessorRows,
+        assessorYear,
+        monthKeys,
+        monthMaxSeed,
+        totalOpen,
+        totalOverdue,
+        avgSystemRisk,
+        avgSystemLevel,
+        highCriticalFacilities,
+        riskMix,
+        monthlyTrendRows
+      };
+    }
+
+    function pill(level, score) {
+      const resolved = resolvedRiskLevel(level, score);
+      const css = riskCss(resolved);
+      return '<span class="db-pill ' + css + '">' + esc(resolved) + ' (' + esc(fmtScore(score)) + ')</span>';
+    }
+
+    function setEmptyBody(bodyId, colspan, message) {
+      const body = document.getElementById(bodyId);
+      body.innerHTML = '<tr><td colspan="' + String(colspan) + '"><div class="db-empty">' + esc(message) + '</div></td></tr>';
+    }
+
+    function renderKpis(data) {
+      document.getElementById('kPublishedAssessments').textContent = String(data.masterReferenceCount);
+      document.getElementById('kFacilitiesAssessed').textContent = String(data.latestFacilityRows.length);
+      document.getElementById('kOpenActions').textContent = String(data.totalOpen);
+      document.getElementById('kOverdueActions').textContent = String(data.totalOverdue);
+      document.getElementById('kAvgSystemRisk').textContent = fmtScore(data.avgSystemRisk) + ' (' + data.avgSystemLevel + ')';
+      document.getElementById('kAvgSystemRiskMeta').textContent = data.latestFacilityRows.length
+        ? 'Derived from latest published record per facility'
+        : 'No published facility records available';
+      document.getElementById('kHighCriticalFacilities').textContent = String(data.highCriticalFacilities);
+    }
+
+    function renderHighestRiskFacilities(rows, fallbackRows) {
+      const node = document.getElementById('topHighFacilitiesChart');
+      if (!(rows || []).length && !(fallbackRows || []).length) {
+        node.innerHTML = '<div class="db-empty">No published facility records available.</div>';
+        return;
+      }
+      const merged = [];
+      const seen = new Set();
+      rows.slice().forEach((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const key = String(row.facilityName || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(row);
+      });
+      (fallbackRows || []).slice().forEach((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const key = String(row.facilityName || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(row);
+      });
+      const sorted = merged
+        .sort((a, b) => {
+          if (Number(b.rankingScore || b.residualScore || 0) !== Number(a.rankingScore || a.residualScore || 0)) return Number(b.rankingScore || b.residualScore || 0) - Number(a.rankingScore || a.residualScore || 0);
+          if (riskRank(b.rankingLevel || b.residualLevel) !== riskRank(a.rankingLevel || a.residualLevel)) return riskRank(b.rankingLevel || b.residualLevel) - riskRank(a.rankingLevel || a.residualLevel);
+          return String(a.facilityName || '').localeCompare(String(b.facilityName || ''));
+        })
+        .slice(0, 5);
+      if (!sorted.length) {
+        node.innerHTML = '<div class="db-empty">No facilities currently have published risk above 0.</div>';
+        return;
+      }
+      const RISK_MAX = 25;
+      node.innerHTML = sorted.map((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const level = resolvedRiskLevel(row.rankingLevel || row.residualLevel, score);
+        const fillClass = riskCss(level);
+        const pct = Math.max(0, Math.min(100, Math.round((score / RISK_MAX) * 100)));
+        return (
+          '<div class="db-highrisk-row">' +
+            '<div class="db-highrisk-name">' +
+              '<span class="main">' + esc(row.facilityName) + '</span>' +
+              '<span class="sub">' + esc(row.zone) + ' · ' + esc(fmtDate(row.inspectionDate)) + '</span>' +
+            '</div>' +
+            '<div class="db-highrisk-track">' +
+              '<div class="db-highrisk-fill ' + fillClass + '" style="width:' + String(pct) + '%;">' + esc(fmtScore(score)) + '</div>' +
+            '</div>' +
+            '<div class="db-highrisk-meta">' +
+              pill(level, score) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderHighestRiskZones(zones, fallbackZones) {
+      const node = document.getElementById('topHighZonesChart');
+      if (!(zones || []).length && !(fallbackZones || []).length) {
+        node.innerHTML = '<div class="db-empty">No zone data available from published records.</div>';
+        return;
+      }
+      const merged = [];
+      const seen = new Set();
+      zones.slice().forEach((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const key = String(zone.zone || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(zone);
+      });
+      (fallbackZones || []).slice().forEach((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const key = String(zone.zone || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(zone);
+      });
+      const sorted = merged
+        .sort((a, b) => {
+          if (Number(b.avgScore) !== Number(a.avgScore)) return Number(b.avgScore) - Number(a.avgScore);
+          if (riskRank(b.highestRisk) !== riskRank(a.highestRisk)) return riskRank(b.highestRisk) - riskRank(a.highestRisk);
+          return String(a.zone || '').localeCompare(String(b.zone || ''));
+        })
+        .slice(0, 5);
+      if (!sorted.length) {
+        node.innerHTML = '<div class="db-empty">No zones currently have average risk above 0.</div>';
+        return;
+      }
+      const RISK_MAX = 25;
+      node.innerHTML = sorted.map((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const level = resolvedRiskLevel(zone.highestRisk || zone.avgLevel, score);
+        const fillClass = riskCss(level);
+        const pct = Math.max(0, Math.min(100, Math.round((score / RISK_MAX) * 100)));
+        return (
+          '<div class="db-highrisk-row">' +
+            '<div class="db-highrisk-name">' +
+              '<span class="main">' + esc(zone.zone) + '</span>' +
+              '<span class="sub">' + String(zone.facilities) + ' facilities</span>' +
+            '</div>' +
+            '<div class="db-highrisk-track">' +
+              '<div class="db-highrisk-fill ' + fillClass + '" style="width:' + String(pct) + '%;">' + esc(fmtScore(score)) + '</div>' +
+            '</div>' +
+            '<div class="db-highrisk-meta">' +
+              pill(level, score) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderLowestRiskFacilities(rows, fallbackRows) {
+      const node = document.getElementById('topLowFacilitiesChart');
+      if (!(rows || []).length && !(fallbackRows || []).length) {
+        node.innerHTML = '<div class="db-empty">No published facility records available.</div>';
+        return;
+      }
+      const merged = [];
+      const seen = new Set();
+      rows.slice().forEach((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const key = String(row.facilityName || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(row);
+      });
+      (fallbackRows || []).slice().forEach((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const key = String(row.facilityName || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(row);
+      });
+      const sorted = merged
+        .sort((a, b) => {
+          if (Number(a.rankingScore || a.residualScore || 0) !== Number(b.rankingScore || b.residualScore || 0)) return Number(a.rankingScore || a.residualScore || 0) - Number(b.rankingScore || b.residualScore || 0);
+          return a.facilityName.localeCompare(b.facilityName);
+        })
+        .slice(0, 5);
+      if (!sorted.length) {
+        node.innerHTML = '<div class="db-empty">No facilities currently have published risk above 0.</div>';
+        return;
+      }
+      const RISK_MAX = 25;
+      node.innerHTML = sorted.map((row) => {
+        const score = Number(row.rankingScore || row.residualScore || 0);
+        const level = resolvedRiskLevel(row.rankingLevel || row.residualLevel, score);
+        const fillClass = riskCss(level);
+        const pct = Math.max(0, Math.min(100, Math.round((score / RISK_MAX) * 100)));
+        return (
+          '<div class="db-highrisk-row">' +
+            '<div class="db-highrisk-name">' +
+              '<span class="main">' + esc(row.facilityName) + '</span>' +
+              '<span class="sub">' + esc(row.zone) + ' · ' + esc(fmtDate(row.inspectionDate)) + '</span>' +
+            '</div>' +
+            '<div class="db-highrisk-track">' +
+              '<div class="db-highrisk-fill ' + fillClass + '" style="width:' + String(pct) + '%;">' + esc(fmtScore(score)) + '</div>' +
+            '</div>' +
+            '<div class="db-highrisk-meta">' +
+              pill(level, score) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderLowestRiskZones(zones, fallbackZones) {
+      const node = document.getElementById('topLowZonesChart');
+      if (!(zones || []).length && !(fallbackZones || []).length) {
+        node.innerHTML = '<div class="db-empty">No zone data available from published records.</div>';
+        return;
+      }
+      const merged = [];
+      const seen = new Set();
+      zones.slice().forEach((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const key = String(zone.zone || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(zone);
+      });
+      (fallbackZones || []).slice().forEach((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const key = String(zone.zone || '').toLowerCase();
+        if (score <= 0 || !key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(zone);
+      });
+      const sorted = merged
+        .sort((a, b) => {
+          if (Number(a.avgScore) !== Number(b.avgScore)) return Number(a.avgScore) - Number(b.avgScore);
+          return Number(b.publishedAssessments) - Number(a.publishedAssessments);
+        })
+        .slice(0, 5);
+      if (!sorted.length) {
+        node.innerHTML = '<div class="db-empty">No zones currently have average risk above 0.</div>';
+        return;
+      }
+      const RISK_MAX = 25;
+      node.innerHTML = sorted.map((zone) => {
+        const score = Number(zone.avgScore || 0);
+        const level = resolvedRiskLevel(zone.avgLevel, score);
+        const fillClass = riskCss(level);
+        const pct = Math.max(0, Math.min(100, Math.round((score / RISK_MAX) * 100)));
+        return (
+          '<div class="db-highrisk-row">' +
+            '<div class="db-highrisk-name">' +
+              '<span class="main">' + esc(zone.zone) + '</span>' +
+              '<span class="sub">' + String(zone.facilities) + ' facilities</span>' +
+            '</div>' +
+            '<div class="db-highrisk-track">' +
+              '<div class="db-highrisk-fill ' + fillClass + '" style="width:' + String(pct) + '%;">' + esc(fmtScore(score)) + '</div>' +
+            '</div>' +
+            '<div class="db-highrisk-meta">' +
+              pill(level, score) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function renderTopIssues(issues) {
+      if (!issues.length) {
+        setEmptyBody('topIssuesBody', 4, 'No published corrective-action issues available.');
+        return;
+      }
+      const sorted = issues
+        .slice()
+        .sort((a, b) => {
+          if (Number(b.facilitiesAffected) !== Number(a.facilitiesAffected)) return Number(b.facilitiesAffected) - Number(a.facilitiesAffected);
+          if (Number(b.masterRefsRecorded) !== Number(a.masterRefsRecorded)) return Number(b.masterRefsRecorded) - Number(a.masterRefsRecorded);
+          return riskRank(b.riskLevel) - riskRank(a.riskLevel);
+        })
+        .slice(0, 8);
+      document.getElementById('topIssuesBody').innerHTML = sorted.map((item) => (
+        '<tr>' +
+          '<td class="db-issue">' + esc(item.issue) + '</td>' +
+          '<td><span class="db-num">' + String(item.facilitiesAffected) + '</span></td>' +
+          '<td><span class="db-num">' + String(item.masterRefsRecorded) + '</span></td>' +
+          '<td>' + pill(item.riskLevel, item.riskLevel === 'Low' ? 5 : item.riskLevel === 'Medium' ? 10 : item.riskLevel === 'High' ? 15 : 20) + '</td>' +
+        '</tr>'
+      )).join('');
+    }
+
+    function renderRiskMixChart(riskMix) {
+      const node = document.getElementById('riskMixChart');
+      const counts = {
+        Low: Number(riskMix && riskMix.Low || 0),
+        Medium: Number(riskMix && riskMix.Medium || 0),
+        High: Number(riskMix && riskMix.High || 0),
+        Critical: Number(riskMix && riskMix.Critical || 0)
+      };
+      const total = counts.Low + counts.Medium + counts.High + counts.Critical;
+      if (!total) {
+        node.innerHTML = '<div class="db-empty">No latest facility risk records to chart.</div>';
+        return;
+      }
+
+      const segments = [
+        { key: 'Low', count: counts.Low, color: '#3FB950' },
+        { key: 'Medium', count: counts.Medium, color: '#D29922' },
+        { key: 'High', count: counts.High, color: '#E07D23' },
+        { key: 'Critical', count: counts.Critical, color: '#DA3633' }
+      ];
+
+      let angle = 0;
+      const stops = [];
+      segments.forEach((seg) => {
+        const ratio = seg.count / total;
+        const next = angle + (ratio * 360);
+        stops.push(seg.color + ' ' + angle.toFixed(2) + 'deg ' + next.toFixed(2) + 'deg');
+        angle = next;
+      });
+
+      const legend = segments.map((seg) => (
+        '<div class="db-riskmix-item">' +
+          '<span class="left"><span class="dot" style="background:' + seg.color + ';"></span>' + esc(seg.key) + '</span>' +
+          '<span class="v">' + String(seg.count) + '</span>' +
+        '</div>'
+      )).join('');
+
+      node.innerHTML =
+        '<div class="db-riskmix-wrap">' +
+          '<div class="db-donut" style="background:conic-gradient(' + stops.join(',') + ');">' +
+            '<div class="db-donut-center"><div><div class="v">' + String(total) + '</div><div class="k">Facilities</div></div></div>' +
+          '</div>' +
+          '<div class="db-riskmix-legend">' + legend + '</div>' +
+        '</div>';
+    }
+
+    function renderPublicationTrendChart(monthlyRows) {
+      const node = document.getElementById('publicationTrendChart');
+      const points = Array.isArray(monthlyRows) ? monthlyRows.slice() : [];
+      if (!points.length) {
+        node.innerHTML = '<div class="db-empty">No monthly publication trend data available.</div>';
+        return;
+      }
+
+      const width = Math.max(700, (points.length * 95));
+      const height = 250;
+      const left = 46;
+      const right = 16;
+      const top = 16;
+      const bottom = 44;
+      const plotW = width - left - right;
+      const plotH = height - top - bottom;
+      const maxPublished = Math.max(1, ...points.map((item) => Number(item.publishedCount || 0)));
+      const maxRisk = 25;
+      const step = points.length > 1 ? (plotW / (points.length - 1)) : 0;
+      const baseY = top + plotH;
+
+      const barWidth = Math.max(18, Math.min(28, Math.floor(plotW / (points.length * 2 || 1))));
+      const linePts = [];
+      const circles = [];
+      const bars = [];
+      const labels = [];
+      const xLabels = [];
+
+      points.forEach((item, idx) => {
+        const x = left + (step * idx);
+        const published = Number(item.publishedCount || 0);
+        const avgRisk = Number(item.avgResidualRisk || 0);
+        const barH = Math.round((published / maxPublished) * plotH);
+        const barY = baseY - barH;
+        const riskY = baseY - Math.round((Math.min(maxRisk, Math.max(0, avgRisk)) / maxRisk) * plotH);
+        linePts.push(x + ',' + riskY);
+        bars.push('<rect x="' + (x - (barWidth / 2)) + '" y="' + barY + '" width="' + barWidth + '" height="' + barH + '" rx="4" fill="rgba(47,129,247,.52)" stroke="rgba(47,129,247,.95)" stroke-width="1"></rect>');
+        circles.push('<circle cx="' + x + '" cy="' + riskY + '" r="4.5" fill="#F47920" stroke="#0D1117" stroke-width="2"></circle>');
+        labels.push('<text x="' + x + '" y="' + (riskY - 9) + '" fill="#F47920" font-size="10" font-weight="700" text-anchor="middle">' + esc(fmtScore(avgRisk)) + '</text>');
+        xLabels.push('<text x="' + x + '" y="' + (baseY + 18) + '" fill="#8B949E" font-size="10" text-anchor="middle">' + esc(monthLabel(item.month)) + '</text>');
+      });
+
+      const yGrid = [0, 0.25, 0.5, 0.75, 1].map((r) => {
+        const y = top + (plotH * r);
+        return '<line x1="' + left + '" y1="' + y + '" x2="' + (left + plotW) + '" y2="' + y + '" stroke="rgba(255,255,255,.08)" stroke-width="1"></line>';
+      }).join('');
+
+      const svg =
+        '<svg class="db-trend-svg" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">' +
+          yGrid +
+          '<line x1="' + left + '" y1="' + baseY + '" x2="' + (left + plotW) + '" y2="' + baseY + '" stroke="rgba(255,255,255,.14)" stroke-width="1"></line>' +
+          bars.join('') +
+          '<polyline points="' + linePts.join(' ') + '" fill="none" stroke="#F47920" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></polyline>' +
+          circles.join('') +
+          labels.join('') +
+          xLabels.join('') +
+        '</svg>';
+
+      node.innerHTML =
+        '<div class="db-trend-wrap">' + svg + '</div>' +
+        '<div class="db-trend-legend">' +
+          '<span><span class="bar" style="background:#2F81F7;"></span>Published assessments</span>' +
+          '<span><span class="line" style="background:#F47920;"></span>Average residual risk score</span>' +
+        '</div>';
+    }
+
+    function renderZonePublicationChart(zones) {
+      const node = document.getElementById('zonePublicationChart');
+      if (!zones.length) {
+        node.innerHTML = '<div class="db-empty">No published zone distribution available.</div>';
+        return;
+      }
+      const sorted = zones
+        .slice()
+        .sort((a, b) => Number(b.publishedAssessments) - Number(a.publishedAssessments) || Number(b.publishedFacilities) - Number(a.publishedFacilities));
+      const width = Math.max(680, sorted.length * 190);
+      const height = 250;
+      const left = 48;
+      const right = 20;
+      const top = 16;
+      const bottom = 64;
+      const plotW = width - left - right;
+      const plotH = height - top - bottom;
+      const baseY = top + plotH;
+      const maxVal = Math.max(1, ...sorted.map((item) => Number(item.publishedAssessments || 0)));
+      const groups = sorted.length || 1;
+      const slot = plotW / groups;
+      const barW = Math.min(48, Math.max(16, Math.floor(slot - 26)));
+
+      const yGrid = [0, 0.25, 0.5, 0.75, 1].map((r) => {
+        const y = top + (plotH * r);
+        const value = Math.round(maxVal * (1 - r));
+        return ''
+          + '<line x1="' + left + '" y1="' + y + '" x2="' + (left + plotW) + '" y2="' + y + '" stroke="rgba(255,255,255,.08)" stroke-width="1"></line>'
+          + '<text x="' + (left - 8) + '" y="' + (y + 3) + '" text-anchor="end" fill="var(--wh4)" style="font-size:10px;font-family:Barlow;">' + String(value) + '</text>';
+      }).join('');
+
+      const bars = sorted.map((item, idx) => {
+        const ass = Number(item.publishedAssessments || 0);
+        const groupStart = left + (idx * slot);
+        const assX = groupStart + (slot / 2) - (barW / 2);
+        const assH = Math.round((ass / maxVal) * plotH);
+        const assY = baseY - assH;
+        const label = String(item.zone || 'Zone');
+        return ''
+          + '<rect x="' + assX + '" y="' + assY + '" width="' + barW + '" height="' + assH + '" rx="4" fill="rgba(47,129,247,.78)" stroke="rgba(47,129,247,.95)" stroke-width="1"></rect>'
+          + '<text x="' + (assX + (barW / 2)) + '" y="' + (assY - 6) + '" text-anchor="middle" fill="var(--info)" style="font-size:10px;font-family:Barlow;font-weight:700;">' + String(ass) + '</text>'
+          + '<text x="' + (groupStart + (slot / 2)) + '" y="' + (baseY + 18) + '" text-anchor="middle" fill="var(--wh4)" style="font-size:10.5px;font-family:Barlow;">' + esc(label) + '</text>';
+      }).join('');
+
+      const svg =
+        '<svg class="db-zone-bar-svg" viewBox="0 0 ' + width + ' ' + height + '" preserveAspectRatio="none">' +
+          yGrid +
+          '<line x1="' + left + '" y1="' + baseY + '" x2="' + (left + plotW) + '" y2="' + baseY + '" stroke="rgba(255,255,255,.14)" stroke-width="1"></line>' +
+          bars +
+        '</svg>';
+
+      node.innerHTML = '<div class="db-zone-bar-wrap">' + svg + '</div>';
+    }
+
+    function renderAssessorPublications(data) {
+      const node = document.getElementById('assessorPublicationWrap');
+      const monthSelect = document.getElementById('assessorMonthSelect');
+      const allToggle = document.getElementById('assessorAllToggle');
+      const reportYear = Number(data.assessorYear || new Date().getFullYear());
+      if (monthSelect) monthSelect.value = String(assessorMonth);
+      if (allToggle) {
+        allToggle.classList.toggle('active', assessorViewMode === 'all');
+        allToggle.setAttribute('aria-pressed', assessorViewMode === 'all' ? 'true' : 'false');
+      }
+      if (!data.assessorRows.length) {
+        node.innerHTML = '<div class="db-empty">No assessor publication data available.</div>';
+        return;
+      }
+      const monthKey = String(reportYear) + '-' + String(assessorMonth).padStart(2, '0');
+      const monthLabelText = new Date(reportYear, assessorMonth - 1, 1).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+
+      const rows = data.assessorRows.slice().sort((a, b) => {
+        if (assessorViewMode === 'all') {
+          return Number(b.total || 0) - Number(a.total || 0) || String(a.assessor || '').localeCompare(String(b.assessor || ''));
+        }
+        const aMonth = Number((a.monthCounts || {})[monthKey] || 0);
+        const bMonth = Number((b.monthCounts || {})[monthKey] || 0);
+        if (bMonth !== aMonth) return bMonth - aMonth;
+        return Number(b.yearTotal || 0) - Number(a.yearTotal || 0) || String(a.assessor || '').localeCompare(String(b.assessor || ''));
+      });
+
+      const head = (
+        '<thead><tr>' +
+          '<th>Assessor</th>' +
+          '<th>' + esc(assessorViewMode === 'all' ? 'Total Across All Months' : (monthLabelText + ' Published')) + '</th>' +
+          '<th>Total Published (' + esc(String(reportYear)) + ')</th>' +
+          '<th>Average Risk</th>' +
+        '</tr></thead>'
+      );
+      const body = rows.map((row) => {
+        const monthCount = Number((row.monthCounts || {})[monthKey] || 0);
+        const selectedCount = assessorViewMode === 'all' ? Number(row.total || 0) : monthCount;
+        const monthRiskCount = Number((row.monthRiskCount || {})[monthKey] || 0);
+        const monthRiskAvg = monthRiskCount > 0
+          ? (Number((row.monthRiskSum || {})[monthKey] || 0) / monthRiskCount)
+          : null;
+        const riskScore = assessorViewMode === 'all' ? Number(row.avgScore || 0) : monthRiskAvg;
+        const riskCell = (riskScore == null)
+          ? '<span class="db-pill neutral">No records</span>'
+          : pill(riskLevelFromScore(riskScore), riskScore);
+        return (
+          '<tr>' +
+            '<td><span class="main">' + esc(row.assessor) + '</span></td>' +
+            '<td><span class="db-num">' + String(selectedCount) + '</span></td>' +
+            '<td><span class="db-num">' + String(row.yearTotal) + '</span></td>' +
+            '<td>' + riskCell + '</td>' +
+          '</tr>'
+        );
+      }).join('');
+      node.innerHTML = '<table class="db-assessor-table">' + head + '<tbody>' + body + '</tbody></table>';
+    }
+
+    function mergeFacilityActionRows(rows, fallbackRows) {
+      const merged = [];
+      const seen = new Set();
+      (rows || []).forEach((item) => {
+        const key = String(item && item.facilityName || '').toLowerCase();
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(item);
+      });
+      (fallbackRows || []).forEach((item) => {
+        const key = String(item && item.facilityName || '').toLowerCase();
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        merged.push(item);
+      });
+      return merged;
+    }
+
+    function renderMostOpenFacilities(rows, fallbackRows) {
+      const pool = mergeFacilityActionRows(rows, fallbackRows).filter((item) => Number(item.open || 0) > 0 || Number(item.overdue || 0) > 0);
+      if (!pool.length) {
+        setEmptyBody('topOpenFacilitiesBody', 5, 'No corrective-action data available.');
+        return;
+      }
+      const sorted = pool
+        .slice()
+        .sort((a, b) => Number(b.open) - Number(a.open) || Number(b.overdue) - Number(a.overdue))
+        .slice(0, 5);
+      document.getElementById('topOpenFacilitiesBody').innerHTML = sorted.map((item) => {
+        const latest = item.latest || {};
+        return (
+          '<tr>' +
+            '<td><span class="main">' + esc(item.facilityName) + '</span><span class="sub">' + esc(item.zone) + '</span></td>' +
+            '<td>' + esc(item.zone) + '</td>' +
+            '<td><span class="db-num">' + String(item.open) + '</span></td>' +
+            '<td><span class="db-num">' + String(item.overdue) + '</span></td>' +
+            '<td>' + pill(latest.residualLevel || 'Low', latest.residualScore || 0) + '</td>' +
+          '</tr>'
+        );
+      }).join('');
+    }
+
+    function renderMostClosedFacilities(rows, fallbackRows) {
+      const pool = mergeFacilityActionRows(rows, fallbackRows).filter((item) => Number(item.closed || 0) > 0);
+      if (!pool.length) {
+        setEmptyBody('topClosedFacilitiesBody', 5, 'No corrective-action closure data available.');
+        return;
+      }
+      const sorted = pool
+        .slice()
+        .sort((a, b) => Number(b.closed) - Number(a.closed) || Number(b.total) - Number(a.total))
+        .slice(0, 5);
+      document.getElementById('topClosedFacilitiesBody').innerHTML = sorted.map((item) => {
+        const latest = item.latest || {};
+        const improvement = Number(latest.riskReduction || 0);
+        const improvementLabel = improvement > 0
+          ? '<span class="db-pill trend-down">↓ ' + esc(fmtScore(improvement)) + ' reduced</span>'
+          : '<span class="db-pill trend-flat">No reduction</span>';
+        return (
+          '<tr>' +
+            '<td><span class="main">' + esc(item.facilityName) + '</span><span class="sub">' + esc(item.zone) + '</span></td>' +
+            '<td>' + esc(item.zone) + '</td>' +
+            '<td><span class="db-num">' + String(item.closed) + '</span></td>' +
+            '<td>' + pill(latest.residualLevel || 'Low', latest.residualScore || 0) + '</td>' +
+            '<td>' + improvementLabel + '</td>' +
+          '</tr>'
+        );
+      }).join('');
+    }
+
+    function renderUrgentList(data) {
+      const list = document.getElementById('urgentList');
+      const urgent = [];
+
+      data.facilityActionRows.forEach((item) => {
+        if (item.overdue > 0) {
+          urgent.push({
+            title: item.facilityName + ' · Overdue corrective actions',
+            meta: item.overdue + ' overdue · ' + item.open + ' open · Zone: ' + item.zone
+          });
+        }
+      });
+
+      data.latestFacilityRows.forEach((row) => {
+        const level = normalizeRiskLevel(row.residualLevel);
+        if (level === 'High' || level === 'Critical') {
+          urgent.push({
+            title: row.facilityName + ' · ' + level + ' residual risk',
+            meta: 'Residual ' + fmtScore(row.residualScore) + ' (' + level + ') · Open CAs: ' + row.actionStats.open
+          });
+        }
+      });
+
+      if (!urgent.length) {
+        list.innerHTML = '<div class="rm-list-item"><div class="t">No urgent items</div><div class="m">Overdue corrective actions and high residual-risk facilities will appear here.</div></div>';
+        return;
+      }
+
+      list.innerHTML = urgent
+        .slice(0, 12)
+        .map((item) => '<div class="rm-list-item"><div class="t">' + esc(item.title) + '</div><div class="m">' + esc(item.meta) + '</div></div>')
+        .join('');
+    }
+
+    function renderDashboard() {
+      const data = computeDashboardData();
+      renderKpis(data);
+      renderHighestRiskFacilities(data.latestFacilityRows, data.allFacilityRowsForRanking);
+      renderHighestRiskZones(data.zoneRows, data.zoneRowsAll);
+      renderLowestRiskFacilities(data.latestFacilityRows, data.allFacilityRowsForRanking);
+      renderLowestRiskZones(data.zoneRows, data.zoneRowsAll);
+      renderTopIssues(data.issueRows);
+      renderZonePublicationChart(data.zoneRows);
+      renderAssessorPublications(data);
+      renderMostOpenFacilities(data.facilityActionRows, data.allFacilityActionRows);
+      renderMostClosedFacilities(data.facilityActionRows, data.allFacilityActionRows);
+      renderUrgentList(data);
+    }
+
+    function init() {
+      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
+      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      const monthSelect = document.getElementById('assessorMonthSelect');
+      const allToggle = document.getElementById('assessorAllToggle');
+      if (monthSelect) {
+        monthSelect.value = String(assessorMonth);
+        monthSelect.addEventListener('change', (event) => {
+          const next = Number(event.target.value || 0);
+          if (Number.isFinite(next) && next >= 1 && next <= 12) assessorMonth = next;
+          assessorViewMode = 'month';
+          renderDashboard();
+        });
+      }
+      if (allToggle) {
+        allToggle.addEventListener('click', () => {
+          assessorViewMode = assessorViewMode === 'all' ? 'month' : 'all';
+          renderDashboard();
+        });
+      }
+
+      renderDashboard();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
