@@ -29,19 +29,23 @@
   }
 
   function logout() {
-    // Sign out from Supabase (clears server session + localStorage token)
+    // Remove the Supabase session token directly — this is what auth-guard
+    // checks, so clearing it synchronously guarantees the login page won't
+    // bounce the user back to portal.  Server-side token expiry is handled
+    // automatically by Supabase within the JWT lifetime.
+    localStorage.removeItem('sb-qpldcpendvdobtbkygxo-auth-token');
+    localStorage.removeItem('goilUserProfile');
+
+    // Best-effort async server sign-out (fire-and-forget; does not block nav)
     try {
-      var ctx = window.GOIL_AUTH_CONTEXT;
-      if (ctx && ctx.session) {
-        var sb = window.supabase;
-        if (sb && sb.createClient) {
-          var SUPABASE_URL  = 'https://qpldcpendvdobtbkygxo.supabase.co';
-          var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg';
-          sb.createClient(SUPABASE_URL, SUPABASE_ANON).auth.signOut();
-        }
+      if (window.supabase && window.supabase.createClient) {
+        window.supabase.createClient(
+          'https://qpldcpendvdobtbkygxo.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg'
+        ).auth.signOut();
       }
     } catch (e) {}
-    localStorage.removeItem('goilUserProfile');
+
     window.location.href = '../index.html';
   }
 
