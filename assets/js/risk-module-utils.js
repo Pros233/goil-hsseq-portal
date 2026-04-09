@@ -1008,6 +1008,18 @@
   }
 
   function getCurrentUser() {
+    // Read from Supabase auth profile; fall back to legacy key for compatibility
+    var profile = readJSON('goilUserProfile', null);
+    if (profile && (profile.email || profile.id)) {
+      return {
+        id:        profile.id       || '',
+        email:     profile.email    || '',
+        username:  profile.full_name || profile.email || '',
+        full_name: profile.full_name || '',
+        role:      profile.role      || 'submitter',
+        office:    profile.office    || ''
+      };
+    }
     return readJSON('goilUser', {});
   }
 

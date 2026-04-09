@@ -50,14 +50,13 @@
 
     <script>
       (function () {
-        const user = JSON.parse(localStorage.getItem("goilUser") || "{}");
+        const profile = JSON.parse(localStorage.getItem("goilUserProfile") || "{}");
         const node = document.getElementById("kpiUser");
-        if (node) node.textContent = user.username || "HSSEQ User";
+        if (node) node.textContent = profile.full_name || profile.email || "HSSEQ User";
         const logoutBtn = document.getElementById("logoutBtn");
         if (logoutBtn) {
           logoutBtn.addEventListener("click", function () {
-            localStorage.removeItem("goilAuth");
-            localStorage.removeItem("goilUser");
+            localStorage.removeItem("goilUserProfile");
             window.location.href = "../index.html";
           });
         }

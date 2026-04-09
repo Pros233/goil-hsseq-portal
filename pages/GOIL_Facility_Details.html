@@ -651,11 +651,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set today's date
   document.getElementById('fld-date').value = new Date().toISOString().split('T')[0];
 
-  // Load assessor from auth context/session
+  // Load assessor from Supabase profile (full_name preferred over email)
   try {
-    const user = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
-    const authSession = JSON.parse(localStorage.getItem('goil_auth_session') || '{}');
-    const assessorName = user.username || user.email || authSession.name || '';
+    const profile = JSON.parse(localStorage.getItem('goilUserProfile') || '{}');
+    const assessorName = profile.full_name || profile.email || '';
     if (assessorName) {
       document.getElementById('fld-assessor').value = assessorName;
     }
