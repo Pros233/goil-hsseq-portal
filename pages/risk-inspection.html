@@ -14,93 +14,75 @@
       position: relative;
       min-height: 100vh;
       overflow-x: hidden;
-      background:
-        radial-gradient(900px 460px at 4% -8%, rgba(47,129,247,.17), transparent 62%),
-        radial-gradient(860px 480px at 96% -10%, rgba(244,121,32,.16), transparent 64%),
-        radial-gradient(900px 460px at 52% 116%, rgba(139,92,246,.12), transparent 64%),
-        #0D1117;
+      background: #0D1117;
     }
 
+    /* Subtle single-colour ambient glow — orange only, top-left only */
     body.amc-landing::before {
       content: '';
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .18;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(255,255,255,.02) 1px, transparent 1px);
-      background-size: 120px 120px;
-      -webkit-mask-image: radial-gradient(circle at 50% 35%, #000 20%, transparent 92%);
-      mask-image: radial-gradient(circle at 50% 35%, #000 20%, transparent 92%);
+      background: radial-gradient(900px 500px at -4% -10%, rgba(244,121,32,.09), transparent 62%);
     }
 
     body.amc-landing .rm-topbar {
-      background: linear-gradient(132deg, rgba(18,25,35,.94), rgba(13,17,23,.96) 54%, rgba(16,22,30,.95));
-      border-bottom-color: rgba(255,255,255,.14);
-      box-shadow: 0 12px 32px rgba(0,0,0,.38);
+      background: rgba(13,17,23,.97);
+      border-bottom: 1px solid rgba(244,121,32,.18);
+      box-shadow: 0 1px 0 rgba(244,121,32,.08), 0 4px 24px rgba(0,0,0,.5);
     }
 
     body.amc-landing .rm-shell {
       width: min(1450px, 95vw);
-      gap: 18px;
+      gap: 20px;
       margin-top: 22px;
     }
 
     body.amc-landing .rm-primary-btn {
-      background: linear-gradient(135deg, #F47920 0%, #F3A21F 44%, #2F81F7 120%);
-      border: 1px solid rgba(255,255,255,.16);
-      box-shadow:
-        0 8px 28px rgba(244,121,32,.35),
-        0 0 0 1px rgba(255,255,255,.08) inset;
-      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      background: #F47920;
+      border: none;
+      box-shadow: 0 4px 18px rgba(244,121,32,.36);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
     }
 
     body.amc-landing .rm-primary-btn:hover {
-      transform: translateY(-2px);
-      filter: saturate(1.08);
-      box-shadow:
-        0 14px 34px rgba(244,121,32,.42),
-        0 0 26px rgba(47,129,247,.28),
-        0 0 0 1px rgba(255,255,255,.12) inset;
+      background: #e06b15;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(244,121,32,.46);
     }
 
     body.amc-landing .rm-hero {
       position: relative;
       overflow: hidden;
-      padding: 28px 30px;
-      border-radius: 18px;
-      border-color: rgba(255,255,255,.16);
-      background:
-        linear-gradient(128deg, rgba(244,121,32,.17), rgba(47,129,247,.16) 52%, rgba(139,92,246,.15)),
-        rgba(22,27,34,.80);
-      backdrop-filter: blur(12px);
-      box-shadow:
-        0 16px 42px rgba(0,0,0,.36),
-        inset 0 1px 0 rgba(255,255,255,.09);
+      padding: 30px 32px;
+      border-radius: 16px;
+      border: 1px solid rgba(244,121,32,.22);
+      background: #161B22;
+      box-shadow: 0 2px 24px rgba(0,0,0,.4);
     }
 
-    body.amc-landing .rm-hero::before,
+    /* Clean orange left-edge accent */
+    body.amc-landing .rm-hero::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 16px 0 0 16px;
+      background: linear-gradient(180deg, #F47920, rgba(244,121,32,.3));
+      pointer-events: none;
+    }
+
     body.amc-landing .rm-hero::after {
       content: '';
       position: absolute;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
+      top: 0;
+      right: 0;
+      width: 380px;
+      height: 100%;
+      background: radial-gradient(ellipse at 100% 50%, rgba(244,121,32,.07), transparent 68%);
       pointer-events: none;
-      filter: blur(2px);
-    }
-
-    body.amc-landing .rm-hero::before {
-      top: -160px;
-      right: -70px;
-      background: radial-gradient(circle, rgba(47,129,247,.38), transparent 72%);
-    }
-
-    body.amc-landing .rm-hero::after {
-      bottom: -190px;
-      left: -70px;
-      background: radial-gradient(circle, rgba(244,121,32,.32), transparent 74%);
     }
 
     .amc-hero-content {
@@ -112,39 +94,39 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      height: 26px;
-      border-radius: 999px;
-      padding: 0 11px;
-      border: 1px solid rgba(255,255,255,.20);
-      background: rgba(13,17,23,.36);
-      color: #E6EDF3;
+      height: 24px;
+      border-radius: 4px;
+      padding: 0 10px;
+      border: 1px solid rgba(244,121,32,.3);
+      background: rgba(244,121,32,.08);
+      color: #F47920;
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .amc-kicker-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #F47920, #2F81F7);
-      box-shadow: 0 0 10px rgba(244,121,32,.5);
+      background: #F47920;
+      box-shadow: 0 0 8px rgba(244,121,32,.7);
     }
 
     body.amc-landing .rm-hero h2 {
       margin-bottom: 8px;
-      font-size: clamp(34px, 3.9vw, 52px);
-      letter-spacing: .8px;
-      text-shadow: 0 8px 20px rgba(0,0,0,.28);
+      font-size: clamp(32px, 3.6vw, 48px);
+      letter-spacing: .4px;
+      color: #E6EDF3;
     }
 
     body.amc-landing .rm-hero p {
-      font-size: 14px;
-      color: #D1D9E0;
-      max-width: 820px;
-      line-height: 1.65;
+      font-size: 13px;
+      color: #8B949E;
+      max-width: 780px;
+      line-height: 1.6;
     }
 
     .amc-folder-wrap {
@@ -191,83 +173,84 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 0 2px;
+      padding: 0 2px 2px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding-bottom: 10px;
     }
 
     .amc-folder-head h3 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 24px;
+      font-size: 13px;
       text-transform: uppercase;
-      letter-spacing: .6px;
-      color: var(--wh);
+      letter-spacing: 1.4px;
+      color: #8B949E;
       line-height: 1;
+      font-weight: 700;
     }
 
     .amc-folder-head p {
       font-size: 12px;
-      color: var(--wh3);
+      color: #484F58;
       text-align: right;
     }
 
     body.amc-landing .rm-folder-grid {
       grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 18px;
+      gap: 14px;
     }
 
     body.amc-landing .rm-folder {
+      --accent: #F47920;
       --accent-rgb: 244,121,32;
       position: relative;
       min-height: 190px;
-      padding: 18px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.16);
-      background:
-        linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015)),
-        rgba(22,27,34,.82);
-      backdrop-filter: blur(10px);
-      box-shadow:
-        0 16px 34px rgba(0,0,0,.32),
-        inset 0 1px 0 rgba(255,255,255,.08);
-      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: #161B22;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
       display: grid;
       align-content: space-between;
       gap: 14px;
       overflow: hidden;
+      cursor: pointer;
     }
 
+    /* Top accent bar — solid colour, no shimmer */
     body.amc-landing .rm-folder::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(520px 210px at -10% -20%, rgba(var(--accent-rgb), .26), transparent 70%);
-      pointer-events: none;
-      transition: opacity .22s ease;
-    }
-
-    body.amc-landing .rm-folder::after {
       content: '';
       position: absolute;
       left: 0;
       right: 0;
       top: 0;
       height: 3px;
-      background: linear-gradient(90deg, rgba(var(--accent-rgb),.82), rgba(255,255,255,.65), rgba(var(--accent-rgb),.35));
-      opacity: .9;
+      border-radius: 12px 12px 0 0;
+      background: var(--accent);
       pointer-events: none;
     }
 
-    body.amc-landing .rm-folder:hover {
-      transform: translateY(-6px) scale(1.01);
-      border-color: rgba(var(--accent-rgb), .58);
-      box-shadow:
-        0 24px 42px rgba(0,0,0,.42),
-        0 0 0 1px rgba(var(--accent-rgb),.34),
-        0 0 24px rgba(var(--accent-rgb),.24),
-        inset 0 1px 0 rgba(255,255,255,.10);
+    /* Subtle ambient glow behind icon area */
+    body.amc-landing .rm-folder::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -20px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--accent-rgb), .08), transparent 70%);
+      pointer-events: none;
+      transition: opacity .2s ease;
     }
 
-    body.amc-landing .rm-folder:hover::before { opacity: .95; }
+    body.amc-landing .rm-folder:hover {
+      transform: translateY(-4px);
+      border-color: rgba(var(--accent-rgb), .35);
+      box-shadow: 0 12px 28px rgba(0,0,0,.4), 0 0 0 1px rgba(var(--accent-rgb),.15);
+    }
+
+    body.amc-landing .rm-folder:hover::after { opacity: 1.4; }
 
     .amc-folder-top {
       position: relative;
@@ -279,9 +262,9 @@
     }
 
     .amc-folder-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -289,39 +272,32 @@
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .9px;
-      color: #fff;
-      border: 1px solid rgba(var(--accent-rgb), .58);
-      background: linear-gradient(145deg, rgba(var(--accent-rgb), .44), rgba(var(--accent-rgb), .18));
-      box-shadow: 0 8px 18px rgba(var(--accent-rgb), .26);
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-
-    body.amc-landing .rm-folder:hover .amc-folder-icon {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(var(--accent-rgb), .34);
+      color: var(--accent);
+      border: 1px solid rgba(var(--accent-rgb), .28);
+      background: rgba(var(--accent-rgb), .1);
     }
 
     .amc-folder-tag {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: .8px;
+      letter-spacing: .9px;
       text-transform: uppercase;
-      color: rgba(230,237,243,.82);
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(13,17,23,.28);
-      border-radius: 999px;
-      padding: 4px 9px;
+      color: #8B949E;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      border-radius: 4px;
+      padding: 3px 8px;
       white-space: nowrap;
     }
 
     body.amc-landing .rm-folder-name {
       position: relative;
       z-index: 1;
-      font-size: 25px;
-      line-height: 1.08;
-      letter-spacing: .25px;
-      color: #F4F7FA;
-      text-shadow: 0 6px 14px rgba(0,0,0,.26);
+      font-size: 22px;
+      line-height: 1.1;
+      letter-spacing: .2px;
+      color: #E6EDF3;
+      font-weight: 800;
     }
 
     body.amc-landing .rm-folder-meta {
@@ -331,25 +307,26 @@
     }
 
     body.amc-landing .rm-folder-k {
-      font-size: 11px;
-      letter-spacing: .85px;
-      color: #B9C4D0;
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #8B949E;
+      text-transform: uppercase;
+      font-weight: 700;
     }
 
     body.amc-landing .rm-folder-v {
       font-size: 44px;
-      color: #fff;
+      font-weight: 900;
+      color: var(--accent);
       line-height: .95;
-      text-shadow:
-        0 0 16px rgba(var(--accent-rgb),.34),
-        0 8px 18px rgba(0,0,0,.28);
     }
 
-    .folder-dashboard { --accent-rgb: 47,129,247; }
-    .folder-uncompleted { --accent-rgb: 244,121,32; }
-    .folder-published { --accent-rgb: 63,185,80; }
-    .folder-corrections { --accent-rgb: 218,54,51; }
-    .folder-profile { --accent-rgb: 139,92,246; }
+    /* Folder accent colours — using GOIL palette */
+    .folder-dashboard   { --accent: #F47920; --accent-rgb: 244,121,32; }
+    .folder-uncompleted { --accent: #E6A817; --accent-rgb: 230,168,23; }
+    .folder-published   { --accent: #3FB950; --accent-rgb: 63,185,80; }
+    .folder-corrections { --accent: #DA3633; --accent-rgb: 218,54,51; }
+    .folder-profile     { --accent: #58A6FF; --accent-rgb: 88,166,255; }
 
     @media (max-width: 1280px) {
       body.amc-landing .rm-folder-grid {
