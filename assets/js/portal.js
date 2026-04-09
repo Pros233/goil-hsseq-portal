@@ -2,8 +2,7 @@
   'use strict';
 
   var KEYS = {
-    auth: 'goilAuth',
-    user: 'goilUser'
+    profile: 'goilUserProfile'
   };
 
   var state = {
@@ -24,28 +23,25 @@
     localStorage.setItem(key, JSON.stringify(value));
   }
 
-  function getEmailFromRoute() {
-    var params = new URLSearchParams(window.location.search);
-    return (params.get('email') || '').trim().toLowerCase();
-  }
-
-  function resolveUserEmail() {
-    var routeEmail = getEmailFromRoute();
-    var user = loadFromStorage(KEYS.user, {});
-    var email = routeEmail || user.email || user.username || 'hsseq.user@goil.com.gh';
-
-    if (routeEmail) {
-      user.email = routeEmail;
-      user.username = routeEmail;
-      saveToStorage(KEYS.user, user);
-    }
-
-    return email;
+  function resolveUserDisplay() {
+    var profile = loadFromStorage(KEYS.profile, {});
+    return profile.full_name || profile.email || '';
   }
 
   function logout() {
-    localStorage.removeItem(KEYS.auth);
-    localStorage.removeItem(KEYS.user);
+    // Sign out from Supabase (clears server session + localStorage token)
+    try {
+      var ctx = window.GOIL_AUTH_CONTEXT;
+      if (ctx && ctx.session) {
+        var sb = window.supabase;
+        if (sb && sb.createClient) {
+          var SUPABASE_URL  = 'https://qpldcpendvdobtbkygxo.supabase.co';
+          var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg';
+          sb.createClient(SUPABASE_URL, SUPABASE_ANON).auth.signOut();
+        }
+      }
+    } catch (e) {}
+    localStorage.removeItem('goilUserProfile');
     window.location.href = '../index.html';
   }
 
@@ -269,7 +265,7 @@
 
   function init() {
     var emailNode = document.getElementById('portalUserEmail');
-    if (emailNode) emailNode.textContent = resolveUserEmail();
+    if (emailNode) emailNode.textContent = resolveUserDisplay();
 
     var logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) logoutBtn.addEventListener('click', logout);
