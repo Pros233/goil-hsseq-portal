@@ -173,6 +173,9 @@ CREATE POLICY "notifs_update" ON public.notifications
 
 
 -- ── 8. Helper function to create a user + identity + profile ─────────────────
+-- Drop first so we cleanly replace any previously broken version
+
+DROP FUNCTION IF EXISTS public.create_goil_user(TEXT, TEXT, TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION public.create_goil_user(
   p_email      TEXT,
@@ -209,11 +212,12 @@ BEGIN
   );
 
   -- Auth identity (email provider)
+  -- provider_id = email for the email provider (required NOT NULL column)
   INSERT INTO auth.identities (
-    id, user_id, identity_data, provider,
+    id, user_id, provider_id, identity_data, provider,
     last_sign_in_at, created_at, updated_at
   ) VALUES (
-    gen_random_uuid(), v_uid,
+    gen_random_uuid(), v_uid, p_email,
     jsonb_build_object('sub', v_uid::text, 'email', p_email),
     'email', NOW(), NOW(), NOW()
   );
