@@ -6,11 +6,16 @@
     <meta name="theme-color" content="#F47920" />
     <link rel="manifest" href="manifest.json" />
     <title>GOIL HSSEQ | Login</title>
+    <!-- Apply stored theme before CSS renders (prevents flash) -->
     <script>
+      if (localStorage.getItem('goilTheme') === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js', { scope: '/' }).catch(function () {});
       }
     </script>
+    <link rel="stylesheet" href="assets/css/theme.css" data-goil-theme="1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -338,6 +343,75 @@
         font-size: 10px;
       }
 
+      /* ── Theme toggle: fixed top-right corner on login page ── */
+      .login-theme-btn {
+        position: fixed;
+        top: 14px;
+        right: 16px;
+        z-index: 99;
+        background: transparent;
+        border: 1.5px solid rgba(244,121,32,0.35);
+        color: #F47920;
+        width: 34px; height: 34px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .2s;
+        flex-shrink: 0;
+      }
+      .login-theme-btn:hover {
+        background: rgba(244,121,32,0.1);
+        border-color: #F47920;
+      }
+      .login-theme-btn svg { width: 16px; height: 16px; }
+
+      /* ── Password-change modal ── */
+      .pw-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.7);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .pw-modal-overlay.open { display: flex; }
+      .pw-modal-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 8px 32px rgba(0,0,0,.5);
+        padding: 36px 32px;
+        width: min(420px, 100%);
+      }
+      .pw-modal-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--wh);
+        margin-bottom: 6px;
+      }
+      .pw-modal-sub {
+        font-size: 12px;
+        color: var(--wh3);
+        margin-bottom: 20px;
+      }
+      .pw-change-error {
+        display: none;
+        margin-top: 10px;
+        background: rgba(218,54,51,.1);
+        border-left: 3px solid var(--crit);
+        color: var(--crit-text);
+        font-size: 12px;
+        padding: 9px 10px;
+        border-radius: 6px;
+      }
+      .pw-change-error.show { display: block; }
+
       @media (max-width: 980px) {
         .login-shell {
           grid-template-columns: 1fr;
@@ -366,6 +440,37 @@
     </style>
   </head>
   <body>
+    <!-- Dark / Light mode toggle -->
+    <button id="loginThemeBtn" class="login-theme-btn" type="button" aria-label="Toggle theme" title="Toggle dark/light mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+
+    <!-- First-login password change modal -->
+    <div id="pwChangeModal" class="pw-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pwModalTitle">
+      <div class="pw-modal-card">
+        <h2 id="pwModalTitle" class="pw-modal-title">Set New Password</h2>
+        <p class="pw-modal-sub">Your account requires a password change before continuing.</p>
+        <form id="pwChangeForm" novalidate>
+          <div class="form-row">
+            <label for="pwNew" class="form-label">New Password</label>
+            <div class="password-wrap">
+              <input id="pwNew" name="pwNew" type="password" class="field" placeholder="At least 8 characters" autocomplete="new-password" required />
+              <button type="button" id="togglePwNew" class="toggle-pass" aria-label="Show new password" aria-pressed="false">👁</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="pwConfirm" class="form-label">Confirm Password</label>
+            <div class="password-wrap">
+              <input id="pwConfirm" name="pwConfirm" type="password" class="field" placeholder="Repeat new password" autocomplete="new-password" required />
+              <button type="button" id="togglePwConfirm" class="toggle-pass" aria-label="Show confirm password" aria-pressed="false">👁</button>
+            </div>
+          </div>
+          <button type="submit" id="pwChangeBtn" class="login-btn" style="margin-top:14px;">Set New Password</button>
+          <div id="pwChangeError" class="pw-change-error" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+
     <main class="login-shell">
       <section class="brand-panel" aria-label="GOIL HSSEQ brand panel">
         <img src="assets/img/goil-logo.png" alt="" class="brand-watermark" aria-hidden="true" />
@@ -426,6 +531,28 @@
       </section>
     </main>
 
-    <script src="assets/js/auth.js?v=20260318-masterrefdeep6" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+      // Wire up login-page theme toggle button
+      (function () {
+        var btn = document.getElementById('loginThemeBtn');
+        if (!btn || !window.GoilTheme) return;
+        function updateIcon() {
+          var dark = GoilTheme.getTheme() === 'dark';
+          var MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
+          var SUN  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+          btn.innerHTML = dark ? SUN : MOON;
+          btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+          btn.setAttribute('aria-label', btn.title);
+        }
+        btn.addEventListener('click', function () {
+          GoilTheme.toggle();
+          updateIcon();
+        });
+        updateIcon();
+      })();
+    </script>
   </body>
 </html>

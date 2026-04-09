@@ -1,0 +1,194 @@
+/* ============================================================
+   GOIL HSSEQ – Theme overrides
+   Applied by adding/removing  html.light-mode  via theme.js
+   ============================================================ */
+
+/* ── Light mode: workflow pages (--bg, --wh, --or variables) ── */
+html.light-mode {
+  --bg:      #F8F9FA;
+  --bg2:     #FFFFFF;
+  --bg3:     #F0F2F5;
+  --bg4:     #E4E6EB;
+  --bg5:     #CDD0D4;
+  --border:  rgba(0, 0, 0, 0.12);
+  --border2: rgba(0, 0, 0, 0.08);
+
+  --wh:  #1C1E21;
+  --wh2: #3A3B3C;
+  --wh3: #606770;
+  --wh4: #8A8D91;
+
+  --or:       #F47920;
+  --or-glow:  rgba(244, 121, 32, 0.25);
+  --or-strong:#C9600A;
+  --or-soft:  rgba(244, 121, 32, 0.12);
+
+  --low:      #2D8A4E;
+  --low-dim:  rgba(45, 138, 78, 0.12);
+  --med:      #B07D00;
+  --med-dim:  rgba(176, 125, 0, 0.12);
+  --high:     #C05A1A;
+  --high-dim: rgba(192, 90, 26, 0.12);
+  --crit:     #B71C1C;
+  --crit-text:#C62828;
+  --crit-dim: rgba(183, 28, 28, 0.10);
+}
+
+/* ── Light mode: portal/unit pages (--charcoal, --white variables) ── */
+html.light-mode {
+  --charcoal:   #F5F5F5;
+  --charcoal-2: #ECECEC;
+  --charcoal-3: #E3E3E3;
+  --charcoal-4: #D1D1D1;
+  --white:      #1A1A1A;
+  --muted:      #555555;
+  --muted-2:    #888888;
+  --orange:     #F47920;
+  --orange-deep:#C9600A;
+}
+
+/* ── General body background and text colour in light mode ── */
+html.light-mode body {
+  background: #F8F9FA;
+  color: #1C1E21;
+}
+
+/* ── Topbar ── */
+html.light-mode .topbar {
+  background: rgba(255, 255, 255, 0.97) !important;
+  border-bottom-color: rgba(244, 121, 32, 0.25) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.08);
+}
+html.light-mode .topbar-title,
+html.light-mode .user-email,
+html.light-mode .topbar-page { color: #1C1E21 !important; }
+html.light-mode .topbar-dept,
+html.light-mode .user-label   { color: #F47920 !important; }
+
+/* ── Hero section ── */
+html.light-mode .hero {
+  background: #FFFFFF !important;
+}
+html.light-mode .hero::before {
+  background:
+    linear-gradient(135deg, rgba(244,121,32,0.05) 0%, transparent 55%),
+    repeating-linear-gradient(
+      -45deg, transparent, transparent 40px,
+      rgba(244,121,32,0.015) 40px, rgba(244,121,32,0.015) 41px
+    ) !important;
+}
+html.light-mode .hero-welcome { color: #1C1E21; }
+html.light-mode .hero-subtitle { color: #606770; }
+html.light-mode .hero-desc { color: #606770; }
+html.light-mode .hero-desc strong { color: #1C1E21; }
+
+/* ── Module / Unit cards ── */
+html.light-mode .modules-section {
+  background: #F0F2F5 !important;
+}
+html.light-mode .mod-card {
+  background: #FFFFFF !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+html.light-mode .mod-card::before { background: #D1D1D1; }
+html.light-mode .mod-card:hover { border-color: rgba(244,121,32,0.4) !important; box-shadow: 0 12px 36px rgba(0,0,0,0.1) !important; }
+html.light-mode .mod-card:hover::before { background: #F47920 !important; }
+html.light-mode .mod-card.active {
+  background: linear-gradient(150deg, rgba(244,121,32,0.07), #FFFFFF 60%) !important;
+  border-color: #F47920 !important;
+}
+html.light-mode .mod-name { color: #1C1E21 !important; }
+html.light-mode .mod-desc { color: #606770 !important; }
+html.light-mode .badge-planned { color: #8A8D91 !important; }
+
+/* ── Checklist / form pages ── */
+html.light-mode .top-nav {
+  background: #FFFFFF !important;
+  border-bottom-color: rgba(0,0,0,0.1) !important;
+}
+html.light-mode .nav-back {
+  border-color: rgba(0,0,0,0.15) !important;
+  color: #606770 !important;
+}
+html.light-mode .nav-back:hover { border-color: #8A8D91 !important; color: #1C1E21 !important; }
+html.light-mode .nav-facility-name { color: #1C1E21 !important; }
+html.light-mode .nav-facility-meta { color: #606770 !important; }
+html.light-mode .save-later-btn {
+  border-color: rgba(0,0,0,0.15) !important;
+  color: #606770 !important;
+}
+html.light-mode .save-later-btn:hover { border-color: #F47920 !important; color: #F47920 !important; }
+
+html.light-mode .section-progress { background: #E4E6EB !important; }
+html.light-mode .checklist-area   { background: #F8F9FA !important; }
+html.light-mode .cl-section       { background: #FFFFFF !important; border-color: rgba(0,0,0,0.08) !important; }
+html.light-mode .cl-item          { border-bottom-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .item-question    { color: #1C1E21 !important; }
+html.light-mode .item-sub         { color: #606770 !important; }
+
+html.light-mode .resp-btn {
+  border-color: rgba(0,0,0,0.2) !important;
+  color: #606770 !important;
+  background: transparent !important;
+}
+html.light-mode .resp-btn:hover { border-color: #F47920 !important; color: #F47920 !important; }
+html.light-mode .resp-btn.sel-Y { background: #2D8A4E !important; border-color: #2D8A4E !important; color: #fff !important; }
+html.light-mode .resp-btn.sel-N { background: #B71C1C !important; border-color: #B71C1C !important; color: #fff !important; }
+html.light-mode .resp-btn.sel-P { background: #B07D00 !important; border-color: #B07D00 !important; color: #fff !important; }
+html.light-mode .resp-btn.sel-NA{ background: #8A8D91 !important; border-color: #8A8D91 !important; color: #fff !important; }
+
+html.light-mode .bottom-nav { background: #FFFFFF !important; border-top-color: rgba(0,0,0,0.1) !important; }
+html.light-mode .btn-ghost  { border-color: rgba(0,0,0,0.2) !important; color: #606770 !important; }
+html.light-mode .btn-ghost:hover { border-color: #F47920 !important; color: #F47920 !important; }
+
+/* ── Login page ── */
+html.light-mode .login-split    { background: #F0F2F5 !important; }
+html.light-mode .brand-panel    { background: linear-gradient(160deg, #1C1E21 0%, #2D3035 100%) !important; }
+html.light-mode .form-panel     { background: #FFFFFF !important; }
+html.light-mode .login-card     { background: #FFFFFF !important; }
+html.light-mode .card-title     { color: #1C1E21 !important; }
+html.light-mode .card-sub,
+html.light-mode .card-foot      { color: #606770 !important; }
+html.light-mode .form-label     { color: #3A3B3C !important; }
+html.light-mode .field {
+  background: #F8F9FA !important;
+  border-color: rgba(0,0,0,0.18) !important;
+  color: #1C1E21 !important;
+}
+html.light-mode .field:focus   { border-color: #F47920 !important; }
+
+/* ── Tables ── */
+html.light-mode .records-table th  { background: rgba(0,0,0,0.04) !important; color: #8A8D91 !important; }
+html.light-mode .records-table td  { color: #3A3B3C !important; border-bottom-color: rgba(0,0,0,0.06) !important; }
+html.light-mode .records-table tr:hover td { background: rgba(244,121,32,0.04) !important; }
+
+/* ── Empty state ── */
+html.light-mode .unit-empty,
+html.light-mode .empty-state {
+  background: #FFFFFF !important;
+  border-color: rgba(244,121,32,0.2) !important;
+}
+
+/* ── Theme toggle button ── */
+.goil-theme-btn {
+  background: transparent;
+  border: 1.5px solid rgba(244,121,32,0.35);
+  color: #F47920;
+  width: 34px; height: 34px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.goil-theme-btn:hover {
+  background: rgba(244,121,32,0.1);
+  border-color: #F47920;
+}
+.goil-theme-btn svg { width: 16px; height: 16px; }
+
+/* ── Role-based visibility ── */
+/* Elements with .admin-only are hidden for submitters */
+body.role-submitter .admin-only { display: none !important; }
+/* Elements with .submitter-only are hidden for admins */
+body.role-admin .submitter-only { display: none !important; }
