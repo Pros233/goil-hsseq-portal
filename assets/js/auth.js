@@ -67,6 +67,16 @@
   // ── Already authenticated? Redirect ─────────────────────────────────────
 
   async function checkExistingSession() {
+    // Check for password-recovery link (type=recovery in URL hash)
+    if (window.location.hash.indexOf('type=recovery') >= 0) {
+      var client = getClient();
+      if (client) await client.auth.getSession(); // processes the hash tokens
+      showPasswordChangeModal();
+      // Clean hash from URL without reload
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      return;
+    }
+
     var client = getClient();
     if (!client) return;
     var res = await client.auth.getSession();
@@ -124,6 +134,18 @@
       office:    profile.office   || '',
       role:      profile.role     || 'submitter'
     }));
+
+    // Handle "Keep me signed in"
+    var keepEl = document.getElementById('keepSignedIn');
+    var keep = !keepEl || keepEl.checked;
+    if (!keep) {
+      // Mark session as non-persistent so auth-guard can detect a fresh browser open
+      localStorage.setItem('goilNoRemember', '1');
+    } else {
+      localStorage.removeItem('goilNoRemember');
+    }
+    // Mark this browser session as active (survives page nav, not browser close)
+    sessionStorage.setItem('goilActive', '1');
 
     setLoading(false);
 
@@ -187,6 +209,83 @@
     window.location.href = 'pages/portal.html';
   }
 
+  // ── Forgot password ───────────────────────────────────────────────────────
+
+  function showForgotModal() {
+    var m = document.getElementById('forgotModal');
+    if (m) {
+      m.classList.add('open');
+      // Pre-fill email from login field if present
+      var loginEmail = (document.getElementById('email') || {}).value || '';
+      var fe = document.getElementById('forgotEmail');
+      if (fe && loginEmail) fe.value = loginEmail;
+    }
+  }
+
+  function hideForgotModal() {
+    var m = document.getElementById('forgotModal');
+    if (m) {
+      m.classList.remove('open');
+      // Reset form state
+      var form = document.getElementById('forgotForm');
+      if (form) form.reset();
+      var s = document.getElementById('forgotSuccess');
+      if (s) { s.textContent = ''; s.classList.remove('show'); }
+      var e = document.getElementById('forgotError');
+      if (e) { e.textContent = ''; e.classList.remove('show'); }
+      var btn = document.getElementById('forgotBtn');
+      if (btn) { btn.disabled = false; btn.querySelector('.btn-text').textContent = 'Send Reset Link'; }
+    }
+  }
+
+  async function onForgotPassword(event) {
+    event.preventDefault();
+
+    var email  = (document.getElementById('forgotEmail').value || '').trim().toLowerCase();
+    var btn    = document.getElementById('forgotBtn');
+    var btnTxt = btn ? btn.querySelector('.btn-text') : null;
+    var success = document.getElementById('forgotSuccess');
+    var err     = document.getElementById('forgotError');
+
+    if (success) { success.textContent = ''; success.classList.remove('show'); }
+    if (err)     { err.textContent = '';     err.classList.remove('show'); }
+
+    if (!email) {
+      if (err) { err.textContent = 'Please enter your email address.'; err.classList.add('show'); }
+      return;
+    }
+
+    if (btn) { btn.disabled = true; }
+    if (btnTxt) btnTxt.textContent = 'Sending…';
+
+    var client = getClient();
+    if (!client) {
+      if (btn) btn.disabled = false;
+      if (btnTxt) btnTxt.textContent = 'Send Reset Link';
+      return;
+    }
+
+    // redirectTo must match a URL configured in Supabase Auth → URL Configuration
+    var redirectTo = window.location.origin + window.location.pathname;
+    var res = await client.auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
+
+    if (btn) btn.disabled = false;
+    if (btnTxt) btnTxt.textContent = 'Send Reset Link';
+
+    if (res.error) {
+      if (err) { err.textContent = 'Could not send reset email. Please try again.'; err.classList.add('show'); }
+      return;
+    }
+
+    // Always show success (avoid user enumeration — don't confirm if email exists)
+    if (success) {
+      success.textContent = 'If that email is registered, a reset link has been sent. Check your inbox (and spam folder).';
+      success.classList.add('show');
+    }
+    var cancelBtn = document.getElementById('forgotCancelBtn');
+    if (cancelBtn) cancelBtn.textContent = 'Back to Sign In';
+  }
+
   // ── Init ────────────────────────────────────────────────────────────────
 
   function init() {
@@ -201,6 +300,15 @@
 
     var pwForm = document.getElementById('pwChangeForm');
     if (pwForm) pwForm.addEventListener('submit', onPasswordChange);
+
+    var forgotForm = document.getElementById('forgotForm');
+    if (forgotForm) forgotForm.addEventListener('submit', onForgotPassword);
+
+    var forgotBtn = document.getElementById('forgotPwBtn');
+    if (forgotBtn) forgotBtn.addEventListener('click', showForgotModal);
+
+    var forgotCancel = document.getElementById('forgotCancelBtn');
+    if (forgotCancel) forgotCancel.addEventListener('click', hideForgotModal);
 
     bindPasswordToggle('password',   'togglePassword');
     bindPasswordToggle('pwNew',      'togglePwNew');

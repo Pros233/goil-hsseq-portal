@@ -66,6 +66,17 @@
   // ── Enforce authentication ─────────────────────────────────────────────────
 
   function enforceAuth() {
+    // "Keep me signed in" was unchecked: if this is a fresh browser open
+    // (sessionStorage is empty), clear the stored token and force re-login.
+    if (localStorage.getItem('goilNoRemember') === '1' &&
+        !sessionStorage.getItem('goilActive')) {
+      localStorage.removeItem('sb-qpldcpendvdobtbkygxo-auth-token');
+      localStorage.removeItem('goilUserProfile');
+      localStorage.removeItem('goilNoRemember');
+      redirect(getLoginPath());
+      return;
+    }
+
     var session = getSupabaseSession();
 
     if (!session) {
@@ -83,6 +94,9 @@
     // Apply role class to <body> for CSS-driven role gating
     var role = profile.role || 'submitter';
     document.body.classList.add('role-' + role);
+
+    // Keep session-active marker alive across page navigations
+    sessionStorage.setItem('goilActive', '1');
 
     // Expose auth context globally
     window.GOIL_AUTH_CONTEXT = {

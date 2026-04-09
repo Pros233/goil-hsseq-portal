@@ -412,6 +412,121 @@
       }
       .pw-change-error.show { display: block; }
 
+      /* ── Keep signed in + forgot password row ── */
+      .keep-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+        margin-top: 4px;
+      }
+      .keep-left {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        cursor: pointer;
+      }
+      .keep-check {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--or);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .keep-label {
+        font-size: 12px;
+        color: var(--wh3);
+        user-select: none;
+        cursor: pointer;
+      }
+      .forgot-link {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 12px;
+        color: var(--or);
+        cursor: pointer;
+        text-decoration: none;
+        font-family: 'Barlow', sans-serif;
+        transition: opacity .15s;
+      }
+      .forgot-link:hover { opacity: .75; text-decoration: underline; }
+
+      /* ── Forgot password modal ── */
+      .forgot-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.7);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .forgot-modal-overlay.open { display: flex; }
+      .forgot-modal-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 8px 32px rgba(0,0,0,.5);
+        padding: 36px 32px;
+        width: min(420px, 100%);
+      }
+      .forgot-modal-title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--wh);
+        margin-bottom: 6px;
+      }
+      .forgot-modal-sub {
+        font-size: 12px;
+        color: var(--wh3);
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .forgot-success {
+        display: none;
+        margin-top: 10px;
+        background: rgba(63,185,80,.1);
+        border-left: 3px solid #3FB950;
+        color: #3FB950;
+        font-size: 12px;
+        padding: 9px 10px;
+        border-radius: 6px;
+        line-height: 1.5;
+      }
+      .forgot-success.show { display: block; }
+      .forgot-error {
+        display: none;
+        margin-top: 10px;
+        background: rgba(218,54,51,.1);
+        border-left: 3px solid var(--crit);
+        color: var(--crit-text);
+        font-size: 12px;
+        padding: 9px 10px;
+        border-radius: 6px;
+      }
+      .forgot-error.show { display: block; }
+      .forgot-cancel {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--wh3);
+        font-family: 'Barlow', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        height: 38px;
+        cursor: pointer;
+        transition: border-color .15s, color .15s;
+      }
+      .forgot-cancel:hover { border-color: var(--wh3); color: var(--wh2); }
+
       @media (max-width: 980px) {
         .login-shell {
           grid-template-columns: 1fr;
@@ -444,6 +559,26 @@
     <button id="loginThemeBtn" class="login-theme-btn" type="button" aria-label="Toggle theme" title="Toggle dark/light mode">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
+
+    <!-- Forgot password modal -->
+    <div id="forgotModal" class="forgot-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="forgotModalTitle">
+      <div class="forgot-modal-card">
+        <h2 id="forgotModalTitle" class="forgot-modal-title">Reset Password</h2>
+        <p class="forgot-modal-sub">Enter your GOIL email address and we'll send you a link to set a new password.</p>
+        <form id="forgotForm" novalidate>
+          <div class="form-row">
+            <label for="forgotEmail" class="form-label">Email Address</label>
+            <input id="forgotEmail" name="forgotEmail" type="email" class="field" placeholder="e.g., name@goil.com.gh" autocomplete="email" required />
+          </div>
+          <button type="submit" id="forgotBtn" class="login-btn" style="margin-top:12px;">
+            <span class="btn-text">Send Reset Link</span>
+          </button>
+          <div id="forgotSuccess" class="forgot-success" aria-live="polite"></div>
+          <div id="forgotError" class="forgot-error" aria-live="polite"></div>
+          <button type="button" id="forgotCancelBtn" class="forgot-cancel">Back to Sign In</button>
+        </form>
+      </div>
+    </div>
 
     <!-- First-login password change modal -->
     <div id="pwChangeModal" class="pw-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pwModalTitle">
@@ -517,6 +652,14 @@
               />
               <button type="button" id="togglePassword" class="toggle-pass" aria-label="Show password" aria-pressed="false">👁</button>
             </div>
+          </div>
+
+          <div class="keep-row">
+            <label class="keep-left">
+              <input type="checkbox" id="keepSignedIn" class="keep-check" checked />
+              <span class="keep-label">Keep me signed in</span>
+            </label>
+            <button type="button" id="forgotPwBtn" class="forgot-link">Forgot password?</button>
           </div>
 
           <button type="submit" id="loginBtn" class="login-btn">
