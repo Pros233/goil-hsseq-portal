@@ -67,12 +67,15 @@
   // ── Already authenticated? Redirect ─────────────────────────────────────
 
   async function checkExistingSession() {
-    // Check for password-recovery link (type=recovery in URL hash)
+    // Handle password-recovery link (e.g. clicked from reset email)
+    // Supabase puts #access_token=...&type=recovery in the URL hash
     if (window.location.hash.indexOf('type=recovery') >= 0) {
       var client = getClient();
-      if (client) await client.auth.getSession(); // processes the hash tokens
+      if (client) await client.auth.getSession(); // lets Supabase consume hash tokens
+      // Update modal subtitle to "recovery" wording
+      var sub = document.getElementById('pwModalSub');
+      if (sub) sub.textContent = 'Enter and confirm your new password below.';
       showPasswordChangeModal();
-      // Clean hash from URL without reload
       history.replaceState(null, '', window.location.pathname + window.location.search);
       return;
     }
@@ -213,77 +216,60 @@
 
   function showForgotModal() {
     var m = document.getElementById('forgotModal');
-    if (m) {
-      m.classList.add('open');
-      // Pre-fill email from login field if present
-      var loginEmail = (document.getElementById('email') || {}).value || '';
-      var fe = document.getElementById('forgotEmail');
-      if (fe && loginEmail) fe.value = loginEmail;
-    }
+    if (!m) return;
+    // Reset to step-1 state every time it opens
+    var step1 = document.getElementById('forgotStep1');
+    var step2 = document.getElementById('forgotStep2');
+    if (step1) step1.style.display = '';
+    if (step2) step2.style.display = 'none';
+    var err = document.getElementById('forgotError');
+    if (err) { err.textContent = ''; err.classList.remove('show'); }
+    // Pre-fill email from login field
+    var loginEmail = (document.getElementById('email') || {}).value || '';
+    var fe = document.getElementById('forgotEmail');
+    if (fe) { fe.value = loginEmail; }
+    m.classList.add('open');
+    if (fe) fe.focus();
   }
 
   function hideForgotModal() {
     var m = document.getElementById('forgotModal');
-    if (m) {
-      m.classList.remove('open');
-      // Reset form state
-      var form = document.getElementById('forgotForm');
-      if (form) form.reset();
-      var s = document.getElementById('forgotSuccess');
-      if (s) { s.textContent = ''; s.classList.remove('show'); }
-      var e = document.getElementById('forgotError');
-      if (e) { e.textContent = ''; e.classList.remove('show'); }
-      var btn = document.getElementById('forgotBtn');
-      if (btn) { btn.disabled = false; btn.querySelector('.btn-text').textContent = 'Send Reset Link'; }
-    }
+    if (m) m.classList.remove('open');
   }
 
   async function onForgotPassword(event) {
     event.preventDefault();
 
-    var email  = (document.getElementById('forgotEmail').value || '').trim().toLowerCase();
-    var btn    = document.getElementById('forgotBtn');
-    var btnTxt = btn ? btn.querySelector('.btn-text') : null;
-    var success = document.getElementById('forgotSuccess');
+    var email   = (document.getElementById('forgotEmail').value || '').trim().toLowerCase();
+    var btn     = document.getElementById('forgotSendBtn');
     var err     = document.getElementById('forgotError');
 
-    if (success) { success.textContent = ''; success.classList.remove('show'); }
-    if (err)     { err.textContent = '';     err.classList.remove('show'); }
+    if (err) { err.textContent = ''; err.classList.remove('show'); }
 
     if (!email) {
       if (err) { err.textContent = 'Please enter your email address.'; err.classList.add('show'); }
       return;
     }
 
-    if (btn) { btn.disabled = true; }
-    if (btnTxt) btnTxt.textContent = 'Sending…';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var client = getClient();
     if (!client) {
-      if (btn) btn.disabled = false;
-      if (btnTxt) btnTxt.textContent = 'Send Reset Link';
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Reset Link'; }
       return;
     }
 
-    // redirectTo must match a URL configured in Supabase Auth → URL Configuration
     var redirectTo = window.location.origin + window.location.pathname;
-    var res = await client.auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
+    await client.auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
+    // Always succeed (don't reveal whether email exists)
 
-    if (btn) btn.disabled = false;
-    if (btnTxt) btnTxt.textContent = 'Send Reset Link';
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Reset Link'; }
 
-    if (res.error) {
-      if (err) { err.textContent = 'Could not send reset email. Please try again.'; err.classList.add('show'); }
-      return;
-    }
-
-    // Always show success (avoid user enumeration — don't confirm if email exists)
-    if (success) {
-      success.textContent = 'If that email is registered, a reset link has been sent. Check your inbox (and spam folder).';
-      success.classList.add('show');
-    }
-    var cancelBtn = document.getElementById('forgotCancelBtn');
-    if (cancelBtn) cancelBtn.textContent = 'Back to Sign In';
+    // Show step 2 — instructions to check email
+    var step1 = document.getElementById('forgotStep1');
+    var step2 = document.getElementById('forgotStep2');
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = '';
   }
 
   // ── Init ────────────────────────────────────────────────────────────────
@@ -304,16 +290,30 @@
     var forgotForm = document.getElementById('forgotForm');
     if (forgotForm) forgotForm.addEventListener('submit', onForgotPassword);
 
-    var forgotBtn = document.getElementById('forgotPwBtn');
-    if (forgotBtn) forgotBtn.addEventListener('click', showForgotModal);
+    var forgotOpenBtn = document.getElementById('forgotPwBtn');
+    if (forgotOpenBtn) forgotOpenBtn.addEventListener('click', showForgotModal);
 
-    var forgotCancel = document.getElementById('forgotCancelBtn');
-    if (forgotCancel) forgotCancel.addEventListener('click', hideForgotModal);
+    var forgotCancelBtn = document.getElementById('forgotCancelBtn');
+    if (forgotCancelBtn) forgotCancelBtn.addEventListener('click', hideForgotModal);
+
+    // Close modal if user clicks the dark backdrop
+    var forgotOverlay = document.getElementById('forgotModal');
+    if (forgotOverlay) {
+      forgotOverlay.addEventListener('click', function (e) {
+        if (e.target === forgotOverlay) hideForgotModal();
+      });
+    }
 
     bindPasswordToggle('password',   'togglePassword');
     bindPasswordToggle('pwNew',      'togglePwNew');
     bindPasswordToggle('pwConfirm',  'togglePwConfirm');
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  // Fix: scripts at end of <body> run after DOM is ready — don't wait for
+  // DOMContentLoaded if it has already fired.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();

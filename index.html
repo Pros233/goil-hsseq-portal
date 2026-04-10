@@ -564,19 +564,31 @@
     <div id="forgotModal" class="forgot-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="forgotModalTitle">
       <div class="forgot-modal-card">
         <h2 id="forgotModalTitle" class="forgot-modal-title">Reset Password</h2>
-        <p class="forgot-modal-sub">Enter your GOIL email address and we'll send you a link to set a new password.</p>
-        <form id="forgotForm" novalidate>
-          <div class="form-row">
-            <label for="forgotEmail" class="form-label">Email Address</label>
-            <input id="forgotEmail" name="forgotEmail" type="email" class="field" placeholder="e.g., name@goil.com.gh" autocomplete="email" required />
+
+        <!-- Step 1: Enter email -->
+        <div id="forgotStep1">
+          <p class="forgot-modal-sub">Enter your GOIL email address and we'll send you a link to set a new password.</p>
+          <form id="forgotForm" novalidate>
+            <div class="form-row">
+              <label for="forgotEmail" class="form-label">Email Address</label>
+              <input id="forgotEmail" name="forgotEmail" type="email" class="field" placeholder="e.g., name@goil.com.gh" autocomplete="email" required />
+            </div>
+            <div id="forgotError" class="forgot-error" aria-live="polite"></div>
+            <button type="submit" id="forgotSendBtn" class="login-btn" style="margin-top:12px;">
+              <span class="btn-text">Send Reset Link</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Step 2: Check email confirmation -->
+        <div id="forgotStep2" style="display:none;">
+          <p class="forgot-modal-sub">Check your inbox! A password reset link has been sent to your email address. Click the link in the email to set a new password.</p>
+          <div style="background:rgba(63,185,80,.1);border-left:3px solid #3FB950;color:#3FB950;font-size:12px;padding:9px 10px;border-radius:6px;line-height:1.5;margin-bottom:12px;">
+            If you don't see the email within a few minutes, check your spam or junk folder.
           </div>
-          <button type="submit" id="forgotBtn" class="login-btn" style="margin-top:12px;">
-            <span class="btn-text">Send Reset Link</span>
-          </button>
-          <div id="forgotSuccess" class="forgot-success" aria-live="polite"></div>
-          <div id="forgotError" class="forgot-error" aria-live="polite"></div>
-          <button type="button" id="forgotCancelBtn" class="forgot-cancel">Back to Sign In</button>
-        </form>
+        </div>
+
+        <button type="button" id="forgotCancelBtn" class="forgot-cancel">Back to Sign In</button>
       </div>
     </div>
 
@@ -584,7 +596,7 @@
     <div id="pwChangeModal" class="pw-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pwModalTitle">
       <div class="pw-modal-card">
         <h2 id="pwModalTitle" class="pw-modal-title">Set New Password</h2>
-        <p class="pw-modal-sub">Your account requires a password change before continuing.</p>
+        <p id="pwModalSub" class="pw-modal-sub">Your account requires a password change before continuing.</p>
         <form id="pwChangeForm" novalidate>
           <div class="form-row">
             <label for="pwNew" class="form-label">New Password</label>
