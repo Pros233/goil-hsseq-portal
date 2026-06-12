@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partial Submission Completed - Integrated Risk Assessment</title>
+<script src="../assets/js/auth-guard.js?v=20260520-publishsync1" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D;
+  --bd:rgba(255,255,255,.08); --bd2:rgba(255,255,255,.14);
+  --tx:#E6EDF3; --tx2:#C9D1D9; --tx3:#8B949E;
+  --or:#F47920; --or-s:#e06b14; --or-d:rgba(244,121,32,.14);
+  --info:#2F81F7; --info-d:rgba(47,129,247,.14);
+  --warn:#D29922; --warn-d:rgba(210,153,34,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
+.page{min-height:100%;display:flex;flex-direction:column}
+.main{width:min(1040px,100%);margin:42px auto;padding:0 20px;display:flex;flex-direction:column;gap:18px}
+.card{
+  background:linear-gradient(135deg,rgba(244,121,32,.1),var(--bg2));
+  border:1px solid rgba(244,121,32,.28);
+  border-radius:18px;padding:28px;
+}
+.eyebrow{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;
+  letter-spacing:1.4px;text-transform:uppercase;color:var(--or);margin-bottom:14px
+}
+.eyebrow::before{
+  content:'';width:28px;height:4px;border-radius:999px;background:var(--or);flex-shrink:0
+}
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:50px;line-height:.95;
+  font-weight:900;color:var(--tx);letter-spacing:.4px
+}
+.hero-sub{
+  margin-top:16px;max-width:860px;font-size:18px;line-height:1.55;color:var(--tx2)
+}
+.hero-sub strong{color:#fff}
+.summary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px
+}
+.summary-card{
+  background:var(--bg2);border:1px solid var(--bd2);border-radius:12px;padding:16px
+}
+.summary-card .k{
+  font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--tx3)
+}
+.summary-card .v{
+  margin-top:8px;font-size:18px;font-weight:700;color:var(--tx)
+}
+.status-line{
+  border:1px solid rgba(210,153,34,.28);background:var(--warn-d);
+  color:#f4d58b;border-radius:12px;padding:16px 18px;font-size:15px;line-height:1.5
+}
+.status-line strong{color:#fff}
+.sync-note{
+  border:1px solid rgba(47,129,247,.28);background:var(--info-d);
+  color:#b9d4ff;border-radius:12px;padding:14px 18px;font-size:14px;line-height:1.5
+}
+.actions{
+  display:flex;justify-content:flex-start;align-items:center;gap:14px;flex-wrap:wrap
+}
+.btn{
+  border:1.5px solid var(--bd2);background:transparent;color:var(--tx2);
+  border-radius:10px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer;
+  transition:border-color .16s,color .16s,background .16s,transform .16s
+}
+.btn:hover{border-color:var(--or);color:var(--or)}
+.btn-secondary{
+  background:var(--bg2);
+  color:var(--tx);
+}
+.btn-primary{
+  min-width:280px;
+  background:linear-gradient(135deg,var(--or),var(--or-s));
+  border-color:transparent;color:#fff;
+  box-shadow:0 4px 18px rgba(244,121,32,.35)
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(244,121,32,.45)}
+.foot-note{font-size:13px;color:var(--tx3)}
+@media (max-width:900px){
+  .hero-title{font-size:40px}
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  .main{padding:0 14px;margin:22px auto}
+  .card{padding:22px 18px}
+  .hero-title{font-size:34px}
+  .hero-sub{font-size:16px}
+  .summary{grid-template-columns:1fr}
+  .btn-primary{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <main class="main">
+    <section class="card">
+      <div class="eyebrow">Partial Submission</div>
+      <h2 class="hero-title">Partial Submission Completed</h2>
+      <p class="hero-sub">
+        You have successfully submitted a <strong>partial checklist</strong>. For a complete submission and publication to the register,
+        please complete the Corrective Action plan using the button below.
+      </p>
+    </section>
+
+    <section class="summary" id="summaryGrid"></section>
+
+    <section class="status-line">
+      This checklist is currently in <strong>Checklist Submitted / Pending Corrective Action</strong> status.
+      It has <strong>not</strong> yet been fully submitted or published to the register.
+    </section>
+
+    <section class="sync-note" id="syncNote" hidden>
+      Cloud sync will retry automatically. Your partial submission has still been saved locally.
+    </section>
+
+    <section class="actions">
+      <button class="btn btn-secondary" type="button" onclick="goBack()">Back</button>
+      <button class="btn btn-secondary" type="button" onclick="saveAndContinueLater()">Save and Continue Later</button>
+      <button class="btn btn-primary" type="button" onclick="goToCorrectivePage()">Go to Corrective Action Page</button>
+    </section>
+
+    <p class="foot-note">Complete the corrective action plan to finish the assessment workflow and publish the final record.</p>
+  </main>
+</div>
+
+<script>
+const FACILITY_KEY = 'goil_facility_details';
+const META_KEY = 'goil_inspection_meta';
+const NOTICE_KEY = 'goil_partial_submission_notice';
+
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function formatDateOnly(value) {
+  if (!value || value === '—') return '—';
+  const text = String(value).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    const [year, month, day] = text.split('-');
+    return `${day}/${month}/${String(year).slice(-2)}`;
+  }
+  const dt = new Date(text);
+  if (Number.isNaN(dt.getTime())) return text;
+  return `${pad2(dt.getDate())}/${pad2(dt.getMonth() + 1)}/${String(dt.getFullYear()).slice(-2)}`;
+}
+
+function formatDateTime(value) {
+  if (!value) return '—';
+  const dt = new Date(value);
+  if (Number.isNaN(dt.getTime())) return String(value);
+  return `${pad2(dt.getDate())}/${pad2(dt.getMonth() + 1)}/${String(dt.getFullYear()).slice(-2)}, ${pad2(dt.getHours())}:${pad2(dt.getMinutes())}:${pad2(dt.getSeconds())}`;
+}
+
+function readJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function parseNotice() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const stored = JSON.parse(sessionStorage.getItem(NOTICE_KEY) || 'null') || {};
+    const facility = readJSON(FACILITY_KEY, {});
+    const meta = readJSON(META_KEY, {});
+    return {
+      inspectionRef: params.get('ref') || stored.inspectionRef || meta.referenceNo || '—',
+      assessorName: params.get('assessor') || stored.assessorName || facility.assessorName || '—',
+      assessmentDate: params.get('date') || stored.assessmentDate || facility.assessmentDate || '—',
+      checklistSubmittedAt: params.get('submittedAt') || stored.checklistSubmittedAt || meta.checklistSubmittedAt || '',
+      version: Number(params.get('version') || stored.version || meta.versionCurrent || 1),
+      synced: params.has('synced') ? params.get('synced') === '1' : stored.synced !== false
+    };
+  } catch (error) {
+    return {
+      inspectionRef: '—',
+      assessorName: '—',
+      assessmentDate: '—',
+      checklistSubmittedAt: '',
+      version: 1,
+      synced: true
+    };
+  }
+}
+
+function renderSummary(data) {
+  const submittedAt = formatDateTime(data.checklistSubmittedAt);
+  const cards = [
+    { k: 'Checklist ID', v: data.inspectionRef || '—' },
+    { k: 'Assessor', v: data.assessorName || '—' },
+    { k: 'Assessment Date', v: formatDateOnly(data.assessmentDate) },
+    { k: 'Version', v: `V${data.version || 1}` },
+    { k: 'Partial Submission Time', v: submittedAt }
+  ];
+  document.getElementById('summaryGrid').innerHTML = cards.map(card => `
+    <div class="summary-card">
+      <div class="k">${esc(card.k)}</div>
+      <div class="v">${esc(card.v)}</div>
+    </div>
+  `).join('');
+}
+
+function goBack() {
+  window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6';
+}
+
+function saveAndContinueLater() {
+  try {
+    sessionStorage.setItem(NOTICE_KEY, JSON.stringify(parseNotice()));
+  } catch (error) {}
+  window.location.href = 'risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now();
+}
+
+function goToCorrectivePage() {
+  window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep6';
+}
+
+function init() {
+  const data = parseNotice();
+  renderSummary(data);
+  const syncNote = document.getElementById('syncNote');
+  if (!data.synced) syncNote.hidden = false;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

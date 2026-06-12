@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Review & Submit - Integrated Risk Assessment</title>
+<script src="../assets/js/auth-guard.js?v=20260520-publishsync1" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-<script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+<script src="../assets/js/workflow-core.js?v=20260514-recordrestore1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260514-recordrestore1"></script>
 <style>
 :root{
   --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D; --bg5:#30363D;
@@ -33,13 +34,15 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
   min-height:58px;
 }
 .top-brand{
-  display:flex;align-items:center;
+  display:flex;align-items:center;gap:10px;
   border-right:1px solid rgba(244,121,32,.3);
   padding-right:16px;margin-right:4px;
 }
-.top-brand-dot{
-  width:8px;height:8px;border-radius:50%;background:var(--or);
-  box-shadow:0 0 8px var(--or);margin-right:10px;flex-shrink:0;
+.top-brand-logo{
+  height:18px;
+  width:auto;
+  display:block;
+  flex-shrink:0;
 }
 .top h1{
   font-family:'Barlow Condensed',sans-serif;font-size:22px;
@@ -175,8 +178,29 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
   background:var(--or-d);border:1px solid rgba(244,121,32,.25);
   border-radius:9px;padding:13px;
 }
+.decl.decl-attention{
+  animation:declPulse 1.25s ease-in-out infinite;
+}
 .decl input{margin-top:2px;accent-color:var(--or)}
 .decl label{font-size:13px;color:var(--tx2);line-height:1.45}
+
+@keyframes declPulse{
+  0%{
+    border-color:rgba(244,121,32,.28);
+    background:var(--or-d);
+    box-shadow:0 0 0 0 rgba(244,121,32,.14);
+  }
+  50%{
+    border-color:rgba(244,121,32,.82);
+    background:rgba(244,121,32,.18);
+    box-shadow:0 0 0 8px rgba(244,121,32,.08);
+  }
+  100%{
+    border-color:rgba(244,121,32,.28);
+    background:var(--or-d);
+    box-shadow:0 0 0 0 rgba(244,121,32,.14);
+  }
+}
 
 /* ── Checklist sections ── */
 .section{background:var(--bg2);border:1px solid var(--bd2);border-radius:11px;overflow:hidden}
@@ -215,12 +239,6 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
 .cell .k{font-size:10px;color:var(--tx4);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
 .cell .v{font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.35;word-break:break-word}
 
-/* ── Confirm panel ── */
-.confirm{display:none;border:1px solid rgba(47,129,247,.35);background:var(--info-d);border-radius:10px;padding:14px}
-.confirm.show{display:block}
-.confirm h3{color:#9ec9ff;font-size:14px;margin-bottom:8px;font-weight:700}
-.confirm p{font-size:13px;color:var(--tx2);margin-bottom:12px}
-
 /* ── Audit ── */
 .audit-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;padding-right:4px}
 .audit-item{border:1px solid var(--bd);background:var(--bg3);border-left:3px solid var(--or-d2);border-radius:7px;padding:9px 11px}
@@ -258,10 +276,10 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
 </style>
 </head>
 <body>
-<div class="page">
+  <div class="page">
   <div class="top">
     <div class="top-brand">
-      <div class="top-brand-dot"></div>
+      <img src="../assets/img/goil-logo.png" alt="GOIL Logo" class="top-brand-logo" />
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:var(--or);letter-spacing:1px;text-transform:uppercase">GOIL</span>
     </div>
     <div class="left">
@@ -297,7 +315,7 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
     </section>
 
     <section class="panel">
-      <div class="decl">
+      <div class="decl decl-attention" id="declarationWrap">
         <input type="checkbox" id="declarationChk" onchange="onDeclarationChange()">
         <label for="declarationChk">I confirm that the inspection information entered is accurate to the best of my knowledge.</label>
       </div>
@@ -305,12 +323,6 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--tx2)}
 
     <section id="sectionsWrap"></section>
     <section id="findingsWrap"></section>
-
-    <section class="panel confirm" id="confirmPanel">
-      <h3>Checklist submitted successfully. Proceed to the Corrective Action page for final submission.</h3>
-      <p>The checklist is now in <strong>Checklist Submitted / Pending Corrective Action</strong> status and is not yet published to the register.</p>
-      <button class="btn btn-flash-red" onclick="goToCorrectivePage()">Go to Corrective Action Page</button>
-    </section>
 
     <section class="panel">
       <h2>Audit Trail</h2>
@@ -406,6 +418,13 @@ function writeJSON(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+function getActorName() {
+  const user = (window.RiskModuleUtils && typeof RiskModuleUtils.getCurrentUser === 'function')
+    ? RiskModuleUtils.getCurrentUser()
+    : {};
+  return user.full_name || user.fullName || user.username || user.email || facility.assessorName || 'Unknown User';
+}
+
 function ensureInspectionMeta() {
   const meta = readJSON(META_KEY, {});
   if (!meta.referenceNo) meta.referenceNo = generateReferenceNo();
@@ -425,7 +444,7 @@ function appendAudit(action, details) {
   list.push({
     at: nowIso(),
     action,
-    actor: facility.assessorName || 'Unknown User',
+    actor: getActorName(),
     referenceNo: inspectionMeta.referenceNo || '',
     ...(details || {})
   });
@@ -733,19 +752,35 @@ function renderOverallRisk() {
 function renderHeaderMeta() {
   const ref = inspectionMeta.referenceNo || '—';
   const date = facility.assessmentDate || '—';
+  const startTime = facility.startTime || inspectionMeta.startTime || '—';
+  const locationCoords = facility.locationCoordinates || inspectionMeta.locationCoordinates || '—';
   const site = [facility.zone || '', facility.nameDisplay || ''].filter(Boolean).join(' · ') || '—';
   const metaRows = [
     { k:'Inspection Ref', v: ref },
-    { k:'Version', v: inspectionMeta.versionCurrent || 0 },
     { k:'Facility Name', v: facility.nameDisplay || '—' },
     { k:'Facility Type', v: facility.facilityType || '—' },
     { k:'Inspection Date', v: date },
+    { k:'Start Time', v: startTime },
+    { k:'Location Coordinates', v: locationCoords },
     { k:'Inspector', v: facility.assessorName || '—' },
     { k:'Site / Location', v: site },
     { k:'Checklist Submitted', v: inspectionMeta.checklistSubmittedAt ? new Date(inspectionMeta.checklistSubmittedAt).toLocaleString() : '—' },
     { k:'Last Updated', v: inspectionMeta.lastUpdatedAt ? new Date(inspectionMeta.lastUpdatedAt).toLocaleString() : '—' },
     { k:'Current Status', v: inspectionMeta.status || STATUS.DRAFT }
   ];
+
+  if (inspectionMeta.status === STATUS.PUBLISHED) {
+    const records = window.RiskModuleUtils && typeof RiskModuleUtils.getRecords === 'function' ? RiskModuleUtils.getRecords() : [];
+    const currentRecord = records.find((record) => (
+      String(record.inspectionRef || record.assessment_reference || '').trim() === String(ref).trim() &&
+      Number(record.version || record.version_number || 0) === Number(inspectionMeta.versionCurrent || 1) &&
+      (record.is_published === true || String(record.assessment_status || record.status || '') === STATUS.PUBLISHED)
+    ));
+    const displayVersion = currentRecord && RiskModuleUtils.getPublishedDisplayVersionNumber
+      ? RiskModuleUtils.getPublishedDisplayVersionNumber(currentRecord, records)
+      : Number(inspectionMeta.versionCurrent || 1);
+    metaRows.splice(1, 0, { k:'Version', v: `V${displayVersion || 1}` });
+  }
 
   const metaGrid = document.getElementById('metaGrid');
   metaGrid.innerHTML = metaRows.map(row => `
@@ -962,7 +997,15 @@ function showValidationErrors(errors) {
 
 function onDeclarationChange() {
   reviewDirty = true;
+  updateDeclarationAttention();
   saveReviewState();
+}
+
+function updateDeclarationAttention() {
+  const wrap = document.getElementById('declarationWrap');
+  const chk = document.getElementById('declarationChk');
+  if (!wrap || !chk) return;
+  wrap.classList.toggle('decl-attention', !chk.checked);
 }
 
 function saveReviewState() {
@@ -1072,7 +1115,32 @@ function buildCorrectiveActionPrefill() {
   };
 }
 
-function submitChecklistPartial() {
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForSyncBridge(timeoutMs) {
+  const deadline = Date.now() + (timeoutMs || 0);
+  while (Date.now() < deadline) {
+    if (window.GoilSupabase && typeof window.GoilSupabase.sync === 'function') return true;
+    await wait(150);
+  }
+  return !!(window.GoilSupabase && typeof window.GoilSupabase.sync === 'function');
+}
+
+async function syncChecklistSnapshot() {
+  if (!navigator.onLine) return false;
+  const ready = await waitForSyncBridge(3500);
+  if (!ready) return false;
+  try {
+    await window.GoilSupabase.sync();
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function submitChecklistPartial() {
   reloadChecklistState();
   renderKpis();
   renderOverallRisk();
@@ -1090,7 +1158,7 @@ function submitChecklistPartial() {
   if (window.GoilWorkflow) {
     const lockResult = window.GoilWorkflow.lockChecklistSnapshot({
       facility,
-      actor: facility.assessorName || 'Unknown User',
+      actor: getActorName(),
       checklistSession: {
         sectionStates,
         catalog,
@@ -1117,6 +1185,10 @@ function submitChecklistPartial() {
     }
     writeJSON(META_KEY, inspectionMeta);
   }
+  caPayload.inspectionRef = inspectionMeta.referenceNo || '';
+  caPayload.version = caPayload.version || inspectionMeta.versionCurrent || 1;
+  caPayload.facilityName = facility.nameDisplay || facility.nameVal || '';
+  caPayload.assessmentDate = facility.assessmentDate || '';
   writeJSON(CA_KEY, caPayload);
 
   appendAudit('checklist_partially_submitted', {
@@ -1131,13 +1203,30 @@ function submitChecklistPartial() {
 
   reviewDirty = false;
   renderHeaderMeta();
-  document.getElementById('confirmPanel').classList.add('show');
-  document.getElementById('confirmPanel').scrollIntoView({ behavior:'smooth', block:'center' });
-  toast('Checklist submitted successfully.', 'success');
+  const synced = await syncChecklistSnapshot();
+  const partialNotice = {
+    inspectionRef: inspectionMeta.referenceNo || '',
+    assessorName: facility.assessorName || '',
+    assessmentDate: facility.assessmentDate || '',
+    checklistSubmittedAt: inspectionMeta.checklistSubmittedAt || submittedAt,
+    version: inspectionMeta.versionCurrent || caPayload.version || 1,
+    synced: !!synced
+  };
+  try {
+    sessionStorage.setItem('goil_partial_submission_notice', JSON.stringify(partialNotice));
+  } catch (error) {}
+  window.location.href = buildPartialSubmissionUrl(partialNotice);
 }
 
-function goToCorrectivePage() {
-  window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep6';
+function buildPartialSubmissionUrl(payload = {}) {
+  const params = new URLSearchParams();
+  if (payload.inspectionRef) params.set('ref', payload.inspectionRef);
+  if (payload.assessorName) params.set('assessor', payload.assessorName);
+  if (payload.assessmentDate) params.set('date', payload.assessmentDate);
+  if (payload.checklistSubmittedAt) params.set('submittedAt', payload.checklistSubmittedAt);
+  if (payload.version) params.set('version', String(payload.version));
+  if (typeof payload.synced === 'boolean') params.set('synced', payload.synced ? '1' : '0');
+  return 'GOIL_Partial_Submission.html?v=20260522-partial1' + (params.toString() ? `&${params.toString()}` : '');
 }
 
 function sectionIndexById(id) {
@@ -1167,9 +1256,12 @@ function reopenForRevision() {
   const reason = (window.prompt('Enter reason for reopening this inspection for revision:', '') || '').trim();
   if (!reason) return;
   if (window.GoilWorkflow) {
+    const currentUser = (window.RiskModuleUtils && typeof RiskModuleUtils.getCurrentUser === 'function')
+      ? RiskModuleUtils.getCurrentUser()
+      : {};
     const result = window.GoilWorkflow.reopenForRevision({
       facility,
-      actor: facility.assessorName || 'Unknown User',
+      actor: currentUser,
       reason
     });
     if (!result.ok) {
@@ -1211,7 +1303,7 @@ function goHome() {
   inspectionMeta.lastPage = 'home';
   inspectionMeta.lastSavedAt = nowIso();
   writeJSON(META_KEY, inspectionMeta);
-  window.location.href = 'portal.html';
+  window.location.href = 'risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now();
 }
 
 function renderAudit() {
@@ -1246,7 +1338,18 @@ function toast(msg, type) {
   }, 3400);
 }
 
+function hydrateRecordFromRouteParams() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ref = (params.get('ref') || '').trim();
+    const version = (params.get('version') || '').trim();
+    if (!ref || !window.RiskModuleUtils || typeof RiskModuleUtils.prepareAssessmentRecord !== 'function') return;
+    RiskModuleUtils.prepareAssessmentRecord(ref, version);
+  } catch (error) {}
+}
+
 function init() {
+  hydrateRecordFromRouteParams();
   facility = readJSON(FACILITY_KEY, {});
   checklist = readJSON(SAVE_KEY, {});
   reviewState = readJSON(REVIEW_STATE_KEY, { declaration:false });
@@ -1261,10 +1364,7 @@ function init() {
   renderFindings();
   renderAudit();
   document.getElementById('declarationChk').checked = !!reviewState.declaration;
-
-  if (inspectionMeta.status === STATUS.PENDING || inspectionMeta.status === STATUS.REVISED_CHECKLIST_SUBMITTED) {
-    document.getElementById('confirmPanel').classList.add('show');
-  }
+  updateDeclarationAttention();
 
   appendAudit('review_page_opened', { status: inspectionMeta.status });
 }

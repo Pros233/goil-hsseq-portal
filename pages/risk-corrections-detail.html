@@ -4,32 +4,94 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Corrective Action Detail | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <script src="../assets/js/auth-guard.js?v=20260513-datatransfer1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
   <style>
+    :root{
+      --blue:#2F81F7;
+      --blue-dim:rgba(47,129,247,.14);
+      --low:#3FB950;
+      --low-dim:rgba(63,185,80,.12);
+      --low-glow:rgba(63,185,80,.28);
+      --med:#D29922;
+      --med-dim:rgba(210,153,34,.12);
+      --high:#E07D23;
+      --high-dim:rgba(224,125,35,.12);
+      --crit:#DA3633;
+      --crit-dim:rgba(218,54,51,.12);
+      --border2:rgba(255,255,255,.12);
+      --or-glow:rgba(244,121,32,.28);
+    }
     body{
       background:
         radial-gradient(900px 420px at 0% -15%, rgba(47,129,247,.14), transparent 62%),
         radial-gradient(900px 420px at 100% -15%, rgba(244,121,32,.12), transparent 62%),
         var(--bg);
     }
+    .rm-topbar{
+      padding:14px 22px;
+      gap:18px;
+    }
+    .rm-topbar-left{
+      gap:14px;
+    }
+    .rm-back-btn{
+      height:42px;
+      padding:0 16px;
+      border-radius:10px;
+      color:var(--wh2);
+      font-size:12px;
+      font-weight:700;
+      border-color:rgba(255,255,255,.16);
+      background:rgba(255,255,255,.02);
+      white-space:nowrap;
+    }
+    .rm-back-btn:hover{
+      border-color:rgba(244,121,32,.45);
+      background:rgba(244,121,32,.08);
+      color:var(--wh);
+    }
+    .rm-title{
+      font-size:26px;
+      line-height:.95;
+      letter-spacing:.7px;
+    }
+    .rm-subtitle{
+      font-size:12px;
+      color:var(--wh3);
+      max-width:none;
+    }
+    .rm-primary-btn{
+      height:48px;
+      padding:0 22px;
+      border-radius:10px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.3px;
+      box-shadow:0 6px 20px rgba(244,121,32,.28);
+    }
+    .rm-shell{
+      width:min(1980px, calc(100vw - 24px));
+      max-width:none;
+    }
     .rm-card{
       border-color:rgba(255,255,255,.14);
       box-shadow:0 14px 28px rgba(0,0,0,.28);
       background:linear-gradient(180deg, rgba(22,27,34,.98), rgba(13,17,23,.98));
+      min-height:calc(100vh - 118px);
     }
     .ca-header-card{
       display:grid;
-      grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
-      gap:14px;
-      padding:14px 16px;
+      grid-template-columns:minmax(0,1.6fr) minmax(360px,.8fr);
+      gap:18px;
+      padding:16px 20px;
       border:1px solid var(--border2);
-      border-left:4px solid var(--or);
-      border-radius:10px;
-      background:linear-gradient(125deg, rgba(244,121,32,.10), rgba(22,27,34,.92) 42%, rgba(13,17,23,.98));
+      border-left:5px solid var(--or);
+      border-radius:16px;
+      background:linear-gradient(125deg, rgba(244,121,32,.11), rgba(22,27,34,.94) 40%, rgba(13,17,23,.99));
       box-shadow:0 10px 24px rgba(0,0,0,.24);
     }
     .ca-eyebrow{
@@ -56,7 +118,7 @@
     .ca-facility-title{
       margin:0;
       font-family:'Barlow Condensed',sans-serif;
-      font-size:30px;
+      font-size:34px;
       font-weight:900;
       line-height:1.05;
       letter-spacing:.5px;
@@ -66,48 +128,79 @@
     }
     .ca-facility-title .accent{color:var(--or)}
     .ca-meta-strip{
-      margin-top:10px;
-      padding-top:9px;
+      margin-top:14px;
+      padding-top:14px;
       border-top:1px solid rgba(255,255,255,.12);
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      font-size:11px;
-      color:var(--wh3);
-      line-height:1.4;
+      display:grid;
+      grid-template-columns:repeat(5, minmax(0, 1fr));
+      gap:12px 16px;
     }
     .ca-meta-strip .meta-item{
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
+      display:grid;
+      grid-template-columns:16px minmax(0,1fr);
+      grid-template-areas:
+        "icon label"
+        "icon value";
+      column-gap:10px;
+      row-gap:2px;
+      align-items:start;
       color:var(--wh2);
     }
-    .ca-meta-strip .meta-item::after{
-      content:'·';
+    .ca-meta-strip .meta-item::before{
+      grid-area:icon;
       color:var(--wh4);
-      margin-left:4px;
+      font-size:12px;
+      line-height:1.1;
+      margin-top:2px;
+      content:'•';
     }
-    .ca-meta-strip .meta-item:last-child::after{content:'';margin:0}
+    .ca-meta-strip .meta-item:nth-child(1)::before{content:'⌖'}
+    .ca-meta-strip .meta-item:nth-child(2)::before{content:'▣'}
+    .ca-meta-strip .meta-item:nth-child(3)::before{content:'⎘'}
+    .ca-meta-strip .meta-item:nth-child(4)::before{content:'◷'}
+    .ca-meta-strip .meta-item:nth-child(5)::before{content:'◎'}
     .ca-meta-strip .meta-label{
+      grid-area:label;
       color:var(--wh4);
       text-transform:uppercase;
-      letter-spacing:.5px;
+      letter-spacing:.7px;
       font-size:10px;
+      font-weight:700;
+    }
+    .ca-meta-strip .meta-item > [id]{
+      grid-area:value;
+      color:var(--wh);
+      font-size:13px;
+      line-height:1.4;
     }
     .ca-header-note{
       margin:0;
-      font-size:12px;
-      line-height:1.55;
+      font-size:13px;
+      line-height:1.6;
       color:var(--wh3);
       font-style:italic;
       background:rgba(13,17,23,.48);
       border:1px solid rgba(255,255,255,.10);
-      border-radius:8px;
-      padding:10px 12px;
+      border-radius:12px;
+      padding:18px;
       align-self:stretch;
       display:flex;
+      align-items:flex-start;
+      gap:12px;
+    }
+    .ca-note-icon{
+      width:20px;
+      height:20px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      color:var(--wh2);
+      display:inline-flex;
       align-items:center;
+      justify-content:center;
+      font-style:normal;
+      font-weight:700;
+      flex-shrink:0;
+      margin-top:2px;
     }
     .rm-stat{
       position:relative;
@@ -116,28 +209,59 @@
       box-shadow:0 8px 20px rgba(0,0,0,.2);
       border-top:3px solid var(--border2);
       overflow:hidden;
+      border-radius:16px;
+      padding:0;
+    }
+    .rm-stat-body{
+      display:grid;
+      grid-template-columns:82px minmax(0,1fr);
+      gap:16px;
+      align-items:center;
+      padding:18px 20px;
+      min-height:126px;
+    }
+    .rm-stat-icon{
+      width:78px;
+      height:78px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid currentColor;
+      background:rgba(255,255,255,.02);
+      color:var(--wh3);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    .rm-stat-icon svg{
+      width:30px;
+      height:30px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.9;
+      stroke-linecap:round;
+      stroke-linejoin:round;
     }
     .rm-stat .rm-stat-k{
       color:var(--wh3);
-      letter-spacing:.4px;
+      letter-spacing:.9px;
       text-transform:uppercase;
-      font-size:10px;
-      font-weight:700;
+      font-size:11px;
+      font-weight:800;
     }
     .rm-stat .rm-stat-v{
       font-family:'Barlow Condensed',sans-serif;
-      font-size:28px;
+      font-size:52px;
       font-weight:900;
       line-height:1;
-      margin-top:4px;
-      color:var(--wh2);
+      margin-top:6px;
+      color:var(--wh);
     }
     .rm-stat .kpi-sub{
       margin-top:6px;
-      font-size:10px;
-      color:var(--wh4);
+      font-size:12px;
+      color:var(--wh3);
       line-height:1.3;
-      min-height:13px;
+      min-height:16px;
     }
     .rm-stat .kpi-chip{
       margin-top:7px;
@@ -152,24 +276,27 @@
       color:var(--low);
       border:1px solid rgba(63,185,80,.32);
     }
-    .kpi-open{border-top-color:var(--crit)}
-    .kpi-open .rm-stat-v{color:var(--crit)}
+    .kpi-open{border-top-color:var(--blue)}
+    .kpi-open .rm-stat-icon{color:var(--blue); background:rgba(47,129,247,.08); border-color:rgba(47,129,247,.82)}
     .kpi-progress{border-top-color:var(--med)}
-    .kpi-progress .rm-stat-v{color:var(--med)}
+    .kpi-progress .rm-stat-icon{color:var(--med)}
     .kpi-overdue{
       border-top:3px solid transparent;
-      border-image:linear-gradient(90deg, var(--crit), #ff4444) 1;
+      border-image:linear-gradient(90deg, var(--or), #ff6b2c) 1;
     }
-    .kpi-overdue .rm-stat-v{color:var(--crit)}
+    .kpi-overdue .rm-stat-icon{color:#ff6b5c; background:rgba(255,107,92,.08); border-color:rgba(255,107,92,.88)}
     .kpi-overdue .kpi-sub{color:#f58f8d}
     .kpi-closed{border-top-color:var(--low)}
-    .kpi-closed .rm-stat-v{color:var(--low)}
+    .kpi-closed .rm-stat-icon{color:var(--low); background:rgba(63,185,80,.08); border-color:rgba(63,185,80,.9)}
     .kpi-initial{border-top-color:var(--wh4)}
     .kpi-initial .rm-stat-v{color:var(--wh3)}
     .kpi-residual{border-top-color:var(--or)}
     .kpi-residual .rm-stat-v{color:var(--or)}
     .kpi-reduction{border-top-color:var(--low)}
     .kpi-reduction .rm-stat-v{color:var(--low)}
+    .ca-metrics-three{
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+    }
     .rm-subtabs .rm-subtab{
       border:1.5px solid var(--border2);
       background:transparent;
@@ -208,27 +335,113 @@
       border-color:rgba(255,255,255,.2);
     }
     .ca-table{
-      min-width:1450px;
-      table-layout:auto;
+      width:100%;
+      min-width:0;
+      table-layout:fixed;
     }
     .ca-table th,
     .ca-table td{
       vertical-align:top;
       white-space:normal;
-      padding:10px 9px;
+      padding:10px 7px;
+    }
+    .ca-table th:nth-child(1),
+    .ca-table td:nth-child(1){
+      width:6%;
+    }
+    .ca-table th:nth-child(2),
+    .ca-table td:nth-child(2){
+      width:7%;
+    }
+    .ca-table th.nc-head,
+    .ca-table td.nc-cell{
+      width:14%;
+      white-space:normal !important;
     }
     .ca-table th.reco-head,
     .ca-table td.reco-cell{
-      width:42%;
-      min-width:520px;
+      width:20%;
       white-space:normal !important;
     }
+    .ca-table th:nth-child(5),
+    .ca-table td:nth-child(5){width:8%}
+    .ca-table th:nth-child(6),
+    .ca-table td:nth-child(6){width:7%}
+    .ca-table th:nth-child(7),
+    .ca-table td:nth-child(7){width:7%}
+    .ca-table th:nth-child(8),
+    .ca-table td:nth-child(8){width:7%}
+    .ca-table th:nth-child(9),
+    .ca-table td:nth-child(9){width:7%}
+    .ca-table th:nth-child(10),
+    .ca-table td:nth-child(10){width:6%}
+    .ca-table th:nth-child(11),
+    .ca-table td:nth-child(11){width:11%}
+    .ca-table th:nth-child(-n+4),
+    .ca-table td:nth-child(-n+4){
+      padding-left:6px;
+      padding-right:6px;
+    }
+    .ca-table th:nth-child(5),
+    .ca-table th:nth-child(6),
+    .ca-table th:nth-child(7),
+    .ca-table th:nth-child(8),
+    .ca-table th:nth-child(9),
+    .ca-table th:nth-child(10),
+    .ca-table th:nth-child(11),
+    .ca-table td:nth-child(5),
+    .ca-table td:nth-child(6),
+    .ca-table td:nth-child(7),
+    .ca-table td:nth-child(8),
+    .ca-table td:nth-child(9),
+    .ca-table td:nth-child(10),
+    .ca-table td:nth-child(11){
+      text-align:center;
+    }
+    .ca-table td:nth-child(11){
+      text-align:right;
+    }
+    .ca-table td.nc-cell,
     .ca-table td.reco-cell{
       overflow-wrap:anywhere;
       word-break:break-word;
       padding-top:8px;
       padding-bottom:8px;
     }
+    .nc-block{
+      display:grid;
+      gap:4px;
+      color:var(--wh2);
+      line-height:1.42;
+      max-width:none;
+    }
+    .nc-code{
+      display:inline-flex;
+      width:max-content;
+      max-width:100%;
+      align-items:center;
+      padding:1px 7px;
+      border-radius:999px;
+      border:1px solid rgba(244,121,32,.24);
+      background:rgba(244,121,32,.08);
+      color:var(--or);
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+    }
+    .nc-text,
+    .rec-text{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:normal;
+      text-wrap:balance;
+    }
+    .nc-text{max-width:22ch}
+    .rec-text{max-width:none}
     tr.row-crit { border-left: 3px solid var(--crit); background: rgba(218,54,51,.02); }
     tr.row-high { border-left: 3px solid var(--high); background: rgba(224,125,35,.02); }
     tr.row-med  { border-left: 3px solid var(--med); }
@@ -245,6 +458,7 @@
       font-size:10px;
       line-height:1.35;
       color:var(--wh4);
+      max-width:100%;
     }
     .action-id-stack .aid-base{color:var(--wh4)}
     .action-id-stack .aid-code{color:var(--or)}
@@ -381,38 +595,44 @@
       color:var(--wh2);
     }
     .rec-action {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 8px 10px;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      padding: 1px 0;
       font-size: 12px;
       color: var(--wh2);
-      line-height: 1.5;
+      line-height: 1.42;
       white-space:normal;
       overflow-wrap:anywhere;
       word-break:break-word;
+      max-width:none;
+      width:100%;
     }
-    tr.row-crit .rec-action{border-color:rgba(218,54,51,.15)}
-    tr.row-high .rec-action{border-color:rgba(224,125,35,.15)}
     .reco-input{
       width:100%;
-      min-height:78px;
-      resize:vertical;
-      border-radius:4px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(28,33,40,.95);
+      min-height:2.8em;
+      max-height:2.8em;
+      resize:none;
+      -webkit-appearance:none;
+      appearance:none;
+      border-radius:0;
+      border:0;
+      background:transparent;
       color:var(--wh);
-      padding:8px 9px;
+      padding:0;
       font-family:'Barlow',sans-serif;
       font-size:12px;
-      line-height:1.45;
+      line-height:1.3;
       outline:none;
-      transition:border-color .16s ease, box-shadow .16s ease;
+      transition:color .16s ease, background-color .16s ease;
       white-space:normal;
+      overflow:hidden;
+      text-wrap:balance;
     }
     .reco-input:focus{
-      border-color:rgba(244,121,32,.65);
-      box-shadow:0 0 0 2px rgba(244,121,32,.16);
+      border:0;
+      box-shadow:none;
+      background:transparent;
     }
     .auth-note{
       margin-top:6px;
@@ -424,8 +644,27 @@
     .row-actions{
       display:flex;
       flex-direction:column;
-      align-items:flex-start;
+      align-items:flex-end;
       gap:6px;
+      width:100%;
+    }
+    .close-btn.btn-open{
+      width:100%;
+      min-width:0;
+      max-width:156px;
+      min-height:48px;
+      padding:0 14px;
+      border-radius:10px;
+      border-color:rgba(255,255,255,.12);
+      color:var(--wh);
+      font-size:12px;
+      font-weight:800;
+      background:rgba(255,255,255,.03);
+    }
+    .close-btn.btn-open:hover{
+      border-color:rgba(255,255,255,.2);
+      background:rgba(255,255,255,.06);
+      color:var(--wh);
     }
     .rm-btn[disabled]{opacity:.45;cursor:not-allowed}
     .photo-only{display:none}
@@ -780,6 +1019,14 @@
       font-size:10px;
       color:var(--wh4);
     }
+    .risk-preview-item.risk-initial.low{border-top-color:var(--low)}
+    .risk-preview-item.risk-initial.low .v{color:var(--low)}
+    .risk-preview-item.risk-initial.moderate{border-top-color:var(--med)}
+    .risk-preview-item.risk-initial.moderate .v{color:var(--med)}
+    .risk-preview-item.risk-initial.high{border-top-color:var(--high)}
+    .risk-preview-item.risk-initial.high .v{color:var(--high)}
+    .risk-preview-item.risk-initial.critical{border-top-color:var(--crit)}
+    .risk-preview-item.risk-initial.critical .v{color:var(--crit)}
     .risk-preview-item.risk-residual{border-top-color:var(--med)}
     .risk-preview-item.risk-residual .v{color:var(--med)}
     .risk-preview-item.risk-reduction{border-top-color:var(--low)}
@@ -880,16 +1127,6 @@
     #closedBy{
       background:var(--bg4);
       color:var(--wh3);
-    }
-    #closureMethod.method-unset{
-      border-color:var(--med);
-      box-shadow:0 0 0 2px rgba(210,153,34,.16);
-    }
-    .method-hint{
-      margin-top:4px;
-      font-size:10px;
-      color:var(--med);
-      display:none;
     }
     .method-hint.show{display:block}
     .close-evidence-wrap{grid-column:span 2}
@@ -1079,16 +1316,27 @@
     @keyframes ctOut{from{opacity:1}to{opacity:0;transform:translateX(12px)}}
     @media (max-width:980px){
       .ca-header-card{grid-template-columns:1fr}
+      .ca-metrics-three{grid-template-columns:repeat(2, minmax(0, 1fr))}
+      .ca-meta-strip{grid-template-columns:repeat(2, minmax(0, 1fr))}
       .close-crumbs{display:none}
       .ref-grid{grid-template-columns:1fr}
       .risk-preview-grid{grid-template-columns:1fr}
       .close-fields-grid{grid-template-columns:1fr}
       .close-evidence-wrap,
       .close-textarea-wrap{grid-column:span 1}
+      .ca-table th.nc-head,
+      .ca-table td.nc-cell{min-width:260px}
       .ca-table th.reco-head,
-      .ca-table td.reco-cell{min-width:360px}
+      .ca-table td.reco-cell{min-width:280px}
     }
     @media (max-width:760px){
+      .ca-metrics-three{grid-template-columns:1fr}
+      .ca-meta-strip{grid-template-columns:1fr}
+      .rm-stat-body{
+        grid-template-columns:1fr;
+        justify-items:start;
+        min-height:unset;
+      }
       #closeModal{
         padding:0;
         align-items:stretch;
@@ -1139,13 +1387,12 @@
 <body>
   <header class="rm-topbar">
     <div class="rm-topbar-left">
-      <button class="rm-back-btn" id="backLandingBtn">← Assessment Management Center</button>
+      <button class="rm-back-btn" id="backLandingBtn">← Back to Corrections &amp; Corrective Actions</button>
       <div class="rm-title-wrap">
         <h1 class="rm-title">Corrective Action Detail</h1>
         <p class="rm-subtitle" id="detailSubtitle">Facility corrective action review and closure</p>
       </div>
     </div>
-    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
   </header>
 
   <main class="rm-shell">
@@ -1162,47 +1409,44 @@
             <span class="meta-item"><span class="meta-label">Inspector</span><span id="metaInspector">-</span></span>
           </div>
         </div>
-        <p class="ca-header-note">Issue = what was found. Recommended Action = what should be done. Closure is restricted to the original assessor or authorised reviewers.</p>
-      </div>
-      <div class="rm-actions" style="margin-top:10px;">
-        <button class="rm-btn" id="backCorrectionsBtn">Back to Corrections &amp; Corrective Actions</button>
       </div>
 
-      <div class="rm-stat-grid" style="margin-top:10px;">
+      <div class="rm-stat-grid ca-metrics-three" style="margin-top:10px;">
         <article class="rm-stat kpi-open">
-          <div class="rm-stat-k">Open Actions</div>
-          <div class="rm-stat-v" id="statOpen">0</div>
-          <div class="kpi-sub">&nbsp;</div>
-        </article>
-        <article class="rm-stat kpi-progress">
-          <div class="rm-stat-k">In Progress</div>
-          <div class="rm-stat-v" id="statInProgress">0</div>
-          <div class="kpi-sub">&nbsp;</div>
+          <div class="rm-stat-body">
+            <div class="rm-stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M8 4h8l3 3v13H5V4h3Z"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h4"/></svg>
+            </div>
+            <div>
+              <div class="rm-stat-k">Open Actions</div>
+              <div class="rm-stat-v" id="statOpen">0</div>
+              <div class="kpi-sub">Actions requiring attention</div>
+            </div>
+          </div>
         </article>
         <article class="rm-stat kpi-overdue">
-          <div class="rm-stat-k">Overdue</div>
-          <div class="rm-stat-v" id="statOverdue">0</div>
-          <div class="kpi-sub">⚠ Past due date</div>
+          <div class="rm-stat-body">
+            <div class="rm-stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg>
+            </div>
+            <div>
+              <div class="rm-stat-k">Overdue Actions</div>
+              <div class="rm-stat-v" id="statOverdue">0</div>
+              <div class="kpi-sub">Past due date</div>
+            </div>
+          </div>
         </article>
         <article class="rm-stat kpi-closed">
-          <div class="rm-stat-k">Closed</div>
-          <div class="rm-stat-v" id="statClosed">0</div>
-          <div class="kpi-sub">&nbsp;</div>
-        </article>
-        <article class="rm-stat kpi-initial">
-          <div class="rm-stat-k">Initial Risk</div>
-          <div class="rm-stat-v" id="statInitialRisk">0</div>
-          <div class="kpi-sub">&nbsp;</div>
-        </article>
-        <article class="rm-stat kpi-residual">
-          <div class="rm-stat-k">Residual Risk</div>
-          <div class="rm-stat-v" id="statResidualRisk">0</div>
-          <div class="kpi-sub">&nbsp;</div>
-        </article>
-        <article class="rm-stat kpi-reduction">
-          <div class="rm-stat-k">Risk Reduction</div>
-          <div class="rm-stat-v" id="statRiskReduction">0</div>
-          <div class="kpi-chip" id="riskReductionChip">↓ 0% improved</div>
+          <div class="rm-stat-body">
+            <div class="rm-stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8.5 12.5 2.3 2.3 4.8-5.1"/></svg>
+            </div>
+            <div>
+              <div class="rm-stat-k">Closed Actions</div>
+              <div class="rm-stat-v" id="statClosed">0</div>
+              <div class="kpi-sub">Completed actions</div>
+            </div>
+          </div>
         </article>
       </div>
 
@@ -1218,6 +1462,7 @@
             <tr>
               <th>Action ID</th>
               <th>Inspection Ref</th>
+              <th class="nc-head">NC</th>
               <th class="reco-head">Recommended Action</th>
               <th>Risk</th>
               <th>Priority</th>
@@ -1231,7 +1476,6 @@
           <tbody id="actionsTbody"></tbody>
         </table>
       </div>
-      <p class="rm-muted" id="actionHint" style="margin-top:10px;">Evidence is optional. Critical closures may move to Closed Pending Verification before full risk reduction.</p>
     </section>
   </main>
 
@@ -1275,7 +1519,7 @@
             </span>
             <div class="ref-risk-chips">
               <span class="risk-chip-priority" id="modalPriorityPill">Priority</span>
-              <span class="risk-chip-score" id="modalRiskScorePill">Score 0</span>
+              <span class="risk-chip-score" id="modalRiskScorePill">Score -</span>
             </div>
           </div>
 
@@ -1320,7 +1564,7 @@
             <div class="risk-preview-item risk-reduction">
               <div class="k">Risk Reduction</div>
               <div class="v" id="previewRiskReduction">-</div>
-              <span class="risk-improve-chip" id="previewRiskReductionChip">↓ 0% improved</span>
+              <span class="risk-improve-chip" id="previewRiskReductionChip">—</span>
             </div>
           </div>
           <div class="closure-impact" id="closureImpactNote">⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.</div>
@@ -1339,26 +1583,12 @@
             </select>
           </div>
           <div>
-            <label class="rm-label" for="closureMethod">Closure Method <span class="req">*</span></label>
-            <select class="rm-select" id="closureMethod">
-              <option value="">Select closure method</option>
-              <option value="Remediation Completed">Remediation Completed</option>
-              <option value="Compensating Control Implemented">Compensating Control Implemented</option>
-              <option value="Risk Accepted with Justification">Risk Accepted with Justification</option>
-              <option value="Third-Party Certification Obtained">Third-Party Certification Obtained</option>
-              <option value="Training & Awareness Completed">Training & Awareness Completed</option>
-              <option value="Deferred with Approval">Deferred with Approval</option>
-              <option value="Verified by Re-inspection">Verified by Re-inspection</option>
-            </select>
-            <div class="method-hint show" id="closureMethodHint">Required — select how this action was resolved</div>
-          </div>
-          <div>
             <label class="rm-label" for="closureDate">Closure Date</label>
             <input class="rm-input" id="closureDate" type="date" />
           </div>
           <div>
             <label class="rm-label" for="closedBy">Closed By</label>
-            <input class="rm-input" id="closedBy" placeholder="Name / email" readonly />
+            <input class="rm-input" id="closedBy" placeholder="Name" readonly />
           </div>
           <div>
             <label class="rm-label" for="originalAssessorDisplay">Assessment Owner / Original Assessor</label>
@@ -1431,8 +1661,8 @@
 
   <div class="close-toast-wrap" id="closeToastWrap"></div>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/workflow-core.js?v=20260514-recordrestore1"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260514-recordrestore1"></script>
   <script>
     var activeTab = 'open';
     var activeFacility = '';
@@ -1463,6 +1693,22 @@
       return authSession;
     }
 
+    function resolveDisplayName(primary, fallback) {
+      var source = primary || {};
+      var backup = fallback || {};
+      return String(
+        source.full_name ||
+        source.fullName ||
+        source.username ||
+        backup.full_name ||
+        backup.fullName ||
+        backup.username ||
+        source.email ||
+        backup.email ||
+        ''
+      ).trim();
+    }
+
     function showCloseToast(message, type) {
       var wrap = document.getElementById('closeToastWrap');
       if (!wrap) return;
@@ -1486,12 +1732,7 @@
     }
 
     function updateClosureMethodState(forceShowHint) {
-      var methodEl = document.getElementById('closureMethod');
-      var hint = document.getElementById('closureMethodHint');
-      if (!methodEl || !hint) return;
-      var hasValue = !!String(methodEl.value || '').trim();
-      methodEl.classList.toggle('method-unset', !hasValue);
-      hint.classList.toggle('show', forceShowHint || !hasValue);
+      return !!forceShowHint;
     }
 
     function updateClosureDetailsCounter() {
@@ -1654,6 +1895,14 @@
       return 'low';
     }
 
+    function riskCssColor(level) {
+      var klass = riskClass(level);
+      if (klass === 'critical') return 'var(--crit)';
+      if (klass === 'high') return 'var(--high)';
+      if (klass === 'moderate') return 'var(--med)';
+      return 'var(--low)';
+    }
+
     function statusClass(status) {
       var normalized = String(status || '').toLowerCase();
       if (normalized === 'open') return 'status-open';
@@ -1769,12 +2018,48 @@
       return '<span class="file-chip" title="' + RiskModuleUtils.esc(titleText) + '">📄 1 file</span>';
     }
 
+    function compactNcLabel(text) {
+      var value = String(text || '').trim();
+      if (!value) return '';
+      value = value.replace(/^[\s-]+|[\s-]+$/g, '');
+      value = value.replace(/^(valid|current|updated|available|functional|proper|adequate)\s+/i, '');
+      value = value.replace(/^availability of\s+/i, '');
+      value = value.replace(/^presence of\s+/i, '');
+      value = value.replace(/^evidence of\s+/i, '');
+      value = value.replace(/\bEPA environmental\b/gi, 'EPA');
+      value = value.replace(/\s+is\s+available\s+and\s+displayed\.?$/i, '');
+      value = value.replace(/\s+is\s+available\.?$/i, '');
+      value = value.replace(/\s+is\s+displayed\.?$/i, '');
+      value = value.replace(/\s+certificate\/permit\b/gi, ' permit/certificate');
+      value = value.replace(/\s{2,}/g, ' ').trim();
+      return value;
+    }
+
+    function ncCellHtml(action) {
+      var code = String(action && action.sourceCode || '').trim();
+      var questionPoint = compactNcLabel(action && (action.issue || action.sourceQuestion || action.sourceCode));
+      var commentText = String((action && action.sourceComment) || '').trim();
+      var ncText = '-';
+      if (questionPoint && commentText && questionPoint.toLowerCase() !== commentText.toLowerCase()) {
+        ncText = questionPoint + '(' + commentText + ')';
+      } else if (commentText) {
+        ncText = commentText;
+      } else if (questionPoint) {
+        ncText = questionPoint;
+      }
+      var codeHtml = code ? ('<span class="nc-code">' + RiskModuleUtils.esc(code) + '</span>') : '';
+      return '<div class="nc-block">' +
+        codeHtml +
+        '<span class="nc-text">' + RiskModuleUtils.esc(ncText) + '</span>' +
+      '</div>';
+    }
+
     function recommendationCellHtml(action, canEdit) {
       var recommendation = action.recommendedAction || action.description || '-';
       if (!canEdit) {
-        return '<div class="rec-action">' + RiskModuleUtils.esc(recommendation) + '</div>';
+        return '<div class="rec-action"><span class="rec-text">' + RiskModuleUtils.esc(recommendation) + '</span></div>';
       }
-      return '<div class="rec-action"><textarea class="reco-input" data-reco="' + RiskModuleUtils.esc(action.actionId) + '">' +
+      return '<div class="rec-action"><textarea class="reco-input" rows="3" data-reco="' + RiskModuleUtils.esc(action.actionId) + '">' +
         RiskModuleUtils.esc(recommendation) + '</textarea></div>';
     }
 
@@ -1783,7 +2068,9 @@
         return action.status === 'Open' || action.status === 'In Progress' || action.status === 'Overdue' || action.status === 'Reopened' || action.status === 'Closed Pending Verification';
       }).length;
       var closedCount = actions.filter(function (action) {
-        return action.status === 'Verified Closed' || action.status === 'Closed';
+        return RiskModuleUtils.hasConfirmedClosure
+          ? RiskModuleUtils.hasConfirmedClosure(action)
+          : ((action.status === 'Verified Closed' || action.status === 'Closed') && !!(action.closedBy || action.verifiedClosedBy || action.closureDate || action.verifiedClosedAt || action.closureOutcome || action.closedHow || action.closureMethod));
       }).length;
       document.getElementById('tabCountOpen').textContent = String(openCount);
       document.getElementById('tabCountClosed').textContent = String(closedCount);
@@ -1806,7 +2093,12 @@
 
     function setFacilityHeader(actions) {
       var records = allFacilityRecords();
-      var latestRecord = records[0] || {};
+      var latestRecord = records.slice().sort(function (a, b) {
+        var aVersion = Number(a && (a.version || a.version_number || 0));
+        var bVersion = Number(b && (b.version || b.version_number || 0));
+        if (aVersion !== bVersion) return bVersion - aVersion;
+        return new Date(b && (b.lastUpdatedAt || b.last_updated_at || b.inspectionDate || b.assessment_date) || 0) - new Date(a && (a.lastUpdatedAt || a.last_updated_at || a.inspectionDate || a.assessment_date) || 0);
+      })[0] || {};
       var firstAction = actions[0] || {};
       var facilityDetails = RiskModuleUtils.readJSON('goil_facility_details', {});
 
@@ -1885,7 +2177,9 @@
       }
       if (activeTab === 'closed') {
         return actions.filter(function (action) {
-          return action.status === 'Verified Closed' || action.status === 'Closed';
+          return RiskModuleUtils.hasConfirmedClosure
+            ? RiskModuleUtils.hasConfirmedClosure(action)
+            : ((action.status === 'Verified Closed' || action.status === 'Closed') && !!(action.closedBy || action.verifiedClosedBy || action.closureDate || action.verifiedClosedAt || action.closureOutcome || action.closedHow || action.closureMethod));
         });
       }
       return actions;
@@ -1901,37 +2195,26 @@
 
     function canEditRecommendation(action) {
       if (!action) return false;
-      if (action.status === 'Verified Closed' || action.status === 'Closed') return false;
+      if (RiskModuleUtils.hasConfirmedClosure
+        ? RiskModuleUtils.hasConfirmedClosure(action)
+        : ((action.status === 'Verified Closed' || action.status === 'Closed') && !!(action.closedBy || action.verifiedClosedBy || action.closureDate || action.verifiedClosedAt || action.closureOutcome || action.closedHow || action.closureMethod))) return false;
       return RiskModuleUtils.canUserCloseAction(action, currentUser) || RiskModuleUtils.canUserVerifyAction(action, currentUser);
     }
 
     function setStats(actions) {
-      var open = actions.filter(function (action) { return action.status === 'Open'; }).length;
-      var inProgress = actions.filter(function (action) { return action.status === 'In Progress' || action.status === 'Reopened' || action.status === 'Closed Pending Verification'; }).length;
+      var open = actions.filter(function (action) {
+        return action.status === 'Open' || action.status === 'In Progress' || action.status === 'Reopened' || action.status === 'Closed Pending Verification';
+      }).length;
       var overdue = actions.filter(function (action) { return action.status === 'Overdue'; }).length;
-      var closed = actions.filter(function (action) { return action.status === 'Verified Closed' || action.status === 'Closed'; }).length;
-
-      var records = allFacilityRecords();
-      var initial = 0;
-      var residual = 0;
-      records.forEach(function (record) {
-        var snap = RiskModuleUtils.getRiskSnapshotForRecord(record, actions);
-        initial += Number(snap.initialScore || 0);
-        residual += Number(snap.residualScore || 0);
-      });
-      initial = Math.round(initial * 10) / 10;
-      residual = Math.round(residual * 10) / 10;
-      var reduction = Math.max(0, Math.round((initial - residual) * 10) / 10);
+      var closed = actions.filter(function (action) {
+        return RiskModuleUtils.hasConfirmedClosure
+          ? RiskModuleUtils.hasConfirmedClosure(action)
+          : ((action.status === 'Verified Closed' || action.status === 'Closed') && !!(action.closedBy || action.verifiedClosedBy || action.closureDate || action.verifiedClosedAt || action.closureOutcome || action.closedHow || action.closureMethod));
+      }).length;
 
       document.getElementById('statOpen').textContent = String(open);
-      document.getElementById('statInProgress').textContent = String(inProgress);
       document.getElementById('statOverdue').textContent = String(overdue);
       document.getElementById('statClosed').textContent = String(closed);
-      document.getElementById('statInitialRisk').textContent = String(initial);
-      document.getElementById('statResidualRisk').textContent = String(residual);
-      document.getElementById('statRiskReduction').textContent = String(reduction);
-      var reductionPct = initial > 0 ? Math.round((reduction / initial) * 100) : 0;
-      document.getElementById('riskReductionChip').textContent = '↓ ' + String(reductionPct) + '% improved';
     }
 
     function findActionById(actionId) {
@@ -1959,7 +2242,7 @@
       var base = String(referenceNo || '-');
       var version = Number(versionNumber);
       if (!Number.isFinite(version) || version < 1) version = 1;
-      return base + '-v' + String(version);
+      return base + '-V' + String(version);
     }
 
     function displayReferenceForAction(action) {
@@ -1986,9 +2269,27 @@
       }) || null;
     }
 
+    function getAssessmentContextForAction(action) {
+      if (!action) return null;
+      var record = getRecordForAction(action);
+      var ref = (record && (record.inspectionRef || record.assessment_reference))
+        || action.inspectionRef
+        || activeMasterRef
+        || '';
+      var version = (record && Number(record.version || record.version_number || 0))
+        || actionVersionFromId(action.actionId)
+        || 1;
+      if (!ref) return null;
+      return {
+        ref: String(ref),
+        version: Number.isFinite(version) && version > 0 ? version : 1
+      };
+    }
+
     function renderRiskPreview(action) {
       var initialNode = document.getElementById('previewInitialRisk');
       var initialLevelNode = document.getElementById('previewInitialRiskLevel');
+      var initialCardNode = initialNode ? initialNode.closest('.risk-preview-item') : null;
       var residualNode = document.getElementById('previewResidualRisk');
       var residualLevelNode = document.getElementById('previewResidualRiskLevel');
       var reductionNode = document.getElementById('previewRiskReduction');
@@ -2001,7 +2302,7 @@
         residualNode.textContent = '-';
         if (residualLevelNode) residualLevelNode.textContent = '-';
         reductionNode.textContent = '-';
-        if (reductionChipNode) reductionChipNode.textContent = '↓ 0% improved';
+        if (reductionChipNode) reductionChipNode.textContent = '—';
         impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
         return;
       }
@@ -2015,7 +2316,7 @@
         residualNode.textContent = '-';
         if (residualLevelNode) residualLevelNode.textContent = '-';
         reductionNode.textContent = '-';
-        if (reductionChipNode) reductionChipNode.textContent = '↓ 0% improved';
+        if (reductionChipNode) reductionChipNode.textContent = '—';
         impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
         return;
       }
@@ -2032,18 +2333,49 @@
 
       var baseline = RiskModuleUtils.getRiskSnapshotForRecord(record, currentActions);
       var projected = RiskModuleUtils.getRiskSnapshotForRecord(record, projectedActions);
-      var initialScore = Number(baseline.initialScore || 0);
-      var projectedResidual = Number(projected.residualScore || 0);
-      var reduction = Math.max(0, Math.round((initialScore - projectedResidual) * 10) / 10);
-      var reductionPct = initialScore > 0 ? Math.round((reduction / initialScore) * 100) : 0;
+      var actionInitialScore = Number(action && action.riskScore);
+      var initialScore = Number.isFinite(actionInitialScore) && actionInitialScore > 0
+        ? actionInitialScore
+        : Number(baseline.initialScore || 0);
+      var initialLevel = String(action && (action.riskLevel || action.priority) || baseline.initialLevel || 'Low');
+      var hasOpenAfterClosure = Number(projected.openCount || 0) > 0;
+      var hasResidualScore = projected.residualScore != null && Number.isFinite(Number(projected.residualScore));
+      var resolvesToLow = !hasResidualScore && String(projected.residualLevel || '').toLowerCase() === 'low';
+      var projectedResidual = hasResidualScore ? Number(projected.residualScore) : null;
+      var reduction = hasResidualScore
+        ? Math.max(0, Math.round((initialScore - projectedResidual) * 10) / 10)
+        : (hasOpenAfterClosure
+          ? null
+          : (initialScore > 0 ? Math.round(initialScore * 10) / 10 : null));
+      var reductionPct = (reduction != null && initialScore > 0)
+        ? Math.round((reduction / initialScore) * 100)
+        : null;
 
-      initialNode.textContent = String(initialScore);
-      if (initialLevelNode) initialLevelNode.textContent = baseline.initialLevel || 'Low';
-      residualNode.textContent = String(projectedResidual);
-      if (residualLevelNode) residualLevelNode.textContent = projected.residualLevel || 'Low';
-      reductionNode.textContent = String(reduction);
-      if (reductionChipNode) reductionChipNode.textContent = '↓ ' + String(reductionPct) + '% improved';
-      impactNode.textContent = '⚡ Submitting this closure will update the residual risk score for this assessment. This action cannot be undone once confirmed.';
+      initialNode.textContent = initialScore > 0 ? String(initialScore) : '-';
+      if (initialLevelNode) initialLevelNode.textContent = initialLevel || 'Low';
+      if (initialCardNode) {
+        var initialColor = riskCssColor(initialLevel);
+        initialCardNode.classList.remove('low', 'moderate', 'high', 'critical');
+        initialCardNode.classList.add(riskClass(initialLevel));
+        initialCardNode.style.borderTopColor = initialColor;
+        if (initialNode) initialNode.style.color = initialColor;
+        if (initialLevelNode) initialLevelNode.style.color = initialColor;
+      }
+      residualNode.textContent = hasResidualScore ? String(projectedResidual) : '-';
+      if (residualLevelNode) {
+        residualLevelNode.textContent = resolvesToLow ? 'Low' : (projected.residualLevel || '-');
+      }
+      reductionNode.textContent = reduction != null && reduction > 0 ? String(reduction) : '-';
+      if (reductionChipNode) {
+        reductionChipNode.textContent = reductionPct != null
+          ? ('↓ ' + String(reductionPct) + '% improved')
+          : (hasOpenAfterClosure ? 'Partial reduction' : '—');
+      }
+      if (impactNode) {
+        impactNode.textContent = hasOpenAfterClosure
+          ? '⚡ Another corrective action will still remain open after this closure, so residual risk will reduce to reflect the remaining open NCs.'
+          : '⚡ After this closure, all linked corrective actions will be closed and the residual risk will be updated for this assessment.';
+      }
     }
 
     function openCloseModal(actionId) {
@@ -2059,11 +2391,11 @@
 
       var user = currentUser || {};
       var auth = readAuthSession();
-      var defaultCloser = String(auth.email || user.email || user.username || user.fullName || '').trim();
+      var defaultCloser = resolveDisplayName(user, auth);
       var draft = current.closureDraft || {};
       var sectionText = current.sectionLabel || current.sectionId || '-';
       var facilityText = current.facilityName || activeFacility || 'Facility';
-      var scoreText = String(current.riskScore || 0);
+      var scoreText = String(current.riskScore == null ? '-' : current.riskScore);
       var levelText = String(current.riskLevel || current.priority || 'Low');
       var priorityText = String(current.priority || levelText);
       var isCritical = String(levelText).toLowerCase() === 'critical' || String(priorityText).toLowerCase() === 'critical';
@@ -2084,9 +2416,10 @@
       document.getElementById('modalSummaryPriorityText').textContent = priorityText + ' · ' + levelText + ' · Score ' + scoreText;
 
       document.getElementById('closureOutcome').value = draft.outcomeStatus || 'Closed';
-      document.getElementById('closureMethod').value = draft.method || '';
+      var draftCloser = String(draft.by || '').trim();
+      if (draftCloser.indexOf('@') >= 0 && defaultCloser) draftCloser = defaultCloser;
       document.getElementById('closureDate').value = draft.date || new Date().toISOString().slice(0, 10);
-      document.getElementById('closedBy').value = draft.by || defaultCloser;
+      document.getElementById('closedBy').value = draftCloser || defaultCloser;
       document.getElementById('originalAssessorDisplay').value = current.originalAssessor || 'Unknown Assessor';
       document.getElementById('closureEvidence').value = '';
       document.getElementById('closurePhoto').value = '';
@@ -2141,7 +2474,7 @@
     function collectClosurePayload() {
       return {
         outcomeStatus: (document.getElementById('closureOutcome').value || 'Closed').trim(),
-        method: (document.getElementById('closureMethod').value || '').trim(),
+        method: '',
         date: (document.getElementById('closureDate').value || '').trim(),
         by: (document.getElementById('closedBy').value || '').trim(),
         details: (document.getElementById('closureDetails').value || '').trim(),
@@ -2152,10 +2485,6 @@
     function validateClosurePayload(payload) {
       if (!payload.outcomeStatus) {
         return { ok: false, fieldId: 'closureOutcome', message: 'Please set a closure outcome status' };
-      }
-      if (!payload.method) {
-        updateClosureMethodState(true);
-        return { ok: false, fieldId: 'closureMethod', message: 'Please select a closure method' };
       }
       if (!payload.date) {
         return { ok: false, fieldId: 'closureDate', message: 'Please set a closure date' };
@@ -2184,7 +2513,6 @@
         if (action.actionId !== closeActionId) return;
         action.closureDraft = {
           outcomeStatus: payload.outcomeStatus || 'Closed',
-          method: payload.method || '',
           date: payload.date || '',
           by: payload.by || '',
           details: payload.details || '',
@@ -2200,7 +2528,7 @@
       showCloseToast('Draft saved — you can continue later', 'success');
       hideCloseError();
       if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
-        window.GoilWorkflow.appendAudit('corrective_action_closure_draft_saved', currentUser.email || currentUser.username || 'Unknown User', {
+        window.GoilWorkflow.appendAudit('corrective_action_closure_draft_saved', resolveDisplayName(currentUser, readAuthSession()) || 'Unknown User', {
           actionId: closeActionId,
           facilityName: activeFacility
         });
@@ -2220,7 +2548,7 @@
       if (!changed) return;
       RiskModuleUtils.saveActions(actions);
       if (window.GoilWorkflow && typeof window.GoilWorkflow.appendAudit === 'function') {
-        window.GoilWorkflow.appendAudit('corrective_action_recommended_action_updated', currentUser.email || currentUser.username || 'Unknown User', {
+        window.GoilWorkflow.appendAudit('corrective_action_recommended_action_updated', resolveDisplayName(currentUser, readAuthSession()) || 'Unknown User', {
           actionId: actionId,
           facilityName: activeFacility
         });
@@ -2230,6 +2558,10 @@
     function viewSourceChecklistItem() {
       var current = findActionById(closeActionId);
       if (!current) return;
+      var context = getAssessmentContextForAction(current);
+      if (context && RiskModuleUtils.prepareAssessmentRecord) {
+        RiskModuleUtils.prepareAssessmentRecord(context.ref, context.version);
+      }
       try {
         var checklist = RiskModuleUtils.readJSON('goil_checklist_session', {});
         var sections = Array.isArray(checklist.sectionsMeta) ? checklist.sectionsMeta : [];
@@ -2238,11 +2570,37 @@
         if (idx >= 0) localStorage.setItem('goil_current_section', String(idx));
         if (current.sourceCode) localStorage.setItem('goil_focus_item_code', String(current.sourceCode));
       } catch (error) {}
-      window.location.href = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6&_=' + Date.now();
+      var url = 'GOIL_Checklist_Section1.html?v=20260318-masterrefdeep6';
+      if (context) {
+        url += '&ref=' + encodeURIComponent(context.ref);
+        url += '&version=' + encodeURIComponent(String(context.version));
+      }
+      if (current.sourceCode) {
+        url += '&focusCode=' + encodeURIComponent(String(current.sourceCode));
+      }
+      url += '&_=' + Date.now();
+      window.location.href = url;
     }
 
     function viewFullAssessmentRecord() {
-      window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6&_=' + Date.now();
+      var current = findActionById(closeActionId);
+      if (!current) return;
+      var context = getAssessmentContextForAction(current);
+      if (!context) {
+        window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6&_=' + Date.now();
+        return;
+      }
+      if (RiskModuleUtils.openAssessmentRecord) {
+        RiskModuleUtils.openAssessmentRecord(context.ref, context.version);
+        return;
+      }
+      if (RiskModuleUtils.prepareAssessmentRecord) {
+        RiskModuleUtils.prepareAssessmentRecord(context.ref, context.version);
+      }
+      window.location.href = 'GOIL_Review_Submit.html?v=20260318-masterrefdeep6&ref='
+        + encodeURIComponent(context.ref)
+        + '&version=' + encodeURIComponent(String(context.version))
+        + '&_=' + Date.now();
     }
 
     function requestSubmitClosure() {
@@ -2295,16 +2653,16 @@
       var actions = RiskModuleUtils.getActions();
       var updated = false;
       var now = new Date().toISOString();
-      var actualCloser = currentUser.email || currentUser.username || currentUser.fullName || payload.by || 'Unknown User';
+      var actualCloser = resolveDisplayName(currentUser, readAuthSession()) || payload.by || 'Unknown User';
 
       actions.forEach(function (action) {
         if (action.actionId !== closeActionId) return;
         var nextStatus = outcomeToStatus(action, payload.outcomeStatus);
         action.status = nextStatus;
         action.closureOutcome = payload.outcomeStatus;
-        action.closureMethod = payload.method;
+        action.closureMethod = '';
         action.closureMethodOther = '';
-        action.closedHow = payload.method;
+        action.closedHow = '';
         action.responsiblePerson = payload.by;
         action.closureComments = payload.details;
         if (payload.outcomeStatus === 'Deferred with Approval') {
@@ -2346,7 +2704,6 @@
           actionId: closeActionId,
           facilityName: activeFacility,
           closureDate: payload.date,
-          closureMethod: payload.method,
           responsiblePerson: payload.by,
           actualCloser: actualCloser,
           closureOutcome: payload.outcomeStatus,
@@ -2368,7 +2725,7 @@
       if (!current) return;
       if (!RiskModuleUtils.canUserVerifyAction(current, currentUser)) return;
 
-      var verifier = (currentUser.email || currentUser.username || currentUser.fullName || 'Authorized Reviewer');
+      var verifier = resolveDisplayName(currentUser, readAuthSession()) || 'Authorized Reviewer';
       var now = new Date().toISOString();
       var actions = RiskModuleUtils.getActions();
       var updated = false;
@@ -2403,7 +2760,7 @@
       var rows = tabFilteredActions();
       var tbody = document.getElementById('actionsTbody');
       if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="10">No actions in this tab.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11">No actions in this tab.</td></tr>';
         return;
       }
 
@@ -2441,7 +2798,8 @@
 
         return '<tr class="' + rowRiskClass(action) + '">' +
           '<td>' + actionIdCellHtml(action) + '</td>' +
-          '<td title="Parent Reference: ' + RiskModuleUtils.esc(action.inspectionRef || '-') + '">' + RiskModuleUtils.esc(displayReferenceForAction(action)) + '</td>' +
+          '<td>' + RiskModuleUtils.esc(displayReferenceForAction(action)) + '</td>' +
+          '<td class="nc-cell">' + ncCellHtml(action) + '</td>' +
           '<td class="reco-cell">' + recommendationCellHtml(action, canEdit) + '</td>' +
           '<td>' + riskBadgeHtml(action) + '</td>' +
           '<td>' + priorityBadgeHtml(action) + '</td>' +
@@ -2469,8 +2827,6 @@
         });
       });
 
-      var role = String(currentUser.role || currentUser.userRole || currentUser.accessRole || 'Assessor');
-      document.getElementById('actionHint').textContent = 'Issue and Source context are available in the Close Action popup. Logged in as: ' + role + '. Evidence remains optional.';
     }
 
     function bindTabs() {
@@ -2495,11 +2851,9 @@
       activeMasterRef = getMasterRefParam();
       activeFacility = getFacilityParam();
 
-      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
-      document.getElementById('backCorrectionsBtn').addEventListener('click', function () {
+      document.getElementById('backLandingBtn').addEventListener('click', function () {
         window.location.href = 'risk-corrections.html?v=20260319-corrwidth1';
       });
-      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
       document.getElementById('closeModalBackBtn').addEventListener('click', hideCloseModal);
       document.getElementById('modalConductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
       document.getElementById('crumbModule').addEventListener('click', function (event) {
@@ -2525,9 +2879,6 @@
         closureDraftEvidenceName = '';
         updateClosureEvidenceName();
         hideCloseInfo();
-      });
-      document.getElementById('closureMethod').addEventListener('change', function () {
-        updateClosureMethodState(false);
       });
       document.getElementById('closureOutcome').addEventListener('change', function () {
         var action = findActionById(closeActionId);

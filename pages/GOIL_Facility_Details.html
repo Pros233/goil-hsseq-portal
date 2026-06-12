@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GOIL HSSEQ – Facility Details</title>
-<script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+<script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -162,8 +162,15 @@ body{
   width:48px;height:48px;border-radius:10px;
   background:rgba(244,121,32,0.12);border:1px solid rgba(244,121,32,0.3);
   display:flex;align-items:center;justify-content:center;
-  font-size:22px;flex-shrink:0;margin-top:2px;
+  flex-shrink:0;margin-top:2px;
   box-shadow:0 0 20px rgba(244,121,32,0.1);
+  padding:8px;
+}
+.card-head-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
 }
 .card-head-text h1{
   font-family:'Barlow Condensed',sans-serif;
@@ -198,6 +205,13 @@ body{
 }
 .form-row.full{grid-template-columns:1fr}
 .form-group{display:flex;flex-direction:column;gap:6px}
+.form-group-stack{gap:10px}
+.inline-subfield{display:flex;flex-direction:column;gap:6px}
+.inline-subfields{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
 .form-label{
   font-size:12px;font-weight:600;color:var(--wh2);
   display:flex;align-items:center;gap:6px;
@@ -305,9 +319,16 @@ body{
   border-bottom:1px solid var(--or-glow);
   font-size:11px;font-weight:700;text-transform:uppercase;
   letter-spacing:1px;color:var(--or);
+  display:flex;align-items:center;gap:8px;
+}
+.preview-head-logo{
+  height:14px;
+  width:auto;
+  display:block;
+  flex-shrink:0;
 }
 .preview-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
+  display:grid;grid-template-columns:repeat(4,1fr);
   gap:0;
 }
 .preview-item{
@@ -315,8 +336,8 @@ body{
   border-right:1px solid var(--border);
   border-bottom:1px solid var(--border);
 }
-.preview-item:nth-child(3n){border-right:none}
-.preview-item:nth-last-child(-n+3){border-bottom:none}
+.preview-item:nth-child(4n){border-right:none}
+.preview-item:nth-last-child(-n+4){border-bottom:none}
 .preview-key{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--wh3);margin-bottom:3px}
 .preview-val{font-size:12px;font-weight:600;color:var(--wh);word-break:break-word}
 
@@ -375,6 +396,7 @@ body{
 @media(max-width:640px){
   .progress-bar,.page-body,.page-footer{padding-left:16px;padding-right:16px}
   .form-row{grid-template-columns:1fr}
+  .inline-subfields{grid-template-columns:1fr}
   .preview-grid{grid-template-columns:1fr 1fr}
   .card-body{padding:20px 16px}
   .card-head{padding:20px 16px}
@@ -422,7 +444,9 @@ body{
 
     <div class="card-head">
       <img src="../assets/img/goil-logo.png" alt="" class="card-head-watermark" aria-hidden="true" />
-      <div class="card-head-icon">🏭</div>
+      <div class="card-head-icon">
+        <img src="../assets/img/goil-logo.png" alt="GOIL Logo" />
+      </div>
       <div class="card-head-text">
         <h1>Facility Details</h1>
         <p>Provide facility identification and assessment context. All fields marked <strong style="color:var(--crit)">*</strong> are required before you can proceed to the checklist.</p>
@@ -446,6 +470,28 @@ body{
           <div class="form-group" id="grp-date">
             <label class="form-label">Assessment Date <span class="label-req">*</span></label>
             <input class="form-input" id="fld-date" type="date" oninput="livePreview()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" id="grp-location-coords">
+            <label class="form-label">
+              Location Coordinates
+              <span class="label-auto">Auto-filled</span>
+            </label>
+            <input class="form-input" id="fld-location-coords" type="text" readonly placeholder="Capturing location...">
+            <input id="fld-location-lat" type="hidden">
+            <input id="fld-location-lng" type="hidden">
+            <input id="fld-location-accuracy" type="hidden">
+            <input id="fld-location-status" type="hidden">
+            <input id="fld-location-captured-at" type="hidden">
+          </div>
+          <div class="form-group" id="grp-start-time">
+            <label class="form-label">
+              Start Time
+              <span class="label-auto">Auto-filled</span>
+            </label>
+            <input class="form-input" id="fld-start-time" type="text" readonly placeholder="Auto-captured when assessment starts">
           </div>
         </div>
 
@@ -481,6 +527,7 @@ body{
               <option value="" disabled selected>Select facility type…</option>
               <option value="Fuel Station">Fuel Station</option>
               <option value="LPG Plant">LPG Plant</option>
+              <option value="Consumer">Consumer</option>
               <option value="Office &amp; Depot">Office &amp; Depot</option>
             </select>
             <div class="field-error" id="err-ftype">Please select a facility type</div>
@@ -561,14 +608,41 @@ body{
           </div>
         </div>
 
+        <!-- Consumer Details -->
+        <div class="reveal-wrap" id="rev-consumer-wrap">
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-consumer">
+              <label class="form-label">Consumer Name <span class="label-req">*</span></label>
+              <input class="form-input" id="fld-consumer" type="text"
+                     placeholder="Enter consumer name…"
+                     oninput="livePreview(); clearError('grp-consumer','err-consumer')">
+              <div class="field-error" id="err-consumer">Please enter the consumer name</div>
+            </div>
+          </div>
+          <div class="form-row full" style="margin-bottom:0">
+            <div class="form-group" id="grp-consumer-location">
+              <label class="form-label">Site Location <span class="label-req">*</span></label>
+              <input class="form-input" id="fld-consumer-location" type="text"
+                     placeholder="Enter site location…"
+                     oninput="livePreview(); clearError('grp-consumer-location','err-consumer-location')">
+              <div class="field-error" id="err-consumer-location">Please enter the site location</div>
+            </div>
+          </div>
+        </div>
+
       </div><!-- /section B -->
 
       <!-- ══ LIVE SUMMARY PREVIEW ══ -->
       <div class="preview-card" id="previewCard">
-        <div class="preview-head">📋 Session Summary Preview</div>
+        <div class="preview-head">
+          <img src="../assets/img/goil-logo.png" alt="GOIL Logo" class="preview-head-logo" />
+          <span>Session Summary Preview</span>
+        </div>
         <div class="preview-grid">
           <div class="preview-item"><div class="preview-key">Assessor</div><div class="preview-val" id="prev-assessor">—</div></div>
           <div class="preview-item"><div class="preview-key">Date</div><div class="preview-val" id="prev-date">—</div></div>
+          <div class="preview-item"><div class="preview-key">Start Time</div><div class="preview-val" id="prev-start-time">—</div></div>
+          <div class="preview-item"><div class="preview-key">Coordinates</div><div class="preview-val" id="prev-location-coords">—</div></div>
           <div class="preview-item"><div class="preview-key">Assessment Type</div><div class="preview-val" id="prev-atype">—</div></div>
           <div class="preview-item"><div class="preview-key">Facility Type</div><div class="preview-val" id="prev-ftype">—</div></div>
           <div class="preview-item"><div class="preview-key">Zone</div><div class="preview-val" id="prev-zone">—</div></div>
@@ -642,14 +716,93 @@ async function purgeLegacyClientCaches() {
   } catch (error) {}
 }
 
+function padTime(value) {
+  return String(value).padStart(2, '0');
+}
+
+function currentDateValue() {
+  const now = new Date();
+  return [
+    now.getFullYear(),
+    padTime(now.getMonth() + 1),
+    padTime(now.getDate())
+  ].join('-');
+}
+
+function currentStartTimeValue() {
+  const now = new Date();
+  return padTime(now.getHours()) + ':' + padTime(now.getMinutes());
+}
+
+function formatCoordinateValue(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num.toFixed(6) : '';
+}
+
+function setLocationFields(details) {
+  const payload = details && typeof details === 'object' ? details : {};
+  const lat = payload.latitude != null ? String(payload.latitude) : '';
+  const lng = payload.longitude != null ? String(payload.longitude) : '';
+  const accuracy = payload.accuracy != null ? String(payload.accuracy) : '';
+  const status = payload.status ? String(payload.status) : '';
+  const capturedAt = payload.capturedAt ? String(payload.capturedAt) : '';
+  const display = lat && lng
+    ? `${formatCoordinateValue(lat)}, ${formatCoordinateValue(lng)}`
+    : (status === 'captured' ? 'Location Unverified' : 'Location Not Captured');
+
+  document.getElementById('fld-location-coords').value = display;
+  document.getElementById('fld-location-lat').value = lat;
+  document.getElementById('fld-location-lng').value = lng;
+  document.getElementById('fld-location-accuracy').value = accuracy;
+  document.getElementById('fld-location-status').value = status;
+  document.getElementById('fld-location-captured-at').value = capturedAt;
+}
+
+function captureStartLocation(force) {
+  const statusField = document.getElementById('fld-location-status');
+  if (!force && statusField && statusField.value) return;
+
+  if (!navigator.geolocation) {
+    setLocationFields({ status: 'unavailable', capturedAt: new Date().toISOString() });
+    persistCurrentFacilityState();
+    livePreview();
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setLocationFields({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+        status: 'captured',
+        capturedAt: new Date().toISOString()
+      });
+      persistCurrentFacilityState();
+      livePreview();
+    },
+    (error) => {
+      const status = error && error.code === 1 ? 'denied' : 'failed';
+      setLocationFields({ status, capturedAt: new Date().toISOString() });
+      persistCurrentFacilityState();
+      livePreview();
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+function persistCurrentFacilityState() {
+  try {
+    const payload = buildFacilityStoragePayload(buildDetails());
+    localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+  } catch (error) {}
+}
+
 // ─────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   purgeLegacyClientCaches();
-
-  // Set today's date
-  document.getElementById('fld-date').value = new Date().toISOString().split('T')[0];
 
   // Load assessor from Supabase profile (full_name preferred over email)
   try {
@@ -662,6 +815,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Restore any previously saved form state
   restoreState();
+  if (!document.getElementById('fld-date').value) {
+    document.getElementById('fld-date').value = currentDateValue();
+  }
+  if (!document.getElementById('fld-start-time').value) {
+    document.getElementById('fld-start-time').value = currentStartTimeValue();
+  }
+  captureStartLocation(false);
+  persistCurrentFacilityState();
   livePreview();
 });
 
@@ -705,6 +866,7 @@ function onFacilityTypeChange() {
   hide('rev-station-wrap');
   hide('rev-lpg-wrap');
   hide('rev-facility-wrap');
+  hide('rev-consumer-wrap');
   hide('rev-station-other');
   hide('rev-lpg-other');
   hide('rev-facility-other');
@@ -712,9 +874,13 @@ function onFacilityTypeChange() {
   document.getElementById('fld-station').innerHTML = '<option value="" disabled selected>Select zone first…</option>';
   document.getElementById('fld-lpg').innerHTML     = '<option value="" disabled selected>Select zone first…</option>';
   document.getElementById('fld-facility').innerHTML= '<option value="" disabled selected>Select facility…</option>';
+  document.getElementById('fld-consumer').value = '';
+  document.getElementById('fld-consumer-location').value = '';
 
   if (ftype === 'Fuel Station' || ftype === 'LPG Plant') {
     show('rev-zone-wrap');
+  } else if (ftype === 'Consumer') {
+    show('rev-consumer-wrap');
   } else if (ftype === 'Office') {
     populateSelect('fld-facility', DATA_OFFICES);
     show('rev-facility-wrap');
@@ -798,6 +964,8 @@ function populateSelect(selId, items, placeholder) {
 function livePreview() {
   const assessor = document.getElementById('fld-assessor').value;
   const date     = document.getElementById('fld-date').value;
+  const startTime = document.getElementById('fld-start-time').value;
+  const locationCoords = document.getElementById('fld-location-coords').value;
   const atypeRaw = document.getElementById('fld-atype').value;
   const atypeOth = document.getElementById('fld-atype-other').value.trim();
   const atype    = atypeRaw === 'Other' ? (atypeOth || 'Other') : atypeRaw;
@@ -811,6 +979,12 @@ function livePreview() {
   } else if (ftype === 'LPG Plant') {
     const v = document.getElementById('fld-lpg').value;
     selName = v === 'Other' ? (document.getElementById('fld-lpg-other').value || 'Other') : (v || '—');
+  } else if (ftype === 'Consumer') {
+    const consumerName = document.getElementById('fld-consumer').value.trim();
+    const consumerSiteLocation = document.getElementById('fld-consumer-location').value.trim();
+    selName = consumerName
+      ? (consumerSiteLocation ? consumerName + ' · ' + consumerSiteLocation : consumerName)
+      : '—';
   } else if (ftype === 'Office' || ftype === 'Office & Depot') {
     const v = document.getElementById('fld-facility').value;
     selName = v === 'Other' ? (document.getElementById('fld-facility-other').value || 'Other') : (v || '—');
@@ -823,6 +997,8 @@ function livePreview() {
   document.getElementById('prev-date').textContent = date
     ? new Date(date + 'T12:00').toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'})
     : '—';
+  document.getElementById('prev-start-time').textContent = startTime || '—';
+  document.getElementById('prev-location-coords').textContent = locationCoords || '—';
   document.getElementById('prev-atype').textContent  = atype  || '—';
   document.getElementById('prev-ftype').textContent  = ftype  || '—';
   document.getElementById('prev-zone').textContent   = zone   || 'N/A';
@@ -883,6 +1059,10 @@ function validate() {
         document.getElementById('grp-lpg').classList.add('has-error'); ok = false;
       }
     }
+    if (ftype === 'Consumer') {
+      check('grp-consumer', 'err-consumer', document.getElementById('fld-consumer').value);
+      check('grp-consumer-location', 'err-consumer-location', document.getElementById('fld-consumer-location').value);
+    }
     if (ftype === 'Office' || ftype === 'Office & Depot') {
       const v = document.getElementById('fld-facility').value;
       if (!v) { check('grp-facility','err-facility', ''); }
@@ -918,6 +1098,10 @@ function buildDetails() {
     nameVal     = document.getElementById('fld-lpg').value;
     nameOther   = document.getElementById('fld-lpg-other').value.trim();
     nameDisplay = nameVal === 'Other' ? nameOther : nameVal;
+  } else if (ftype === 'Consumer') {
+    nameVal     = document.getElementById('fld-consumer').value.trim();
+    nameOther   = document.getElementById('fld-consumer-location').value.trim();
+    nameDisplay = nameVal;
   } else {
     nameVal     = document.getElementById('fld-facility').value;
     nameOther   = document.getElementById('fld-facility-other').value.trim();
@@ -927,6 +1111,15 @@ function buildDetails() {
   return {
     assessorName:    document.getElementById('fld-assessor').value,
     date:            document.getElementById('fld-date').value,
+    assessmentDate:  document.getElementById('fld-date').value,
+    startTime:       document.getElementById('fld-start-time').value,
+    locationCoordinates: document.getElementById('fld-location-coords').value,
+    locationLatitude: document.getElementById('fld-location-lat').value,
+    locationLongitude: document.getElementById('fld-location-lng').value,
+    locationAccuracy: document.getElementById('fld-location-accuracy').value,
+    locationStatus: document.getElementById('fld-location-status').value,
+    locationCapturedAt: document.getElementById('fld-location-captured-at').value,
+    siteLocation:    ftype === 'Consumer' ? document.getElementById('fld-consumer-location').value.trim() : '',
     atypeVal:        atypeRaw,
     atypeOther:      atypeOth,
     atypeDisplay:    atypeRaw === 'Other' ? atypeOth : atypeRaw,
@@ -942,13 +1135,26 @@ function buildDetails() {
 function buildFacilityStoragePayload(details) {
   return {
     assessorName: details.assessorName || '',
-    assessmentDate: details.date || '',
+    date: details.date || details.assessmentDate || '',
+    assessmentDate: details.date || details.assessmentDate || '',
+    startTime: details.startTime || '',
+    locationCoordinates: details.locationCoordinates || '',
+    locationLatitude: details.locationLatitude || '',
+    locationLongitude: details.locationLongitude || '',
+    locationAccuracy: details.locationAccuracy || '',
+    locationStatus: details.locationStatus || '',
+    locationCapturedAt: details.locationCapturedAt || '',
+    siteLocation: details.siteLocation || '',
     assessmentType: details.atypeDisplay || '',
+    atypeVal: details.atypeVal || '',
+    atypeOther: details.atypeOther || '',
+    atypeDisplay: details.atypeDisplay || '',
     facilityType: details.facilityType || '',
     zone: details.zone || '',
     nameVal: details.nameVal || '',
     nameOther: details.nameOther || '',
-    nameDisplay: details.nameDisplay || ''
+    nameDisplay: details.nameDisplay || '',
+    savedAt: details.savedAt || new Date().toISOString()
   };
 }
 
@@ -1010,13 +1216,24 @@ function goBack() {
 function restoreState() {
   try {
     const saved = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
-    if (!saved.savedAt) return;
+    if (!saved || typeof saved !== 'object') return;
 
-    if (saved.date) document.getElementById('fld-date').value = saved.date;
+    if (saved.date || saved.assessmentDate) {
+      document.getElementById('fld-date').value = saved.date || saved.assessmentDate;
+    }
+    if (saved.startTime) document.getElementById('fld-start-time').value = saved.startTime;
+    setLocationFields({
+      latitude: saved.locationLatitude || '',
+      longitude: saved.locationLongitude || '',
+      accuracy: saved.locationAccuracy || '',
+      status: saved.locationStatus || '',
+      capturedAt: saved.locationCapturedAt || ''
+    });
 
-    if (saved.atypeVal) {
-      document.getElementById('fld-atype').value = saved.atypeVal;
-      if (saved.atypeVal === 'Other') {
+    const assessmentTypeValue = saved.atypeVal || '';
+    if (assessmentTypeValue) {
+      document.getElementById('fld-atype').value = assessmentTypeValue;
+      if (assessmentTypeValue === 'Other') {
         show('rev-atype');
         document.getElementById('fld-atype-other').value = saved.atypeOther || '';
       }
@@ -1032,6 +1249,13 @@ function restoreState() {
       }
 
       setTimeout(() => {
+        if (saved.facilityType === 'Consumer') {
+          document.getElementById('fld-consumer').value = saved.nameDisplay || saved.nameVal || '';
+          document.getElementById('fld-consumer-location').value = saved.siteLocation || saved.nameOther || '';
+          livePreview();
+          return;
+        }
+
         const selId   = saved.facilityType === 'Fuel Station'  ? 'fld-station' :
                         saved.facilityType === 'LPG Plant'     ? 'fld-lpg'     : 'fld-facility';
         const revId   = saved.facilityType === 'Fuel Station'  ? 'rev-station-other' :

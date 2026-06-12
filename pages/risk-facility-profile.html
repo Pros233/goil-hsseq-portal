@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Facility Profile | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep9" defer></script>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -949,6 +949,17 @@
       border-radius: 8px;
       border: 1px solid var(--border2);
       background: var(--bg3);
+      transition: border-color var(--t), box-shadow var(--t), background var(--t);
+    }
+
+    .fp-group-focus td {
+      background: rgba(255,145,41,.06);
+    }
+
+    .fp-version-line.is-focus {
+      border-color: rgba(255,145,41,.8);
+      box-shadow: 0 0 0 1px rgba(255,145,41,.22);
+      background: rgba(255,145,41,.06);
     }
 
     .fp-version-line .v-seq {
@@ -1446,8 +1457,8 @@
     </section>
   </main>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/workflow-core.js?v=20260528-viewfacility2"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260528-viewfacility2"></script>
   <script>
     const auth = JSON.parse(localStorage.getItem('goil_auth_session') || '{}');
     const STATUS = window.RiskModuleUtils && typeof RiskModuleUtils.STATUS === 'function'
@@ -1488,6 +1499,8 @@
     let snapshotIndex = {};
     let filteredRecords = [];
     let activeFacility = '';
+    let queryAssessmentRef = '';
+    let queryAssessmentVersion = 0;
     let visibleAssessmentRows = [];
     let complianceMode = 'current';
 
@@ -1541,6 +1554,48 @@
     function pickFacilityNameFromQuery() {
       const params = new URLSearchParams(window.location.search);
       return String(params.get('facility') || '').trim();
+    }
+
+    function pickAssessmentRefFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return String(params.get('ref') || '').trim();
+    }
+
+    function pickAssessmentVersionFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      return Number(params.get('version') || 0) || 0;
+    }
+
+    function pickPendingFacilityRoute() {
+      try {
+        const raw = localStorage.getItem('goil_pending_record_route') || '';
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function matchesQueryAssessment(parentReference, version) {
+      const expectedRef = String(queryAssessmentRef || '').trim().toUpperCase();
+      const candidateRef = String(parentReference || '').trim().toUpperCase();
+      const expectedVersion = Number(queryAssessmentVersion || 0);
+      return !!expectedRef && candidateRef === expectedRef && (!expectedVersion || Number(version || 0) === expectedVersion);
+    }
+
+    function focusAssessmentHistoryMatch() {
+      const scope = document.getElementById('assessmentHistoryTbody');
+      if (!scope) return;
+      const line = scope.querySelector('.fp-version-line.is-focus');
+      const group = scope.querySelector('.fp-group-focus');
+      const target = line || group;
+      if (!target) return;
+      try {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (error) {
+        target.scrollIntoView();
+      }
     }
 
     function normalizeLevel(level) {
@@ -2508,6 +2563,11 @@
         const row = group.latest;
         const detailRowId = 'fp-versions-' + esc(group.parentReference).replace(/[^a-zA-Z0-9]+/g, '-');
         const versionsSorted = group.versions.slice().sort(function (a, b) { return a.version - b.version; });
+        const hasFocusedVersion = group.versions.some(function (v) {
+          return matchesQueryAssessment(v.parentReference, v.version);
+        });
+        const groupClass = hasFocusedVersion ? ' class="fp-group-focus"' : '';
+        const detailDisplay = hasFocusedVersion ? '' : 'none';
         const versionsHead = ''
           + '<div class="fp-version-head">'
           + '<span>#</span>'
@@ -2522,36 +2582,39 @@
           + '<span>View</span>'
           + '</div>';
         const versionsHtml = versionsSorted.map(function (v, idx) {
+          const isFocus = matchesQueryAssessment(v.parentReference, v.version);
           return ''
-            + '<div class="fp-version-line">'
+            + '<div class="fp-version-line' + (isFocus ? ' is-focus' : '') + '">'
             +   '<span class="v-seq">' + esc(String(idx + 1) + '.') + '</span>'
             +   '<span class="v-ref">' + esc(v.displayReference) + '</span>'
             +   '<span>' + esc(fmtDate(v.inspectionDate)) + '</span>'
-            +   '<span><span class="fp-badge ' + riskBadgeClass(v.initialLevel) + '">' + esc(v.initialLevel + ' (' + v.initialScore + ')') + '</span></span>'
-            +   '<span><span class="fp-badge ' + riskBadgeClass(v.residualLevel) + '">' + esc(v.residualLevel + ' (' + v.residualScore + ')') + '</span></span>'
-            +   '<span>' + esc(String(v.reduction)) + '</span>'
+            +   '<span><span class="fp-badge ' + riskBadgeClass(v.initialLevel) + '">' + esc(window.RiskModuleUtils && typeof RiskModuleUtils.formatSubmissionRiskDisplay === 'function' ? RiskModuleUtils.formatSubmissionRiskDisplay(v.initialLevel, v.initialScore) : (v.initialLevel + ' (' + v.initialScore + ')')) + '</span></span>'
+            +   '<span><span class="fp-badge ' + riskBadgeClass(v.residualLevel) + '">' + esc(window.RiskModuleUtils && typeof RiskModuleUtils.formatResidualRiskDisplay === 'function' ? RiskModuleUtils.formatResidualRiskDisplay(v.residualLevel, v.residualScore) : (v.residualLevel + ' (' + v.residualScore + ')')) + '</span></span>'
+            +   '<span>' + esc(v.reduction == null ? '-' : String(v.reduction)) + '</span>'
             +   '<span><span class="fp-badge ' + statusBadgeClass(v.status) + '">' + esc(v.status) + '</span></span>'
             +   '<span>' + esc(v.inspector) + '</span>'
             +   '<span>' + esc(fmtDateTime(v.updatedAt)) + '</span>'
             +   '<span><button class="fp-version-view" data-ref="' + esc(v.parentReference) + '" data-ver="' + esc(v.version) + '">View</button></span>'
             + '</div>';
         }).join('');
-        return '<tr>' +
+        return '<tr' + groupClass + '>' +
           '<td><button class="fp-ref-toggle" data-target="' + detailRowId + '">' + esc(group.parentReference) + '</button></td>' +
-          '<td>v' + esc(row.version) + (group.versions.length > 1 ? ' <span class="fp-version-meta">(' + esc(group.versions.length) + ' versions)</span>' : '') + '</td>' +
+          '<td>V' + esc(row.version) + (group.versions.length > 1 ? ' <span class="fp-version-meta">(' + esc(group.versions.length) + ' versions)</span>' : '') + '</td>' +
           '<td>' + esc(fmtDate(row.inspectionDate)) + '</td>' +
-          '<td><span class="fp-badge ' + riskBadgeClass(row.initialLevel) + '">' + esc(row.initialLevel + ' (' + row.initialScore + ')') + '</span></td>' +
-          '<td><span class="fp-badge ' + riskBadgeClass(row.residualLevel) + '">' + esc(row.residualLevel + ' (' + row.residualScore + ')') + '</span></td>' +
-          '<td>' + esc(String(row.reduction)) + '</td>' +
+          '<td><span class="fp-badge ' + riskBadgeClass(row.initialLevel) + '">' + esc(window.RiskModuleUtils && typeof RiskModuleUtils.formatSubmissionRiskDisplay === 'function' ? RiskModuleUtils.formatSubmissionRiskDisplay(row.initialLevel, row.initialScore) : (row.initialLevel + ' (' + row.initialScore + ')')) + '</span></td>' +
+          '<td><span class="fp-badge ' + riskBadgeClass(row.residualLevel) + '">' + esc(window.RiskModuleUtils && typeof RiskModuleUtils.formatResidualRiskDisplay === 'function' ? RiskModuleUtils.formatResidualRiskDisplay(row.residualLevel, row.residualScore) : (row.residualLevel + ' (' + row.residualScore + ')')) + '</span></td>' +
+          '<td>' + esc(row.reduction == null ? '-' : String(row.reduction)) + '</td>' +
           '<td><span class="fp-badge ' + statusBadgeClass(row.status) + '">' + esc(row.status) + '</span></td>' +
           '<td>' + esc(row.inspector) + '</td>' +
           '<td>' + esc(fmtDateTime(row.updatedAt)) + '</td>' +
           '<td><button class="fp-view-btn" data-ref="' + esc(row.parentReference) + '" data-ver="' + esc(row.version) + '">View</button></td>' +
         '</tr>' +
-        '<tr id="' + detailRowId + '" class="fp-version-row" style="display:none;">' +
+        '<tr id="' + detailRowId + '" class="fp-version-row" style="display:' + detailDisplay + ';">' +
           '<td colspan="10"><div class="fp-version-scroll"><div class="fp-version-list">' + versionsHead + versionsHtml + '</div></div></td>' +
         '</tr>';
       }).join('');
+
+      focusAssessmentHistoryMatch();
     }
 
     function renderActionSummaryBadges(actions) {
@@ -2832,11 +2895,11 @@
       visibleAssessmentRows.forEach(function (row) {
         const cols = [
           row.parentReference,
-          'v' + row.version,
+          'V' + row.version,
           fmtDate(row.inspectionDate),
-          row.initialLevel + ' (' + row.initialScore + ')',
-          row.residualLevel + ' (' + row.residualScore + ')',
-          row.reduction,
+          window.RiskModuleUtils && typeof RiskModuleUtils.formatSubmissionRiskDisplay === 'function' ? RiskModuleUtils.formatSubmissionRiskDisplay(row.initialLevel, row.initialScore) : (row.initialLevel + ' (' + row.initialScore + ')'),
+          window.RiskModuleUtils && typeof RiskModuleUtils.formatResidualRiskDisplay === 'function' ? RiskModuleUtils.formatResidualRiskDisplay(row.residualLevel, row.residualScore) : (row.residualLevel + ' (' + row.residualScore + ')'),
+          row.reduction == null ? '-' : row.reduction,
           row.status,
           row.inspector,
           fmtDateTime(row.updatedAt)
@@ -2904,8 +2967,26 @@
         setComplianceMode('all');
       });
 
-      const byQuery = pickFacilityNameFromQuery();
+      const pendingRoute = pickPendingFacilityRoute();
+      queryAssessmentRef = String(pickAssessmentRefFromQuery() || (pendingRoute && pendingRoute.ref) || '').trim().toUpperCase();
+      queryAssessmentVersion = Number(pickAssessmentVersionFromQuery() || (pendingRoute && pendingRoute.version) || 0) || 0;
+
+      let byQuery = pickFacilityNameFromQuery() || String((pendingRoute && pendingRoute.facility) || '').trim();
+      if (!byQuery && queryAssessmentRef) {
+        const matched = (allRecords || []).find(function (record) {
+          const parentRef = window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function'
+            ? (RiskModuleUtils.getParentInspectionReference(record) || '')
+            : (record.inspectionRef || record.assessment_reference || '');
+          const normalizedParent = stripVersionSuffix(normalizeReference(parentRef)).toUpperCase();
+          const version = Number(record.version || record.version_number || 0) || 0;
+          return normalizedParent === queryAssessmentRef && (!queryAssessmentVersion || version === queryAssessmentVersion);
+        });
+        if (matched) {
+          byQuery = recordFacility(matched);
+        }
+      }
       applyFiltersAndRender(byQuery);
+      try { localStorage.removeItem('goil_pending_record_route'); } catch (error) {}
 
       document.getElementById('facilitySelect').addEventListener('change', function (event) {
         activeFacility = String(event.target.value || '');

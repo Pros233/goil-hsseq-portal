@@ -7,10 +7,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Corrective Action - Integrated Risk Assessment</title>
+<script src="../assets/js/auth-guard.js?v=20260520-publishsync1" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-<script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+<script src="../assets/js/workflow-core.js?v=20260514-recordrestore1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260514-recordrestore1"></script>
 <style>
 :root{
   --bg:#0D1117; --bg2:#161B22; --bg3:#1C2128; --bg4:#21262D;
@@ -277,12 +278,19 @@ function nowIso(){ return new Date().toISOString(); }
 function readJSON(key, fallback){ try{ const v=JSON.parse(localStorage.getItem(key)||'null'); return v==null?fallback:v; }catch(e){ return fallback; } }
 function writeJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
 
+function getActorName() {
+  const user = (window.RiskModuleUtils && typeof RiskModuleUtils.getCurrentUser === 'function')
+    ? RiskModuleUtils.getCurrentUser()
+    : {};
+  return user.full_name || user.fullName || user.username || user.email || facility.assessorName || 'Unknown User';
+}
+
 function appendAudit(action, details){
   const list = readJSON(AUDIT_KEY, []);
   list.push({
     at: nowIso(),
     action,
-    actor: facility.assessorName || 'Unknown User',
+    actor: getActorName(),
     referenceNo: inspectionMeta.referenceNo || '',
     ...(details || {})
   });
@@ -306,15 +314,36 @@ function setSubmittingState(isSubmitting){
 
 function buildPublishedReference(){
   const ref = inspectionMeta.referenceNo || '—';
-  const version = Number(inspectionMeta.versionCurrent || 1);
-  return `${ref} (v${version})`;
+  const records = window.RiskModuleUtils && typeof RiskModuleUtils.getRecords === 'function' ? RiskModuleUtils.getRecords() : [];
+  const currentRecord = records.find((record) => (
+    String(record.inspectionRef || record.assessment_reference || '').trim() === String(ref).trim() &&
+    Number(record.version || record.version_number || 0) === Number(inspectionMeta.versionCurrent || 1) &&
+    (record.is_published === true || String(record.assessment_status || record.status || '') === STATUS.PUBLISHED)
+  ));
+  const version = currentRecord && RiskModuleUtils.getPublishedDisplayVersionNumber
+    ? RiskModuleUtils.getPublishedDisplayVersionNumber(currentRecord, records)
+    : Number(inspectionMeta.versionCurrent || 1);
+  return `${ref} (V${version})`;
+}
+
+function getPublishedVersionNumber() {
+  const ref = inspectionMeta.referenceNo || '—';
+  const records = window.RiskModuleUtils && typeof RiskModuleUtils.getRecords === 'function' ? RiskModuleUtils.getRecords() : [];
+  const currentRecord = records.find((record) => (
+    String(record.inspectionRef || record.assessment_reference || '').trim() === String(ref).trim() &&
+    Number(record.version || record.version_number || 0) === Number(inspectionMeta.versionCurrent || 1) &&
+    (record.is_published === true || String(record.assessment_status || record.status || '') === STATUS.PUBLISHED)
+  ));
+  return currentRecord && RiskModuleUtils.getPublishedDisplayVersionNumber
+    ? RiskModuleUtils.getPublishedDisplayVersionNumber(currentRecord, records)
+    : Number(inspectionMeta.versionCurrent || 1);
 }
 
 function setPublishSuccessFlash(at){
   writeJSON(PUBLISH_FLASH_KEY, {
     referenceNo: inspectionMeta.referenceNo || '',
     publishedReference: buildPublishedReference(),
-    version: Number(inspectionMeta.versionCurrent || 1),
+    version: getPublishedVersionNumber(),
     submittedBy: facility.assessorName || 'Unknown User',
     submittedAt: at || nowIso(),
     message: `Assessment ${inspectionMeta.referenceNo || ''} was successfully published to the register.`
@@ -385,7 +414,7 @@ function getRiskFlowMetrics(){
     initialLevel: fallbackLevel,
     residualScore: fallbackScore,
     residualLevel: fallbackLevel,
-    riskReduction: 0,
+    riskReduction: null,
     openCount: 0,
     closedCount: 0
   };
@@ -432,8 +461,14 @@ function renderOverallRisk() {
         : 'risk-acceptable';
   const dispositionText = responseExpectationForLevel(risk.level);
   const flow = riskFlow || getRiskFlowMetrics();
-  const initialRiskText = `${flow.initialLevel || 'Low'} (${flow.initialScore || 0})`;
-  const residualRiskText = `${flow.residualLevel || 'Low'} (${flow.residualScore || 0})`;
+  const initialRiskText = window.RiskModuleUtils && typeof RiskModuleUtils.formatSubmissionRiskDisplay === 'function'
+    ? RiskModuleUtils.formatSubmissionRiskDisplay(flow.initialLevel, flow.initialScore)
+    : ((flow.initialScore == null || flow.initialScore <= 0)
+      ? (flow.initialLevel || 'Low')
+      : `${flow.initialLevel || 'Low'} (${flow.initialScore})`);
+  const residualRiskText = window.RiskModuleUtils && typeof RiskModuleUtils.formatResidualRiskDisplay === 'function'
+    ? RiskModuleUtils.formatResidualRiskDisplay(flow.residualLevel, flow.residualScore)
+    : `${flow.residualLevel || 'Low'} (${flow.residualScore || 0})`;
   card.innerHTML = `
     <div class="risk-top">
       <div>
@@ -443,7 +478,7 @@ function renderOverallRisk() {
       </div>
       <div class="risk-score-wrap">
         <div class="risk-k">Overall Risk Score</div>
-        <div class="risk-score">${esc(String(risk.score || 0))}</div>
+        <div class="risk-score">${esc(String(risk.score == null ? '-' : risk.score))}</div>
       </div>
     </div>
     <div class="risk-meta">
@@ -451,7 +486,7 @@ function renderOverallRisk() {
       <span class="risk-chip ${dispositionClass}">${esc(dispositionText)}</span>
       <span class="risk-chip ${riskChipClass(flow.initialLevel)}">Initial: ${esc(initialRiskText)}</span>
       <span class="risk-chip ${riskChipClass(flow.residualLevel)}">Residual: ${esc(residualRiskText)}</span>
-      <span class="risk-chip risk-chip-failed">Risk Reduction: ${esc(String(flow.riskReduction || 0))}</span>
+      <span class="risk-chip risk-chip-failed">Risk Reduction: ${esc(flow.riskReduction == null ? '—' : String(flow.riskReduction))}</span>
       <span class="risk-chip risk-chip-failed">Open Actions: ${esc(String(flow.openCount || 0))} · Closed Actions: ${esc(String(flow.closedCount || 0))}</span>
       <span class="risk-chip risk-chip-failed">${esc(String(risk.failedCount || 0))} Failed / Non-Compliant</span>
       <span class="risk-time">Calculated: ${esc(new Date(risk.calculatedAt || nowIso()).toLocaleString())}</span>
@@ -462,6 +497,14 @@ function renderOverallRisk() {
 
 function init(){
   applyCameraModeClass();
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ref = (params.get('ref') || '').trim();
+    const version = (params.get('version') || '').trim();
+    if (ref && window.RiskModuleUtils && typeof RiskModuleUtils.prepareAssessmentRecord === 'function') {
+      RiskModuleUtils.prepareAssessmentRecord(ref, version);
+    }
+  } catch (error) {}
   facility = readJSON(FACILITY_KEY, {});
   inspectionMeta = window.GoilWorkflow ? window.GoilWorkflow.getMeta(facility) : ensureMeta();
   if (window.GoilWorkflow) window.GoilWorkflow.refreshOverdueNotifications();
@@ -496,7 +539,6 @@ function renderHeader(){
 
   const rows = [
     { k:'Inspection Ref', v: inspectionMeta.referenceNo || '—' },
-    { k:'Version', v: inspectionMeta.versionCurrent || 0 },
     { k:'Facility Name', v: facility.nameDisplay || '—' },
     { k:'Facility Type', v: facility.facilityType || '—' },
     { k:'Inspection Date', v: facility.assessmentDate || '—' },
@@ -506,6 +548,10 @@ function renderHeader(){
     { k:'Corrective Submitted At', v: inspectionMeta.correctiveSubmittedAt ? new Date(inspectionMeta.correctiveSubmittedAt).toLocaleString() : '—' },
     { k:'Last Updated', v: inspectionMeta.lastUpdatedAt ? new Date(inspectionMeta.lastUpdatedAt).toLocaleString() : '—' }
   ];
+
+  if (inspectionMeta.status === STATUS.PUBLISHED) {
+    rows.splice(1, 0, { k:'Version', v: 'V' + String(getPublishedVersionNumber()) });
+  }
 
   document.getElementById('metaGrid').innerHTML = rows.map(r => `
     <div class="meta"><div class="k">${esc(r.k)}</div><div class="v">${esc(r.v)}</div></div>
@@ -601,7 +647,7 @@ function pushChange(item, field, fromVal, toVal){
   if (!Array.isArray(item.changeHistory)) item.changeHistory = [];
   item.changeHistory.push({
     at: nowIso(),
-    actor: facility.assessorName || 'Unknown User',
+    actor: getActorName(),
     field,
     from: fromVal || '',
     to: toVal || ''
@@ -752,7 +798,32 @@ function showValidationErrors(errors){
   panel.scrollIntoView({ behavior:'smooth', block:'center' });
 }
 
-function finalSubmit(){
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForSyncBridge(timeoutMs){
+  const deadline = Date.now() + (timeoutMs || 0);
+  while (Date.now() < deadline){
+    if (window.GoilSupabase && typeof window.GoilSupabase.sync === 'function') return true;
+    await wait(150);
+  }
+  return !!(window.GoilSupabase && typeof window.GoilSupabase.sync === 'function');
+}
+
+async function syncPublishedRecord(){
+  if (!navigator.onLine) return false;
+  const ready = await waitForSyncBridge(4000);
+  if (!ready) return false;
+  try {
+    await window.GoilSupabase.sync();
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function finalSubmit(){
   if (readOnly || finalSubmitInProgress) return;
   setSubmittingState(true);
   try {
@@ -787,11 +858,14 @@ function finalSubmit(){
     if (window.GoilWorkflow) {
       const result = window.GoilWorkflow.finalizeCorrectiveSubmission({
         facility,
-        actor: facility.assessorName || 'Unknown User',
+        actor: getActorName(),
         correctiveSession: caSession,
         overallRisk
       });
       inspectionMeta = result.meta || inspectionMeta;
+      if (typeof window.GoilWorkflow.clearActiveAssessmentSession === 'function') {
+        window.GoilWorkflow.clearActiveAssessmentSession({ preserveMeta: true });
+      }
     } else {
       inspectionMeta.status = STATUS.PUBLISHED;
       inspectionMeta.correctiveSubmittedAt = at;
@@ -803,6 +877,16 @@ function finalSubmit(){
         inspectionMeta.overallRiskCalculatedAt = overallRisk.calculatedAt || at;
       }
       writeJSON(META_KEY, inspectionMeta);
+      [
+        'goil_facility_details',
+        'goil_checklist_session',
+        'goil_current_section',
+        'goil_review_state',
+        'goil_corrective_action_session'
+      ].forEach(key => {
+        sessionStorage.removeItem(key);
+        localStorage.removeItem(key);
+      });
     }
 
     appendAudit('corrective_action_submitted', {
@@ -819,6 +903,7 @@ function finalSubmit(){
     renderKpis();
     renderActions();
     renderAudit();
+    const synced = await syncPublishedRecord();
     setSubmittingState(false);
     document.getElementById('finalSubmitBtn').disabled = true;
     document.getElementById('confirmRef').textContent = buildPublishedReference();
@@ -826,7 +911,12 @@ function finalSubmit(){
     document.getElementById('confirmPanel').scrollIntoView({ behavior:'smooth', block:'center' });
     correctiveDirty = false;
     setPublishSuccessFlash(at);
-    toast('Final submission completed successfully.', 'success');
+    toast(
+      synced
+        ? 'Final submission completed and synced successfully.'
+        : 'Final submission completed. Cloud sync will retry automatically.',
+      synced ? 'success' : 'info'
+    );
     setTimeout(() => goHome(), 1400);
   } catch (error) {
     setSubmittingState(false);
@@ -869,9 +959,12 @@ function reopenForRevision(){
   const reason = (window.prompt('Enter reason for reopening this inspection for revision:', '') || '').trim();
   if (!reason) return;
   if (window.GoilWorkflow) {
+    const currentUser = (window.RiskModuleUtils && typeof RiskModuleUtils.getCurrentUser === 'function')
+      ? RiskModuleUtils.getCurrentUser()
+      : {};
     const result = window.GoilWorkflow.reopenForRevision({
       facility,
-      actor: facility.assessorName || 'Unknown User',
+      actor: currentUser,
       reason
     });
     if (!result.ok) {
@@ -909,12 +1002,12 @@ function goHome(){
 }
 
 function goPublishedRegister(){
-  window.location.href = 'risk-published-register.html?v=20260318-masterrefdeep11&_=' + Date.now();
+  window.location.href = 'risk-published-register.html?v=20260601-registerroute1&_=' + Date.now();
 }
 
 function viewPublishedRecord(){
   const ref = encodeURIComponent(inspectionMeta.referenceNo || '');
-  window.location.href = `risk-published-register.html?v=20260318-masterrefdeep11&ref=${ref}&_=${Date.now()}`;
+  window.location.href = `risk-published-register.html?v=20260601-registerroute1&ref=${ref}&_=${Date.now()}`;
 }
 
 function startNewAssessment(){

@@ -4,661 +4,1097 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Uncompleted Assessments | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep11" defer></script>
+  <script src="../assets/js/auth-guard.js?v=20260513-datatransfer1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep11" />
   <style>
-    .rm-shell {
-      width: min(1680px, 98.5vw);
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: #0d0f14;
+      color: #e6edf3;
+      overflow: hidden;
     }
 
     .uc-topbar {
+      padding: 12px 18px;
+      background: rgba(14,16,22,.96);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      justify-content: space-between;
+    }
+
+    .uc-topbar-left {
+      min-width: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 14px;
       flex-wrap: wrap;
     }
-    .uc-left {
+
+    .uc-topbar-right {
+      min-width: 0;
+      margin-left: auto;
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 0;
-      flex: 1 1 auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
-    .uc-vsep {
-      width: 1px;
-      height: 24px;
-      background: var(--border2, rgba(255,255,255,.12));
+
+    .uc-brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .uc-logo {
+      height: 34px;
+      width: auto;
+      display: block;
       flex: 0 0 auto;
     }
-    .uc-brand {
+
+    .uc-topbar-title {
+      color: var(--or, #F47920);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: calc(24px * var(--goil-font-scale, 1));
+      line-height: .92;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .uc-back-btn {
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.74);
+      font-family: 'Barlow', sans-serif;
+      font-size: calc(12px * var(--goil-font-scale, 1));
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: var(--wh2, #C9D1D9);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      letter-spacing: .45px;
-      text-transform: uppercase;
-      white-space: nowrap;
+      cursor: pointer;
+      transition: all var(--t);
     }
-    .uc-brand img {
-      width: 22px;
-      height: 22px;
-      filter: drop-shadow(0 0 4px rgba(244,121,32,.35));
+
+    .uc-back-btn:hover {
+      border-color: rgba(244,121,32,.34);
+      color: var(--or, #F47920);
+      background: rgba(244,121,32,.08);
     }
-    .uc-page-title {
-      min-width: 0;
-      display: grid;
-      gap: 1px;
-    }
-    .uc-page-title h1 {
-      margin: 0;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: .3px;
-      text-transform: uppercase;
-      color: var(--wh, #E6EDF3);
-    }
-    .uc-page-title p {
-      margin: 0;
-      color: var(--wh4, #484F58);
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
+
+    .uc-shell {
+      width: min(1680px, 97vw);
+      height: calc(100vh - 58px);
+      margin: 0 auto;
+      padding-bottom: 6px;
       overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .uc-primary {
-      min-width: 194px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
 
     .uc-card {
-      background: linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,0)) , var(--bg2, #161B22);
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      border-radius: 14px;
-      padding: 22px;
-      display: grid;
-      gap: 18px;
-    }
-    .uc-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .uc-head-main { display: grid; gap: 6px; }
-    .uc-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--or, #F47920);
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .uc-eyebrow::before {
-      content: '';
-      width: 20px;
-      height: 2px;
-      border-radius: 999px;
-      background: var(--or, #F47920);
-    }
-    .uc-head-main h2 {
-      margin: 0;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 30px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: .35px;
-      line-height: 1;
-      color: var(--wh, #E6EDF3);
-    }
-    .uc-head-main p {
-      margin: 0;
-      color: var(--wh3, #8B949E);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-    .uc-export {
-      height: 36px;
-      padding: 0 12px;
-      border-radius: 8px;
-      border: 1.5px solid var(--border2, rgba(255,255,255,.12));
+      border: 0;
       background: transparent;
-      color: var(--wh3, #8B949E);
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
+      height: 100%;
+      padding: 10px 8px 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
       gap: 6px;
-      cursor: pointer;
-    }
-    .uc-export:hover {
-      border-color: var(--or, #F47920);
-      color: var(--or, #F47920);
-      background: rgba(244,121,32,.09);
+      overflow: hidden;
+      position: relative;
     }
 
-    .uc-alerts { display: grid; gap: 10px; }
-    .uc-alert {
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
+    .uc-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 132px;
+      border-radius: 0 0 24px 24px;
+      background:
+        radial-gradient(circle at 88% 30%, rgba(244,121,32,.18), transparent 22%),
+        linear-gradient(180deg, rgba(17,20,27,.92), rgba(17,20,27,.55) 58%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
     }
-    .uc-alert.pending {
-      border-color: rgba(224,125,35,.35);
-      background: linear-gradient(90deg, rgba(224,125,35,.08), rgba(224,125,35,.03));
+
+    .uc-kpis,
+    .uc-stage-panel {
+      position: relative;
+      z-index: 1;
     }
-    .uc-alert.overdue {
-      border-color: rgba(218,54,51,.35);
-      background: linear-gradient(90deg, rgba(218,54,51,.12), rgba(218,54,51,.05));
-    }
-    .uc-alert .left {
+
+    .uc-export {
+      height: 46px;
+      min-width: 150px;
+      padding: 0 18px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(24,27,36,.72);
+      color: var(--wh2, #C9D1D9);
+      font-size: calc(15px * var(--goil-font-scale, 1));
+      font-family: 'Barlow', sans-serif;
+      font-weight: 800;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      color: var(--wh2, #C9D1D9);
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 1.4;
-      min-width: 0;
-    }
-    .uc-alert .icon { font-size: 15px; }
-    .uc-alert .btn {
-      height: 30px;
-      padding: 0 12px;
-      border-radius: 7px;
-      border: 1.5px solid rgba(255,255,255,.15);
-      background: rgba(0,0,0,.15);
-      color: #ffb067;
-      font-size: 11px;
-      font-weight: 700;
       cursor: pointer;
-      white-space: nowrap;
+      transition: all var(--t);
     }
-    .uc-alert.overdue .btn { color: #ff6f6f; }
-    .uc-alert .btn:hover { border-color: var(--or, #F47920); color: var(--or, #F47920); }
-    .uc-hide { display: none !important; }
+
+    .uc-export:hover {
+      border-color: rgba(244,121,32,.42);
+      color: var(--or, #F47920);
+      background: rgba(244,121,32,.08);
+    }
 
     .uc-kpis {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 8px;
     }
+
     .uc-kpi {
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      border-radius: 12px;
-      background: var(--bg3, #1C2128);
-      padding: 18px 18px 16px;
-      position: relative;
+      --accent: #F47920;
+      min-height: 84px;
+      padding: 10px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, #171b23 0%, #151922 100%);
       display: grid;
-      gap: 6px;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 10px 28px rgba(0,0,0,.16);
     }
+
     .uc-kpi::before {
       content: '';
       position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 3px;
-      border-radius: 12px 12px 0 0;
-      background: var(--wh4, #484F58);
+      inset: 0 0 auto;
+      height: 2px;
+      width: 100%;
+      border-radius: 20px 20px 0 0;
+      background: rgba(244,121,32,.85);
+      pointer-events: none;
     }
-    .uc-kpi.total::before { background: var(--or, #F47920); }
-    .uc-kpi.draft::before { background: #D29922; }
-    .uc-kpi.pending::before { background: #E07D23; }
-    .uc-kpi.overdue::before { background: #DA3633; }
-    .uc-kpi .k {
-      color: var(--wh4, #484F58);
-      text-transform: uppercase;
-      letter-spacing: 1.1px;
-      font-size: 10px;
-      font-weight: 700;
+
+    .uc-kpi.total {
+      --accent: #F47920;
+      background: linear-gradient(180deg, #171b23 0%, #151922 100%);
     }
-    .uc-kpi .v {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 30px;
-      font-weight: 900;
-      line-height: 1;
+
+    .uc-kpi.draft {
+      --accent: #FF9A40;
+      background: linear-gradient(180deg, #171b23 0%, #151922 100%);
+    }
+
+    .uc-kpi.pending {
+      --accent: #F47920;
+      background: linear-gradient(180deg, #171b23 0%, #151922 100%);
+    }
+
+    .uc-kpi-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(244,121,32,.32);
+      background: rgba(244,121,32,.10);
       color: var(--or, #F47920);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      position: relative;
+      z-index: 1;
     }
-    .uc-kpi.draft .v { color: #D29922; }
-    .uc-kpi.pending .v { color: #E07D23; }
-    .uc-kpi.overdue .v { color: #ff4b4b; }
+
+    .uc-kpi.total .uc-kpi-icon {
+      border-color: rgba(244,121,32,.32);
+      background: rgba(244,121,32,.10);
+      color: #F47920;
+    }
+
+    .uc-kpi.draft .uc-kpi-icon {
+      border-color: rgba(244,121,32,.28);
+      background: rgba(244,121,32,.08);
+      color: #FF9A40;
+    }
+
+    .uc-kpi.pending .uc-kpi-icon {
+      border-color: rgba(244,121,32,.24);
+      background: rgba(244,121,32,.06);
+      color: #F47920;
+    }
+
+    .uc-kpi-copy {
+      display: grid;
+      gap: 4px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .uc-kpi .k {
+      color: rgba(255,255,255,.72);
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .uc-kpi .v {
+      color: var(--or, #F47920);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: calc(clamp(28px, 2.8vw, 36px) * var(--goil-font-scale, 1));
+      font-weight: 900;
+      line-height: .92;
+    }
+
     .uc-kpi .n {
-      font-size: 10px;
-      color: var(--wh4, #484F58);
-      line-height: 1.3;
+      color: rgba(255,255,255,.34);
+      font-size: calc(10px * var(--goil-font-scale, 1));
+      line-height: 1.35;
     }
-    .uc-kpi.overdue .n { color: #ff4b4b; font-weight: 600; }
+
+    .uc-kpi-wave {
+      position: absolute;
+      right: 18px;
+      bottom: 10px;
+      width: 76px;
+      height: 18px;
+      opacity: .72;
+      pointer-events: none;
+    }
+
+    .uc-kpi-wave path {
+      stroke: #F47920;
+    }
 
     .uc-stage-panel {
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
       overflow: hidden;
-      background: var(--bg3, #1C2128);
-    }
-    .uc-stage-head {
-      border-bottom: 1px solid var(--border2, rgba(255,255,255,.12));
+      background: #151922;
+      box-shadow: 0 18px 38px rgba(0,0,0,.18);
+      min-height: 0;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 16px;
-      flex-wrap: wrap;
+      flex-direction: column;
     }
+
+    .uc-stage-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 340px) 170px 170px;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 18px 6px;
+    }
+
     .uc-tabs {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
     }
+
     .uc-tab {
       border: 0;
       background: transparent;
-      color: var(--wh4, #484F58);
-      font-size: 13px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .45px;
-      padding: 10px 14px;
-      border-bottom: 2px solid transparent;
+      color: rgba(255,255,255,.40);
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      padding: 5px 6px 9px;
+      border-bottom: 3px solid transparent;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      transition: color var(--t), border-color var(--t);
     }
+
     .uc-tab.active {
       color: var(--or, #F47920);
       border-bottom-color: var(--or, #F47920);
     }
+
     .uc-tab .count {
-      min-width: 20px;
-      height: 20px;
+      min-width: 24px;
+      height: 24px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0 6px;
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      background: rgba(255,255,255,.06);
-      color: var(--wh3, #8B949E);
-      font-size: 10px;
+      padding: 0 8px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.42);
+      font-size: calc(10px * var(--goil-font-scale, 1));
       font-weight: 800;
     }
+
     .uc-tab.active .count {
-      background: rgba(244,121,32,.18);
-      color: #ffb067;
-      border-color: rgba(244,121,32,.3);
+      background: rgba(244,121,32,.12);
+      border-color: rgba(244,121,32,.38);
+      color: #F47920;
     }
-    .uc-tools {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+
+    .uc-search {
+      position: relative;
+      display: block;
     }
-    .uc-tools .rm-input,
-    .uc-tools .rm-select {
-      min-width: 190px;
+
+    .uc-search-input {
       height: 40px;
-      border-radius: 9px;
+      border-radius: 13px;
+      padding: 0 52px 0 16px;
+      border-color: rgba(255,255,255,.10);
+      background: #0d0f14;
+      color: #e6edf3;
+      font-size: calc(12px * var(--goil-font-scale, 1));
     }
-    .uc-tools .rm-select { min-width: 145px; }
+
+    .uc-search-icon {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      color: var(--wh3, #8B949E);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .uc-stage-top .rm-select {
+      min-width: 0;
+      width: 100%;
+      height: 40px;
+      border-radius: 13px;
+      border-color: rgba(255,255,255,.10);
+      background: #0d0f14;
+      color: #e6edf3;
+      font-size: calc(12px * var(--goil-font-scale, 1));
+      padding-inline: 14px 34px;
+    }
 
     .uc-table-wrap {
       width: 100%;
-      overflow-x: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,.06);
     }
+
     .uc-table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1300px;
+      min-width: 1240px;
     }
+
     .uc-table th,
     .uc-table td {
-      padding: 16px 14px;
-      border-bottom: 1px solid var(--border, rgba(255,255,255,.07));
+      padding: 6px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
       text-align: left;
-      vertical-align: top;
-      font-size: 11px;
+      vertical-align: middle;
+      font-size: calc(11px * var(--goil-font-scale, 1));
       color: var(--wh2, #C9D1D9);
     }
+
     .uc-table th {
-      background: rgba(255,255,255,.015);
-      color: var(--wh4, #484F58);
-      font-size: 10px;
-      font-weight: 800;
+      background: rgba(255,255,255,.02);
+      color: rgba(255,255,255,.28);
+      font-size: calc(10px * var(--goil-font-scale, 1));
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: .8px;
       position: sticky;
       top: 0;
       z-index: 1;
     }
-    .uc-table tbody tr:hover { background: rgba(255,255,255,.015); }
-    .uc-row-urgent td {
-      background: rgba(218,54,51,.03);
-      border-top: 1px solid rgba(218,54,51,.16);
-      border-bottom: 1px solid rgba(218,54,51,.16);
+
+    .uc-table tbody tr {
+      transition: background var(--t);
     }
 
-    .uc-ref {
+    .uc-table tbody tr:hover {
+      background: rgba(255,255,255,.02);
+    }
+
+    .uc-row-urgent {
+      background: linear-gradient(90deg, rgba(244,121,32,.05), rgba(255,255,255,0));
+    }
+
+    .uc-ref-cell {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: 240px;
+    }
+
+    .uc-ref-lines {
       display: grid;
       gap: 2px;
-      font-family: 'Barlow Condensed', sans-serif;
+      min-width: 0;
     }
-    .uc-ref .main {
-      color: var(--or, #F47920);
-      font-size: 15px;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: .2px;
-      text-transform: uppercase;
-      white-space: nowrap;
+
+    .uc-ref-lines .main {
+      color: var(--wh, #E6EDF3);
+      font-family: 'Barlow', sans-serif;
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: .01em;
     }
-    .uc-ref .ver {
-      color: var(--wh4, #484F58);
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1;
-      text-transform: lowercase;
+
+    .uc-ref-type {
+      color: var(--wh3, #8B949E);
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      line-height: 1.25;
     }
 
     .uc-fac {
       display: grid;
-      gap: 1px;
-    }
-    .uc-fac .main {
-      color: var(--wh, #E6EDF3);
-      font-size: 18px;
-      line-height: 1;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .uc-fac .sub {
-      color: var(--wh4, #484F58);
-      font-size: 11px;
-    }
-    .uc-zone {
-      color: var(--wh3, #8B949E);
-      font-size: 13px;
-      line-height: 1.1;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      text-transform: uppercase;
+      gap: 2px;
     }
 
-    .uc-status {
-      display: grid;
-      gap: 5px;
+    .uc-fac .main {
+      color: var(--wh, #E6EDF3);
+      font-family: 'Barlow', sans-serif;
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      line-height: 1.1;
+      font-weight: 600;
     }
-    .uc-status-note {
-      color: #ff5b5b;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .4px;
-      text-transform: uppercase;
-    }
-    .uc-risk-dash {
-      width: 34px;
-      height: 24px;
-      border-radius: 999px;
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
+
+    .uc-fac .sub {
       color: var(--wh4, #484F58);
+      font-size: calc(10px * var(--goil-font-scale, 1));
+      line-height: 1.2;
+    }
+
+    .uc-zone {
+      color: var(--wh2, #C9D1D9);
+      font-family: 'Barlow', sans-serif;
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      line-height: 1.1;
+      font-weight: 500;
+    }
+
+    .uc-stage-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      font-size: calc(10px * var(--goil-font-scale, 1));
+      font-family: 'Barlow', sans-serif;
       font-weight: 700;
+      white-space: nowrap;
     }
 
-    .uc-stage-box {
-      border: 1px solid var(--border2, rgba(255,255,255,.12));
-      border-radius: 8px;
-      padding: 8px 10px;
-      display: grid;
-      gap: 4px;
-      min-width: 150px;
-      background: rgba(255,255,255,.015);
+    .uc-stage-pill.draft {
+      border-color: rgba(244,121,32,.30);
+      background: rgba(244,121,32,.10);
+      color: #FF9A40;
     }
-    .uc-stage-box .main {
-      color: var(--wh2, #C9D1D9);
-      font-size: 12px;
-      line-height: 1;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      text-transform: capitalize;
+
+    .uc-stage-pill.pending {
+      border-color: rgba(244,121,32,.42);
+      background: rgba(244,121,32,.14);
+      color: #F47920;
     }
-    .uc-stage-box .sub {
-      color: var(--wh4, #484F58);
-      font-size: 11px;
+
+    .uc-stage-pill.reopened {
+      border-color: rgba(255,255,255,.16);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.72);
     }
 
     .uc-progress {
       display: grid;
-      gap: 5px;
-      min-width: 120px;
+      gap: 3px;
+      min-width: 168px;
     }
+
+    .uc-progress .pct {
+      color: var(--wh, #E6EDF3);
+      font-family: 'Barlow', sans-serif;
+      font-size: calc(12px * var(--goil-font-scale, 1));
+      line-height: 1;
+      font-weight: 600;
+    }
+
     .uc-progress-line {
       width: 100%;
-      height: 8px;
+      height: 7px;
       border-radius: 999px;
-      background: #2b3440;
+      background: rgba(255,255,255,.08);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.05);
     }
+
     .uc-progress-fill {
       display: block;
       height: 100%;
       border-radius: 999px;
     }
-    .uc-progress-fill.high { background: #3FB950; }
-    .uc-progress-fill.mid { background: #F47920; }
-    .uc-progress-fill.low { background: #D29922; }
-    .uc-progress .pct {
-      font-size: 11px;
-      color: var(--wh3, #8B949E);
-      font-weight: 700;
-      text-align: right;
+
+    .uc-progress-fill.draft { background: linear-gradient(90deg, #F47920, #FF9A40); }
+    .uc-progress-fill.pending { background: linear-gradient(90deg, #F47920, #FF9A40); }
+    .uc-progress-fill.reopened { background: linear-gradient(90deg, rgba(244,121,32,.88), rgba(255,154,64,.72)); }
+
+    .uc-progress .sub {
+      color: rgba(255,255,255,.40);
+      font-size: calc(10px * var(--goil-font-scale, 1));
+      line-height: 1.3;
     }
 
     .uc-updated {
       display: grid;
-      gap: 2px;
+      gap: 1px;
       color: var(--wh3, #8B949E);
-      font-size: 11px;
+      font-size: calc(9px * var(--goil-font-scale, 1));
       line-height: 1.2;
       white-space: nowrap;
     }
-    .uc-updated .date { color: var(--wh2, #C9D1D9); }
-    .uc-updated .rel { color: var(--wh4, #484F58); }
+
+    .uc-updated .date,
+    .uc-updated .time {
+      color: var(--wh2, #C9D1D9);
+      font-weight: 600;
+    }
+
+    .uc-updated .rel {
+      color: rgba(255,255,255,.28);
+    }
+
+    .uc-col-action {
+      width: 232px;
+      text-align: center !important;
+    }
+
+    .uc-col-action-cell {
+      text-align: center !important;
+    }
 
     .uc-actions {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
     }
+
     .uc-btn {
-      height: 36px;
-      border-radius: 9px;
-      border: 1.5px solid var(--border2, rgba(255,255,255,.12));
-      background: transparent;
-      color: var(--wh3, #8B949E);
-      font-size: 12px;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      letter-spacing: .15px;
-      text-transform: capitalize;
+      height: 34px;
+      min-width: 200px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--wh, #E6EDF3);
+      font-size: calc(11px * var(--goil-font-scale, 1));
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
       padding: 0 16px;
       cursor: pointer;
-      line-height: 1;
-    }
-    .uc-btn:hover { border-color: var(--or, #F47920); color: var(--or, #F47920); }
-    .uc-btn.corr {
-      background: linear-gradient(180deg, rgba(244,121,32,.95), rgba(212,97,16,.95));
-      border-color: rgba(244,121,32,.55);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(244,121,32,.32);
-      min-width: 140px;
-      justify-content: center;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 10px;
+      transition: all var(--t);
     }
+
+    .uc-btn:hover {
+      border-color: rgba(244,121,32,.42);
+      background: rgba(244,121,32,.10);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
     .uc-empty {
-      padding: 26px 10px;
+      padding: 28px 20px;
       text-align: center;
       color: var(--wh3, #8B949E);
-      font-size: 15px;
+      font-size: calc(15px * var(--goil-font-scale, 1));
       font-weight: 500;
     }
 
-    @media (max-width: 1250px) {
-      .uc-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .uc-page-title h1 { font-size: 21px; }
-      .uc-head-main h2 { font-size: 28px; }
+    .uc-table-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 8px 18px;
+      flex: 0 0 auto;
     }
-    @media (max-width: 980px) {
-      .uc-tools .rm-input, .uc-tools .rm-select { min-width: 160px; }
-      .uc-page-title p { display: none; }
+
+    .uc-results-meta {
+      color: var(--wh3, #8B949E);
+      font-size: calc(12px * var(--goil-font-scale, 1));
+      line-height: 1.4;
     }
-    @media (max-width: 760px) {
-      .uc-kpis { grid-template-columns: 1fr; }
-      .uc-head-main h2 { font-size: 24px; }
-      .uc-page-title h1 { font-size: 19px; }
-      .uc-vsep, .uc-brand { display: none; }
+
+    .uc-pagination {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .uc-page-btn {
+      min-width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(9,15,24,.82);
+      color: var(--wh2, #C9D1D9);
+      font-size: calc(13px * var(--goil-font-scale, 1));
+      font-weight: 700;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--t);
+    }
+
+    .uc-page-btn:hover:not(:disabled) {
+      border-color: rgba(244,121,32,.42);
+      color: var(--or, #F47920);
+    }
+
+    .uc-page-btn.active {
+      background: linear-gradient(180deg, rgba(244,121,32,.96), rgba(218,100,20,.96));
+      border-color: rgba(244,121,32,.52);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(244,121,32,.25);
+    }
+
+    .uc-page-btn:disabled {
+      opacity: .45;
+      cursor: default;
+    }
+
+    html.light-mode body {
+      background: #f3f5f8 !important;
+      color: #1c1e21 !important;
+    }
+
+    html.light-mode .uc-topbar {
+      background: rgba(255,255,255,.96) !important;
+      border-bottom-color: rgba(0,0,0,.08) !important;
+      box-shadow: 0 6px 18px rgba(19, 26, 39, 0.06);
+    }
+
+    html.light-mode .uc-back-btn,
+    html.light-mode .uc-export {
+      background: #ffffff !important;
+      border-color: rgba(0,0,0,.12) !important;
+      color: #3a3b3c !important;
+    }
+
+    html.light-mode .uc-back-btn:hover,
+    html.light-mode .uc-export:hover {
+      color: #f47920 !important;
+      border-color: rgba(244,121,32,.36) !important;
+      background: rgba(244,121,32,.08) !important;
+    }
+
+    html.light-mode .uc-card::before {
+      background:
+        radial-gradient(circle at 88% 30%, rgba(244,121,32,.10), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.58) 58%, transparent 100%) !important;
+    }
+
+    html.light-mode .uc-kpi,
+    html.light-mode .uc-stage-panel {
+      background: linear-gradient(180deg, #ffffff 0%, #f7f8fa 100%) !important;
+      border-color: rgba(0,0,0,.08) !important;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    html.light-mode .uc-kpi {
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 14px 32px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    html.light-mode .uc-kpi .k,
+    html.light-mode .uc-kpi .n,
+    html.light-mode .uc-tab,
+    html.light-mode .uc-tab .count,
+    html.light-mode .uc-results-meta,
+    html.light-mode .uc-updated {
+      color: #606770 !important;
+    }
+
+    html.light-mode .uc-tab.active,
+    html.light-mode .uc-tab.active .count {
+      color: #f47920 !important;
+    }
+
+    html.light-mode .uc-search-input,
+    html.light-mode .uc-stage-top .rm-select {
+      background: #ffffff !important;
+      border-color: rgba(0,0,0,.12) !important;
+      color: #1c1e21 !important;
+    }
+
+    html.light-mode .uc-search-input::placeholder {
+      color: #8a8d91 !important;
+    }
+
+    html.light-mode .uc-search-icon {
+      color: #8a8d91 !important;
+    }
+
+    html.light-mode .uc-table-wrap {
+      border-top-color: rgba(0,0,0,.06) !important;
+    }
+
+    html.light-mode .uc-table th {
+      background: rgba(0,0,0,.04) !important;
+      color: #8a8d91 !important;
+      border-bottom-color: rgba(0,0,0,.06) !important;
+    }
+
+    html.light-mode .uc-table td {
+      color: #3a3b3c !important;
+      border-bottom-color: rgba(0,0,0,.06) !important;
+    }
+
+    html.light-mode .uc-table tbody tr:hover {
+      background: rgba(244,121,32,.04) !important;
+    }
+
+    html.light-mode .uc-row-urgent {
+      background: linear-gradient(90deg, rgba(244,121,32,.08), rgba(255,255,255,0)) !important;
+    }
+
+    html.light-mode .uc-ref-lines .main,
+    html.light-mode .uc-fac .main,
+    html.light-mode .uc-zone,
+    html.light-mode .uc-progress .pct,
+    html.light-mode .uc-updated .date,
+    html.light-mode .uc-updated .time {
+      color: #1c1e21 !important;
+    }
+
+    html.light-mode .uc-fac .sub,
+    html.light-mode .uc-progress .sub,
+    html.light-mode .uc-updated .rel,
+    html.light-mode .uc-empty {
+      color: #606770 !important;
+    }
+
+    html.light-mode .uc-progress-line {
+      background: rgba(0,0,0,.08) !important;
+    }
+
+    html.light-mode .uc-stage-pill {
+      background: rgba(0,0,0,.025) !important;
+      border-color: rgba(0,0,0,.12) !important;
+    }
+
+    html.light-mode .uc-stage-pill.draft {
+      background: rgba(244,121,32,.10) !important;
+      border-color: rgba(244,121,32,.26) !important;
+      color: #d97312 !important;
+    }
+
+    html.light-mode .uc-stage-pill.pending {
+      background: rgba(244,121,32,.14) !important;
+      border-color: rgba(244,121,32,.34) !important;
+      color: #c9600a !important;
+    }
+
+    html.light-mode .uc-stage-pill.reopened {
+      background: rgba(0,0,0,.04) !important;
+      border-color: rgba(0,0,0,.12) !important;
+      color: #4b5563 !important;
+    }
+
+    html.light-mode .uc-btn,
+    html.light-mode .uc-page-btn {
+      background: #ffffff !important;
+      border-color: rgba(0,0,0,.12) !important;
+      color: #1c1e21 !important;
+      box-shadow: none !important;
+    }
+
+    html.light-mode .uc-btn:hover,
+    html.light-mode .uc-page-btn:hover:not(:disabled) {
+      background: rgba(244,121,32,.08) !important;
+      border-color: rgba(244,121,32,.34) !important;
+      color: #f47920 !important;
+    }
+
+    html.light-mode .uc-page-btn.active {
+      background: linear-gradient(180deg, rgba(244,121,32,.96), rgba(218,100,20,.96)) !important;
+      border-color: rgba(244,121,32,.52) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 24px rgba(244,121,32,.18) !important;
+    }
+
+    @media (max-width: 1320px) {
+      body {
+        overflow: auto;
+      }
+
+      .uc-shell {
+        height: auto;
+        min-height: calc(100vh - 76px);
+        overflow: visible;
+      }
+
+      .uc-card {
+        height: auto;
+        grid-template-rows: auto;
+        overflow: visible;
+      }
+
+      .uc-stage-panel {
+        min-height: auto;
+      }
+
+      .uc-table-wrap {
+        flex: 0 0 auto;
+        min-height: 0;
+        max-height: none;
+      }
+
+      .uc-stage-top {
+        grid-template-columns: 1fr;
+      }
+
+      .uc-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 920px) {
+      body {
+        overflow: auto;
+      }
+
+      .uc-shell {
+        height: auto;
+        min-height: auto;
+      }
+
+      .uc-topbar {
+        padding-inline: 18px;
+      }
+
+      .uc-card {
+        padding-inline: 0;
+        overflow: visible;
+      }
+
+      .uc-kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .uc-stage-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        overflow: auto;
+      }
+
+      .uc-topbar {
+        gap: 12px;
+      }
+
+      .uc-topbar-left {
+        align-items: flex-start;
+      }
+
+      .uc-topbar-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .uc-topbar-title {
+        font-size: 18px;
+      }
+
+      .uc-export {
+        min-width: 144px;
+      }
+
+      .uc-kpi {
+        min-height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .uc-kpi-icon {
+        width: 74px;
+        height: 74px;
+      }
+
+      .uc-stage-top,
+      .uc-table-foot {
+        padding-inline: 16px;
+      }
+
+      .uc-tab {
+        padding-inline: 0;
+      }
     }
   </style>
 </head>
 <body>
   <header class="rm-topbar uc-topbar">
-    <div class="uc-left">
-      <button class="rm-back-btn" id="backLandingBtn">‹ Assessment Management Center</button>
-      <span class="uc-vsep"></span>
-      <div class="uc-brand">
-        GOIL HSSEQ
-      </div>
-      <span class="uc-vsep"></span>
-      <div class="uc-page-title">
-        <h1>Uncompleted Assessments</h1>
-        <p>Draft, in-progress, pending corrective action, and reopened records</p>
+    <div class="uc-topbar-left">
+      <button class="uc-back-btn" id="backLandingBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        Back
+      </button>
+      <div class="uc-brand-lockup">
+        <img class="uc-logo" src="../assets/img/goil-logo.png" alt="GOIL Logo" />
+        <div class="uc-topbar-title">Uncompleted Assessments</div>
       </div>
     </div>
-    <button class="rm-primary-btn uc-primary" id="conductAssessmentBtn">+ Conduct Assessment</button>
+    <div class="uc-topbar-right goil-page-tools">
+      <button class="uc-export" id="exportBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 4V14M12 14L8.5 10.5M12 14L15.5 10.5M5 18H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        Export
+      </button>
+    </div>
   </header>
 
-  <main class="rm-shell">
+  <main class="rm-shell uc-shell">
     <section class="uc-card">
-      <div class="uc-head">
-        <div class="uc-head-main">
-          <span class="uc-eyebrow">Unpublished Register</span>
-          <h2>Uncompleted Assessments</h2>
-          <p>All assessments that have not yet been fully submitted and published to the register.</p>
-        </div>
-        <button class="uc-export" id="exportBtn">⇩ Export</button>
-      </div>
-
-      <div class="uc-alerts">
-        <article class="uc-alert pending" id="alertPending">
-          <div class="left">
-            <span class="icon">⚠</span>
-            <span id="alertPendingText">0 assessments are pending corrective action submission. Checklists submitted but corrective actions not yet finalised.</span>
-          </div>
-          <button class="btn" id="alertPendingBtn">View →</button>
-        </article>
-        <article class="uc-alert overdue" id="alertOverdue">
-          <div class="left">
-            <span class="icon">⦿</span>
-            <span id="alertOverdueText">0 overdue corrective actions across uncompleted assessments require immediate attention.</span>
-          </div>
-          <button class="btn" id="alertOverdueBtn">Review →</button>
-        </article>
-      </div>
-
       <div class="uc-kpis">
         <article class="uc-kpi total">
-          <span class="k">Total Unpublished</span>
-          <span class="v" id="kpiTotal">0</span>
-          <span class="n">Across all stages</span>
+          <div class="uc-kpi-icon" aria-hidden="true">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+              <path d="M8 3H14L18 7V20H8C6.89543 20 6 19.1046 6 18V5C6 3.89543 6.89543 3 8 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+              <path d="M14 3V7H18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+              <path d="M9 11H15M9 15H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="uc-kpi-copy">
+            <span class="k">Total Unpublished</span>
+            <span class="v" id="kpiTotal">0</span>
+            <span class="n">Across all stages</span>
+          </div>
+          <svg class="uc-kpi-wave" viewBox="0 0 120 34" fill="none" aria-hidden="true">
+            <path d="M3 24C14 24 16 12 28 12C39 12 41 25 53 25C65 25 66 7 79 7C94 7 95 18 117 18" stroke="#2F81F7" stroke-width="3" stroke-linecap="round"></path>
+          </svg>
         </article>
         <article class="uc-kpi draft">
-          <span class="k">Draft / In Progress</span>
-          <span class="v" id="kpiDraft">0</span>
-          <span class="n">Awaiting completion</span>
+          <div class="uc-kpi-icon" aria-hidden="true">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+              <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"></circle>
+            </svg>
+          </div>
+          <div class="uc-kpi-copy">
+            <span class="k">Draft / In Progress</span>
+            <span class="v" id="kpiDraft">0</span>
+            <span class="n">Awaiting completion</span>
+          </div>
+          <svg class="uc-kpi-wave" viewBox="0 0 120 34" fill="none" aria-hidden="true">
+            <path d="M3 24C13 24 16 14 28 14C40 14 40 26 53 26C66 26 68 10 81 10C94 10 96 20 117 20" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"></path>
+          </svg>
         </article>
         <article class="uc-kpi pending">
-          <span class="k">Pending Corr. Action</span>
-          <span class="v" id="kpiPending">0</span>
-          <span class="n">Checklist submitted</span>
+          <div class="uc-kpi-icon" aria-hidden="true">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5H16M9 3H15M8 7H16C17.1046 7 18 7.89543 18 9V19C18 20.1046 17.1046 21 16 21H8C6.89543 21 6 20.1046 6 19V9C6 7.89543 6.89543 7 8 7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path>
+              <path d="M9 13L11 15L15 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <div class="uc-kpi-copy">
+            <span class="k">Pending Corrective Action</span>
+            <span class="v" id="kpiPending">0</span>
+            <span class="n">Checklist submitted</span>
+          </div>
+          <svg class="uc-kpi-wave" viewBox="0 0 120 34" fill="none" aria-hidden="true">
+            <path d="M3 24C14 24 17 15 28 15C39 15 40 26 53 26C67 26 68 9 81 9C93 9 95 18 117 18" stroke="#22C55E" stroke-width="3" stroke-linecap="round"></path>
+          </svg>
         </article>
       </div>
 
-      <section class="uc-stage-panel">
-        <div class="uc-stage-head">
+      <section class="uc-stage-panel" id="stagePanel">
+        <div class="uc-stage-top">
           <div class="uc-tabs" id="tabs">
             <button class="uc-tab active" data-tab="all">All Unpublished <span class="count" id="tabAll">0</span></button>
             <button class="uc-tab" data-tab="draft">Draft / In Progress <span class="count" id="tabDraft">0</span></button>
             <button class="uc-tab" data-tab="pending">Pending Corr. Action <span class="count" id="tabPending">0</span></button>
             <button class="uc-tab" data-tab="reopened">Reopened / Under Revision <span class="count" id="tabReopened">0</span></button>
           </div>
-          <div class="uc-tools">
-            <input class="rm-input" id="fltSearch" placeholder="Search facility, ref, zone..." />
-            <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
-            <select class="rm-select" id="fltType"><option value="">All Types</option></select>
-          </div>
+          <label class="uc-search">
+            <input class="rm-input uc-search-input" id="fltSearch" placeholder="Search by facility, reference, or zone..." />
+            <span class="uc-search-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.8"></circle>
+                <path d="M20 20L16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+            </span>
+          </label>
+          <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
+          <select class="rm-select" id="fltType"><option value="">All Types</option></select>
         </div>
 
         <div class="uc-table-wrap">
           <table class="uc-table">
             <thead>
               <tr>
-                <th>Reference Number</th>
+                <th>Reference</th>
                 <th>Facility</th>
                 <th>Zone</th>
-                <th>Status</th>
-                <th>Risk</th>
-                <th>Current Stage</th>
+                <th>Stage</th>
                 <th>Progress</th>
                 <th>Last Updated</th>
-                <th>Action</th>
+                <th class="uc-col-action">Action</th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
           </table>
         </div>
+
+        <div class="uc-table-foot">
+          <p class="uc-results-meta" id="resultsMeta">Showing 0 to 0 of 0 results</p>
+          <div class="uc-pagination" id="pagination"></div>
+        </div>
       </section>
     </section>
   </main>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/workflow-core.js?v=20260513-snapshotlatest1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260513-snapshotlatest1"></script>
   <script>
     const STATUS = RiskModuleUtils.STATUS();
     const SECTION_ORDER = ['doc', 'hsse', 'elec', 'fire', 'fore', 'disp', 'tank', 'env', 'sec', 'wel', 'other'];
 
     const state = {
       activeTab: 'all',
-      overdueOnly: false,
       allRows: [],
-      rows: []
+      rows: [],
+      page: 1,
+      pageSize: 8
     };
 
     function isCorrectiveActionStage(status) {
@@ -677,9 +1113,7 @@
     }
 
     function rowsInFilterScope() {
-      let rows = rowsForTab(state.allRows, state.activeTab);
-      if (state.overdueOnly) rows = rows.filter(function (row) { return row.overdueCA > 0; });
-      return rows;
+      return rowsForTab(state.allRows, state.activeTab);
     }
 
     function masterRef(record) {
@@ -710,24 +1144,16 @@
       return 'Low';
     }
 
-    function riskBadgeClass(level) {
-      const l = normalizeRiskLevel(level);
-      if (l === 'Critical') return 'b-overdue';
-      if (l === 'High') return 'b-high';
-      if (l === 'Medium') return 'b-pending';
-      return 'b-published';
-    }
-
-    function statusBadgeClass(status) {
-      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'b-pending';
-      if (status === STATUS.REOPENED) return 'b-reopen';
-      return 'b-draft';
-    }
-
     function statusLabel(status) {
       if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'Pending Corr. Action';
       if (status === STATUS.REOPENED) return 'Reopened / Under Revision';
       return 'Draft / In Progress';
+    }
+
+    function statusToneClass(status) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) return 'pending';
+      if (status === STATUS.REOPENED) return 'reopened';
+      return 'draft';
     }
 
     function statusPriority(status) {
@@ -742,6 +1168,26 @@
       if (!raw) return '-';
       const cleaned = raw.replace(/^zonal office\s*/i, '');
       return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    }
+
+    function meaningfulText(value) {
+      const raw = String(value == null ? '' : value).trim();
+      if (!raw) return '';
+      const lowered = raw.toLowerCase();
+      if (lowered === '-' || lowered === 'n/a' || lowered === 'null' || lowered === 'undefined') return '';
+      return raw;
+    }
+
+    function familyValue(records, keys, fallback) {
+      const list = Array.isArray(records) ? records : [];
+      for (let i = 0; i < list.length; i += 1) {
+        const record = list[i] || {};
+        for (let j = 0; j < keys.length; j += 1) {
+          const value = meaningfulText(record[keys[j]]);
+          if (value) return value;
+        }
+      }
+      return fallback;
     }
 
     function progressValue(record, status) {
@@ -767,6 +1213,14 @@
       const idx = SECTION_ORDER.indexOf(section);
       const step = idx >= 0 ? ('Section ' + (idx + 1) + ' of ' + SECTION_ORDER.length) : ('Section ' + Math.max(1, Math.round((progress / 100) * SECTION_ORDER.length)) + ' of ' + SECTION_ORDER.length);
       return { main: 'Assessment Checklist', sub: step };
+    }
+
+    function progressSummary(progress) {
+      const total = SECTION_ORDER.length;
+      const safeProgress = Number(progress || 0);
+      if (!(safeProgress > 0)) return '0 of ' + total + ' sections';
+      const completed = Math.max(1, Math.min(total, Math.round((safeProgress / 100) * total)));
+      return completed + ' of ' + total + ' sections';
     }
 
     function actionsForRecord(record, allActions) {
@@ -835,9 +1289,10 @@
           versionCount: versions.length,
           status: status,
           statusLabel: statusLabel(status),
-          facility: String(latest.facilityName || latest.facility_name || '-'),
-          facilityType: String(latest.facilityType || latest.facility_type || 'Fuel Station'),
-          zone: zoneShort(latest.location || latest.zone || '-'),
+          recordType: String(latest.assessmentType || latest.assessment_type || latest.checklistType || latest.templateName || 'Assessment Checklist'),
+          facility: familyValue(versions, ['facilityName', 'facility_name'], '-'),
+          facilityType: familyValue(versions, ['facilityType', 'facility_type'], 'Fuel Station'),
+          zone: zoneShort(familyValue(versions, ['location', 'zone'], '-')),
           riskLevel: riskLevel,
           riskScore: riskScore,
           stageMain: stage.main,
@@ -869,9 +1324,6 @@
       const draft = rows.filter(function (row) { return row.status === STATUS.DRAFT || row.status === STATUS.IN_PROGRESS; }).length;
       const pending = rows.filter(function (row) { return row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED; }).length;
       const reopened = rows.filter(function (row) { return row.status === STATUS.REOPENED; }).length;
-      const overdueGlobal = rows.reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
-      const overdueInActiveTab = rowsForTab(rows, state.activeTab).reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
-      const overdue = state.activeTab === 'all' ? overdueGlobal : overdueInActiveTab;
 
       document.getElementById('tabAll').textContent = String(all);
       document.getElementById('tabDraft').textContent = String(draft);
@@ -881,18 +1333,6 @@
       document.getElementById('kpiTotal').textContent = String(all);
       document.getElementById('kpiDraft').textContent = String(draft);
       document.getElementById('kpiPending').textContent = String(pending);
-      const kpiOverdue = document.getElementById('kpiOverdue');
-      if (kpiOverdue) kpiOverdue.textContent = String(overdue);
-    }
-
-    function refreshAlerts(rows) {
-      const pending = rows.filter(function (row) { return row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED; }).length;
-      const overdue = rows.reduce(function (sum, row) { return sum + row.overdueCA; }, 0);
-
-      document.getElementById('alertPendingText').textContent = pending + ' assessments are pending corrective action submission. Checklists submitted but corrective actions not yet finalised.';
-      document.getElementById('alertOverdueText').textContent = overdue + ' overdue corrective actions across uncompleted assessments require immediate attention.';
-      document.getElementById('alertPending').classList.toggle('uc-hide', pending === 0);
-      document.getElementById('alertOverdue').classList.toggle('uc-hide', overdue === 0);
     }
 
     function populateFilters(rows) {
@@ -932,14 +1372,13 @@
       const tabRows = rowsForTab(state.allRows, state.activeTab);
 
       let rows = tabRows.filter(function (row) {
-        const hay = [row.masterRef, row.facility, row.zone, row.facilityType].join(' ').toLowerCase();
+        const hay = [row.masterRef, row.facility, row.zone, row.facilityType, row.recordType, row.statusLabel].join(' ').toLowerCase();
         if (search && hay.indexOf(search) < 0) return false;
         if (zone && row.zone.toLowerCase() !== zone) return false;
         if (type && row.facilityType.toLowerCase() !== type) return false;
         return true;
       });
 
-      if (state.overdueOnly) rows = rows.filter(function (row) { return row.overdueCA > 0; });
       state.rows = rows;
     }
 
@@ -953,61 +1392,129 @@
       if (Number.isNaN(dateObj.getTime())) {
         return { date: '-', time: '-', relative: '-' };
       }
-      const date = dateObj.toLocaleDateString('en-GB');
+      const date = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
       const time = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
       const now = new Date();
       const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
       const startRow = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()).getTime();
       const diffDays = Math.floor((startToday - startRow) / 86400000);
       let rel = 'Today';
-      if (diffDays === 1) rel = 'Yesterday';
+      if (diffDays === 1) rel = '1 day ago';
       else if (diffDays > 1) rel = diffDays + ' days ago';
       else if (diffDays < 0) rel = 'Today';
       return { date: date, time: time, relative: rel };
     }
 
+    function ensurePageInRange() {
+      const totalPages = Math.max(1, Math.ceil(state.rows.length / state.pageSize));
+      if (state.page > totalPages) state.page = totalPages;
+      if (state.page < 1) state.page = 1;
+    }
+
+    function pagedRows() {
+      const start = (state.page - 1) * state.pageSize;
+      return state.rows.slice(start, start + state.pageSize);
+    }
+
+    function measurePageSize() {
+      const wrap = document.querySelector('.uc-table-wrap');
+      const headRow = wrap ? wrap.querySelector('thead tr') : null;
+      const firstRow = wrap ? wrap.querySelector('tbody tr') : null;
+      if (!wrap || !headRow || !firstRow || firstRow.querySelector('.uc-empty')) return state.pageSize;
+      const available = wrap.clientHeight - Math.ceil(headRow.getBoundingClientRect().height) - 2;
+      const rowHeight = Math.max(1, Math.ceil(firstRow.getBoundingClientRect().height));
+      const fitted = Math.floor(available / rowHeight);
+      return Math.max(8, fitted);
+    }
+
+    function fitRowsToViewport() {
+      const nextPageSize = measurePageSize();
+      if (!Number.isFinite(nextPageSize) || nextPageSize === state.pageSize) return false;
+      state.pageSize = nextPageSize;
+      ensurePageInRange();
+      return true;
+    }
+
+    function updateResultsMeta(visibleCount) {
+      const meta = document.getElementById('resultsMeta');
+      const total = state.rows.length;
+      if (!total || !visibleCount) {
+        meta.textContent = 'Showing 0 to 0 of ' + total + ' results';
+        return;
+      }
+      const start = ((state.page - 1) * state.pageSize) + 1;
+      const end = start + visibleCount - 1;
+      meta.textContent = 'Showing ' + start + ' to ' + end + ' of ' + total + ' results';
+    }
+
+    function renderPagination() {
+      const holder = document.getElementById('pagination');
+      const totalPages = Math.max(1, Math.ceil(state.rows.length / state.pageSize));
+      const buttons = [];
+
+      buttons.push('<button class="uc-page-btn" data-page="' + Math.max(1, state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + '>‹</button>');
+      for (let page = 1; page <= totalPages; page += 1) {
+        buttons.push('<button class="uc-page-btn ' + (page === state.page ? 'active' : '') + '" data-page="' + page + '">' + page + '</button>');
+      }
+      buttons.push('<button class="uc-page-btn" data-page="' + Math.min(totalPages, state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + '>›</button>');
+
+      holder.innerHTML = buttons.join('');
+    }
+
+    function openContinueTarget(ref, version, status) {
+      if (status === STATUS.PENDING_CORRECTIVE || status === STATUS.REVISED_CHECKLIST_SUBMITTED) {
+        window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep11&ref=' + encodeURIComponent(ref) + '&version=' + encodeURIComponent(version);
+        return;
+      }
+      RiskModuleUtils.openAssessmentRecord(ref, version);
+    }
+
     function renderRows() {
       const tbody = document.getElementById('tbody');
-      if (!state.rows.length) {
-        tbody.innerHTML = '<tr><td colspan="9"><div class="uc-empty">No records found for this stage/filter selection.</div></td></tr>';
+      const visibleRows = pagedRows();
+      if (!visibleRows.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="uc-empty">No records found for this stage/filter selection.</div></td></tr>';
+        updateResultsMeta(0);
         return;
       }
 
-      tbody.innerHTML = state.rows.map(function (row) {
+      tbody.innerHTML = visibleRows.map(function (row) {
         const urgent = row.overdueCA > 0;
-        const riskText = row.riskScore > 0 ? (row.riskLevel + ' (' + fmtScore(row.riskScore) + ')') : '-';
-        const statusNote = urgent ? '<div class="uc-status-note">● Overdue CA</div>' : '';
         const parts = updatedParts(row.lastUpdated);
-        let progressClass = 'mid';
-        if (row.progress >= 90) progressClass = 'high';
-        if (row.progress < 50) progressClass = 'low';
-        const secondAction = (row.status === STATUS.PENDING_CORRECTIVE || row.status === STATUS.REVISED_CHECKLIST_SUBMITTED)
-          ? '<button class="uc-btn corr" data-action="corr" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '">⚠ Corr. Actions</button>'
+        const stageTone = statusToneClass(row.status);
+        const facilitySub = row.facilityType && row.facilityType.toLowerCase() !== row.facility.toLowerCase()
+          ? '<span class="sub">' + RiskModuleUtils.esc(row.facilityType) + '</span>'
           : '';
         return ''
           + '<tr class="' + (urgent ? 'uc-row-urgent' : '') + '">'
-          + '<td><div class="uc-ref"><span class="main">' + RiskModuleUtils.esc(row.masterRef) + '</span><span class="ver">v' + RiskModuleUtils.esc(String(row.latestVersion)) + '</span></div></td>'
-          + '<td><div class="uc-fac"><span class="main">' + RiskModuleUtils.esc(row.facility) + '</span><span class="sub">' + RiskModuleUtils.esc(row.facilityType) + '</span></div></td>'
+          + '<td><div class="uc-ref-cell"><div class="uc-ref-lines"><span class="main">' + RiskModuleUtils.esc(row.masterRef) + '</span></div></div></td>'
+          + '<td><div class="uc-fac"><span class="main">' + RiskModuleUtils.esc(row.facility) + '</span>' + facilitySub + '</div></td>'
           + '<td><span class="uc-zone">' + RiskModuleUtils.esc(row.zone) + '</span></td>'
-          + '<td><div class="uc-status"><span class="rm-badge ' + statusBadgeClass(row.status) + '">' + RiskModuleUtils.esc(row.statusLabel) + '</span>' + statusNote + '</div></td>'
-          + '<td>' + (row.riskScore > 0 ? '<span class="rm-badge ' + riskBadgeClass(row.riskLevel) + '">' + RiskModuleUtils.esc(riskText) + '</span>' : '<span class="uc-risk-dash">–</span>') + '</td>'
-          + '<td><div class="uc-stage-box"><span class="main">' + RiskModuleUtils.esc(row.stageMain) + '</span><span class="sub">' + RiskModuleUtils.esc(row.stageSub) + '</span></div></td>'
-          + '<td><div class="uc-progress"><div class="uc-progress-line"><span class="uc-progress-fill ' + progressClass + '" style="width:' + RiskModuleUtils.esc(String(row.progress)) + '%;"></span></div><span class="pct">' + RiskModuleUtils.esc(String(row.progress)) + '%</span></div></td>'
-          + '<td><div class="uc-updated"><span class="date">' + RiskModuleUtils.esc(parts.date) + ',</span><span>' + RiskModuleUtils.esc(parts.time) + '</span><span class="rel">' + RiskModuleUtils.esc(parts.relative) + '</span></div></td>'
-          + '<td><div class="uc-actions"><button class="uc-btn" data-action="view" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '">Continue</button>' + secondAction + '</div></td>'
+          + '<td><span class="uc-stage-pill ' + stageTone + '">' + RiskModuleUtils.esc(row.statusLabel) + '</span></td>'
+          + '<td><div class="uc-progress"><span class="pct">' + RiskModuleUtils.esc(String(row.progress)) + '%</span><div class="uc-progress-line"><span class="uc-progress-fill ' + stageTone + '" style="width:' + RiskModuleUtils.esc(String(row.progress)) + '%;"></span></div><span class="sub">' + RiskModuleUtils.esc(progressSummary(row.progress)) + '</span></div></td>'
+          + '<td><div class="uc-updated"><span class="date">' + RiskModuleUtils.esc(parts.date) + '</span><span class="time">' + RiskModuleUtils.esc(parts.time) + '</span><span class="rel">' + RiskModuleUtils.esc(parts.relative) + '</span></div></td>'
+          + '<td class="uc-col-action-cell"><div class="uc-actions"><button class="uc-btn" data-action="continue" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '" data-status="' + RiskModuleUtils.esc(row.status) + '">Resume Assessment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button></div></td>'
           + '</tr>';
       }).join('');
+
+      updateResultsMeta(visibleRows.length);
     }
 
     function render() {
       populateFilters(rowsInFilterScope());
       refreshTabsAndKpis(state.allRows);
       applyFilters();
+      ensurePageInRange();
       renderRows();
+      if (state.rows.length && fitRowsToViewport()) {
+        renderRows();
+      }
+      renderPagination();
     }
 
     function setActiveTab(tab) {
       state.activeTab = tab;
+      state.page = 1;
       document.querySelectorAll('#tabs .uc-tab').forEach(function (button) {
         button.classList.toggle('active', button.getAttribute('data-tab') === state.activeTab);
       });
@@ -1015,52 +1522,53 @@
     }
 
     function bindEvents() {
-      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
-      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      const backBtn = document.getElementById('backLandingBtn');
+      if (backBtn) backBtn.addEventListener('click', RiskModuleUtils.goLanding);
 
       document.querySelectorAll('#tabs .uc-tab').forEach(function (button) {
         button.addEventListener('click', function () {
-          state.overdueOnly = false;
           setActiveTab(button.getAttribute('data-tab') || 'all');
         });
       });
 
       ['fltSearch', 'fltZone', 'fltType'].forEach(function (id) {
         const node = document.getElementById(id);
-        node.addEventListener('input', render);
-        node.addEventListener('change', render);
-      });
-
-      document.getElementById('alertPendingBtn').addEventListener('click', function () {
-        state.overdueOnly = false;
-        setActiveTab('pending');
-      });
-      document.getElementById('alertOverdueBtn').addEventListener('click', function () {
-        state.overdueOnly = true;
-        setActiveTab('all');
+        node.addEventListener('input', function () {
+          state.page = 1;
+          render();
+        });
+        node.addEventListener('change', function () {
+          state.page = 1;
+          render();
+        });
       });
 
       document.getElementById('tbody').addEventListener('click', function (event) {
         const button = event.target.closest('button[data-action]');
         if (!button) return;
-        const action = button.getAttribute('data-action');
         const ref = button.getAttribute('data-ref');
         const version = button.getAttribute('data-version');
-        if (action === 'corr') {
-          window.location.href = 'GOIL_Corrective_Action.html?v=20260318-masterrefdeep11&ref=' + encodeURIComponent(ref) + '&version=' + encodeURIComponent(version);
-          return;
-        }
-        RiskModuleUtils.openAssessmentRecord(ref, version);
+        const status = button.getAttribute('data-status') || '';
+        openContinueTarget(ref, version, status);
+      });
+
+      document.getElementById('pagination').addEventListener('click', function (event) {
+        const button = event.target.closest('button[data-page]');
+        if (!button || button.disabled) return;
+        const page = Number(button.getAttribute('data-page') || 1);
+        state.page = Number.isFinite(page) && page > 0 ? page : 1;
+        ensurePageInRange();
+        renderRows();
+        renderPagination();
       });
 
       document.getElementById('exportBtn').addEventListener('click', function () {
-        const headers = ['Reference Number', 'Version', 'Facility', 'Type', 'Zone', 'Status', 'Risk', 'Current Stage', 'Progress', 'Last Updated', 'Open CAs', 'Overdue CAs'];
+        const headers = ['Reference Number', 'Facility', 'Type', 'Zone', 'Status', 'Risk', 'Current Stage', 'Progress', 'Last Updated', 'Open CAs', 'Overdue CAs'];
         const lines = [headers.map(function (v) { return '"' + v + '"'; }).join(',')];
         state.rows.forEach(function (row) {
           const stage = row.stageMain + ' - ' + row.stageSub;
           lines.push([
             row.masterRef,
-            'v' + row.latestVersion,
             row.facility,
             row.facilityType,
             row.zone,
@@ -1083,6 +1591,15 @@
         a.remove();
         URL.revokeObjectURL(url);
       });
+
+      let resizeFrame = 0;
+      window.addEventListener('resize', function () {
+        if (resizeFrame) cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(function () {
+          resizeFrame = 0;
+          render();
+        });
+      });
     }
 
     function initFromQuery() {
@@ -1095,7 +1612,6 @@
       initFromQuery();
       state.allRows = buildRows();
       refreshTabsAndKpis(state.allRows);
-      refreshAlerts(state.allRows);
       populateFilters(rowsInFilterScope());
       bindEvents();
       setActiveTab(state.activeTab);

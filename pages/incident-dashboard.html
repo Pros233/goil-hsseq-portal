@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOIL HSSEQ | Incident Dashboard</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #f5f5f5;
+      color: #1d2433;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 999px; }
+    .app {
+      display: flex;
+      min-height: 100vh;
+      background: #f5f5f5;
+    }
+    .sidebar {
+      width: 260px;
+      background: #151515;
+      color: #847d76;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .brand {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .brand img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f1ebe5;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #e8521a;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .side-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px 0 14px;
+    }
+    .side-section { margin-bottom: 18px; }
+    .side-label {
+      padding: 0 22px 10px;
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #48433d;
+      font-weight: 700;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 22px;
+      color: #8e8881;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.14s ease, color 0.14s ease;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: #f1ebe5; }
+    .nav-item.active {
+      background: rgba(232, 82, 26, 0.12);
+      color: #f1ebe5;
+      position: relative;
+    }
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #e8521a;
+    }
+    .nav-icon {
+      width: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+    .nav-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 16px 22px;
+    }
+    .nav-badge-soon {
+      margin-left: auto;
+      padding: 2px 7px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6f695f;
+      font-weight: 700;
+    }
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .topbar {
+      height: 60px;
+      background: #151515;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      color: #f1ebe5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .crumbs {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .crumb {
+      color: #837b74;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .crumb.active {
+      color: #f1ebe5;
+      font-weight: 600;
+    }
+    .crumb-sep { color: #48433d; }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-shrink: 0;
+    }
+    .clock {
+      color: #d49a2a;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .topbar-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.08);
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #e3841c;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .user-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+    .user-copy strong {
+      color: #f1ebe5;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+    .user-copy span {
+      color: #8c847c;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 0 40px;
+    }
+    .content-shell {
+      width: min(1660px, calc(100vw - 320px));
+      margin: 0 auto;
+    }
+    .dashboard-hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+    .dashboard-hero-copy {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .dashboard-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: #fff4ec;
+      color: #ff7a1a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .dashboard-title {
+      color: #1d2740;
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .dashboard-subtitle {
+      margin-top: 6px;
+      color: #72809a;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .year-select {
+      min-width: 106px;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid #dfe5ef;
+      background: #fff;
+      color: #50607a;
+      padding: 0 18px;
+      font-size: 15px;
+      font-weight: 600;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #7f8ba0 50%), linear-gradient(135deg, #7f8ba0 50%, transparent 50%);
+      background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+    }
+    .filter-card,
+    .metrics-row article,
+    .severity-row article,
+    .quarter-row article,
+    .chart-card {
+      background: #fff;
+      border: 1px solid #edf1f6;
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(21, 28, 38, 0.06);
+    }
+    .filter-card {
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 106px 166px 186px 196px auto;
+      gap: 16px;
+      align-items: end;
+    }
+    .filter-field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #6c7789;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .filter-field select {
+      width: 100%;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid #dfe5ef;
+      background: #fff;
+      color: #8f97a8;
+      padding: 0 18px;
+      font-size: 15px;
+      font-weight: 500;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #7f8ba0 50%), linear-gradient(135deg, #7f8ba0 50%, transparent 50%);
+      background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+    }
+    .apply-btn {
+      height: 48px;
+      border-radius: 16px;
+      border: none;
+      background: #ff7a1a;
+      color: #fff;
+      padding: 0 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(255, 122, 26, 0.18);
+    }
+    .metrics-row,
+    .severity-row,
+    .quarter-row,
+    .charts-row {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .metrics-row { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .severity-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .quarter-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .charts-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .metric-card {
+      padding: 26px 28px 24px;
+      min-height: 174px;
+    }
+    .metric-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 26px;
+    }
+    .metric-card.total .metric-icon { background: #f5f7fb; color: #5d6b85; }
+    .metric-card.open .metric-icon { background: #e9f0ff; color: #2b65f8; }
+    .metric-card.investigating .metric-icon { background: #fff3cc; color: #d39b00; }
+    .metric-card.closed .metric-icon { background: #dcfbe5; color: #16b84a; }
+    .metric-card.accidents .metric-icon { background: #ffe5e5; color: #ff2b2b; }
+    .metric-value {
+      color: #18223a;
+      font-size: 38px;
+      line-height: 1;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .metric-label {
+      color: #66748b;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .metric-note {
+      color: #a3acbb;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+    .severity-card {
+      color: #fff;
+      padding: 24px 28px;
+      min-height: 174px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+    .severity-card svg {
+      opacity: 0.95;
+    }
+    .severity-card .severity-value {
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 800;
+    }
+    .severity-card .severity-label {
+      font-size: 18px;
+      line-height: 1.12;
+      font-weight: 500;
+    }
+    .severity-card.fatalities { background: #9d1d20; }
+    .severity-card.lti { background: #ff5a00; }
+    .severity-card.medical { background: #f5ba00; }
+    .severity-card.first-aid { background: #0caf38; }
+    .quarter-card {
+      padding: 22px 24px;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 12px;
+    }
+    .quarter-card .quarter-name {
+      color: #657389;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .quarter-card .quarter-value {
+      color: #ff7a1a;
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 800;
+    }
+    .quarter-card .quarter-label {
+      color: #9ba5b6;
+      font-size: 16px;
+    }
+    .chart-card {
+      padding: 20px 22px 24px;
+      min-height: 340px;
+    }
+    .chart-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #edf1f6;
+      margin-bottom: 18px;
+    }
+    .chart-head svg { color: #ff7a1a; }
+    .chart-title {
+      color: #1d2740;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 255px;
+      display: block;
+    }
+    .axis-label {
+      fill: #a4adbb;
+      font-size: 12px;
+      font-family: 'Barlow', sans-serif;
+    }
+    .grid-line {
+      stroke: #e6ebf3;
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+    .axis-line {
+      stroke: #cfd7e4;
+      stroke-width: 1.25;
+    }
+    .line-series {
+      fill: none;
+      stroke: #ff7a1a;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .line-dot {
+      fill: #ff7a1a;
+    }
+    .bar-series {
+      fill: #ff7a1a;
+      rx: 8;
+    }
+    @media (max-width: 1500px) {
+      .content-shell { width: calc(100vw - 300px); }
+      .metrics-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .severity-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 1180px) {
+      .filter-grid,
+      .metrics-row,
+      .severity-row,
+      .quarter-row,
+      .charts-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 960px) {
+      .app { display: block; }
+      .sidebar { display: none; }
+      .content-shell { width: min(95vw, 1200px); }
+      .dashboard-hero { flex-direction: column; }
+      .filter-grid,
+      .metrics-row,
+      .severity-row,
+      .quarter-row,
+      .charts-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="../assets/img/goil-logo.png" alt="GOIL logo" onerror="this.style.display='none'">
+        <div class="brand-copy">
+          <div class="brand-title">GOIL</div>
+          <div class="brand-sub">HSSEQ</div>
+        </div>
+      </div>
+      <div class="side-scroll">
+        <div class="side-section">
+          <div class="side-label">Platform</div>
+          <a class="nav-item" href="portal.html"><span class="nav-icon">▦</span><span>Dashboard</span></a>
+        </div>
+        <div class="side-section">
+          <div class="side-label">Units</div>
+          <a class="nav-item" href="unit-hse.html"><span class="nav-icon">◫</span><span>HSE</span></a>
+          <a class="nav-item" href="unit-compliance.html"><span class="nav-icon">☑</span><span>Compliance &amp; Regulatory</span></a>
+          <a class="nav-item" href="unit-security.html"><span class="nav-icon">◌</span><span>Security</span></a>
+          <a class="nav-item" href="unit-quality.html"><span class="nav-icon">⌁</span><span>Quality</span></a>
+          <a class="nav-item" href="unit-iso.html"><span class="nav-icon">◫</span><span>ISO</span></a>
+          <a class="nav-item" href="unit-common.html"><span class="nav-icon">□</span><span>Common</span></a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="side-section">
+          <div class="side-label" style="color:#e8521a;">Incident &amp; Hazard</div>
+          <a class="nav-item" href="incident-reporting.html?view=home"><span>Home</span></a>
+          <a class="nav-item" href="incident-reporting.html?view=report"><span>Report Incident / Hazard</span></a>
+          <a class="nav-item" href="incident-list.html"><span>Incident List</span></a>
+          <a class="nav-item active" href="incident-dashboard.html"><span>Dashboard</span></a>
+          <a class="nav-item" href="incident-archive.html"><span>Year Archive</span></a>
+          <a class="nav-item" href="incident-admin.html"><span>Admin</span></a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="side-section">
+          <div class="side-label">Reporting</div>
+          <div class="nav-item" style="cursor:default;">
+            <span>KPI &amp; Reporting</span>
+            <span class="nav-badge-soon">Soon</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="crumbs">
+          <span class="crumb">/</span>
+          <span class="crumb">HSE Unit</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb active">Analytics Dashboard</span>
+        </div>
+        <div class="topbar-right">
+          <div class="clock" id="clockNow">12:38 • 14 MAY 2026</div>
+          <div class="topbar-divider"></div>
+          <div class="user-menu">
+            <div class="user-pill" id="topUserAvatar">GU</div>
+            <div class="user-copy">
+              <strong id="topUserName">GOIL User</strong>
+              <span>HSE Unit</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="content-shell">
+          <section class="dashboard-hero">
+            <div class="dashboard-hero-copy">
+              <div class="dashboard-icon" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <div>
+                <h1 class="dashboard-title">HSSEQ Analytics Dashboard</h1>
+                <p class="dashboard-subtitle">Visualize and analyze incident data across all facilities</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="filter-card">
+            <div class="filter-grid">
+              <div class="filter-field">
+                <label for="yearFilter">Year</label>
+                <select id="yearFilter"></select>
+              </div>
+              <div class="filter-field">
+                <label for="quarterFilter">Quarter</label>
+                <select id="quarterFilter">
+                  <option value="all">All Quarters</option>
+                  <option value="1">Q1</option>
+                  <option value="2">Q2</option>
+                  <option value="3">Q3</option>
+                  <option value="4">Q4</option>
+                </select>
+              </div>
+              <div class="filter-field">
+                <label for="regionFilter">Region</label>
+                <select id="regionFilter">
+                  <option value="all">All Regions</option>
+                </select>
+              </div>
+              <div class="filter-field">
+                <label for="facilityTypeFilter">Facility Type</label>
+                <select id="facilityTypeFilter">
+                  <option value="all">All Types</option>
+                </select>
+              </div>
+              <button class="apply-btn" type="button" id="applyFiltersBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Apply</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="metrics-row">
+            <article class="metric-card total">
+              <div class="metric-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="4 14 8 14 11 6 14 18 17 10 20 10"></polyline>
+                </svg>
+              </div>
+              <div class="metric-value" id="metricTotal">0</div>
+              <div class="metric-label">Total</div>
+            </article>
+            <article class="metric-card open">
+              <div class="metric-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+              <div class="metric-value" id="metricOpen">0</div>
+              <div class="metric-label">Open</div>
+            </article>
+            <article class="metric-card investigating">
+              <div class="metric-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2.06 12.34a1 1 0 0 1 0-.68 10 10 0 0 1 19.88 0 1 1 0 0 1 0 .68 10 10 0 0 1-19.88 0"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </div>
+              <div class="metric-value" id="metricInvestigating">0</div>
+              <div class="metric-label">Under Investigation</div>
+            </article>
+            <article class="metric-card closed">
+              <div class="metric-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div class="metric-value" id="metricClosed">0</div>
+              <div class="metric-label">Closed</div>
+            </article>
+            <article class="metric-card accidents">
+              <div class="metric-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="M12 8v4"></path>
+                  <path d="M12 16h.01"></path>
+                </svg>
+              </div>
+              <div class="metric-value" id="metricAccidents">0</div>
+              <div class="metric-label">Accidents</div>
+            </article>
+          </section>
+
+          <section class="severity-row">
+            <article class="severity-card fatalities">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4"></circle>
+                <path d="M9 14h6"></path>
+                <path d="M8 20c1.2-2.7 2.8-4 4-4s2.8 1.3 4 4"></path>
+              </svg>
+              <div class="severity-value" id="metricFatalities">0</div>
+              <div class="severity-label">Fatalities</div>
+            </article>
+            <article class="severity-card lti">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="10" cy="7" r="4"></circle>
+                <path d="M20 8v6"></path>
+                <path d="M23 11h-6"></path>
+              </svg>
+              <div class="severity-value" id="metricLti">0</div>
+              <div class="severity-label">Lost Time Injuries</div>
+            </article>
+            <article class="severity-card medical">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 12 7 12 10 4 14 20 17 12 21 12"></polyline>
+              </svg>
+              <div class="severity-value" id="metricMedical">0</div>
+              <div class="severity-label">Medical Treatment</div>
+            </article>
+            <article class="severity-card first-aid">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 12 7 12 10 4 14 20 17 12 21 12"></polyline>
+              </svg>
+              <div class="severity-value" id="metricFirstAid">0</div>
+              <div class="severity-label">First Aid</div>
+            </article>
+          </section>
+
+          <section class="quarter-row" id="quarterCards"></section>
+
+          <section class="charts-row">
+            <article class="chart-card">
+              <div class="chart-head">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 12 7 12 10 4 14 20 17 12 21 12"></polyline>
+                </svg>
+                <div class="chart-title">Incidents per Month</div>
+              </div>
+              <svg class="chart-svg" id="monthChart" viewBox="0 0 560 255" preserveAspectRatio="none"></svg>
+            </article>
+            <article class="chart-card">
+              <div class="chart-head">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <div class="chart-title">Incidents per Quarter</div>
+              </div>
+              <svg class="chart-svg" id="quarterChart" viewBox="0 0 560 255" preserveAspectRatio="none"></svg>
+            </article>
+          </section>
+
+          <section class="charts-row">
+            <article class="chart-card">
+              <div class="chart-head">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                  <circle cx="12" cy="12" r="8"></circle>
+                </svg>
+                <div class="chart-title">Incidents by Class</div>
+              </div>
+              <svg class="chart-svg" id="classChart" viewBox="0 0 560 255" preserveAspectRatio="none"></svg>
+            </article>
+            <article class="chart-card">
+              <div class="chart-head">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3c-3 3-6 5-6 9a6 6 0 0 0 12 0c0-4-3-6-6-9z"></path>
+                  <path d="M9 12c1 1 2 1.5 3 1.5s2-.5 3-1.5"></path>
+                </svg>
+                <div class="chart-title">Incidents by Region</div>
+              </div>
+              <svg class="chart-svg" id="regionChart" viewBox="0 0 560 255" preserveAspectRatio="none"></svg>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var REPORTS_KEY = 'goil_hsseq_incident_reports_v1';
+      var TYPE_LABELS = {
+        accident: 'Accident',
+        near_miss: 'Near Miss',
+        dangerous_occurrence: 'Dangerous Occurrence',
+        hazard: 'Hazard / Unsafe Condition'
+      };
+
+      function formatClock() {
+        var now = new Date();
+        return now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + ' • ' +
+          now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      }
+
+      function loadReports() {
+        try {
+          return JSON.parse(localStorage.getItem(REPORTS_KEY) || '[]');
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function extractYear(report) {
+        var date = new Date(report.submittedAt || '');
+        return Number.isNaN(date.getTime()) ? null : date.getFullYear();
+      }
+
+      function extractQuarter(report) {
+        var date = new Date(report.submittedAt || '');
+        if (Number.isNaN(date.getTime())) return null;
+        return Math.floor(date.getMonth() / 3) + 1;
+      }
+
+      function getProfile() {
+        try {
+          return JSON.parse(localStorage.getItem('goilUserProfile') || '{}');
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function fillProfile() {
+        var profile = getProfile();
+        var fullName = profile.full_name || profile.email || 'GOIL User';
+        var initials = fullName.split(/\s+/).filter(Boolean).slice(0, 2).map(function (part) {
+          return part.charAt(0).toUpperCase();
+        }).join('') || 'GU';
+      var topUserName = document.getElementById('topUserName');
+      var topUserAvatar = document.getElementById('topUserAvatar');
+      if (topUserName) topUserName.textContent = fullName;
+      if (topUserAvatar) topUserAvatar.textContent = initials;
+      }
+
+      function uniqueValues(records, getter) {
+        var seen = {};
+        records.forEach(function (record) {
+          var value = getter(record);
+          if (value) seen[value] = true;
+        });
+        return Object.keys(seen).sort();
+      }
+
+      function renderYearOptions(records) {
+        var select = document.getElementById('yearFilter');
+        var currentYear = new Date().getFullYear();
+        var years = uniqueValues(records, extractYear);
+        if (years.indexOf(String(currentYear)) === -1) years.unshift(String(currentYear));
+        select.innerHTML = '<option value="all">All Years</option>' + years.map(function (year) {
+          return '<option value="' + year + '"' + (String(year) === String(currentYear) ? ' selected' : '') + '>' + year + '</option>';
+        }).join('');
+      }
+
+      function renderFilterOptions(records) {
+        var regionSelect = document.getElementById('regionFilter');
+        var facilitySelect = document.getElementById('facilityTypeFilter');
+        var regions = uniqueValues(records, function (record) { return record.data && record.data.region; });
+        var facilityTypes = uniqueValues(records, function (record) { return record.data && record.data.facilityType; });
+        regionSelect.innerHTML = '<option value="all">All Regions</option>' + regions.map(function (value) {
+          return '<option value="' + value + '">' + value + '</option>';
+        }).join('');
+        facilitySelect.innerHTML = '<option value="all">All Types</option>' + facilityTypes.map(function (value) {
+          return '<option value="' + value + '">' + value + '</option>';
+        }).join('');
+      }
+
+      function getSeverityBucket(record) {
+        var data = record.data || {};
+        var impacts = Array.isArray(data.impacts) ? data.impacts : [];
+        var fatalities = impacts.some(function (impact) {
+          return /fatal/i.test(String(impact.impactType || '')) || /fatal/i.test(String(impact.personCategory || ''));
+        });
+        if (fatalities) return 'fatalities';
+        var description = String(data.description || '').toLowerCase();
+        if (description.indexOf('lost time') !== -1) return 'lti';
+        if (description.indexOf('medical') !== -1) return 'medical';
+        if (String(record.type || '') === 'accident') return 'firstAid';
+        return '';
+      }
+
+      function filterReports(records) {
+        var year = document.getElementById('yearFilter').value;
+        var quarter = document.getElementById('quarterFilter').value;
+        var region = document.getElementById('regionFilter').value;
+        var facilityType = document.getElementById('facilityTypeFilter').value;
+
+        return records.filter(function (record) {
+          if (year !== 'all' && String(extractYear(record)) !== year) return false;
+          if (quarter !== 'all' && String(extractQuarter(record)) !== quarter) return false;
+          if (region !== 'all' && String((record.data && record.data.region) || '') !== region) return false;
+          if (facilityType !== 'all' && String((record.data && record.data.facilityType) || '') !== facilityType) return false;
+          return true;
+        });
+      }
+
+      function getStatusSlug(record) {
+        return String(record.status || 'Open').trim().toLowerCase();
+      }
+
+      function setText(id, value) {
+        document.getElementById(id).textContent = String(value);
+      }
+
+      function renderMetrics(records) {
+        var openCount = 0;
+        var investigatingCount = 0;
+        var closedCount = 0;
+        var accidentCount = 0;
+        var fatalityCount = 0;
+        var ltiCount = 0;
+        var medicalCount = 0;
+        var firstAidCount = 0;
+
+        records.forEach(function (record) {
+          var status = getStatusSlug(record);
+          if (status === 'closed') closedCount += 1;
+          else if (status === 'under investigation') investigatingCount += 1;
+          else openCount += 1;
+
+          if (record.type === 'accident') accidentCount += 1;
+
+          var bucket = getSeverityBucket(record);
+          if (bucket === 'fatalities') fatalityCount += 1;
+          else if (bucket === 'lti') ltiCount += 1;
+          else if (bucket === 'medical') medicalCount += 1;
+          else if (bucket === 'firstAid') firstAidCount += 1;
+        });
+
+        setText('metricTotal', records.length);
+        setText('metricOpen', openCount);
+        setText('metricInvestigating', investigatingCount);
+        setText('metricClosed', closedCount);
+        setText('metricAccidents', accidentCount);
+        setText('metricFatalities', fatalityCount);
+        setText('metricLti', ltiCount);
+        setText('metricMedical', medicalCount);
+        setText('metricFirstAid', firstAidCount);
+      }
+
+      function renderQuarterCards(records) {
+        var counts = [0, 0, 0, 0];
+        records.forEach(function (record) {
+          var quarter = extractQuarter(record);
+          if (quarter && quarter >= 1 && quarter <= 4) counts[quarter - 1] += 1;
+        });
+
+        document.getElementById('quarterCards').innerHTML = counts.map(function (count, index) {
+          return '' +
+            '<article class="quarter-card">' +
+              '<div class="quarter-name">Q' + (index + 1) + '</div>' +
+              '<div class="quarter-value">' + count + '</div>' +
+              '<div class="quarter-label">Incidents</div>' +
+            '</article>';
+        }).join('');
+      }
+
+      function buildGridLines(maxValue) {
+        var values = [0, 1, 2, 3, 4];
+        var top = 18;
+        var bottom = 220;
+        return values.map(function (value) {
+          var ratio = maxValue ? (value / maxValue) : 0;
+          var y = bottom - ((bottom - top) * ratio);
+          return '' +
+            '<line class="grid-line" x1="56" y1="' + y + '" x2="532" y2="' + y + '"></line>' +
+            '<text class="axis-label" x="30" y="' + (y + 4) + '">' + value + '</text>';
+        }).join('') +
+          '<line class="axis-line" x1="56" y1="220" x2="532" y2="220"></line>' +
+          '<line class="axis-line" x1="56" y1="18" x2="56" y2="220"></line>';
+      }
+
+      function renderMonthChart(records) {
+        var monthCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        records.forEach(function (record) {
+          var date = new Date(record.submittedAt || '');
+          if (!Number.isNaN(date.getTime())) monthCounts[date.getMonth()] += 1;
+        });
+        var max = Math.max.apply(Math, [4].concat(monthCounts));
+        var top = 18;
+        var bottom = 220;
+        var left = 76;
+        var width = 420;
+        var step = width / 11;
+        var points = monthCounts.map(function (count, index) {
+          var ratio = count / max;
+          var x = left + (step * index);
+          var y = bottom - ((bottom - top) * ratio);
+          return { x: x, y: y, count: count };
+        });
+
+        var path = points.map(function (point, index) {
+          return (index === 0 ? 'M' : 'L') + point.x + ' ' + point.y;
+        }).join(' ');
+
+        var labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var labelSvg = points.map(function (point, index) {
+          return '<text class="axis-label" x="' + point.x + '" y="242" text-anchor="middle">' + labels[index] + '</text>';
+        }).join('');
+        var dots = points.map(function (point) {
+          return '<circle class="line-dot" cx="' + point.x + '" cy="' + point.y + '" r="4.5"></circle>';
+        }).join('');
+
+        document.getElementById('monthChart').innerHTML =
+          buildGridLines(max) +
+          '<path class="line-series" d="' + path + '"></path>' +
+          dots +
+          labelSvg;
+      }
+
+      function renderQuarterChart(records) {
+        var quarterCounts = [0, 0, 0, 0];
+        records.forEach(function (record) {
+          var quarter = extractQuarter(record);
+          if (quarter && quarter >= 1 && quarter <= 4) quarterCounts[quarter - 1] += 1;
+        });
+        var max = Math.max.apply(Math, [4].concat(quarterCounts));
+        var top = 18;
+        var bottom = 220;
+        var left = 96;
+        var gap = 76;
+        var barWidth = 64;
+        var bars = quarterCounts.map(function (count, index) {
+          var ratio = count / max;
+          var x = left + ((barWidth + gap) * index);
+          var barHeight = (bottom - top) * ratio;
+          var y = bottom - barHeight;
+          return '' +
+            '<rect class="bar-series" x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '"></rect>' +
+            '<text class="axis-label" x="' + (x + (barWidth / 2)) + '" y="242" text-anchor="middle">Q' + (index + 1) + '</text>';
+        }).join('');
+
+        document.getElementById('quarterChart').innerHTML =
+          buildGridLines(max) +
+          bars;
+      }
+
+      function normalizeClass(type) {
+        var value = String(type || '').trim().toLowerCase();
+        if (value === 'accident') return 'Accident';
+        if (value === 'near_miss' || value === 'near miss') return 'Near Miss';
+        if (value === 'dangerous_occurrence' || value === 'dangerous occurrence') return 'Dangerous Occurrence';
+        if (value === 'hazard' || value === 'hazard / unsafe condition' || value === 'hazard_unsafe_condition') return 'Hazard';
+        return 'Other';
+      }
+
+      function renderDistributionChart(targetId, labels, values, colors) {
+        var max = Math.max.apply(Math, [4].concat(values));
+        var top = 18;
+        var bottom = 220;
+        var left = 72;
+        var chartWidth = 450;
+        var gap = labels.length > 1 ? 22 : 0;
+        var barWidth = Math.min(72, Math.max(44, (chartWidth - (gap * (labels.length - 1))) / Math.max(labels.length, 1)));
+        var bars = labels.map(function (label, index) {
+          var value = values[index] || 0;
+          var ratio = value / max;
+          var x = left + (index * (barWidth + gap));
+          var barHeight = (bottom - top) * ratio;
+          var y = bottom - barHeight;
+          var labelLines = String(label).split(' ');
+          var labelSvg = labelLines.map(function (line, lineIndex) {
+            return '<text class="axis-label" x="' + (x + (barWidth / 2)) + '" y="' + (242 + (lineIndex * 13)) + '" text-anchor="middle">' + line + '</text>';
+          }).join('');
+          return '' +
+            '<rect x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="10" fill="' + colors[index % colors.length] + '"></rect>' +
+            '<text class="axis-label" x="' + (x + (barWidth / 2)) + '" y="' + (y - 8) + '" text-anchor="middle" fill="#5b6577" style="font-weight:700;">' + value + '</text>' +
+            labelSvg;
+        }).join('');
+
+        document.getElementById(targetId).innerHTML =
+          buildGridLines(max) +
+          bars;
+      }
+
+      function renderClassChart(records) {
+        var labels = ['Accident', 'Near Miss', 'Dangerous Occurrence', 'Hazard'];
+        var counts = {
+          Accident: 0,
+          'Near Miss': 0,
+          'Dangerous Occurrence': 0,
+          Hazard: 0
+        };
+
+        records.forEach(function (record) {
+          var normalized = normalizeClass(record.type);
+          if (Object.prototype.hasOwnProperty.call(counts, normalized)) {
+            counts[normalized] += 1;
+          }
+        });
+
+        renderDistributionChart(
+          'classChart',
+          ['Accident', 'Near Miss', 'Dangerous Occurrence', 'Hazard'],
+          labels.map(function (label) { return counts[label]; }),
+          ['#ff6b6b', '#f4b400', '#ff8a34', '#4f8cff']
+        );
+      }
+
+      function renderRegionChart(records) {
+        var regionCounts = {};
+        records.forEach(function (record) {
+          var region = String((record.data && record.data.region) || 'Unknown').trim() || 'Unknown';
+          regionCounts[region] = (regionCounts[region] || 0) + 1;
+        });
+
+        var entries = Object.keys(regionCounts).map(function (region) {
+          return { region: region, count: regionCounts[region] };
+        }).sort(function (a, b) {
+          return b.count - a.count;
+        }).slice(0, 5);
+
+        if (!entries.length) {
+          entries = [{ region: 'Unknown', count: 0 }];
+        }
+
+        renderDistributionChart(
+          'regionChart',
+          entries.map(function (entry) { return entry.region; }),
+          entries.map(function (entry) { return entry.count; }),
+          ['#ff7a1a', '#ff9e45', '#ffc27a', '#ffd8a6', '#ffe6c2']
+        );
+      }
+
+      var allReports = loadReports();
+      document.getElementById('clockNow').textContent = formatClock();
+      fillProfile();
+      renderYearOptions(allReports);
+      renderFilterOptions(allReports);
+
+      function renderAll() {
+        var filtered = filterReports(allReports);
+        renderMetrics(filtered);
+        renderQuarterCards(filtered);
+        renderMonthChart(filtered);
+        renderQuarterChart(filtered);
+        renderClassChart(filtered);
+        renderRegionChart(filtered);
+      }
+
+      document.getElementById('applyFiltersBtn').addEventListener('click', renderAll);
+      renderAll();
+    }());
+  </script>
+</body>
+</html>

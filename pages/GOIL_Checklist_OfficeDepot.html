@@ -259,7 +259,7 @@ input[type=file]{display:none}
 
 <!-- TOP NAV -->
 <nav class="top-nav">
-  <button class="nav-home" onclick="window.location.href='portal.html'" title="Go to Home">
+  <button class="nav-home" onclick="window.location.href='risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now()" title="Go to Assessment Management Center">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5L8 2l6 4.5V14a1 1 0 01-1 1H3a1 1 0 01-1-1V6.5z"/><path d="M6 15V9h4v6"/></svg>
     Home
   </button>
@@ -1045,7 +1045,7 @@ function finishInspection() {
   }
   saveDraft(false);
   showToast('Inspection progress saved.', 'success');
-  setTimeout(() => window.location.href = 'portal.html', 1800);
+  setTimeout(() => window.location.href = 'risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now(), 1800);
 }
 
 function goBack() {

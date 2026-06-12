@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Published Register | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep11" defer></script>
+  <script src="../assets/js/auth-guard.js?v=20260520-publishsync1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -163,11 +163,6 @@
       color:var(--wh3,#8B949E);
       font-weight:600;
     }
-    .rm-select-row{
-      width:14px;
-      height:14px;
-      accent-color:var(--or,#F47920);
-    }
     .rm-view-btn{
       height:26px;
       padding:0 10px;
@@ -281,22 +276,11 @@
     .pr-left{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 auto}
     .pr-vsep{width:1px;height:24px;background:var(--line2,rgba(255,255,255,.13))}
     .pr-brand{display:inline-flex;align-items:center;gap:8px;color:var(--wh2,#C9D1D9);font-family:'Barlow Condensed',sans-serif;font-weight:900;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
-    .pr-brand img{width:22px;height:22px;filter:drop-shadow(0 0 6px rgba(244,121,32,.35))}
+    .pr-brand img{height:34px;width:auto;display:block;filter:drop-shadow(0 0 6px rgba(244,121,32,.35))}
     .pr-title-wrap{display:grid;gap:1px;min-width:0}
     .pr-title{margin:0;font-family:'Barlow Condensed',sans-serif;font-size:30px;line-height:1;font-weight:900;text-transform:uppercase;color:var(--wh,#E6EDF3);letter-spacing:.25px}
     .pr-subtitle{margin:0;color:var(--wh4,#484F58);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .pr-conduct{min-width:192px}
-
-    .pr-card{padding:14px;border-radius:14px;display:grid;gap:10px}
-    .pr-hero{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
-    .pr-hero-main{display:grid;gap:4px}
-    .pr-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--or,#F47920);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
-    .pr-eyebrow::before{content:'';width:20px;height:2px;border-radius:999px;background:var(--or,#F47920)}
-    .pr-hero-main h2{margin:0;font-family:'Barlow Condensed',sans-serif;font-size:50px;line-height:.92;text-transform:uppercase;color:var(--wh,#E6EDF3);font-weight:900}
-    .pr-hero-main p{margin:0;color:var(--wh3,#8B949E);font-size:13px;line-height:1.45}
-    .pr-hero-actions{display:flex;gap:8px;align-items:center}
-    .pr-hero-ghost{height:38px;border-radius:8px;padding:0 14px;font-size:12px}
-    .pr-hero-summary{height:38px;border-radius:8px;padding:0 14px;font-size:12px;box-shadow:0 2px 12px rgba(244,121,32,.34)}
 
     .pr-metrics{gap:10px;grid-template-columns:repeat(6,minmax(0,1fr))}
     .pr-metric{padding:12px 14px;border-radius:10px;gap:4px;position:relative;background:var(--bg3,#1C2128)}
@@ -361,6 +345,7 @@
     .pr-risk-medium td:first-child{border-left:3px solid #D29922}
     .pr-risk-high td:first-child{border-left:3px solid #E07D23}
     .pr-risk-critical td:first-child{border-left:3px solid #DA3633}
+    .pr-risk-unresolved td:first-child{border-left:3px solid rgba(255,255,255,.18)}
     .pr-master{display:grid;gap:1px}
     .pr-master .sub{font-size:10px;color:var(--wh4,#484F58)}
     .pr-fac{display:grid;gap:1px}
@@ -431,24 +416,824 @@
     .pr-result-left .dot.crit{background:#DA3633}
     .pr-result-right{color:var(--wh4,#484F58);font-size:11px;white-space:nowrap}
 
-    /* ── Hide redundant Zone + Facility Type columns (shown in cell sub-lines) ── */
-    .pr-table-wrap .rm-table th:nth-child(4),
-    .pr-table-wrap .rm-table td:nth-child(4),
-    .pr-table-wrap .rm-table th:nth-child(5),
-    .pr-table-wrap .rm-table td:nth-child(5){display:none}
-
     /* ── Tighten table rows ── */
     .pr-table-wrap .rm-table th,.pr-table-wrap .rm-table td{padding:7px 9px}
-    .pr-table-wrap .rm-table{min-width:1180px}
+    .pr-table-wrap .rm-table{min-width:1620px}
+
+    /* ── Published register redesign ── */
+    .pr-topbar{
+      padding:14px 20px;
+      background:rgba(8,12,18,.96);
+      border-bottom-color:rgba(255,255,255,.08);
+      box-shadow:0 8px 24px rgba(0,0,0,.14);
+    }
+    .pr-shell{
+      width:min(1968px, calc(100vw - 32px));
+      margin:8px auto 24px;
+      gap:14px;
+    }
+    .pr-left{gap:10px;flex:1 1 auto;min-width:0}
+    .pr-brand{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      color:var(--wh,#E6EDF3);
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:19px;
+      font-weight:900;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .pr-brand-logo{
+      width:30px;
+      height:30px;
+      flex:0 0 auto;
+      display:block;
+      filter:drop-shadow(0 0 8px rgba(244,121,32,.24));
+    }
+    .pr-vsep{width:1px;height:26px;background:rgba(255,255,255,.10)}
+    .pr-title-wrap{
+      min-width:0;
+      display:grid;
+      gap:0;
+    }
+    .pr-title{
+      margin:0;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:30px;
+      line-height:1;
+      text-transform:uppercase;
+      color:var(--or,#F47920);
+      letter-spacing:.3px;
+      font-weight:900;
+    }
+    .pr-subtitle{
+      margin:0;
+      color:var(--wh4,#484F58);
+      font-size:11px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      display:none;
+    }
+    .pr-topbar-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-shrink:0;
+      margin-left:auto;
+    }
+    .pr-top-btn{
+      min-width:0;
+      height:44px;
+      padding:0 16px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(14,18,26,.86);
+      color:var(--wh2,#C9D1D9);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.2px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:none;
+    }
+    .pr-top-btn svg{width:15px;height:15px;flex:0 0 auto}
+    .pr-top-btn:hover{
+      background:rgba(255,255,255,.03);
+      border-color:rgba(244,121,32,.34);
+      color:var(--wh,#E6EDF3);
+      transform:translateY(-1px);
+    }
+    .pr-conduct{min-width:214px}
+
+    .pr-metric-grid{
+      display:grid;
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:12px;
+      margin-top:0;
+    }
+    .pr-metric{
+      min-height:122px;
+      padding:16px 16px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(31,36,44,.96), rgba(23,28,36,.96));
+      display:grid;
+      grid-template-columns:64px minmax(0,1fr);
+      gap:12px;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .pr-metric::before{
+      content:'';
+      position:absolute;
+      left:0;right:0;top:0;
+      height:3px;
+      border-radius:16px 16px 0 0;
+      background:var(--line2,rgba(255,255,255,.13));
+    }
+    .pr-metric-icon{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.03);
+      color:currentColor;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .pr-metric-icon svg{width:28px;height:28px}
+    .pr-metric-copy{
+      min-width:0;
+      display:grid;
+      gap:4px;
+      align-content:center;
+    }
+    .pr-metric .k{
+      font-size:11px;
+      letter-spacing:.6px;
+      color:var(--wh3,#8B949E);
+      font-weight:800;
+      text-transform:uppercase;
+    }
+    .pr-metric strong{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:58px;
+      line-height:.84;
+      font-weight:900;
+    }
+    .pr-metric .n{
+      font-size:12px;
+      color:var(--wh4,#484F58);
+    }
+    .pr-metric.total{color:#2F81F7}
+    .pr-metric.total::before{background:#2F81F7}
+    .pr-metric.low{color:#3FB950}
+    .pr-metric.low::before{background:#3FB950}
+    .pr-metric.medium{color:#D29922}
+    .pr-metric.medium::before{background:#D29922}
+    .pr-metric.high{color:#F47920}
+    .pr-metric.high::before{background:#F47920}
+    .pr-metric.critical{color:#DA3633}
+    .pr-metric.critical::before{background:#DA3633}
+    .pr-metric.ca{color:#2F81F7}
+    .pr-metric.ca::before{background:#2F81F7}
+    .pr-metric.total .pr-metric-icon{color:#5AA3FF;border-color:rgba(47,129,247,.55)}
+    .pr-metric.low .pr-metric-icon{color:#52D273;border-color:rgba(63,185,80,.45)}
+    .pr-metric.medium .pr-metric-icon{color:#FFD24A;border-color:rgba(210,153,34,.45)}
+    .pr-metric.high .pr-metric-icon{color:#FF9D3A;border-color:rgba(244,121,32,.45)}
+    .pr-metric.critical .pr-metric-icon{color:#FF5F58;border-color:rgba(218,54,51,.45)}
+    .pr-metric.ca .pr-metric-icon{color:#7FB8FF;border-color:rgba(47,129,247,.45)}
+
+    .pr-board{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(23,28,36,.98), rgba(19,23,31,.98));
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+    }
+    .pr-filter-panel{
+      padding:16px 18px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .pr-filter-grid{
+      display:grid;
+      grid-template-columns:1.25fr 1.1fr .9fr 1.05fr auto auto;
+      gap:12px;
+      align-items:end;
+    }
+    .pr-filter-field{
+      min-width:0;
+      display:grid;
+      gap:8px;
+    }
+    .pr-filter-field label{
+      color:var(--wh3,#8B949E);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+    }
+    .pr-input-wrap{
+      position:relative;
+    }
+    .pr-input-wrap .rm-input{
+      padding-right:34px;
+    }
+    .pr-input-icon{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--wh3,#8B949E);
+      pointer-events:none;
+      display:inline-flex;
+    }
+    .pr-chip-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .pr-chip{
+      height:32px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      color:var(--wh3,#8B949E);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.2px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .pr-chip:hover{border-color:rgba(244,121,32,.35);color:var(--wh2,#C9D1D9)}
+    .pr-chip.active{background:rgba(244,121,32,.14);border-color:rgba(244,121,32,.55);color:var(--or,#F47920)}
+    .pr-chip.low.active{background:rgba(63,185,80,.12);border-color:rgba(63,185,80,.45);color:#3FB950}
+    .pr-chip.medium.active{background:rgba(210,153,34,.12);border-color:rgba(210,153,34,.45);color:#D29922}
+    .pr-chip.high.active{background:rgba(244,121,32,.14);border-color:rgba(244,121,32,.55);color:#F47920}
+    .pr-chip.critical.active{background:rgba(218,54,51,.12);border-color:rgba(218,54,51,.5);color:#DA3633}
+    .pr-date-btn,.pr-more-btn,.pr-clear-btn{
+      height:36px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      color:var(--wh2,#C9D1D9);
+      padding:0 12px;
+      font-size:12px;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .pr-date-btn{justify-content:space-between}
+    .pr-more-btn{
+      justify-content:center;
+      color:var(--or,#F47920);
+      border-color:rgba(244,121,32,.32);
+      background:rgba(244,121,32,.08);
+      min-width:120px;
+    }
+    .pr-clear-btn{
+      justify-content:center;
+      background:transparent;
+      color:var(--wh2,#C9D1D9);
+      border-color:transparent;
+      padding:0 4px;
+      min-width:48px;
+    }
+    .pr-date-btn:hover,.pr-more-btn:hover,.pr-clear-btn:hover{
+      border-color:rgba(244,121,32,.48);
+      color:var(--wh,#E6EDF3);
+      background:rgba(255,255,255,.04);
+    }
+    .pr-clear-btn:hover{background:transparent;color:var(--or,#F47920)}
+    .pr-advanced-panel{
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .pr-advanced-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      align-items:end;
+    }
+    .pr-toggle{
+      height:36px;
+      padding:0 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:10px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--wh2,#C9D1D9);
+      font-size:12px;
+      font-weight:700;
+      background:rgba(255,255,255,.02);
+    }
+    .pr-toggle input{accent-color:var(--or,#F47920)}
+
+    .pr-table-meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px 18px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      color:var(--wh3,#8B949E);
+      font-size:12px;
+    }
+    .pr-table-meta-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pr-table-meta-left strong{
+      color:var(--wh2,#C9D1D9);
+      font-size:17px;
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:900;
+    }
+    .pr-legend{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .pr-legend i{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      display:inline-block;
+      background:var(--wh4,#484F58);
+      box-shadow:0 0 0 3px rgba(255,255,255,.02);
+    }
+    .pr-table-meta-right{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      color:var(--wh3,#8B949E);
+      white-space:nowrap;
+    }
+    .pr-table-meta-right i{
+      width:14px;
+      height:14px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.18);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-style:normal;
+      color:var(--wh4,#484F58);
+      flex:0 0 auto;
+    }
+    .pr-table-meta-right i::before{
+      content:'i';
+      font-size:9px;
+      line-height:1;
+      transform:translateY(-.5px);
+    }
+
+    .pr-table-wrap{
+      overflow:visible;
+      border:none;
+      border-radius:0;
+      background:transparent;
+    }
+    .pr-table-wrap .rm-table{
+      min-width:1640px;
+    }
+    .pr-table-wrap .rm-table th,
+    .pr-table-wrap .rm-table td{
+      padding:14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:12px;
+      white-space:nowrap;
+      vertical-align:middle;
+    }
+    .pr-table-wrap .rm-table th{
+      color:var(--wh4,#484F58);
+      font-size:10px;
+      letter-spacing:1px;
+      background:rgba(255,255,255,.01);
+    }
+    .pr-table-wrap .rm-table tbody tr:hover td{background:rgba(255,255,255,.015)}
+    .pr-table-wrap .rm-table td:first-child,
+    .pr-table-wrap .rm-table th:first-child{
+      width:40px;
+      padding-left:18px;
+      padding-right:6px;
+    }
+    .pr-table-wrap .rm-table th:nth-child(10),
+    .pr-table-wrap .rm-table td:nth-child(10),
+    .pr-table-wrap .rm-table th:nth-child(11),
+    .pr-table-wrap .rm-table td:nth-child(11){
+      width:188px;
+      text-align:center;
+    }
+    .pr-row{border-left:3px solid transparent}
+    .pr-risk-low td:first-child{border-left-color:#3FB950}
+    .pr-risk-medium td:first-child{border-left-color:#D29922}
+    .pr-risk-high td:first-child{border-left-color:#F47920}
+    .pr-risk-critical td:first-child{border-left-color:#DA3633}
+    .pr-master,.pr-fac,.pr-subdate,.pr-version,.pr-reduction{display:grid;gap:2px;min-width:0}
+    .pr-master .main,
+    .pr-fac .main,
+    .pr-subdate .date,
+    .pr-version .main,
+    .pr-reduction .main{
+      font-family:'Barlow Condensed',sans-serif;
+      font-weight:800;
+      line-height:.92;
+    }
+    .pr-master .main{color:var(--or,#F47920);font-size:17px;letter-spacing:.2px}
+    .pr-master .sub,
+    .pr-fac .sub,
+    .pr-subdate .rel,
+    .pr-version .sub{
+      color:var(--wh4,#484F58);
+      font-size:11px;
+      line-height:1.2;
+    }
+    .pr-fac .main{color:var(--wh,#E6EDF3);font-size:20px;text-transform:uppercase;font-weight:900}
+    .pr-fac .sub{font-size:11px}
+    .pr-zone,.pr-type,.pr-assessor{font-family:'Barlow Condensed',sans-serif;color:var(--wh2,#C9D1D9);font-size:15px;line-height:1;font-weight:700}
+    .pr-inspection{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      min-width:0;
+      color:var(--wh2,#C9D1D9);
+    }
+    .pr-inspection .date{font-family:'Barlow Condensed',sans-serif;color:var(--wh2,#C9D1D9);font-size:15px;font-weight:700}
+    .pr-inspection .icon{display:inline-flex;color:var(--wh4,#484F58)}
+    .pr-inspection .icon svg{width:14px;height:14px}
+    .pr-risk-badge{height:26px;padding:0 12px;font-size:10px;letter-spacing:.35px}
+    .pr-reduction .main{font-size:24px;color:var(--wh2,#C9D1D9);font-weight:800}
+    .pr-reduction .sub{font-size:11px;color:var(--wh4,#484F58)}
+    .pr-ca-pill{height:28px;padding:0 10px;border-radius:999px;font-size:10px}
+    .pr-version .main{font-size:25px;color:var(--wh,#E6EDF3);font-weight:900}
+    .pr-action-wrap{display:flex;justify-content:center}
+    .pr-action-btn{
+      min-width:170px;
+      height:36px;
+      border-radius:10px;
+      border:1px solid rgba(244,121,32,.34);
+      background:rgba(244,121,32,.12);
+      color:var(--or,#F47920);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.35px;
+      text-transform:uppercase;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .pr-action-btn:hover{
+      border-color:rgba(244,121,32,.5);
+      background:rgba(244,121,32,.18);
+      transform:translateY(-1px);
+    }
+    .pr-action-btn.secondary{
+      border-color:rgba(255,255,255,.12);
+      background:rgba(255,255,255,.03);
+      color:var(--wh2,#C9D1D9);
+      text-transform:none;
+      letter-spacing:0;
+      font-size:12px;
+    }
+    .pr-action-btn.secondary:hover{
+      border-color:rgba(244,121,32,.38);
+      color:var(--wh,#E6EDF3);
+      background:rgba(244,121,32,.10);
+    }
+    .pr-view-register-btn{
+      border-color:rgba(59,130,246,.4);
+      background:rgba(59,130,246,.08);
+      color:#60a5fa;
+    }
+    .pr-view-register-btn:hover{
+      border-color:rgba(59,130,246,.65);
+      background:rgba(59,130,246,.18);
+      color:#93c5fd;
+    }
+    .pr-action-btn[disabled],
+    .pr-action-btn.is-disabled{
+      cursor:not-allowed;
+      background:rgba(255,255,255,.03);
+      border-color:rgba(255,255,255,.09);
+      color:var(--wh4,#484F58);
+      transform:none;
+      box-shadow:none;
+    }
+    .pr-action-btn[disabled]:hover,
+    .pr-action-btn.is-disabled:hover{
+      background:rgba(255,255,255,.03);
+      border-color:rgba(255,255,255,.09);
+      color:var(--wh4,#484F58);
+      transform:none;
+    }
+    .pr-action-head{
+      text-align:center;
+      white-space:nowrap;
+    }
+    body.pr-readonly-mode .rm-table th.pr-action-head,
+    body.pr-readonly-mode .rm-table td.pr-action-head{
+      display:none;
+    }
+    .pr-empty{
+      padding:26px 18px;
+      color:var(--wh3,#8B949E);
+      font-size:13px;
+    }
+
+    .pr-board-foot{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:14px 18px 18px;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .pr-results-meta{
+      color:var(--wh3,#8B949E);
+      font-size:12px;
+      line-height:1.4;
+    }
+    .pr-pager{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pr-page-buttons{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .pr-page-btn{
+      min-width:40px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(9,15,24,.82);
+      color:var(--wh2,#C9D1D9);
+      font-size:13px;
+      font-weight:700;
+      padding:0 12px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:all .15s ease;
+    }
+    .pr-page-btn:hover:not(:disabled){
+      border-color:rgba(244,121,32,.42);
+      color:var(--or,#F47920);
+    }
+    .pr-page-btn.active{
+      background:linear-gradient(180deg, rgba(244,121,32,.98), rgba(218,100,20,.98));
+      border-color:rgba(244,121,32,.52);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(244,121,32,.25);
+    }
+    .pr-page-btn:disabled{opacity:.45;cursor:default}
+    .pr-page-size{
+      min-width:116px;
+      height:40px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(9,15,24,.82);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 10px;
+    }
+    .pr-page-size select{
+      width:100%;
+      height:100%;
+      background:transparent;
+      border:none;
+      color:var(--wh2,#C9D1D9);
+      font-size:12px;
+      font-weight:700;
+      outline:none;
+      text-align:center;
+      appearance:none;
+    }
+    .pr-page-size option{color:#111}
+
+    html.light-mode .pr-topbar{
+      background:rgba(255,255,255,.96);
+      border-bottom-color:rgba(0,0,0,.08);
+      box-shadow:0 10px 24px rgba(15,23,42,.08);
+    }
+    html.light-mode .pr-brand{color:#1C1E21}
+    html.light-mode .pr-top-btn,
+    html.light-mode .pr-page-btn,
+    html.light-mode .pr-page-size,
+    html.light-mode .pr-date-btn,
+    html.light-mode .pr-more-btn,
+    html.light-mode .pr-clear-btn,
+    html.light-mode .pr-action-btn{
+      background:#fff;
+      border-color:rgba(0,0,0,.10);
+      color:#3A3B3C;
+    }
+    html.light-mode .pr-top-btn:hover,
+    html.light-mode .pr-page-btn:hover:not(:disabled),
+    html.light-mode .pr-action-btn:hover,
+    html.light-mode .pr-date-btn:hover,
+    html.light-mode .pr-more-btn:hover,
+    html.light-mode .pr-clear-btn:hover{
+      border-color:rgba(244,121,32,.36);
+      color:#F47920;
+      background:rgba(244,121,32,.06);
+    }
+    html.light-mode .pr-board,
+    html.light-mode .pr-metric,
+    html.light-mode .pr-filter-panel{
+      background:linear-gradient(180deg, #fff 0%, #f7f8fa 100%);
+      border-color:rgba(0,0,0,.08);
+    }
+    html.light-mode .pr-table-wrap .rm-table th{
+      background:rgba(0,0,0,.03);
+      color:#606770;
+    }
+    html.light-mode .pr-table-wrap .rm-table td,
+    html.light-mode .pr-master .sub,
+    html.light-mode .pr-fac .sub,
+    html.light-mode .pr-subdate .rel,
+    html.light-mode .pr-version .sub,
+    html.light-mode .pr-results-meta,
+    html.light-mode .pr-table-meta,
+    html.light-mode .pr-filter-field label{
+      color:#606770;
+    }
+    html.light-mode .pr-fac .main,
+    html.light-mode .pr-subdate .date,
+    html.light-mode .pr-assessor,
+    html.light-mode .pr-zone,
+    html.light-mode .pr-type,
+    html.light-mode .pr-master .main,
+    html.light-mode .pr-version .main{
+      color:#1C1E21;
+    }
+    html.light-mode .pr-chip,
+    html.light-mode .pr-toggle{
+      background:#fff;
+      border-color:rgba(0,0,0,.10);
+      color:#3A3B3C;
+    }
+    html.light-mode .pr-chip.active,
+    html.light-mode .pr-chip.low.active,
+    html.light-mode .pr-chip.medium.active,
+    html.light-mode .pr-chip.high.active,
+    html.light-mode .pr-chip.critical.active{
+      color:#F47920;
+      background:rgba(244,121,32,.08);
+      border-color:rgba(244,121,32,.38);
+    }
+    html.light-mode .pr-metric{
+      box-shadow:0 14px 32px rgba(15,23,42,.08);
+    }
+    html.light-mode .pr-metric .n,
+    html.light-mode .pr-metric .k{color:#606770}
+
+    /* Typography tuned to match the Uncompleted page scale */
+    .pr-title-wrap{gap:1px}
+    .pr-title{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:calc(24px * var(--goil-font-scale, 1));
+      font-weight:800;
+      letter-spacing:.04em;
+    }
+    .pr-subtitle{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(12px * var(--goil-font-scale, 1));
+      line-height:1.25;
+    }
+    .pr-metric .k{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:700;
+    }
+    .pr-metric strong{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:calc(clamp(28px, 2.8vw, 36px) * var(--goil-font-scale, 1));
+      line-height:.92;
+      font-weight:900;
+    }
+    .pr-metric .n{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+      line-height:1.35;
+    }
+    .pr-filter-toggle{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:700;
+    }
+    .pr-table-wrap .rm-table th,
+    .pr-table-wrap .rm-table td{
+      font-size:calc(11px * var(--goil-font-scale, 1));
+    }
+    .pr-table-wrap .rm-table th{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+      font-weight:700;
+      letter-spacing:.8px;
+    }
+    .pr-master .main,
+    .pr-fac .main,
+    .pr-subdate .date,
+    .pr-version .main,
+    .pr-reduction .main{
+      font-family:'Barlow Condensed',sans-serif;
+      line-height:.92;
+      font-weight:800;
+    }
+    .pr-master .main{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:600;
+      letter-spacing:.01em;
+    }
+    .pr-master .sub,
+    .pr-fac .sub,
+    .pr-subdate .rel,
+    .pr-version .sub{
+      font-size:calc(9px * var(--goil-font-scale, 1));
+      line-height:1.2;
+    }
+    .pr-fac .main{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:600;
+      letter-spacing:.01em;
+    }
+    .pr-fac .sub{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+    }
+    .pr-zone,
+    .pr-type,
+    .pr-assessor{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      line-height:1.1;
+      font-weight:500;
+    }
+    .pr-inspection .date{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:600;
+    }
+    .pr-reduction .main{
+      font-size:calc(12px * var(--goil-font-scale, 1));
+    }
+    .pr-reduction .sub{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+    }
+    .pr-ca-pill,
+    .pr-risk-badge{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+    }
+    .pr-version .main{
+      font-size:calc(18px * var(--goil-font-scale, 1));
+    }
+    .pr-subdate{
+      gap:0;
+    }
+    .pr-version{
+      gap:0;
+    }
+    .pr-subdate .date{
+      font-size:calc(10px * var(--goil-font-scale, 1));
+      line-height:1;
+      font-weight:500;
+      color:var(--or,#F47920);
+    }
+    .pr-subdate .rel,
+    .pr-version .sub{
+      line-height:1.05;
+    }
+    .pr-action-btn{
+      font-family:'Barlow',sans-serif;
+      font-size:calc(11px * var(--goil-font-scale, 1));
+      font-weight:600;
+    }
+    .pr-action-btn.secondary{
+      font-size:calc(12px * var(--goil-font-scale, 1));
+    }
+    .pr-results-meta,
+    .pr-table-meta,
+    .pr-board-foot,
+    .pr-page-btn,
+    .pr-page-size select{
+      font-family:'Barlow',sans-serif;
+    }
   </style>
 </head>
 <body>
   <header class="rm-topbar pr-topbar">
     <div class="rm-topbar-left pr-left">
-      <button class="rm-back-btn" id="backLandingBtn">‹ Assessment Management Center</button>
-      <span class="pr-vsep"></span>
+      <button class="rm-back-btn" id="backLandingBtn">‹ Back</button>
       <div class="pr-brand">
-        <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--or,#F47920);flex-shrink:0"></span><span style="color:var(--or,#F47920)">GOIL</span> HSSEQ</span>
+        <img class="pr-brand-logo" src="../assets/img/goil-logo.png" alt="GOIL Logo" />
       </div>
       <span class="pr-vsep"></span>
       <div class="pr-title-wrap">
@@ -457,95 +1242,186 @@
       </div>
     </div>
     <div class="pr-topbar-actions">
-      <button class="rm-ghost-btn" id="exportAllBtn">⇩ Export All</button>
-      <button class="rm-ghost-btn" id="summaryTopBtn">Summary Report</button>
-      <button class="rm-primary-btn pr-conduct" id="conductAssessmentBtn">+ Conduct Assessment</button>
+      <button class="rm-ghost-btn pr-top-btn" id="exportAllBtn">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v10m0 0l4-4m-4 4l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 18.5h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+        <span>Export</span>
+      </button>
     </div>
   </header>
 
   <main class="rm-shell pr-shell">
-    <section class="rm-card pr-card">
-      <div class="rm-metrics pr-metrics" id="summaryMetrics">
-        <article class="rm-metric pr-metric total"><span class="k">Total Published</span><strong id="mTotal">0</strong><span class="n">Master records</span></article>
-        <article class="rm-metric pr-metric low"><span class="k">Low Risk</span><strong id="mLow">0</strong><span class="n">Compliant</span></article>
-        <article class="rm-metric pr-metric medium"><span class="k">Medium Risk</span><strong id="mMedium">0</strong><span class="n">Monitor</span></article>
-        <article class="rm-metric pr-metric high"><span class="k">High Risk</span><strong id="mHigh">0</strong><span class="n">Action required</span></article>
-        <article class="rm-metric pr-metric critical"><span class="k">Critical Risk</span><strong id="mCritical">0</strong><span class="n">None this cycle</span></article>
-        <article class="rm-metric pr-metric ca"><span class="k">Open Corr. Actions</span><strong id="mOpenCA">0</strong><span class="n">Across all records</span></article>
+    <section class="pr-metric-grid" id="summaryMetrics">
+      <article class="rm-metric pr-metric total">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h6.5L18.5 8v12.5H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 3.5V8H18.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">Total Published</span><strong id="mTotal">0</strong><span class="n">Master records</span></div>
+      </article>
+      <article class="rm-metric pr-metric low">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5l7 2.8v5.2c0 4.7-3.1 8.7-7 9.9-3.9-1.2-7-5.2-7-9.9V6.3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.4 12.2l1.8 1.9 3.8-4.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">Low Risk</span><strong id="mLow">0</strong><span class="n">Compliant</span></div>
+      </article>
+      <article class="rm-metric pr-metric medium">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5l7 2.8v5.2c0 4.7-3.1 8.7-7 9.9-3.9-1.2-7-5.2-7-9.9V6.3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8.6v5.2M12 16.8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">Medium Risk</span><strong id="mMedium">0</strong><span class="n">Monitor</span></div>
+      </article>
+      <article class="rm-metric pr-metric high">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4l8.5 14.5H3.5L12 4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4.2M12 16.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">High Risk</span><strong id="mHigh">0</strong><span class="n">Action required</span></div>
+      </article>
+      <article class="rm-metric pr-metric critical">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4.3l8.2 8.2V19a1.7 1.7 0 0 1-1.7 1.7H5.5A1.7 1.7 0 0 1 3.8 19v-6.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 8.3v5.2M12 16.9h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">Critical Risk</span><strong id="mCritical">0</strong><span class="n">None this cycle</span></div>
+      </article>
+      <article class="rm-metric pr-metric ca">
+        <span class="pr-metric-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 4.5a7.5 7.5 0 1 0 7.5 7.5A7.5 7.5 0 0 0 12 4.5Zm0 4.2v4l2.7 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="pr-metric-copy"><span class="k">Open Corr. Actions</span><strong id="mOpenCA">0</strong><span class="n">Across all records</span></div>
+      </article>
+    </section>
+
+    <section class="pr-board">
+      <div class="pr-filter-panel">
+        <div class="pr-filter-grid">
+          <div class="pr-filter-field">
+            <label for="fltSearch">Search</label>
+            <div class="pr-input-wrap">
+              <input class="rm-input" id="fltSearch" placeholder="Search by reference, facility, assessor..." />
+              <span class="pr-input-icon" aria-hidden="true">⌕</span>
+            </div>
+          </div>
+          <div class="pr-filter-field">
+            <label>Risk Level</label>
+            <div class="pr-chip-row" id="riskChipRow">
+              <button type="button" class="pr-chip active" data-risk="">All</button>
+              <button type="button" class="pr-chip low" data-risk="Low">Low</button>
+              <button type="button" class="pr-chip medium" data-risk="Medium">Medium</button>
+              <button type="button" class="pr-chip high" data-risk="High">High</button>
+              <button type="button" class="pr-chip critical" data-risk="Critical">Critical</button>
+            </div>
+          </div>
+          <div class="pr-filter-field">
+            <label for="fltFacility">Facility</label>
+            <select class="rm-select" id="fltFacility"><option value="">All Facilities</option></select>
+          </div>
+          <div class="pr-filter-field">
+            <label>Date Range</label>
+            <button type="button" class="pr-date-btn" id="dateRangeBtn"><span id="dateRangeLabel">Select date range</span><span>▾</span></button>
+          </div>
+          <button type="button" class="pr-more-btn" id="moreFiltersBtn">More Filters</button>
+          <button type="button" class="pr-clear-btn" id="clearFiltersBtn">Clear</button>
+        </div>
+
+        <div class="pr-advanced-panel" id="advancedFiltersPanel" hidden>
+          <div class="pr-advanced-grid">
+            <div class="pr-filter-field">
+              <label for="fltPublishedFrom">Published From</label>
+              <input class="rm-input" id="fltPublishedFrom" type="date" />
+            </div>
+            <div class="pr-filter-field">
+              <label for="fltPublishedTo">Published To</label>
+              <input class="rm-input" id="fltPublishedTo" type="date" />
+            </div>
+            <div class="pr-filter-field">
+              <label for="fltZone">Zone</label>
+              <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
+            </div>
+            <div class="pr-filter-field">
+              <label for="fltFacilityType">Facility Type</label>
+              <select class="rm-select" id="fltFacilityType"><option value="">All Types</option></select>
+            </div>
+            <div class="pr-filter-field">
+              <label for="fltInspector">Inspector / Assessor</label>
+              <select class="rm-select" id="fltInspector"><option value="">Inspector / Assessor</option></select>
+            </div>
+            <div class="pr-filter-field">
+              <label for="fltOpenCA">Corrective Actions</label>
+              <select class="rm-select" id="fltOpenCA"><option value="">All CA Statuses</option><option value="none">No Open Actions</option><option value="open">Open Actions</option><option value="overdue">Overdue Actions</option></select>
+            </div>
+            <label class="pr-toggle"><input type="checkbox" id="fltLatestOnly" checked /> Latest Version Only</label>
+            <select class="rm-select" id="fltResidualRisk" style="display:none;"><option value="">All Risk Levels</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+          </div>
+        </div>
       </div>
 
-      <details class="pr-filter-shell" id="filterShell">
-        <summary class="pr-filter-toggle">
-          <span class="pr-filter-toggle-left">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            Filters
-            <span class="pr-filter-badge" id="filterBadge" style="display:none">0</span>
-          </span>
-          <span class="pr-filter-chevron">▾</span>
-        </summary>
-        <div class="pr-filter-body">
-          <div class="pr-filter-row top">
-            <input class="rm-input" id="fltSearch" placeholder="Search reference, facility, assessor..." />
-            <select class="rm-select" id="fltFacility"><option value="">Facility name</option></select>
-            <select class="rm-select" id="fltZone"><option value="">All Zones</option></select>
-            <select class="rm-select" id="fltFacilityType"><option value="">All Types</option></select>
-            <input class="rm-input" id="fltPublishedFrom" type="date" />
-            <span class="pr-to">to</span>
-            <input class="rm-input" id="fltPublishedTo" type="date" />
-          </div>
-          <div class="pr-filter-row bottom">
-            <select class="rm-select" id="fltInspector"><option value="">Inspector / Assessor</option></select>
-            <select class="rm-select" id="fltResidualRisk"><option value="">All Risk Levels</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
-            <select class="rm-select" id="fltOpenCA"><option value="">All CA Statuses</option><option value="none">No Open Actions</option><option value="open">Open Actions</option><option value="overdue">Overdue Actions</option></select>
-            <label class="pr-latest"><input type="checkbox" id="fltLatestOnly" checked /> Latest Version Only</label>
-          </div>
-        </div>
-      </details>
-
-      <div class="pr-result-bar">
-        <div class="pr-result-left">
+      <div class="pr-table-meta">
+        <div class="pr-table-meta-left">
           <strong id="metaRecordCount">0 records</strong>
-          <span class="dot low"></span><span id="metaLow">Low</span>
-          <span class="dot med"></span><span id="metaMed">Medium</span>
-          <span class="dot high"></span><span id="metaHigh">High</span>
-          <span class="dot crit"></span><span id="metaCrit">Critical</span>
         </div>
-        <div class="pr-result-right">Row border = residual risk</div>
+        <div class="pr-table-meta-right"><i></i> Row border = Residual Risk</div>
       </div>
 
       <div class="rm-table-wrap pr-table-wrap">
         <table class="rm-table">
           <thead>
             <tr>
-              <th><input type="checkbox" id="selectAllRows" /></th>
+              
               <th>Master Reference ↓</th>
               <th><button class="rm-sort" data-sort="facility">Facility</button></th>
-              <th>Zone</th>
-              <th>Facility Type</th>
               <th><button class="rm-sort" data-sort="inspectionDate">Inspection Date</button></th>
-              <th><button class="rm-sort" data-sort="initialRisk">Initial Risk</button></th>
-              <th><button class="rm-sort" data-sort="residualRisk">Residual Risk</button></th>
+              <th><button class="rm-sort" data-sort="submissionRisk">Risk at Submission</button></th>
               <th><button class="rm-sort" data-sort="riskReduction">Risk Reduction</button></th>
               <th>Corrective Action Status</th>
               <th><button class="rm-sort" data-sort="assessor">Assessor</button></th>
               <th><button class="rm-sort" data-sort="submissionDate">Submission Date</button></th>
-              <th>Current Version</th>
+              <th>Version</th>
+              <th class="pr-action-head">View Assessment Register</th>
+              <th class="pr-action-head">Reopen Assessment</th>
+              <th class="pr-action-head">Close Corrective Action</th>
             </tr>
           </thead>
           <tbody id="publishedTbody"></tbody>
         </table>
       </div>
+
+      <div class="pr-board-foot">
+        <div class="pr-results-meta" id="resultsMeta">Showing 0 to 0 of 0 records</div>
+        <div class="pr-pager">
+          <div class="pr-page-buttons">
+            <button class="pr-page-btn" id="prevPageBtn" type="button">‹</button>
+            <div id="pagination" class="pr-page-buttons"></div>
+            <button class="pr-page-btn" id="nextPageBtn" type="button">›</button>
+          </div>
+          <label class="pr-page-size">
+            <select id="pageSizeSelect" aria-label="Rows per page">
+              <option value="10" selected>10 / page</option>
+              <option value="25">25 / page</option>
+              <option value="50">50 / page</option>
+            </select>
+          </label>
+        </div>
+      </div>
     </section>
   </main>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/workflow-core.js?v=20260601-registerroute1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260601-registerroute1"></script>
   <script>
+    function getRouteContext() {
+      const context = {
+        ref: '',
+        version: 0,
+        facility: '',
+        readOnly: false,
+        source: ''
+      };
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const versionToken = String(params.get('version') || '').trim();
+        context.ref = stripVersionSuffix(params.get('ref') || '');
+        context.version = versionToken ? safeVersion(versionToken) : 0;
+        context.facility = String(params.get('facility') || '').trim();
+        context.readOnly = params.get('readonly') === '1';
+        context.source = String(params.get('source') || '').trim();
+      } catch (error) {}
+      return context;
+    }
+
     const state = {
       sortKey: 'submissionDate',
       sortDir: 'desc',
-      selectedKeys: new Set(),
-      lastRows: []
+      lastRows: [],
+      page: 1,
+      pageSize: 10,
+      moreFiltersOpen: false,
+      routeContext: getRouteContext()
     };
 
     function normalizeRiskLevel(level) {
@@ -558,6 +1434,7 @@
     }
 
     function riskClass(level) {
+      if (!level || String(level).trim() === '-') return 'b-draft';
       const normalized = normalizeRiskLevel(level);
       if (normalized === 'Critical') return 'b-overdue';
       if (normalized === 'High') return 'b-high';
@@ -693,11 +1570,44 @@
       return '';
     }
 
+    function recordFreshnessKey(record) {
+      return {
+        version: safeVersion(record && (record.version_number || record.version), record),
+        ts: toDateMs(record && (record.lastUpdatedAt || record.last_updated_at || record.checklistSubmittedAt || record.final_submitted_at || record.publishedAt))
+      };
+    }
+
+    function pickLatestRecord(existing, candidate) {
+      if (!existing) return candidate;
+      const a = recordFreshnessKey(existing);
+      const b = recordFreshnessKey(candidate);
+      if (b.version !== a.version) return b.version > a.version ? candidate : existing;
+      if (b.ts !== a.ts) return b.ts >= a.ts ? candidate : existing;
+      return candidate;
+    }
+
+    function publishedRiskLevel(entry) {
+      return normalizeRiskLevel(
+        entry.submissionRiskLevel || entry.initialLevel || entry.residualLevel || 'Low'
+      );
+    }
+
     function buildGroups() {
       const actions = RiskModuleUtils.getActions();
-      const records = RiskModuleUtils.getRecords().filter((record) => {
+      const allRecords = RiskModuleUtils.getRecords();
+      const records = allRecords.filter((record) => {
         if (record.is_published === true) return true;
         return String(record.assessment_status || record.status || '') === 'Fully Submitted / Published to Register';
+      });
+      const latestOverallByMaster = new Map();
+      allRecords.forEach((record) => {
+        const parentRefRaw = (window.RiskModuleUtils && typeof RiskModuleUtils.getParentInspectionReference === 'function')
+          ? RiskModuleUtils.getParentInspectionReference(record)
+          : (record.assessment_reference || record.inspectionRef || '');
+        const parentRef = stripVersionSuffix(parentRefRaw);
+        if (!parentRef) return;
+        const prevOverall = latestOverallByMaster.get(parentRef);
+        latestOverallByMaster.set(parentRef, pickLatestRecord(prevOverall, record));
       });
       const map = new Map();
       records.forEach((record) => {
@@ -707,18 +1617,38 @@
         const parentRef = stripVersionSuffix(parentRefRaw);
         if (!parentRef) return;
         const version = safeVersion(record.version_number || record.version, record);
+        const displayVersion = window.RiskModuleUtils && typeof RiskModuleUtils.getPublishedDisplayVersionNumber === 'function'
+          ? RiskModuleUtils.getPublishedDisplayVersionNumber(record, records)
+          : version;
         const riskSnapshot = RiskModuleUtils.getRiskSnapshotForRecord(record, actions);
-        const initialScore = Number(riskSnapshot.initialScore || 0);
-        const residualScore = Number(riskSnapshot.residualScore || 0);
-        const delta = Math.round((initialScore - residualScore) * 10) / 10;
-        const reductionPct = initialScore > 0 ? Math.round((delta / initialScore) * 100) : 0;
+        const submissionRisk = RiskModuleUtils.getSubmissionRiskForRecord
+          ? RiskModuleUtils.getSubmissionRiskForRecord(record)
+          : { score: Number(riskSnapshot.initialScore || 0), level: riskSnapshot.initialLevel || 'Low' };
+        const submissionRiskScore = submissionRisk.score == null ? null : Number(submissionRisk.score);
+        const initialScore = submissionRiskScore == null
+          ? (riskSnapshot.initialScore == null ? null : Number(riskSnapshot.initialScore))
+          : submissionRiskScore;
+        const residualScore = riskSnapshot.residualScore == null ? null : Number(riskSnapshot.residualScore);
+        const delta = riskSnapshot.openCount > 0
+          ? null
+          : (initialScore == null || initialScore <= 0
+            ? null
+            : (residualScore == null ? Math.round(initialScore * 10) / 10 : Math.round((initialScore - residualScore) * 10) / 10));
+        const reductionPct = initialScore != null && initialScore > 0 && delta != null ? Math.round((delta / initialScore) * 100) : 0;
         const recordCaStats = getCaStatsForRecord(record, actions);
+        const linkedActions = (actions || []).filter((action) => {
+          return window.RiskModuleUtils && typeof RiskModuleUtils.isActionForRecord === 'function'
+            ? RiskModuleUtils.isActionForRecord(action, record)
+            : String(action.inspectionRef || '') === String(record.inspectionRef || record.assessment_reference || '');
+        });
         const entry = {
           parentRef,
           version,
+          displayVersion,
           record,
           riskSnapshot,
-          versionLabel: parentRef + '/V' + String(version),
+          linkedActions,
+          versionLabel: parentRef + '/V' + String(displayVersion),
           facility: getRecordField(record, ['facility_name', 'facilityName']) || '-',
           zone: getRecordField(record, ['zone', 'location']) || '-',
           location: getRecordField(record, ['location', 'zone']) || '-',
@@ -728,14 +1658,19 @@
           submissionDate: getPublishedSubmissionDate(record),
           submissionTs: toDateMs(getPublishedSubmissionDate(record)),
           assessor: getRecordField(record, ['assessor_name', 'inspector']) || '-',
-          initialLevel: normalizeRiskLevel(riskSnapshot.initialLevel || record.overallRiskLevel || 'Low'),
-          residualLevel: normalizeRiskLevel(riskSnapshot.residualLevel || record.residualRiskLevel || record.overallRiskLevel || 'Low'),
+          initialLevel: normalizeRiskLevel(submissionRisk.level || riskSnapshot.initialLevel || record.overallRiskLevel || 'Low'),
+          residualLevel: (String(riskSnapshot.residualLevel || record.residualRiskLevel || '').trim() === '-')
+            ? '-'
+            : normalizeRiskLevel(riskSnapshot.residualLevel || record.residualRiskLevel || record.overallRiskLevel || 'Low'),
           initialScore: initialScore,
+          submissionRiskLevel: normalizeRiskLevel(submissionRisk.level || riskSnapshot.initialLevel || record.overallRiskLevel || 'Low'),
+          submissionRiskScore: submissionRiskScore,
           residualScore: residualScore,
           riskReduction: delta,
           reductionPct: reductionPct,
           trend: delta > 0 ? 'improved' : (delta < 0 ? 'worsened' : 'unchanged'),
-          caStats: recordCaStats
+          caStats: recordCaStats,
+          latestOverall: latestOverallByMaster.get(parentRef) || record
         };
         if (!map.has(parentRef)) map.set(parentRef, { parentRef, versions: [] });
         map.get(parentRef).versions.push(entry);
@@ -743,17 +1678,87 @@
 
       return Array.from(map.values()).map((group) => {
         group.versions.sort((a, b) => {
+          if (b.displayVersion !== a.displayVersion) return b.displayVersion - a.displayVersion;
           if (b.version !== a.version) return b.version - a.version;
           return b.submissionTs - a.submissionTs;
         });
         group.latest = group.versions[0];
+        group.latestOverall = group.latest && group.latest.latestOverall ? group.latest.latestOverall : group.latest.record;
+        group.latestOverallVersion = safeVersion(group.latestOverall && (group.latestOverall.version || group.latestOverall.version_number), group.latestOverall);
+        group.latestOverallStatus = String(group.latestOverall && (group.latestOverall.assessment_status || group.latestOverall.status || '')).trim();
         group.versionCount = group.versions.length;
         return group;
-      }).sort((a, b) => b.latest.submissionTs - a.latest.submissionTs);
+      }).sort((a, b) => {
+        const aTs = toDateMs(a.latest && a.latest.submissionDate);
+        const bTs = toDateMs(b.latest && b.latest.submissionDate);
+        return bTs - aTs;
+      });
     }
 
     function valueText(input) {
       return String(input || '').trim().toLowerCase();
+    }
+
+    function shouldApplyRouteScope() {
+      const context = state.routeContext || {};
+      return !!(context.readOnly || context.source === 'urgent-view');
+    }
+
+    function rowMatchesRouteContext(row) {
+      const context = state.routeContext || {};
+      if (!shouldApplyRouteScope()) return true;
+      if (!row || !row.entry || !row.group) return false;
+      if (context.ref && stripVersionSuffix(row.group.parentRef || '') !== context.ref) return false;
+      if (context.version && safeVersion(row.entry.version, row.entry.record) !== context.version) return false;
+      if (context.facility && valueText(row.entry.facility) !== valueText(context.facility)) return false;
+      return true;
+    }
+
+    function bindBackButton() {
+      const backBtn = document.getElementById('backLandingBtn');
+      if (!backBtn) return;
+      backBtn.addEventListener('click', function (event) {
+        const context = state.routeContext || {};
+        if (context.source === 'urgent-view') {
+          event.preventDefault();
+          window.location.href = 'risk-dashboard.html?v=20260601-registerroute1&_=' + Date.now();
+          return;
+        }
+        RiskModuleUtils.goLanding();
+      });
+    }
+
+    function applyRouteContextUI() {
+      const context = state.routeContext || {};
+      if (!shouldApplyRouteScope()) return;
+
+      const titleNode = document.querySelector('.pr-title');
+      const subtitleNode = document.querySelector('.pr-subtitle');
+      const searchNode = document.getElementById('fltSearch');
+      const backBtn = document.getElementById('backLandingBtn');
+
+      if (context.readOnly) {
+        document.body.classList.add('pr-readonly-mode');
+        document.title = 'Assessment Register | Risk Assessment & Facility Inspection';
+      }
+
+      if (context.ref && searchNode && !String(searchNode.value || '').trim()) {
+        searchNode.value = context.ref;
+      }
+
+      if (context.readOnly && titleNode) {
+        titleNode.textContent = 'Assessment Register';
+      }
+
+      if (context.readOnly && subtitleNode) {
+        subtitleNode.textContent = context.ref
+          ? ('Read-only register view for ' + context.ref)
+          : 'Read-only register view from dashboard';
+      }
+
+      if (context.source === 'urgent-view' && backBtn) {
+        backBtn.textContent = '‹ Back to Dashboard';
+      }
     }
 
     function uniqueSorted(values) {
@@ -782,7 +1787,7 @@
         }
         group.versions.forEach((entry) => pool.push(entry));
       });
-      setSelectOptions('fltFacility', pool.map((entry) => entry.facility), 'Facility name');
+      setSelectOptions('fltFacility', pool.map((entry) => entry.facility), 'All Facilities');
       setSelectOptions('fltZone', pool.map((entry) => entry.zone), 'All Zones');
       setSelectOptions('fltFacilityType', pool.map((entry) => entry.facilityType), 'All Types');
       setSelectOptions('fltInspector', pool.map((entry) => entry.assessor), 'Inspector / Assessor');
@@ -814,6 +1819,8 @@
         });
       });
 
+      rows = rows.filter((row) => rowMatchesRouteContext(row));
+
       rows = rows.filter((row) => {
         const entry = row.entry;
         const stats = entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 };
@@ -832,7 +1839,7 @@
         if (inspector && entry.assessor.toLowerCase() !== inspector) return false;
         if (fromTs && entry.submissionTs < fromTs) return false;
         if (toTs && entry.submissionTs > toTs) return false;
-        if (residualRisk && entry.residualLevel !== residualRisk) return false;
+        if (residualRisk && publishedRiskLevel(entry) !== residualRisk) return false;
         if (openCA === 'none' && (stats.open > 0 || stats.overdue > 0)) return false;
         if (openCA === 'open' && stats.open <= 0) return false;
         if (openCA === 'overdue' && stats.overdue <= 0) return false;
@@ -855,9 +1862,9 @@
         } else if (state.sortKey === 'assessor') {
           av = a.entry.assessor.toLowerCase();
           bv = b.entry.assessor.toLowerCase();
-        } else if (state.sortKey === 'initialRisk') {
-          av = a.entry.initialScore;
-          bv = b.entry.initialScore;
+        } else if (state.sortKey === 'submissionRisk') {
+          av = a.entry.submissionRiskScore;
+          bv = b.entry.submissionRiskScore;
         } else if (state.sortKey === 'residualRisk') {
           av = a.entry.residualScore;
           bv = b.entry.residualScore;
@@ -870,6 +1877,90 @@
       });
 
       return rows;
+    }
+
+    function totalPagesFor(totalRows) {
+      return Math.max(1, Math.ceil(Number(totalRows || 0) / Math.max(1, Number(state.pageSize || 10))));
+    }
+
+    function ensurePageInRange(totalRows) {
+      const totalPages = totalPagesFor(totalRows);
+      if (state.page > totalPages) state.page = totalPages;
+      if (state.page < 1) state.page = 1;
+    }
+
+    function getPagedRows(rows) {
+      const list = rows || [];
+      const start = Math.max(0, (state.page - 1) * state.pageSize);
+      return list.slice(start, start + state.pageSize);
+    }
+
+    function getDateRangeLabel() {
+      const from = String(document.getElementById('fltPublishedFrom').value || '').trim();
+      const to = String(document.getElementById('fltPublishedTo').value || '').trim();
+      if (!from && !to) return 'Select date range';
+      if (from && to) return RiskModuleUtils.fmtDate(from) + ' to ' + RiskModuleUtils.fmtDate(to);
+      return RiskModuleUtils.fmtDate(from || to);
+    }
+
+    function syncRiskChips() {
+      const current = String(document.getElementById('fltResidualRisk').value || '').trim();
+      document.querySelectorAll('#riskChipRow .pr-chip').forEach((button) => {
+        const active = String(button.getAttribute('data-risk') || '') === current;
+        button.classList.toggle('active', active);
+      });
+    }
+
+    function updateDateRangeLabel() {
+      const node = document.getElementById('dateRangeLabel');
+      if (node) node.textContent = getDateRangeLabel();
+    }
+
+    function updateResultsMeta(totalRows, visibleRows) {
+      const meta = document.getElementById('resultsMeta');
+      if (!meta) return;
+      if (!totalRows || !visibleRows) {
+        meta.textContent = 'Showing 0 to 0 of 0 records';
+        return;
+      }
+      const start = ((state.page - 1) * state.pageSize) + 1;
+      const end = Math.min(totalRows, start + visibleRows - 1);
+      meta.textContent = 'Showing ' + start + ' to ' + end + ' of ' + totalRows + ' records';
+    }
+
+    function renderPagination(totalRows) {
+      const holder = document.getElementById('pagination');
+      const prevBtn = document.getElementById('prevPageBtn');
+      const nextBtn = document.getElementById('nextPageBtn');
+      const totalPages = totalPagesFor(totalRows);
+      if (prevBtn) prevBtn.disabled = state.page <= 1;
+      if (nextBtn) nextBtn.disabled = state.page >= totalPages;
+      if (!holder) return;
+
+      const buttons = [];
+      for (let page = 1; page <= totalPages; page += 1) {
+        buttons.push('<button class="pr-page-btn ' + (page === state.page ? 'active' : '') + '" data-page="' + page + '">' + page + '</button>');
+      }
+      holder.innerHTML = buttons.join('');
+    }
+
+    function resetFilters() {
+      document.getElementById('fltSearch').value = '';
+      document.getElementById('fltFacility').value = '';
+      document.getElementById('fltZone').value = '';
+      document.getElementById('fltFacilityType').value = '';
+      document.getElementById('fltPublishedFrom').value = '';
+      document.getElementById('fltPublishedTo').value = '';
+      document.getElementById('fltInspector').value = '';
+      document.getElementById('fltResidualRisk').value = '';
+      document.getElementById('fltOpenCA').value = '';
+      document.getElementById('fltLatestOnly').checked = true;
+      state.page = 1;
+      state.moreFiltersOpen = false;
+      const panel = document.getElementById('advancedFiltersPanel');
+      if (panel) panel.hidden = true;
+      syncRiskChips();
+      updateDateRangeLabel();
     }
 
     function fmtScore(score) {
@@ -905,10 +1996,6 @@
       URL.revokeObjectURL(url);
     }
 
-    function selectedRows() {
-      return state.lastRows.filter((row) => state.selectedKeys.has(row.key));
-    }
-
     function rowsToCsv(rows) {
       const headers = [
         'Master Reference',
@@ -918,7 +2005,7 @@
         'Zone',
         'Facility Type',
         'Inspection Date',
-        'Initial Risk',
+        'Risk at Submission',
         'Residual Risk',
         'Risk Reduction',
         'Risk Reduction Percent',
@@ -932,15 +2019,15 @@
         const caStatus = caStatusForCounts(row.entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 });
         lines.push([
           row.group.parentRef,
-          'v' + row.entry.version,
+          'V' + row.entry.version,
           row.entry.versionLabel,
           row.entry.facility,
           row.entry.zone,
           row.entry.facilityType,
           RiskModuleUtils.fmtDate(row.entry.inspectionDate),
-          row.entry.initialLevel + ' (' + fmtScore(row.entry.initialScore) + ')',
-          row.entry.residualLevel + ' (' + fmtScore(row.entry.residualScore) + ')',
-          fmtScore(row.entry.riskReduction),
+          RiskModuleUtils.formatSubmissionRiskDisplay(row.entry.submissionRiskLevel, row.entry.submissionRiskScore),
+          RiskModuleUtils.formatResidualRiskDisplay(row.entry.residualLevel, row.entry.residualScore),
+          row.entry.riskReduction == null ? '-' : fmtScore(row.entry.riskReduction),
           String(row.entry.reductionPct) + '%',
           row.entry.trend,
           caStatus.label,
@@ -958,10 +2045,10 @@
         if (!prev || row.entry.version > prev.entry.version) masters.set(row.group.parentRef, row);
       });
       const summaryRows = Array.from(masters.values());
-      const low = summaryRows.filter((row) => row.entry.residualLevel === 'Low').length;
-      const medium = summaryRows.filter((row) => row.entry.residualLevel === 'Medium').length;
-      const high = summaryRows.filter((row) => row.entry.residualLevel === 'High').length;
-      const critical = summaryRows.filter((row) => row.entry.residualLevel === 'Critical').length;
+      const low = summaryRows.filter((row) => publishedRiskLevel(row.entry) === 'Low').length;
+      const medium = summaryRows.filter((row) => publishedRiskLevel(row.entry) === 'Medium').length;
+      const high = summaryRows.filter((row) => publishedRiskLevel(row.entry) === 'High').length;
+      const critical = summaryRows.filter((row) => publishedRiskLevel(row.entry) === 'Critical').length;
       let openCa = 0;
       summaryRows.forEach((row) => {
         const stats = row.entry.caStats || { open: 0, overdue: 0 };
@@ -973,17 +2060,8 @@
       document.getElementById('mHigh').textContent = String(high);
       document.getElementById('mCritical').textContent = String(critical);
       document.getElementById('mOpenCA').textContent = String(openCa);
-
       const metaCount = document.getElementById('metaRecordCount');
-      const metaLow = document.getElementById('metaLow');
-      const metaMed = document.getElementById('metaMed');
-      const metaHigh = document.getElementById('metaHigh');
-      const metaCrit = document.getElementById('metaCrit');
       if (metaCount) metaCount.textContent = summaryRows.length + ' records';
-      if (metaLow) { metaLow.textContent = 'Low'; metaLow.title = String(low) + ' low risk records'; }
-      if (metaMed) { metaMed.textContent = 'Medium'; metaMed.title = String(medium) + ' medium risk records'; }
-      if (metaHigh) { metaHigh.textContent = 'High'; metaHigh.title = String(high) + ' high risk records'; }
-      if (metaCrit) { metaCrit.textContent = 'Critical'; metaCrit.title = String(critical) + ' critical risk records'; }
     }
 
     function updateSortButtons() {
@@ -996,14 +2074,151 @@
       });
     }
 
-    function updateSelectAll() {
-      const allNode = document.getElementById('selectAllRows');
-      if (!allNode) return;
-      if (!state.lastRows.length) {
-        allNode.checked = false;
+    function renderRows(rows) {
+      const tbody = document.getElementById('publishedTbody');
+      if (!tbody) return;
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="12"><div class="pr-empty">No published records match current filters.</div></td></tr>';
         return;
       }
-      allNode.checked = state.lastRows.every((row) => state.selectedKeys.has(row.key));
+
+      const currentUser = RiskModuleUtils.getCurrentUser ? RiskModuleUtils.getCurrentUser() : {};
+      const statusSet = RiskModuleUtils.STATUS ? RiskModuleUtils.STATUS() : {};
+
+      tbody.innerHTML = rows.map((row) => {
+        const entry = row.entry;
+        const group = row.group;
+        const parentRef = group.parentRef || '-';
+        const previewRowId = 'preview-' + RiskModuleUtils.esc(row.key).replace(/[^a-zA-Z0-9]+/g, '-');
+        const entryCaStats = entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 };
+        const caStatus = caStatusForCounts(entryCaStats);
+        const rowRiskClass = entry.residualScore == null
+          ? (Number(entryCaStats.open || 0) > 0 ? 'pr-risk-unresolved' : 'pr-risk-low')
+          : 'pr-risk-' + String(entry.residualLevel || 'low').toLowerCase();
+        const riskAtSubmissionText = RiskModuleUtils.formatSubmissionRiskDisplay(entry.submissionRiskLevel, entry.submissionRiskScore);
+        const residualRiskText = RiskModuleUtils.formatResidualRiskDisplay(entry.residualLevel, entry.residualScore);
+        const masterSub = (entry.facilityType && entry.facilityType !== '-')
+          ? (entry.facilityType + ' - ' + RiskModuleUtils.fmtDate(entry.inspectionDate))
+          : RiskModuleUtils.fmtDate(entry.inspectionDate);
+        const caLabel = caStatus.key === 'overdue'
+          ? ('⚠ ' + String(entryCaStats.overdue) + ' Overdue')
+          : (caStatus.key === 'open'
+            ? ('⚡ ' + String(entryCaStats.open) + ' Open')
+            : '✓ No Actions');
+        const versionCountLabel = group.versionCount === 1 ? '1 version' : String(group.versionCount) + ' versions';
+        const versionsSorted = group.versions.slice().sort((a, b) => {
+          if (a.displayVersion !== b.displayVersion) return a.displayVersion - b.displayVersion;
+          return a.version - b.version;
+        });
+        const versionsHead = ''
+          + '<div class="rm-version-head">'
+          + '<span>#</span><span>Reference Number</span><span>Inspection Date</span><span>Risk at Submission</span><span>Residual Risk</span><span>Risk Reduction</span><span>Status</span><span>Inspector</span><span>Last Updated</span><span>View</span>'
+          + '</div>';
+        const versionsHtml = versionsSorted.map((v, idx) => {
+          return ''
+            + '<div class="rm-version-line">'
+            + '<span class="v-seq">' + RiskModuleUtils.esc(String(idx + 1) + '.') + '</span>'
+            + '<span class="v-ref">' + RiskModuleUtils.esc(v.versionLabel) + '</span>'
+            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(v.inspectionDate)) + '</span>'
+            + '<span><span class="rm-badge ' + riskClass(v.submissionRiskLevel) + '">' + RiskModuleUtils.esc(RiskModuleUtils.formatSubmissionRiskDisplay(v.submissionRiskLevel, v.submissionRiskScore)) + '</span></span>'
+            + '<span><span class="rm-badge ' + riskClass(v.residualLevel) + '">' + RiskModuleUtils.esc(RiskModuleUtils.formatResidualRiskDisplay(v.residualLevel, v.residualScore)) + '</span></span>'
+            + '<span>' + RiskModuleUtils.esc(v.riskReduction == null ? '-' : fmtScore(v.riskReduction)) + '</span>'
+            + '<span><span class="rm-badge ' + statusClass(v.record.assessment_status || v.record.status || '') + '">' + RiskModuleUtils.esc(v.record.assessment_status || v.record.status || '-') + '</span></span>'
+            + '<span>' + RiskModuleUtils.esc(v.assessor) + '</span>'
+            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(v.submissionDate)) + '</span>'
+            + '<span><button class="rm-version-view" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-version="' + RiskModuleUtils.esc(v.version) + '">View</button></span>'
+            + '</div>';
+        }).join('');
+
+        const latestOverall = row.group.latestOverall || entry.record;
+        const latestOverallStatus = String(latestOverall && (latestOverall.assessment_status || latestOverall.status || '')).trim();
+        const latestOverallVersion = safeVersion(latestOverall && (latestOverall.version_number || latestOverall.version), latestOverall);
+        const canReopen = RiskModuleUtils.canUserReopenRecord
+          ? RiskModuleUtils.canUserReopenRecord(latestOverall, currentUser)
+          : false;
+        const canRevise = RiskModuleUtils.canUserReviseRecord
+          ? RiskModuleUtils.canUserReviseRecord(latestOverall, currentUser)
+          : false;
+        const openActions = (entry.linkedActions || []).filter((action) => actionIsOpen(actionStatus(action)));
+        const closableActions = openActions.filter((action) => RiskModuleUtils.canUserCloseAction
+          ? RiskModuleUtils.canUserCloseAction(action, currentUser)
+          : false);
+
+        let reopenLabel = 'Reopen Assessment';
+        let reopenDisabled = !canReopen;
+        let reopenAction = 'reopen';
+        let reopenTargetVersion = entry.version;
+        let reopenTitle = 'Admin only';
+
+        if (latestOverallStatus === statusSet.REOPENED || latestOverallStatus === statusSet.DRAFT || latestOverallStatus === statusSet.IN_PROGRESS) {
+          reopenLabel = 'Revise Assessment';
+          reopenDisabled = !canRevise;
+          reopenAction = 'revise';
+          reopenTargetVersion = latestOverallVersion || entry.version;
+          reopenTitle = reopenDisabled ? 'Only the original assessor can continue this revision.' : 'Open the reassessment checklist.';
+        } else if (
+          latestOverallStatus === statusSet.REVISED_CHECKLIST_SUBMITTED ||
+          latestOverallStatus === statusSet.REVISED_CORRECTIVE_SUBMITTED ||
+          latestOverallStatus === statusSet.PENDING_CORRECTIVE
+        ) {
+          reopenLabel = 'Revision Submitted';
+          reopenDisabled = true;
+          reopenAction = 'view';
+          reopenTargetVersion = latestOverallVersion || entry.version;
+          reopenTitle = 'Revision already submitted.';
+        } else {
+          reopenTitle = reopenDisabled ? 'Admin only' : 'Reopen this assessment for revision.';
+        }
+
+        let closeLabel = 'Close Corrective Action';
+        let closeDisabled = !openActions.length || !closableActions.length;
+        let closeTitle = !openActions.length
+          ? 'No open corrective actions for this record.'
+          : (closableActions.length ? 'Open the corrective action detail page.' : 'Only the original assessor or admin/reviewer can close this action.');
+        if (!openActions.length) {
+          closeLabel = 'No Open Actions';
+        } else if (!closableActions.length) {
+          closeLabel = 'Restricted';
+        }
+
+        return ''
+          + '<tr class="pr-row ' + RiskModuleUtils.esc(rowRiskClass) + '">'
+          + '<td><div class="pr-master"><button class="rm-ref-toggle" data-target="' + previewRowId + '" title="Show versions">' + RiskModuleUtils.esc(parentRef) + '</button><span class="sub">' + RiskModuleUtils.esc(masterSub) + '</span></div></td>'
+          + '<td><div class="pr-fac"><span class="main">' + RiskModuleUtils.esc(entry.facility) + '</span><span class="sub">' + RiskModuleUtils.esc(entry.location || entry.zone || '-') + '</span></div></td>'
+          + '<td><div class="pr-inspection"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4M4 9h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 12h2M12 12h2M8 15h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="date">' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(entry.inspectionDate)) + '</span></div></td>'
+          + '<td><span class="rm-badge pr-risk-badge ' + riskClass(entry.submissionRiskLevel) + '">' + RiskModuleUtils.esc(riskAtSubmissionText) + '</span></td>'
+          + '<td><div class="pr-reduction">'
+            + (entry.riskReduction == null
+              ? ('<span class="main">—</span><span class="sub unchanged">' + (Number(entryCaStats.open || 0) > 0 ? 'Pending closure' : 'No risk score') + '</span>')
+              : (entry.riskReduction > 0
+                ? ('<span class="main">↓ ' + RiskModuleUtils.esc(fmtScore(entry.riskReduction)) + '</span><span class="sub">Improved</span>')
+                : ('<span class="main">—</span><span class="sub unchanged">Unchanged</span>')))
+          + '</div></td>'
+          + '<td><span class="pr-ca-pill ' + RiskModuleUtils.esc(caStatus.key) + '">' + RiskModuleUtils.esc(caLabel) + '</span></td>'
+          + '<td><span class="pr-assessor">' + RiskModuleUtils.esc(entry.assessor) + '</span></td>'
+          + '<td><div class="pr-subdate"><span class="date">' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(entry.submissionDate)) + '</span><span class="rel">' + RiskModuleUtils.esc(relativeDay(entry.submissionDate)) + '</span></div></td>'
+          + '<td><div class="pr-version"><span class="main">V' + RiskModuleUtils.esc(entry.displayVersion) + '</span><span class="sub">' + RiskModuleUtils.esc(versionCountLabel) + '</span></div></td>'
+          + '<td class="pr-action-head"><div class="pr-action-wrap"><button type="button" class="pr-action-btn pr-view-register-btn" data-action="view-register" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-facility="' + RiskModuleUtils.esc(entry.facility) + '" data-version="' + RiskModuleUtils.esc(String(entry.version)) + '" title="Open the full Assessment Register for this facility">View Register</button></div></td>'
+          + '<td class="pr-action-head"><div class="pr-action-wrap"><button type="button" class="pr-action-btn ' + (reopenAction === 'revise' ? 'secondary' : '') + '" data-action="' + RiskModuleUtils.esc(reopenAction) + '" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-version="' + RiskModuleUtils.esc(String(reopenTargetVersion)) + '" title="' + RiskModuleUtils.esc(reopenTitle) + '"' + (reopenDisabled ? ' disabled' : '') + '>' + RiskModuleUtils.esc(reopenLabel) + '</button></div></td>'
+          + '<td class="pr-action-head"><div class="pr-action-wrap"><button type="button" class="pr-action-btn secondary" data-action="close-ca" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-facility="' + RiskModuleUtils.esc(entry.facility) + '" title="' + RiskModuleUtils.esc(closeTitle) + '"' + (closeDisabled ? ' disabled' : '') + '>' + RiskModuleUtils.esc(closeLabel) + '</button></div></td>'
+          + '</tr>'
+          + '<tr id="' + previewRowId + '" class="rm-preview-row" style="display:none;">'
+          + '<td colspan="12"><div class="rm-preview-shell">'
+          + '<div class="rm-version-scroll"><div class="rm-version-list">' + versionsHead + versionsHtml + '</div></div>'
+          + '</div></td>'
+          + '</tr>';
+      }).join('');
+
+    }
+
+    function syncMoreFiltersUI() {
+      const panel = document.getElementById('advancedFiltersPanel');
+      const btn = document.getElementById('moreFiltersBtn');
+      if (panel) panel.hidden = !state.moreFiltersOpen;
+      if (btn) {
+        btn.textContent = state.moreFiltersOpen ? 'Hide Filters' : 'More Filters';
+        btn.setAttribute('aria-expanded', state.moreFiltersOpen ? 'true' : 'false');
+      }
     }
 
     function render() {
@@ -1012,104 +2227,109 @@
       state.lastRows = rows;
       renderSummaryMetrics(rows);
       updateSortButtons();
-
-      const tbody = document.getElementById('publishedTbody');
-      if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="13">No published records match current filters.</td></tr>';
-        updateSelectAll();
-        return;
-      }
-
-      tbody.innerHTML = rows.map((row) => {
-        const entry = row.entry;
-        const group = row.group;
-        const parentRef = group.parentRef || '-';
-        const selected = state.selectedKeys.has(row.key) ? ' checked' : '';
-        const previewRowId = 'preview-' + RiskModuleUtils.esc(row.key).replace(/[^a-zA-Z0-9]+/g, '-');
-        const entryCaStats = entry.caStats || { open: 0, overdue: 0, closed: 0, total: 0 };
-        const caStatus = caStatusForCounts(entryCaStats);
-        const rowRiskClass = 'pr-risk-' + String(entry.residualLevel || 'low').toLowerCase();
-        const initialRiskText = entry.initialLevel + ' (' + fmtScore(entry.initialScore) + ')';
-        const residualRiskText = entry.residualLevel + ' (' + fmtScore(entry.residualScore) + ')';
-        const caLabel = caStatus.key === 'overdue'
-          ? ('⚠ ' + String(entryCaStats.overdue) + ' Overdue')
-          : (caStatus.key === 'open'
-            ? ('⚡ ' + String(entryCaStats.open) + ' Open')
-            : '✓ No Actions');
-        const versionsSorted = group.versions.slice().sort((a, b) => a.version - b.version);
-        const versionsHead = ''
-          + '<div class="rm-version-head">'
-          + '<span>#</span><span>Reference Number</span><span>Inspection Date</span><span>Initial Risk</span><span>Residual Risk</span><span>Risk Reduction</span><span>Status</span><span>Inspector</span><span>Last Updated</span><span>View</span>'
-          + '</div>';
-        const versionsHtml = versionsSorted.map((v, idx) => {
-          return ''
-            + '<div class="rm-version-line">'
-            + '<span class="v-seq">' + RiskModuleUtils.esc(String(idx + 1) + '.') + '</span>'
-            + '<span class="v-ref">' + RiskModuleUtils.esc(v.versionLabel) + '</span>'
-            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(v.inspectionDate)) + '</span>'
-            + '<span><span class="rm-badge ' + riskClass(v.initialLevel) + '">' + RiskModuleUtils.esc(v.initialLevel + ' (' + fmtScore(v.initialScore) + ')') + '</span></span>'
-            + '<span><span class="rm-badge ' + riskClass(v.residualLevel) + '">' + RiskModuleUtils.esc(v.residualLevel + ' (' + fmtScore(v.residualScore) + ')') + '</span></span>'
-            + '<span>' + RiskModuleUtils.esc(fmtScore(v.riskReduction)) + '</span>'
-            + '<span><span class="rm-badge ' + statusClass(v.record.assessment_status || v.record.status || '') + '">' + RiskModuleUtils.esc(v.record.assessment_status || v.record.status || '-') + '</span></span>'
-            + '<span>' + RiskModuleUtils.esc(v.assessor) + '</span>'
-            + '<span>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(v.submissionDate)) + '</span>'
-            + '<span><button class="rm-version-view" data-ref="' + RiskModuleUtils.esc(parentRef) + '" data-version="' + RiskModuleUtils.esc(v.version) + '">View</button></span>'
-            + '</div>';
-        }).join('');
-        return ''
-          + '<tr class="pr-row ' + RiskModuleUtils.esc(rowRiskClass) + '">'
-          + '<td><input type="checkbox" class="rm-select-row" data-key="' + RiskModuleUtils.esc(row.key) + '"' + selected + ' /></td>'
-          + '<td><div class="pr-master"><button class="rm-ref-toggle" data-target="' + previewRowId + '" title="Show versions">' + RiskModuleUtils.esc(parentRef) + '</button><span class="sub">' + RiskModuleUtils.esc(entry.facilityType + ' · ' + RiskModuleUtils.fmtDate(entry.inspectionDate)) + '</span></div></td>'
-          + '<td><div class="pr-fac"><span class="main">' + RiskModuleUtils.esc(entry.facility) + '</span><span class="sub">' + RiskModuleUtils.esc(entry.location || entry.zone || '-') + '</span></div></td>'
-          + '<td><span class="pr-zone">' + RiskModuleUtils.esc(entry.zone) + '</span></td>'
-          + '<td><span class="pr-type">' + RiskModuleUtils.esc(entry.facilityType) + '</span></td>'
-          + '<td>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(entry.inspectionDate)) + '</td>'
-          + '<td><span class="rm-badge ' + riskClass(entry.initialLevel) + '">' + RiskModuleUtils.esc(initialRiskText) + '</span></td>'
-          + '<td><span class="rm-residual-strong ' + riskClass(entry.residualLevel) + '">' + RiskModuleUtils.esc(residualRiskText) + '</span></td>'
-          + '<td><div class="pr-reduction">'
-            + (entry.riskReduction > 0
-              ? ('<span class="main">↓ ' + RiskModuleUtils.esc(fmtScore(entry.riskReduction)) + '</span><div class="bar"><span style="width:' + RiskModuleUtils.esc(String(Math.max(0, Math.min(100, entry.reductionPct)))) + '%"></span></div><span class="pct">↓ ' + RiskModuleUtils.esc(String(entry.reductionPct)) + '% improved</span>')
-              : ('<span class="main unchanged">—</span><div class="bar"><span style="width:0%"></span></div><span class="pct unchanged">Unchanged</span>'))
-          + '</div></td>'
-          + '<td><span class="pr-ca-pill ' + RiskModuleUtils.esc(caStatus.key) + '">' + RiskModuleUtils.esc(caLabel) + '</span></td>'
-          + '<td><span class="pr-assessor">' + RiskModuleUtils.esc(entry.assessor) + '</span></td>'
-          + '<td><div class="pr-subdate"><span class="date">' + RiskModuleUtils.esc(RiskModuleUtils.fmtDateTime(entry.submissionDate)) + '</span><span class="rel">' + RiskModuleUtils.esc(relativeDay(entry.submissionDate)) + '</span></div></td>'
-          + '<td><div class="pr-version"><span class="main">v' + RiskModuleUtils.esc(entry.version) + '</span><span class="sub">' + RiskModuleUtils.esc(String(group.versionCount)) + ' versions</span></div></td>'
-          + '</tr>'
-          + '<tr id="' + previewRowId + '" class="rm-preview-row" style="display:none;">'
-          + '<td colspan="13"><div class="rm-preview-shell">'
-          + '<div class="rm-version-scroll"><div class="rm-version-list">' + versionsHead + versionsHtml + '</div></div>'
-          + '</div></td>'
-          + '</tr>';
-      }).join('');
-
-      updateSelectAll();
-    }
-
-    function updateFilterBadge() {
-      const activeIds = ['fltSearch','fltFacility','fltZone','fltFacilityType','fltPublishedFrom','fltPublishedTo','fltInspector','fltResidualRisk','fltOpenCA'];
-      let count = 0;
-      activeIds.forEach(function(id) {
-        const node = document.getElementById(id);
-        if (node && String(node.value || '').trim()) count += 1;
-      });
-      const badge = document.getElementById('filterBadge');
-      if (!badge) return;
-      if (count > 0) {
-        badge.textContent = String(count);
-        badge.style.display = '';
-      } else {
-        badge.style.display = 'none';
-      }
+      syncRiskChips();
+      updateDateRangeLabel();
+      syncMoreFiltersUI();
+      ensurePageInRange(rows.length);
+      const visibleRows = getPagedRows(rows);
+      renderRows(visibleRows);
+      updateResultsMeta(rows.length, visibleRows.length);
+      renderPagination(rows.length);
     }
 
     function bindFilters() {
       ['fltSearch', 'fltFacility', 'fltZone', 'fltFacilityType', 'fltPublishedFrom', 'fltPublishedTo', 'fltInspector', 'fltResidualRisk', 'fltOpenCA', 'fltLatestOnly'].forEach((id) => {
         const node = document.getElementById(id);
         if (!node) return;
-        node.addEventListener('input', function() { updateFilterBadge(); render(); });
-        node.addEventListener('change', function() { updateFilterBadge(); render(); });
+        node.addEventListener('input', function() {
+          state.page = 1;
+          render();
+        });
+        node.addEventListener('change', function() {
+          state.page = 1;
+          render();
+        });
       });
+
+      const riskChipRow = document.getElementById('riskChipRow');
+      if (riskChipRow) {
+        riskChipRow.addEventListener('click', function (event) {
+          const button = event.target.closest('.pr-chip');
+          if (!button) return;
+          document.getElementById('fltResidualRisk').value = button.getAttribute('data-risk') || '';
+          state.page = 1;
+          render();
+        });
+      }
+
+      const moreBtn = document.getElementById('moreFiltersBtn');
+      if (moreBtn) {
+        moreBtn.addEventListener('click', function () {
+          state.moreFiltersOpen = !state.moreFiltersOpen;
+          syncMoreFiltersUI();
+        });
+      }
+
+      const dateBtn = document.getElementById('dateRangeBtn');
+      if (dateBtn) {
+        dateBtn.addEventListener('click', function () {
+          state.moreFiltersOpen = true;
+          syncMoreFiltersUI();
+          const from = document.getElementById('fltPublishedFrom');
+          if (from) from.focus();
+        });
+      }
+
+      const clearBtn = document.getElementById('clearFiltersBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+          resetFilters();
+          render();
+        });
+      }
+
+      const pageSizeSelect = document.getElementById('pageSizeSelect');
+      if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', function () {
+          state.pageSize = Number(pageSizeSelect.value || 10) || 10;
+          state.page = 1;
+          render();
+        });
+      }
+
+      const prevPageBtn = document.getElementById('prevPageBtn');
+      if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', function () {
+          if (state.page > 1) {
+            state.page -= 1;
+            render();
+          }
+        });
+      }
+
+      const nextPageBtn = document.getElementById('nextPageBtn');
+      if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', function () {
+          const totalPages = totalPagesFor(state.lastRows);
+          if (state.page < totalPages) {
+            state.page += 1;
+            render();
+          }
+        });
+      }
+
+      const pagination = document.getElementById('pagination');
+      if (pagination) {
+        pagination.addEventListener('click', function (event) {
+          const button = event.target.closest('button[data-page]');
+          if (!button || button.disabled) return;
+          const page = Number(button.getAttribute('data-page') || 1);
+          if (Number.isFinite(page) && page > 0) {
+            state.page = page;
+            render();
+          }
+        });
+      }
     }
 
     function bindSorting() {
@@ -1123,6 +2343,7 @@
             state.sortKey = key;
             state.sortDir = key === 'facility' || key === 'assessor' ? 'asc' : 'desc';
           }
+          state.page = 1;
           render();
         });
       });
@@ -1142,77 +2363,112 @@
           downloadText('published-register-all.csv', rowsToCsv(rows), 'text/csv;charset=utf-8;');
         });
       }
-      const exportSummary = function () {
-        const rows = state.lastRows.slice();
-        const total = rows.length;
-        const summaryText = [
-          'GOIL HSSEQ Published Register Summary',
-          'Generated: ' + new Date().toLocaleString(),
-          '',
-          'Rows in current filtered view: ' + total,
-          'Unique master references: ' + new Set(rows.map((row) => row.group.parentRef)).size,
-          'Selected rows: ' + selectedRows().length,
-          '',
-          'Key filters:',
-          '- Search: ' + (document.getElementById('fltSearch').value || 'All'),
-          '- Facility: ' + (document.getElementById('fltFacility').value || 'All'),
-          '- Zone: ' + (document.getElementById('fltZone').value || 'All'),
-          '- Facility Type: ' + (document.getElementById('fltFacilityType').value || 'All'),
-          '- Published From: ' + (document.getElementById('fltPublishedFrom').value || 'All'),
-          '- Published To: ' + (document.getElementById('fltPublishedTo').value || 'All'),
-          '- Residual Risk: ' + (document.getElementById('fltResidualRisk').value || 'All'),
-          '- Open CA: ' + (document.getElementById('fltOpenCA').value || 'All'),
-          '- Latest Version Only: ' + (document.getElementById('fltLatestOnly').checked ? 'Yes' : 'No')
-        ].join('\n');
-        downloadText('published-register-summary.txt', summaryText, 'text/plain;charset=utf-8;');
-      };
+    }
 
-      const topSummaryBtn = document.getElementById('summaryTopBtn');
-      if (topSummaryBtn) {
-        topSummaryBtn.addEventListener('click', exportSummary);
+    function openCorrectiveActionDetail(referenceNo, facilityName) {
+      window.location.href = 'risk-corrections-detail.html?v=20260319-corrwidth1&ref=' + encodeURIComponent(referenceNo || '') + '&facility=' + encodeURIComponent(facilityName || '') + '&_=' + Date.now();
+    }
+
+    function handlePublishedAction(button) {
+      if (!button || button.disabled) return;
+      if (state.routeContext && state.routeContext.readOnly) return;
+      const action = String(button.getAttribute('data-action') || '').trim();
+      const ref = button.getAttribute('data-ref') || '';
+      const version = button.getAttribute('data-version') || '';
+
+      if (action === 'close-ca') {
+        openCorrectiveActionDetail(ref, button.getAttribute('data-facility') || '');
+        return;
+      }
+
+      if (action === 'revise') {
+        if (RiskModuleUtils.prepareAssessmentRecord) {
+          RiskModuleUtils.prepareAssessmentRecord(ref, version);
+        }
+        RiskModuleUtils.openAssessmentRecord(ref, version);
+        return;
+      }
+
+      if (action === 'reopen') {
+        const reason = window.prompt('Enter reason for reopening this assessment for revision:', '');
+        if (!reason || !String(reason).trim()) return;
+        if (RiskModuleUtils.prepareAssessmentRecord) {
+          RiskModuleUtils.prepareAssessmentRecord(ref, version);
+        }
+        const result = window.GoilWorkflow && typeof window.GoilWorkflow.reopenForRevision === 'function'
+          ? window.GoilWorkflow.reopenForRevision({
+            facility: RiskModuleUtils.readJSON('goil_facility_details', {}),
+            actor: RiskModuleUtils.getCurrentUser ? RiskModuleUtils.getCurrentUser() : {},
+            reason: String(reason).trim()
+          })
+          : { ok: false, error: 'Workflow engine unavailable.' };
+        if (!result.ok) {
+          window.alert(result.error || 'Unable to reopen assessment.');
+          return;
+        }
+        window.alert('Assessment reopened for revision.');
+        render();
       }
     }
 
     function init() {
-      document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
-      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      bindBackButton();
+      const pageSizeSelect = document.getElementById('pageSizeSelect');
+      if (pageSizeSelect) pageSizeSelect.value = String(state.pageSize);
+      applyRouteContextUI();
       bindFilters();
       bindSorting();
       bindExports();
 
-      document.getElementById('selectAllRows').addEventListener('change', function (event) {
-        const checked = !!event.target.checked;
-        state.lastRows.forEach((row) => {
-          if (checked) state.selectedKeys.add(row.key);
-          else state.selectedKeys.delete(row.key);
+      const tbody = document.getElementById('publishedTbody');
+      if (tbody) {
+        tbody.addEventListener('click', function (event) {
+          const toggle = event.target.closest('.rm-ref-toggle');
+          if (toggle) {
+            const id = toggle.getAttribute('data-target');
+            const row = id ? document.getElementById(id) : null;
+            if (row) row.style.display = row.style.display === 'none' ? '' : 'none';
+            return;
+          }
+
+          const versionBtn = event.target.closest('.rm-version-view, .rm-view-record');
+          if (versionBtn) {
+            RiskModuleUtils.openAssessmentRecord(versionBtn.getAttribute('data-ref'), versionBtn.getAttribute('data-version'));
+            return;
+          }
+
+          const viewRegisterBtn = event.target.closest('.pr-view-register-btn');
+          if (viewRegisterBtn) {
+            const ref = viewRegisterBtn.getAttribute('data-ref') || '';
+            const facility = viewRegisterBtn.getAttribute('data-facility') || '';
+            const version = viewRegisterBtn.getAttribute('data-version') || '';
+            const params = new URLSearchParams();
+            if (ref) params.set('ref', ref);
+            if (version) params.set('version', version);
+            if (facility) params.set('facility', facility);
+            params.set('source', 'published-register');
+            window.location.href = 'risk-assessment-register.html?' + params.toString();
+            return;
+          }
+
+          const actionBtn = event.target.closest('.pr-action-btn');
+          if (actionBtn) {
+            handlePublishedAction(actionBtn);
+            return;
+          }
         });
+      }
+
+      window.addEventListener('goil:synced-records', function () {
         render();
       });
 
-      document.getElementById('publishedTbody').addEventListener('click', function (event) {
-        const toggle = event.target.closest('.rm-ref-toggle');
-        if (toggle) {
-          const id = toggle.getAttribute('data-target');
-          const row = id ? document.getElementById(id) : null;
-          if (row) row.style.display = row.style.display === 'none' ? '' : 'none';
-          return;
-        }
+      window.addEventListener('storage', function (event) {
+        if (event.key === 'goil_inspection_records') render();
+      });
 
-        const versionBtn = event.target.closest('.rm-version-view, .rm-view-record');
-        if (versionBtn) {
-          RiskModuleUtils.openAssessmentRecord(versionBtn.getAttribute('data-ref'), versionBtn.getAttribute('data-version'));
-          return;
-        }
-
-        const select = event.target.closest('.rm-select-row');
-        if (select) {
-          const key = select.getAttribute('data-key');
-          if (key) {
-            if (select.checked) state.selectedKeys.add(key);
-            else state.selectedKeys.delete(key);
-            updateSelectAll();
-          }
-        }
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) render();
       });
 
       render();

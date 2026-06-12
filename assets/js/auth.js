@@ -4,6 +4,10 @@
 (function () {
   'use strict';
 
+  function normalizeRole(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
   var SUPABASE_URL  = 'https://qpldcpendvdobtbkygxo.supabase.co';
   var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg';
 
@@ -84,7 +88,7 @@
     if (!client) return;
     var res = await client.auth.getSession();
     if (res.data && res.data.session) {
-      window.location.href = 'pages/portal.html';
+      window.location.href = 'pages/dashboard.html';
     }
   }
 
@@ -135,7 +139,7 @@
       email:     user.email,
       full_name: profile.full_name || user.email,
       office:    profile.office   || '',
-      role:      profile.role     || 'submitter'
+      role:      normalizeRole(profile.role || 'submitter') || 'submitter'
     }));
 
     // Handle "Keep me signed in"
@@ -158,7 +162,7 @@
       return;
     }
 
-    window.location.href = 'pages/portal.html';
+    window.location.href = 'pages/dashboard.html';
   }
 
   // ── First-login password change modal ────────────────────────────────────
@@ -209,7 +213,7 @@
       .eq('id', profile.id);
 
     setPwLoading(false);
-    window.location.href = 'pages/portal.html';
+    window.location.href = 'pages/dashboard.html';
   }
 
   // ── Forgot password ───────────────────────────────────────────────────────

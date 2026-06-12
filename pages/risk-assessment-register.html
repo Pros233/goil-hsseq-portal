@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Assessment Register | Risk Assessment &amp; Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260602-assessmentregister6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep11" />
+  <style>
+    :root{
+      --ar-bg:#0d1117;
+      --ar-shell:#161b22;
+      --ar-panel:#1c2128;
+      --ar-border:rgba(255,255,255,.12);
+      --ar-border-soft:rgba(255,255,255,.08);
+      --ar-text:#e6edf3;
+      --ar-muted:#9ba7b5;
+      --ar-orange:#f47920;
+      --ar-sheet:#fff;
+      --ar-sheet-text:#111;
+      --ar-sheet-line:#d1d5db;
+      --ar-sheet-soft:#f3f4f6;
+      --ar-danger:#dc2626;
+      --ar-warning:#d97706;
+      --ar-success:#16a34a;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(244,121,32,.12), transparent 28%),
+        linear-gradient(180deg, #0b0f14 0%, #11161d 100%);
+      color:var(--ar-text);
+      font-family:'Barlow',sans-serif;
+    }
+    button,input,select,textarea{font:inherit}
+
+    .ar-inner{
+      width:min(1380px, calc(100vw - 48px));
+      margin:0 auto;
+    }
+    .ar-page{
+      width:min(1380px, calc(100vw - 48px));
+      margin:0 auto;
+      padding:28px 0 48px;
+    }
+    .ar-topbar{
+      border-bottom:1px solid rgba(255,255,255,.11);
+      background:#0d1117;
+    }
+    .ar-topbar .ar-inner{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:16px;
+      padding:10px 0;
+    }
+    .ar-topbar .ar-inner .ar-print{
+      justify-self:end;
+    }
+    .ar-back{
+      border:1px solid var(--ar-border);
+      background:rgba(255,255,255,.03);
+      color:var(--ar-text);
+      min-height:36px;
+      padding:0 14px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.16s ease;
+    }
+    .ar-back:hover{
+      border-color:rgba(244,121,32,.55);
+      color:var(--ar-orange);
+    }
+    .ar-pill{
+      display:inline-flex;
+      align-items:center;
+      min-height:30px;
+      border-radius:6px;
+      padding:0 14px;
+      border:1.5px solid rgba(244,121,32,.55);
+      background:transparent;
+      color:var(--ar-orange);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.65px;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .ar-print{
+      min-height:36px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      color:var(--ar-text);
+      padding:0 14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.16s ease;
+    }
+    .ar-print:hover{
+      border-color:rgba(244,121,32,.55);
+      color:var(--ar-orange);
+    }
+    .ar-hero{
+      background:linear-gradient(180deg,#080c10 0%,#0e1318 100%);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      margin-bottom:0;
+    }
+    .ar-hero .ar-inner{
+      padding:36px 0 32px;
+    }
+    .ar-eyebrow{
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:1.1px;
+      text-transform:uppercase;
+      color:var(--ar-orange);
+      margin-bottom:8px;
+    }
+    .ar-title{
+      margin:0 0 10px;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:72px;
+      line-height:.88;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:#fff;
+    }
+    .ar-subtitle{
+      margin:0;
+      max-width:720px;
+      font-size:13px;
+      line-height:1.45;
+      color:var(--ar-muted);
+    }
+
+    .ar-sheet-wrap{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--ar-border-soft);
+      border-radius:20px;
+      padding:18px;
+      box-shadow:0 18px 50px rgba(0,0,0,.25);
+    }
+    .ar-sheet{
+      background:var(--ar-sheet);
+      color:var(--ar-sheet-text);
+      border-radius:14px;
+      padding:28px;
+      overflow:hidden;
+    }
+    .ar-sheet-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .ar-sheet-brand{
+      display:grid;
+      gap:6px;
+    }
+    .ar-sheet-title{
+      margin:0;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:34px;
+      line-height:.92;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+      color:#111;
+    }
+    .ar-sheet-note{
+      margin:0;
+      font-size:12px;
+      color:#4b5563;
+      line-height:1.45;
+    }
+    .ar-ref-box{
+      min-width:220px;
+      border:1px solid #d1d5db;
+      border-radius:12px;
+      padding:12px 14px;
+      background:#fafafa;
+    }
+    .ar-ref-k{
+      font-size:10px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      color:#6b7280;
+      margin-bottom:4px;
+    }
+    .ar-ref-v{
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:24px;
+      font-weight:800;
+      line-height:1;
+      color:#111827;
+    }
+
+    .ar-meta{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:10px 22px;
+      margin-bottom:18px;
+      border-top:1px solid #e5e7eb;
+      border-bottom:1px solid #e5e7eb;
+      padding:14px 0;
+    }
+    .ar-meta-item{
+      display:grid;
+      grid-template-columns:170px 10px 1fr;
+      gap:10px;
+      align-items:flex-start;
+      font-size:14px;
+      line-height:1.35;
+    }
+    .ar-meta-k{font-weight:700}
+    .ar-meta-sep{font-weight:700;text-align:center}
+    .ar-meta-v{color:#1f2937}
+
+    .ar-table-wrap{
+      overflow:auto;
+      border:1px solid var(--ar-sheet-line);
+      border-radius:4px;
+    }
+    .ar-table{
+      width:100%;
+      min-width:980px;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:13px;
+    }
+    .ar-table th,
+    .ar-table td{
+      border:1px solid var(--ar-sheet-line);
+      padding:8px 10px;
+      vertical-align:top;
+      text-align:left;
+      word-break:break-word;
+    }
+    .ar-table th{
+      background:#f8fafc;
+      font-weight:700;
+    }
+    .ar-col-head th{
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      color:#6b7280;
+      font-weight:700;
+      background:#f1f5f9;
+    }
+    .ar-section-row th{
+      background:#1c2128;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:14px;
+      letter-spacing:.65px;
+      text-transform:uppercase;
+      color:#e6edf3;
+      padding-top:8px;
+      padding-bottom:8px;
+    }
+    .ar-col-no{width:72px}
+    .ar-col-question{width:33%}
+    .ar-col-response{width:120px}
+    .ar-col-possibility,
+    .ar-col-severity,
+    .ar-col-risk{width:85px}
+    .ar-col-comment{width:18%}
+    .ar-col-action{width:22%}
+    .ar-num{
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .ar-response{
+      font-weight:700;
+    }
+    .ar-response.no{color:var(--ar-danger)}
+    .ar-response.partial{color:var(--ar-warning)}
+    .ar-response.yes{color:var(--ar-success)}
+    .ar-response.blank{color:#6b7280}
+    .ar-cell-muted{color:#6b7280}
+    .ar-footer{
+      margin-top:16px;
+      font-size:11px;
+      color:#6b7280;
+      line-height:1.45;
+    }
+    .ar-empty{
+      background:rgba(255,255,255,.03);
+      border:1px dashed rgba(255,255,255,.15);
+      border-radius:16px;
+      padding:28px 24px;
+      text-align:center;
+      color:var(--ar-muted);
+    }
+    .ar-empty strong{
+      display:block;
+      margin-bottom:8px;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:28px;
+      line-height:1;
+      color:#fff;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+    }
+
+    @media (max-width: 980px){
+      .ar-inner,.ar-page{
+        width:min(100vw, calc(100vw - 24px));
+      }
+      .ar-page{
+        padding:14px 0 28px;
+      }
+      .ar-pill{
+        font-size:10px;
+        padding:0 10px;
+      }
+      .ar-sheet-head{
+        flex-direction:column;
+      }
+      .ar-meta{
+        grid-template-columns:1fr;
+      }
+      .ar-meta-item{
+        grid-template-columns:130px 10px 1fr;
+      }
+      .ar-sheet{
+        padding:18px;
+      }
+      .ar-title{
+        font-size:42px;
+      }
+    }
+
+    @media print{
+      body{
+        background:#fff;
+      }
+      .ar-page{
+        width:auto;
+        margin:0;
+        padding:0;
+      }
+      .ar-topbar,
+      .ar-hero{
+        display:none;
+      }
+      .ar-sheet-wrap{
+        background:transparent;
+        border:0;
+        box-shadow:none;
+        padding:0;
+      }
+      .ar-sheet{
+        border-radius:0;
+        padding:0;
+      }
+      .ar-table-wrap{
+        overflow:visible;
+      }
+      .ar-table{
+        min-width:0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="ar-topbar">
+    <div class="ar-inner">
+      <button type="button" class="ar-back" id="backBtn">&larr; Back</button>
+      <span class="ar-pill">Read Only</span>
+      <button type="button" class="ar-print" id="printBtn">&#8595; Export Register</button>
+    </div>
+  </nav>
+  <header class="ar-hero">
+    <div class="ar-inner">
+      <div class="ar-eyebrow">Read-Only Assessment Register</div>
+      <h1 class="ar-title">Assessment Register</h1>
+      <p class="ar-subtitle" id="pageSubtitle">Question-level register for the selected assessment snapshot.</p>
+    </div>
+  </header>
+  <div class="ar-page">
+    <div id="registerRoot" class="ar-sheet-wrap"></div>
+  </div>
+
+  <script src="../assets/js/workflow-core.js?v=20260602-assessmentregister6"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260602-assessmentregister6"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var _pdfState = null;
+      var _pdfLibsLoaded = false;
+
+      var CHECKLIST_KEY = 'goil_checklist_session';
+      var FACILITY_KEY = 'goil_facility_details';
+      var META_KEY = 'goil_inspection_meta';
+      var PENDING_ROUTE_KEY = 'goil_pending_record_route';
+      var CA_KEY = 'goil_corrective_action_session';
+      var TEMPLATE_SECTION_ORDER = [
+        { id: 'doc', label: 'Documentation' },
+        { id: 'hsse', label: 'HSSE Management' },
+        { id: 'elec', label: 'Electrical Room' },
+        { id: 'fore', label: 'Forecourt Area' },
+        { id: 'disp', label: 'Dispensers' },
+        { id: 'tank', label: 'Tank Farm Area' },
+        { id: 'sec', label: 'Security' },
+        { id: 'env', label: 'Environment' },
+        { id: 'oth', label: 'Other Items' },
+        { id: 'ppe', label: 'PPE / Welfare' },
+        { id: 'fire', label: 'Fire & Emergency' }
+      ];
+      var LEGACY_REGISTER_RECOVERY = {
+        'IRA-20260521-9DJA::1': {
+          ref: 'IRA-20260521-9DJA',
+          version: 1,
+          facility: 'ECG',
+          assessmentDate: '2026-05-21',
+          assessor: 'Prosper Amiibah',
+          zone: '-',
+          sourceLabel: 'hsse app.docx',
+          sectionsMeta: [
+            { id: 'doc', label: 'Documentation' }
+          ],
+          catalog: {
+            'DOC-02': {
+              code: 'DOC-02',
+              sectionId: 'doc',
+              sectionLabel: 'Documentation',
+              question: 'Valid EPA environmental permit/certificate is available and displayed.',
+              sev: 4,
+              likN: 4,
+              likP: 2,
+              action: 'EPA permit shall be renewed and constantly monitored'
+            },
+            'DOC-03': {
+              code: 'DOC-03',
+              sectionId: 'doc',
+              sectionLabel: 'Documentation',
+              question: 'Valid Ghana National Fire Service certificate is available and displayed.',
+              sev: 5,
+              likN: 4,
+              likP: 2,
+              action: 'Fire certificate shall be displayed and constantly monitored'
+            },
+            'DOC-04': {
+              code: 'DOC-04',
+              sectionId: 'doc',
+              sectionLabel: 'Documentation',
+              question: 'Business operating permit from the relevant local authority is available and displayed.',
+              sev: 3,
+              likN: 3,
+              likP: 2,
+              action: ''
+            }
+          },
+          sectionStates: {
+            doc: {
+              responses: {
+                'DOC-02': 'N',
+                'DOC-03': 'P',
+                'DOC-04': 'Y'
+              },
+              comments: {
+                'DOC-02': 'expired',
+                'DOC-03': 'Available but not displayed',
+                'DOC-04': ''
+              }
+            }
+          }
+        }
+      };
+      var DEFAULT_LEGACY_RECOVERY_KEY = 'IRA-20260521-9DJA::1';
+      var FILE_PREVIEW_STATE = null;
+
+      function esc(value) {
+        if (window.RiskModuleUtils && typeof window.RiskModuleUtils.esc === 'function') {
+          return window.RiskModuleUtils.esc(value);
+        }
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function safeJSON(raw, fallback) {
+        try {
+          var parsed = JSON.parse(raw);
+          return parsed == null ? fallback : parsed;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function readJSON(key, fallback) {
+        return safeJSON(localStorage.getItem(key) || '', fallback);
+      }
+
+      function trimString(value) {
+        return String(value == null ? '' : value).trim();
+      }
+
+      function normalizeVersion(value) {
+        var version = Number(value);
+        if (!Number.isFinite(version) || version < 1) return 1;
+        return Math.floor(version);
+      }
+
+      function normalizeReference(value) {
+        return trimString(value)
+          .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i, '')
+          .replace(/[-_ ]+$/, '')
+          .trim();
+      }
+
+      function getLatestPreviewStamp() {
+        var values = Array.prototype.slice.call(arguments);
+        return values.reduce(function (maxStamp, value) {
+          var stamp = Date.parse(trimString(value) || '');
+          if (!Number.isFinite(stamp)) return maxStamp;
+          return stamp > maxStamp ? stamp : maxStamp;
+        }, 0);
+      }
+
+      function getStoredSnapshots() {
+        var stored = readJSON('goil_checklist_snapshots', []);
+        return Array.isArray(stored) ? stored : [];
+      }
+
+      function coerceSnapshotChecklist(snapshot) {
+        if (!snapshot || typeof snapshot !== 'object') return null;
+        if (snapshot.checklist && isRenderableSession(snapshot.checklist)) {
+          return cloneJSON(snapshot.checklist);
+        }
+        if (isRenderableSession(snapshot)) {
+          return cloneJSON(snapshot);
+        }
+        return null;
+      }
+
+      function hasSubmittedRecordStamp(record) {
+        return !!trimString(
+          record && (
+            record.checklistSubmittedAt ||
+            record.checklist_submitted_at ||
+            record.correctiveSubmittedAt ||
+            record.corrective_submitted_at ||
+            record.publishedAt ||
+            record.published_at ||
+            record.final_submitted_at
+          )
+        );
+      }
+
+      function getSnapshotForScope(ref, version, snapshots) {
+        var targetRef = normalizeReference(ref);
+        var targetVersion = normalizeVersion(version);
+        var list = Array.isArray(snapshots) ? snapshots : getStoredSnapshots();
+        for (var i = list.length - 1; i >= 0; i -= 1) {
+          var item = list[i] || {};
+          var itemRef = normalizeReference(item.inspectionRef || item.referenceNo || '');
+          var itemVersion = normalizeVersion(item.version || item.version_number || 1);
+          if (itemRef === targetRef && itemVersion === targetVersion) return item;
+        }
+        return null;
+      }
+
+      function buildFilePreviewRecord(base, session, snapshotMeta) {
+        var record = base && typeof base === 'object' ? cloneJSON(base) : {};
+        var facility = snapshotMeta && snapshotMeta.facility && typeof snapshotMeta.facility === 'object'
+          ? snapshotMeta.facility
+          : {};
+        var ref = normalizeReference(
+          record.inspectionRef ||
+          record.assessment_reference ||
+          record.referenceNo ||
+          (snapshotMeta && (snapshotMeta.inspectionRef || snapshotMeta.referenceNo)) ||
+          ''
+        );
+        var version = normalizeVersion(
+          record.version ||
+          record.version_number ||
+          (snapshotMeta && (snapshotMeta.version || snapshotMeta.version_number)) ||
+          1
+        );
+        var submittedAt = trimString(
+          record.checklistSubmittedAt ||
+          record.checklist_submitted_at ||
+          record.publishedAt ||
+          record.final_submitted_at ||
+          (snapshotMeta && snapshotMeta.submittedAt) ||
+          ''
+        );
+
+        record.inspectionRef = ref;
+        record.assessment_reference = record.assessment_reference || ref;
+        record.version = version;
+        record.version_number = version;
+        record.facilityName = displayValue(
+          record.facilityName,
+          record.facility_name,
+          facility.nameDisplay,
+          facility.nameVal
+        );
+        record.facility_name = record.facility_name || record.facilityName || '';
+        record.location = displayValue(record.location, facility.zone);
+        record.inspectionDate = displayValue(
+          record.inspectionDate,
+          record.assessment_date,
+          facility.assessmentDate,
+          submittedAt ? submittedAt.slice(0, 10) : ''
+        );
+        record.assessment_date = record.assessment_date || record.inspectionDate || '';
+        record.inspector = displayValue(
+          record.inspector,
+          record.assessor_name,
+          facility.assessorName,
+          snapshotMeta && snapshotMeta.submittedBy
+        );
+        record.assessor_name = record.assessor_name || record.inspector || '';
+        record.checklistSubmittedAt = record.checklistSubmittedAt || submittedAt;
+        record.checklist_submitted_at = record.checklist_submitted_at || record.checklistSubmittedAt || '';
+        record.snapshotId = trimString(record.snapshotId || record.lastSnapshotId || (snapshotMeta && snapshotMeta.snapshotId) || '');
+        record.lastSnapshotId = trimString(record.lastSnapshotId || record.snapshotId || '');
+        record.checklistSnapshot = cloneJSON(session);
+        record.checklist_snapshot = cloneJSON(session);
+        return record;
+      }
+
+      function detectFilePreviewState() {
+        var records = readJSON('goil_inspection_records', []);
+        var snapshots = getStoredSnapshots();
+        var best = null;
+
+        if (Array.isArray(records)) {
+          records.forEach(function (record) {
+            if (!record || typeof record !== 'object') return;
+            var ref = normalizeReference(record.inspectionRef || record.assessment_reference || record.referenceNo || '');
+            if (!ref) return;
+            var version = normalizeVersion(record.version || record.version_number || 1);
+            var session = null;
+
+            if (record.checklistSnapshot && isRenderableSession(record.checklistSnapshot)) {
+              session = cloneJSON(record.checklistSnapshot);
+            } else if (record.checklist_snapshot && isRenderableSession(record.checklist_snapshot)) {
+              session = cloneJSON(record.checklist_snapshot);
+            } else {
+              session = coerceSnapshotChecklist(getSnapshotForScope(ref, version, snapshots));
+            }
+            if (!session || !hasSubmittedRecordStamp(record)) return;
+
+            var stamp = getLatestPreviewStamp(
+              record.final_submitted_at,
+              record.publishedAt,
+              record.correctiveSubmittedAt,
+              record.checklistSubmittedAt,
+              record.lastUpdatedAt
+            );
+            if (!best || stamp > best.stamp) {
+              best = {
+                source: 'file-submitted-preview',
+                ref: ref,
+                version: version,
+                facility: trimString(record.facilityName || record.facility_name || ''),
+                record: buildFilePreviewRecord(record, session, null),
+                session: cloneJSON(session),
+                stamp: stamp
+              };
+            }
+          });
+        }
+
+        if (best) return best;
+
+        for (var i = snapshots.length - 1; i >= 0; i -= 1) {
+          var snapshot = snapshots[i] || {};
+          var snapshotSession = coerceSnapshotChecklist(snapshot);
+          if (!snapshotSession) continue;
+          var snapshotRef = normalizeReference(snapshot.inspectionRef || snapshot.referenceNo || '');
+          if (!snapshotRef) continue;
+          var snapshotVersion = normalizeVersion(snapshot.version || snapshot.version_number || 1);
+          var snapshotStamp = getLatestPreviewStamp(snapshot.submittedAt);
+          if (!snapshotStamp) continue;
+          return {
+            source: 'file-submitted-preview',
+            ref: snapshotRef,
+            version: snapshotVersion,
+            facility: trimString(snapshot.facility && (snapshot.facility.nameDisplay || snapshot.facility.nameVal) || ''),
+            record: buildFilePreviewRecord({}, snapshotSession, snapshot),
+            session: cloneJSON(snapshotSession),
+            stamp: snapshotStamp
+          };
+        }
+
+        var liveSession = readJSON(CHECKLIST_KEY, {});
+        var meta = readJSON(META_KEY, {});
+        var facility = readJSON(FACILITY_KEY, {});
+        if (isRenderableSession(liveSession) && trimString(meta.checklistSubmittedAt) && trimString(meta.referenceNo)) {
+          var liveRef = normalizeReference(meta.referenceNo);
+          var liveVersion = normalizeVersion(meta.versionCurrent || liveSession.version || 1);
+          return {
+            source: 'file-submitted-preview',
+            ref: liveRef,
+            version: liveVersion,
+            facility: trimString(facility.nameDisplay || facility.nameVal || meta.facilityName || ''),
+            record: buildFilePreviewRecord({
+              inspectionRef: liveRef,
+              assessment_reference: liveRef,
+              version: liveVersion,
+              version_number: liveVersion,
+              facilityName: facility.nameDisplay || facility.nameVal || meta.facilityName || '',
+              facility_name: facility.nameDisplay || facility.nameVal || meta.facilityName || '',
+              location: facility.zone || meta.location || '',
+              inspectionDate: facility.assessmentDate || meta.inspectionDate || '',
+              assessment_date: facility.assessmentDate || meta.inspectionDate || '',
+              inspector: facility.assessorName || meta.inspectorName || '',
+              assessor_name: facility.assessorName || meta.inspectorName || '',
+              checklistSubmittedAt: meta.checklistSubmittedAt || ''
+            }, liveSession, {
+              snapshotId: trimString(meta.lastSnapshotId || ''),
+              submittedAt: trimString(meta.checklistSubmittedAt || ''),
+              facility: facility
+            }),
+            session: cloneJSON(liveSession),
+            stamp: getLatestPreviewStamp(meta.checklistSubmittedAt)
+          };
+        }
+
+        return null;
+      }
+
+      function getRouteContext() {
+        var fallback = { ref: '', version: '', facility: '', source: '', focusCode: '' };
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var ref = trimString(params.get('ref'));
+          if (ref) {
+            return {
+              ref: ref,
+              version: trimString(params.get('version')),
+              facility: trimString(params.get('facility')),
+              source: trimString(params.get('source')),
+              focusCode: trimString(params.get('focusCode'))
+            };
+          }
+        } catch (error) {}
+
+        var pending = readJSON(PENDING_ROUTE_KEY, {});
+        if (pending && pending.ref) {
+          return {
+            ref: trimString(pending.ref),
+            version: trimString(pending.version),
+            facility: trimString(pending.facility),
+            source: trimString(pending.source),
+            focusCode: trimString(pending.focusCode)
+          };
+        }
+
+        if (window.location.protocol === 'file:') {
+          FILE_PREVIEW_STATE = detectFilePreviewState();
+          if (FILE_PREVIEW_STATE) {
+            return {
+              ref: trimString(FILE_PREVIEW_STATE.ref),
+              version: String(FILE_PREVIEW_STATE.version || 1),
+              facility: trimString(FILE_PREVIEW_STATE.facility),
+              source: trimString(FILE_PREVIEW_STATE.source || 'file-submitted-preview'),
+              focusCode: ''
+            };
+          }
+
+          if (LEGACY_REGISTER_RECOVERY[DEFAULT_LEGACY_RECOVERY_KEY]) {
+            var preview = LEGACY_REGISTER_RECOVERY[DEFAULT_LEGACY_RECOVERY_KEY];
+            return {
+              ref: trimString(preview.ref),
+              version: String(preview.version || 1),
+              facility: trimString(preview.facility),
+              source: 'legacy-document-preview',
+              focusCode: ''
+            };
+          }
+        }
+
+        return fallback;
+      }
+
+      function getFilePreviewStateForContext(context) {
+        if (!FILE_PREVIEW_STATE || !context) return null;
+        if (trimString(context.source).indexOf('file-submitted-preview') !== 0) return null;
+        if (normalizeReference(FILE_PREVIEW_STATE.ref) !== normalizeReference(context.ref)) return null;
+        if (normalizeVersion(FILE_PREVIEW_STATE.version) !== normalizeVersion(context.version || 1)) return null;
+        return FILE_PREVIEW_STATE;
+      }
+
+      function getFilePreviewRecord(context) {
+        var preview = getFilePreviewStateForContext(context);
+        return preview && preview.record ? cloneJSON(preview.record) : null;
+      }
+
+      function getFilePreviewSession(context) {
+        var preview = getFilePreviewStateForContext(context);
+        return preview && preview.session ? cloneJSON(preview.session) : null;
+      }
+
+      function getBackHref(context) {
+        if (context && context.source === 'urgent-view') {
+          return 'risk-dashboard.html?v=20260601-assessmentregister5&_=' + Date.now();
+        }
+        if (context && (context.source === 'legacy-document-preview' || context.source === 'file-submitted-preview')) {
+          return 'risk-dashboard.html';
+        }
+        return 'risk-inspection.html?v=20260601-registerroute1&_=' + Date.now();
+      }
+
+      function hydrateRecord(context) {
+        if (!context || !context.ref || !window.RiskModuleUtils || typeof RiskModuleUtils.prepareAssessmentRecord !== 'function') {
+          return null;
+        }
+        var record = RiskModuleUtils.prepareAssessmentRecord(context.ref, context.version);
+        if (record) {
+          try {
+            localStorage.removeItem(PENDING_ROUTE_KEY);
+          } catch (error) {}
+        }
+        return record;
+      }
+
+      function getRecordReference(record, context) {
+        return normalizeReference(
+          (record && (record.assessment_reference || record.inspectionRef || record.master_reference || record.masterReference)) ||
+          (context && context.ref) ||
+          ''
+        );
+      }
+
+      function getRecordVersion(record, context) {
+        return normalizeVersion(
+          (record && (record.version || record.version_number)) ||
+          (context && context.version) ||
+          1
+        );
+      }
+
+      function getRecordFacilityName(record, facility, meta, context) {
+        return displayValue(
+          facility && (facility.nameDisplay || facility.nameVal),
+          meta && meta.facilityName,
+          record && (record.facility_name || record.facilityName),
+          context && context.facility
+        );
+      }
+
+      function getRecordAssessmentDate(record, facility, meta) {
+        return displayValue(
+          meta && meta.inspectionDate,
+          facility && facility.assessmentDate,
+          record && (record.assessment_date || record.inspectionDate)
+        );
+      }
+
+      function responseMeta(response) {
+        if (response === 'N') return { label: 'No', cls: 'no' };
+        if (response === 'P') return { label: 'Partial', cls: 'partial' };
+        if (response === 'Y') return { label: 'Yes', cls: 'yes' };
+        return { label: '-', cls: 'blank' };
+      }
+
+      function metricForResponse(item, response) {
+        if (!item || (response !== 'N' && response !== 'P')) {
+          return { possibility: '-', severity: '-', risk: '-' };
+        }
+        var severity = Number(item.sev != null ? item.sev : item.severity);
+        var possibility = Number(
+          response === 'N'
+            ? (item.likN != null ? item.likN : item.likelihoodNo)
+            : (item.likP != null ? item.likP : item.likelihoodPartial)
+        );
+        if (!Number.isFinite(severity) || severity < 1) severity = 1;
+        if (!Number.isFinite(possibility) || possibility < 1) possibility = 1;
+        return {
+          possibility: String(possibility),
+          severity: String(severity),
+          risk: String(Math.round(severity * possibility * 10) / 10)
+        };
+      }
+
+      function displayValue() {
+        for (var i = 0; i < arguments.length; i += 1) {
+          var value = arguments[i];
+          if (value == null) continue;
+          var text = trimString(value);
+          if (text) return text;
+        }
+        return '-';
+      }
+
+      function buildSectionOrder(session, catalog) {
+        var sections = Array.isArray(session.sectionsMeta) ? session.sectionsMeta.slice() : [];
+        if (sections.length) {
+          return sections.filter(function (section) {
+            return section && section.id && section.id !== 'af';
+          });
+        }
+        var labelById = {};
+        Object.keys(catalog || {}).forEach(function (code) {
+          var item = catalog[code] || {};
+          var sectionId = trimString(item.sectionId);
+          if (!sectionId || labelById[sectionId]) return;
+          labelById[sectionId] = item.sectionLabel || sectionId;
+        });
+
+        var ordered = TEMPLATE_SECTION_ORDER.filter(function (section) {
+          return !!labelById[section.id];
+        }).map(function (section) {
+          return {
+            id: section.id,
+            label: labelById[section.id] || section.label
+          };
+        });
+
+        Object.keys(labelById).forEach(function (sectionId) {
+          var exists = ordered.some(function (section) { return section.id === sectionId; });
+          if (!exists) {
+            ordered.push({
+              id: sectionId,
+              label: labelById[sectionId]
+            });
+          }
+        });
+
+        return ordered;
+      }
+
+      function isRenderableSession(session) {
+        return !!(
+          session &&
+          typeof session === 'object' &&
+          session.catalog &&
+          typeof session.catalog === 'object' &&
+          Object.keys(session.catalog).length &&
+          session.sectionStates &&
+          typeof session.sectionStates === 'object'
+        );
+      }
+
+      function normalizeQuestion(value) {
+        return trimString(value)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, ' ')
+          .trim();
+      }
+
+      function normalizeStoredResponse(value) {
+        var response = trimString(value).toUpperCase();
+        if (!response) return '';
+        if (response === 'NO' || response === 'NON-COMPLIANT' || response === 'NON COMPLIANT') return 'N';
+        if (response === 'PARTIAL') return 'P';
+        if (response === 'YES' || response === 'COMPLIANT') return 'Y';
+        if (response === 'NA' || response === 'N/A' || response === 'NOT APPLICABLE') return 'NA';
+        if (response === 'N' || response === 'P' || response === 'Y') return response;
+        return '';
+      }
+
+      function normalizeCorrectiveItems(items) {
+        if (!Array.isArray(items)) return [];
+        return items
+          .filter(function (item) { return item && typeof item === 'object'; })
+          .map(function (item, index) {
+            return {
+              id: item.id || item.actionId || ('CA-' + String(index + 1).padStart(3, '0')),
+              sourceCode: trimString(item.sourceCode || item.code || item.actionId || ''),
+              sourceQuestion: trimString(item.sourceQuestion || item.issue || item.question || item.sourceComment || ''),
+              sectionId: trimString(item.sectionId || ''),
+              sectionLabel: trimString(item.sectionLabel || ''),
+              sourceResponse: normalizeStoredResponse(item.sourceResponse || item.response || item.status),
+              sourceComment: trimString(item.sourceComment || item.comment || item.issue || ''),
+              correctiveAction: trimString(item.correctiveAction || item.recommendedAction || item.description || '')
+            };
+          });
+      }
+
+      function getEmbeddedCorrectiveItems(record) {
+        if (!record || typeof record !== 'object') return [];
+        if (Array.isArray(record.correctiveItems)) return normalizeCorrectiveItems(record.correctiveItems);
+        if (Array.isArray(record.corrective_items)) return normalizeCorrectiveItems(record.corrective_items);
+        if (record.correctiveSession && Array.isArray(record.correctiveSession.items)) {
+          return normalizeCorrectiveItems(record.correctiveSession.items);
+        }
+        if (record.corrective_session && Array.isArray(record.corrective_session.items)) {
+          return normalizeCorrectiveItems(record.corrective_session.items);
+        }
+        return [];
+      }
+
+      function isSummaryCorrectiveItem(item) {
+        if (!item || typeof item !== 'object') return true;
+        var sourceCode = trimString(item.sourceCode);
+        var sectionId = trimString(item.sectionId).toLowerCase();
+        var question = trimString(item.sourceQuestion).toLowerCase();
+        if (sectionId && sectionId !== 'summary') return false;
+        if (sourceCode && !/^(A\d+|ITEM-\d+)$/i.test(sourceCode)) return false;
+        if (question && question.indexOf('assessment generated corrective actions') < 0) return false;
+        return true;
+      }
+
+      function sessionMatchesRecord(session, record, context) {
+        if (!isRenderableSession(session)) return false;
+
+        var expectedRef = getRecordReference(record, context);
+        var expectedVersion = getRecordVersion(record, context);
+        var sessionRef = normalizeReference(
+          session.inspectionRef ||
+          session.referenceNo ||
+          session.assessment_reference ||
+          session.assessmentReference ||
+          ''
+        );
+        var sessionVersion = normalizeVersion(session.version || session.version_number || 1);
+
+        if (sessionRef && expectedRef) {
+          return sessionRef === expectedRef && sessionVersion === expectedVersion;
+        }
+
+        var facility = readJSON(FACILITY_KEY, {});
+        var meta = readJSON(META_KEY, {});
+        var sessionFacility = displayValue(
+          session.facilityKey && (session.facilityKey.nameDisplay || session.facilityKey.nameVal),
+          session.facilityName
+        );
+        var sessionDate = displayValue(
+          session.facilityKey && session.facilityKey.assessmentDate,
+          session.assessmentDate
+        );
+        var recordFacility = getRecordFacilityName(record, facility, meta, context);
+        var recordDate = getRecordAssessmentDate(record, facility, meta);
+
+        if (!sessionFacility || !recordFacility || !sessionDate || !recordDate) return false;
+        return trimString(sessionFacility).toLowerCase() === trimString(recordFacility).toLowerCase() &&
+          trimString(sessionDate) === trimString(recordDate);
+      }
+
+      function correctiveSessionMatchesRecord(payload, record, context) {
+        if (!payload || !Array.isArray(payload.items) || !payload.items.length) return false;
+
+        var expectedRef = getRecordReference(record, context);
+        var expectedVersion = getRecordVersion(record, context);
+        var payloadRef = normalizeReference(payload.inspectionRef || payload.referenceNo || '');
+        var payloadVersion = payload.version != null ? normalizeVersion(payload.version) : 0;
+        var recordSubmittedAt = trimString(record && (record.checklistSubmittedAt || record.checklist_submitted_at));
+        var payloadSubmittedAt = trimString(payload.sourceChecklistSubmittedAt || payload.createdAt);
+
+        if (payloadRef && expectedRef && payloadRef !== expectedRef) return false;
+        if (payloadVersion && expectedVersion && payloadVersion !== expectedVersion) return false;
+        if (recordSubmittedAt && payloadSubmittedAt && recordSubmittedAt !== payloadSubmittedAt) return false;
+
+        return true;
+      }
+
+      function getCorrectiveItemsForRecord(record, context) {
+        var embeddedItems = getEmbeddedCorrectiveItems(record);
+        if (embeddedItems.length) return embeddedItems;
+
+        var payload = readJSON(CA_KEY, {});
+        if (correctiveSessionMatchesRecord(payload, record, context)) {
+          return normalizeCorrectiveItems(payload.items);
+        }
+
+        if (!window.RiskModuleUtils || typeof RiskModuleUtils.getActions !== 'function') return [];
+        var recordRef = getRecordReference(record, context);
+        var recordVersion = getRecordVersion(record, context);
+        return RiskModuleUtils.getActions().filter(function (action) {
+          var actionRef = normalizeReference(
+            action && (action.inspectionRef || action.assessment_reference || action.assessmentReference || '')
+          );
+          var actionVersion = normalizeVersion(
+            action && (action.version_number || action.version)
+          );
+          if (!actionRef || actionRef !== recordRef) return false;
+          return actionVersion === recordVersion;
+        }).map(function (action, index) {
+          var inferredResponse = action && (action.riskLevel === 'Critical' || action.riskLevel === 'High') ? 'N' : 'P';
+          return {
+            id: action.actionId || ('CA-' + String(index + 1).padStart(3, '0')),
+            sourceCode: action.sourceCode || '',
+            sourceQuestion: action.sourceQuestion || action.issue || action.sourceComment || '',
+            sectionId: action.sectionId || '',
+            sectionLabel: action.sectionLabel || '',
+            sourceResponse: action.sourceResponse || inferredResponse,
+            sourceComment: action.sourceComment || action.issue || '',
+            correctiveAction: action.recommendedAction || action.description || ''
+          };
+        }).filter(function (item) {
+          return !!(item.sourceCode || item.sourceQuestion || item.correctiveAction);
+        });
+      }
+
+      function buildCorrectiveLookup(items) {
+        var lookup = {
+          byCode: {},
+          byQuestion: {}
+        };
+        normalizeCorrectiveItems(items).forEach(function (item) {
+          var code = trimString(item.sourceCode);
+          var question = normalizeQuestion(item.sourceQuestion);
+          if (code && !lookup.byCode[code]) lookup.byCode[code] = item;
+          if (question && !lookup.byQuestion[question]) lookup.byQuestion[question] = item;
+        });
+        return lookup;
+      }
+
+      function getLegacyRecoveryKey(record, context) {
+        return getRecordReference(record, context) + '::' + String(getRecordVersion(record, context));
+      }
+
+      function getLegacyRecoveryData(record, context) {
+        return LEGACY_REGISTER_RECOVERY[getLegacyRecoveryKey(record, context)] || null;
+      }
+
+      function countAnsweredRowsFromSectionStates(sectionStates) {
+        var count = 0;
+        var sections = sectionStates && typeof sectionStates === 'object' ? sectionStates : {};
+        Object.keys(sections).forEach(function (sectionId) {
+          var section = sections[sectionId] || {};
+          var responses = section.responses && typeof section.responses === 'object' ? section.responses : {};
+          Object.keys(responses).forEach(function (code) {
+            if (trimString(responses[code])) count += 1;
+          });
+        });
+        return count;
+      }
+
+      function getLegacyRecoverySession(record, context) {
+        var recovery = getLegacyRecoveryData(record, context);
+        if (!recovery) return null;
+        return {
+          inspectionRef: trimString(recovery.ref),
+          version: normalizeVersion(recovery.version),
+          catalog: cloneJSON(recovery.catalog || {}),
+          sectionStates: cloneJSON(recovery.sectionStates || {}),
+          sectionsMeta: cloneJSON(recovery.sectionsMeta || []),
+          recoveredFromDocument: true,
+          sourceLabel: trimString(recovery.sourceLabel || '')
+        };
+      }
+
+      function getStoredSnapshotSession(record, context) {
+        var snapshot = getSnapshotForScope(
+          getRecordReference(record, context),
+          getRecordVersion(record, context),
+          getStoredSnapshots()
+        );
+        var session = coerceSnapshotChecklist(snapshot);
+        if (!session) return null;
+        session.inspectionRef = trimString(session.inspectionRef || getRecordReference(record, context));
+        session.version = normalizeVersion(session.version || getRecordVersion(record, context));
+        return session;
+      }
+
+      function buildLegacyRecoveryRecord(context) {
+        var recovery = getLegacyRecoveryData(null, context);
+        if (!recovery) return null;
+        return {
+          inspectionRef: trimString(recovery.ref),
+          assessment_reference: trimString(recovery.ref),
+          version: normalizeVersion(recovery.version),
+          version_number: normalizeVersion(recovery.version),
+          facilityName: trimString(recovery.facility),
+          facility_name: trimString(recovery.facility),
+          assessment_date: trimString(recovery.assessmentDate),
+          inspectionDate: trimString(recovery.assessmentDate),
+          inspector: trimString(recovery.assessor),
+          assessor_name: trimString(recovery.assessor),
+          location: trimString(recovery.zone)
+        };
+      }
+
+      function mergeRecoveredSessionWithTemplate(template, recoveredSession) {
+        if (!template || !template.catalog || !recoveredSession || !recoveredSession.catalog) {
+          return recoveredSession;
+        }
+
+        var mergedCatalog = cloneJSON(template.catalog || {});
+        var mergedSectionsMeta = Array.isArray(template.sectionsMeta) ? cloneJSON(template.sectionsMeta) : [];
+        var mergedSectionStates = {};
+        var templateQuestionIndex = {};
+
+        Object.keys(mergedCatalog).forEach(function (code) {
+          var item = mergedCatalog[code] || {};
+          var sectionId = trimString(item.sectionId);
+          if (!sectionId) return;
+          if (!mergedSectionStates[sectionId]) {
+            mergedSectionStates[sectionId] = {
+              responses: {},
+              comments: {}
+            };
+          }
+          mergedSectionStates[sectionId].responses[code] = '';
+          mergedSectionStates[sectionId].comments[code] = '';
+
+          var normalizedQuestion = normalizeQuestion(item.question);
+          if (normalizedQuestion && !templateQuestionIndex[normalizedQuestion]) {
+            templateQuestionIndex[normalizedQuestion] = code;
+          }
+        });
+
+        Object.keys(recoveredSession.catalog || {}).forEach(function (recoveredCode) {
+          var recoveredItem = recoveredSession.catalog[recoveredCode] || {};
+          var targetCode = mergedCatalog[recoveredCode] ? recoveredCode : '';
+          if (!targetCode) {
+            var normalizedQuestion = normalizeQuestion(recoveredItem.question);
+            if (normalizedQuestion && templateQuestionIndex[normalizedQuestion]) {
+              targetCode = templateQuestionIndex[normalizedQuestion];
+            }
+          }
+          if (!targetCode || !mergedCatalog[targetCode]) return;
+
+          var recoveredSectionId = trimString(recoveredItem.sectionId);
+          var recoveredSectionState = recoveredSession.sectionStates && recoveredSession.sectionStates[recoveredSectionId]
+            ? recoveredSession.sectionStates[recoveredSectionId]
+            : {};
+          var response = trimString(
+            recoveredSectionState.responses && recoveredSectionState.responses[recoveredCode]
+          );
+          var comment = trimString(
+            recoveredSectionState.comments && recoveredSectionState.comments[recoveredCode]
+          );
+
+          mergedCatalog[targetCode] = Object.assign({}, mergedCatalog[targetCode], recoveredItem, {
+            code: targetCode,
+            sectionId: mergedCatalog[targetCode].sectionId || recoveredItem.sectionId,
+            sectionLabel: mergedCatalog[targetCode].sectionLabel || recoveredItem.sectionLabel
+          });
+
+          var targetSectionId = trimString((mergedCatalog[targetCode] || {}).sectionId);
+          if (!targetSectionId) return;
+          if (!mergedSectionStates[targetSectionId]) {
+            mergedSectionStates[targetSectionId] = {
+              responses: {},
+              comments: {}
+            };
+          }
+          if (response) mergedSectionStates[targetSectionId].responses[targetCode] = response;
+          if (comment) mergedSectionStates[targetSectionId].comments[targetCode] = comment;
+        });
+
+        return {
+          inspectionRef: trimString(recoveredSession.inspectionRef || ''),
+          version: normalizeVersion(recoveredSession.version || 1),
+          catalog: mergedCatalog,
+          sectionStates: mergedSectionStates,
+          sectionsMeta: mergedSectionsMeta,
+          recoveredFromDocument: true,
+          sourceLabel: trimString(recoveredSession.sourceLabel || ''),
+          recoveredDocumentMerged: true
+        };
+      }
+
+      function cloneJSON(value) {
+        return JSON.parse(JSON.stringify(value == null ? {} : value));
+      }
+
+      function loadChecklistTemplate(context) {
+        return new Promise(function (resolve) {
+          var iframe = document.createElement('iframe');
+          var resolved = false;
+          var timeoutId = null;
+
+          function cleanup(value) {
+            if (resolved) return;
+            resolved = true;
+            if (timeoutId) clearTimeout(timeoutId);
+            try {
+              iframe.remove();
+            } catch (error) {}
+            resolve(value || null);
+          }
+
+          function readTemplate() {
+            try {
+              var frameWindow = iframe.contentWindow;
+              if (!frameWindow || typeof frameWindow.buildCatalog !== 'function') return null;
+              var catalog = frameWindow.buildCatalog();
+              if (!catalog || !Object.keys(catalog).length) return null;
+
+              var labelById = {};
+              Object.keys(catalog).forEach(function (code) {
+                var item = catalog[code] || {};
+                var sectionId = trimString(item.sectionId);
+                if (!sectionId || labelById[sectionId]) return;
+                labelById[sectionId] = item.sectionLabel || sectionId;
+              });
+
+              var sectionsMeta = TEMPLATE_SECTION_ORDER.filter(function (section) {
+                return !!labelById[section.id];
+              }).map(function (section) {
+                return {
+                  id: section.id,
+                  label: labelById[section.id] || section.label
+                };
+              });
+
+              Object.keys(labelById).forEach(function (sectionId) {
+                var exists = sectionsMeta.some(function (section) { return section.id === sectionId; });
+                if (!exists) {
+                  sectionsMeta.push({
+                    id: sectionId,
+                    label: labelById[sectionId]
+                  });
+                }
+              });
+
+              return {
+                catalog: cloneJSON(catalog),
+                sectionsMeta: sectionsMeta
+              };
+            } catch (error) {
+              return null;
+            }
+          }
+
+          function pollTemplate(remaining) {
+            var template = readTemplate();
+            if (template) {
+              cleanup(template);
+              return;
+            }
+            if (remaining <= 0) {
+              cleanup(null);
+              return;
+            }
+            setTimeout(function () {
+              pollTemplate(remaining - 1);
+            }, 100);
+          }
+
+          iframe.setAttribute('aria-hidden', 'true');
+          iframe.tabIndex = -1;
+          iframe.style.position = 'absolute';
+          iframe.style.width = '0';
+          iframe.style.height = '0';
+          iframe.style.border = '0';
+          iframe.style.opacity = '0';
+          iframe.style.pointerEvents = 'none';
+          iframe.onload = function () {
+            pollTemplate(60);
+          };
+          iframe.onerror = function () {
+            cleanup(null);
+          };
+
+          var params = new URLSearchParams();
+          params.set('v', '20260601-assessmentregister5');
+          if (context && context.ref) params.set('ref', context.ref);
+          if (context && context.version) params.set('version', context.version);
+          params.set('readonly', '1');
+          params.set('registerProbe', '1');
+          params.set('_', String(Date.now()));
+          iframe.src = 'GOIL_Checklist_Section1.html?' + params.toString();
+
+          timeoutId = setTimeout(function () {
+            cleanup(null);
+          }, 8000);
+
+          document.body.appendChild(iframe);
+        });
+      }
+
+      function buildLegacySessionFromCorrective(context, record, template, correctiveItems) {
+        if (!template || !template.catalog || !Array.isArray(correctiveItems) || !correctiveItems.length) return null;
+
+        var catalog = cloneJSON(template.catalog);
+        var sectionsMeta = Array.isArray(template.sectionsMeta) ? template.sectionsMeta.slice() : [];
+        var sectionStates = {};
+        var questionIndex = {};
+        var summaryOnly = correctiveItems.every(isSummaryCorrectiveItem);
+        var matchedCount = 0;
+
+        Object.keys(catalog).forEach(function (code) {
+          var item = catalog[code] || {};
+          var sectionId = trimString(item.sectionId);
+          if (!sectionId) return;
+          if (!sectionStates[sectionId]) {
+            sectionStates[sectionId] = {
+              responses: {},
+              comments: {}
+            };
+          }
+          sectionStates[sectionId].responses[code] = '';
+          sectionStates[sectionId].comments[code] = '';
+
+          var normalizedQuestion = normalizeQuestion(item.question);
+          if (normalizedQuestion && !questionIndex[normalizedQuestion]) {
+            questionIndex[normalizedQuestion] = code;
+          }
+        });
+
+        correctiveItems.forEach(function (item) {
+          var code = trimString(item.sourceCode);
+          if (!catalog[code]) {
+            var normalizedQuestion = normalizeQuestion(item.sourceQuestion || item.issue || '');
+            if (normalizedQuestion && questionIndex[normalizedQuestion]) {
+              code = questionIndex[normalizedQuestion];
+            }
+          }
+          if (!catalog[code]) return;
+          matchedCount += 1;
+
+          var catalogItem = catalog[code] || {};
+          var sectionId = trimString(catalogItem.sectionId);
+          if (!sectionId) return;
+          if (!sectionStates[sectionId]) {
+            sectionStates[sectionId] = {
+              responses: {},
+              comments: {}
+            };
+          }
+
+          var response = normalizeStoredResponse(item.sourceResponse || item.response || item.status);
+          sectionStates[sectionId].responses[code] = response || 'P';
+          sectionStates[sectionId].comments[code] = trimString(
+            item.sourceComment ||
+            item.comment ||
+            item.issue ||
+            ''
+          );
+
+          if (!trimString(catalogItem.action)) {
+            catalogItem.action = trimString(
+              item.correctiveAction ||
+              item.recommendedAction ||
+              item.description ||
+              ''
+            );
+            catalog[code] = catalogItem;
+          }
+        });
+
+        return {
+          inspectionRef: getRecordReference(record, context),
+          version: getRecordVersion(record, context),
+          catalog: catalog,
+          sectionStates: sectionStates,
+          sectionsMeta: sectionsMeta,
+          reconstructedFromCorrective: true,
+          reconstructedFromSummaryOnly: summaryOnly,
+          reconstructedMatchCount: matchedCount,
+          strictExceptionRowsOnly: true
+        };
+      }
+
+      async function resolveSession(context, record) {
+        if (record && record.checklistSnapshot && typeof record.checklistSnapshot === 'object' && isRenderableSession(record.checklistSnapshot)) {
+          return cloneJSON(record.checklistSnapshot);
+        }
+        if (record && record.checklist_snapshot && typeof record.checklist_snapshot === 'object' && isRenderableSession(record.checklist_snapshot)) {
+          return cloneJSON(record.checklist_snapshot);
+        }
+
+        var filePreviewSession = getFilePreviewSession(context);
+        if (filePreviewSession) return filePreviewSession;
+
+        var storedSnapshotSession = getStoredSnapshotSession(record, context);
+        if (storedSnapshotSession) return storedSnapshotSession;
+
+        var storedSession = readJSON(CHECKLIST_KEY, {});
+        if (sessionMatchesRecord(storedSession, record, context)) {
+          return storedSession;
+        }
+
+        var recoveredSession = getLegacyRecoverySession(record, context);
+        if (recoveredSession) {
+          var recoveryTemplate = await loadChecklistTemplate(context);
+          if (recoveryTemplate && recoveryTemplate.catalog) {
+            return mergeRecoveredSessionWithTemplate(recoveryTemplate, recoveredSession);
+          }
+          return recoveredSession;
+        }
+
+        var correctiveItems = getCorrectiveItemsForRecord(record, context);
+        if (!correctiveItems.length) return null;
+
+        var template = await loadChecklistTemplate(context);
+        return buildLegacySessionFromCorrective(context, record, template, correctiveItems);
+      }
+
+      function buildTableMarkup(session, correctiveItems) {
+        var catalog = session && session.catalog && typeof session.catalog === 'object' ? session.catalog : {};
+        var sectionStates = session && session.sectionStates && typeof session.sectionStates === 'object' ? session.sectionStates : {};
+        var correctiveLookup = buildCorrectiveLookup(correctiveItems);
+        var sectionOrder = buildSectionOrder(session || {}, catalog);
+        var strictExceptionRowsOnly = !!(session && session.strictExceptionRowsOnly);
+        if (!sectionOrder.length || !Object.keys(catalog).length) return '';
+
+        var catalogCodes = Object.keys(catalog);
+        var html = '';
+
+        sectionOrder.forEach(function (section) {
+          var sectionId = trimString(section.id);
+          var sectionLabel = displayValue(section.label, sectionId);
+          var sectionState = sectionStates[sectionId] || {};
+          var responses = sectionState.responses && typeof sectionState.responses === 'object' ? sectionState.responses : {};
+          var comments = sectionState.comments && typeof sectionState.comments === 'object' ? sectionState.comments : {};
+          var rowIndex = 0;
+          var sectionCodes = catalogCodes.filter(function (code) {
+            return trimString((catalog[code] || {}).sectionId) === sectionId;
+          });
+          if (strictExceptionRowsOnly) {
+            sectionCodes = sectionCodes.filter(function (code) {
+              return !!trimString(responses[code]);
+            });
+          }
+          if (!sectionCodes.length) return;
+
+          html += ''
+            + '<tr class="ar-section-row">'
+            + '<th colspan="8">' + esc(sectionLabel) + '</th>'
+            + '</tr>'
+            + '<tr class="ar-col-head">'
+            + '<th class="ar-col-no">No.</th>'
+            + '<th class="ar-col-question">Question</th>'
+            + '<th class="ar-col-response">Response</th>'
+            + '<th class="ar-col-possibility">Possibility</th>'
+            + '<th class="ar-col-severity">Severity</th>'
+            + '<th class="ar-col-risk">Risk</th>'
+            + '<th class="ar-col-comment">Comment</th>'
+            + '<th class="ar-col-action">Corrective Action</th>'
+            + '</tr>';
+
+          sectionCodes.forEach(function (code) {
+            var item = catalog[code] || {};
+            var response = trimString(responses[code]);
+            var meta = responseMeta(response);
+            var metric = metricForResponse(item, response);
+            var correctiveMatch = correctiveLookup.byCode[code] || correctiveLookup.byQuestion[normalizeQuestion(item.question)] || null;
+            var action = (response === 'N' || response === 'P')
+              ? displayValue(correctiveMatch && correctiveMatch.correctiveAction, item.action)
+              : '-';
+            var comment = displayValue(comments[code], correctiveMatch && correctiveMatch.sourceComment);
+            rowIndex += 1;
+
+            html += ''
+              + '<tr>'
+              + '<td class="ar-num">' + esc(String(rowIndex) + '.') + '</td>'
+              + '<td>' + esc(displayValue(item.question, code)) + '</td>'
+              + '<td><span class="ar-response ' + esc(meta.cls) + '">' + esc(meta.label) + '</span></td>'
+              + '<td>' + esc(metric.possibility) + '</td>'
+              + '<td>' + esc(metric.severity) + '</td>'
+              + '<td>' + esc(metric.risk) + '</td>'
+              + '<td>' + esc(comment) + '</td>'
+              + '<td>' + esc(action) + '</td>'
+              + '</tr>';
+          });
+        });
+
+        return html;
+      }
+
+      function renderLoading(message) {
+        document.getElementById('registerRoot').innerHTML = ''
+          + '<div class="ar-empty">'
+          + '<strong>Loading Register</strong>'
+          + '<div>' + esc(message) + '</div>'
+          + '</div>';
+      }
+
+      function renderEmpty(message) {
+        document.getElementById('registerRoot').innerHTML = ''
+          + '<div class="ar-empty">'
+          + '<strong>Register Unavailable</strong>'
+          + '<div>' + esc(message) + '</div>'
+          + '</div>';
+      }
+
+      async function renderRegister(context, record) {
+        var session = await resolveSession(context, record);
+        var correctiveItems = getCorrectiveItemsForRecord(record, context);
+        var facility = readJSON(FACILITY_KEY, {});
+        var meta = readJSON(META_KEY, {});
+        var isDocumentRecovery = !!(session && session.recoveredFromDocument);
+        var isReconstructed = !!(session && session.reconstructedFromCorrective);
+        var isSummaryOnlyReconstruction = !!(session && session.reconstructedFromSummaryOnly);
+        var recoveryData = isDocumentRecovery ? getLegacyRecoveryData(record, context) : null;
+        var recoveredAnswerCount = recoveryData ? countAnsweredRowsFromSectionStates(recoveryData.sectionStates) : 0;
+        var totalQuestionCount = session && session.catalog ? Object.keys(session.catalog).length : 0;
+        var tableMarkup = buildTableMarkup(session, correctiveItems);
+        if (!tableMarkup) {
+          renderEmpty(
+            isDocumentRecovery
+              ? 'The archived document recovery did not contain any renderable rows for this assessment register.'
+              : isReconstructed
+              ? 'The exact assessment register could not be reconstructed because the published record no longer retains question-level checklist responses for this assessment.'
+              : 'No locked checklist snapshot was found for this assessment register view.'
+          );
+          return;
+        }
+
+        var displayVersion = 1;
+        if (record && window.RiskModuleUtils && typeof RiskModuleUtils.getPublishedDisplayVersionNumber === 'function') {
+          displayVersion = RiskModuleUtils.getPublishedDisplayVersionNumber(record, RiskModuleUtils.getRecords());
+        } else {
+          displayVersion = normalizeVersion(
+            (record && (record.version || record.version_number)) ||
+            meta.versionCurrent ||
+            context.version ||
+            1
+          );
+        }
+
+        var facilityName = displayValue(
+          facility.nameDisplay,
+          facility.nameVal,
+          meta.facilityName,
+          record && (record.facility_name || record.facilityName),
+          context.facility
+        );
+        var assessor = displayValue(
+          meta.inspectorName,
+          facility.assessorName,
+          record && (record.assessor_name || record.inspector)
+        );
+        var assessmentDate = displayValue(
+          meta.inspectionDate,
+          facility.assessmentDate,
+          record && (record.assessment_date || record.inspectionDate)
+        );
+        var zone = displayValue(
+          record && record.location,
+          facility.zone,
+          meta.location
+        );
+        var referenceNo = trimString(
+          (record && (record.assessment_reference || record.inspectionRef)) ||
+          meta.referenceNo ||
+          context.ref
+        ) || '-';
+
+        _pdfState = {
+          session: session,
+          correctiveItems: correctiveItems,
+          facilityName: facilityName,
+          referenceNo: referenceNo,
+          displayVersion: displayVersion,
+          assessmentDate: assessmentDate,
+          assessor: assessor,
+          zone: zone
+        };
+
+        document.getElementById('pageSubtitle').textContent =
+          (isDocumentRecovery
+            ? 'Recovered archived assessment register for '
+            : isSummaryOnlyReconstruction
+            ? 'Legacy summary-only register for '
+            : (isReconstructed ? 'Reconstructed read-only question register for ' : 'Read-only question register for '))
+          + facilityName + ' (' + referenceNo + ').';
+
+        document.getElementById('registerRoot').innerHTML = ''
+          + '<div class="ar-sheet">'
+          + '  <div class="ar-sheet-head">'
+          + '    <div class="ar-sheet-brand">'
+          + '      <h2 class="ar-sheet-title">Assessment Register</h2>'
+          + '      <p class="ar-sheet-note">'
+          + (isDocumentRecovery
+              ? 'Recovered from archived register evidence (' + esc(displayValue(session.sourceLabel, 'legacy document')) + '). Only ' + esc(String(recoveredAnswerCount || 0)) + ' of ' + esc(String(totalQuestionCount || 0)) + ' question responses were preserved there, so the remaining rows stay blank because the original submitted checklist snapshot is no longer available for this assessment.'
+              : isSummaryOnlyReconstruction
+              ? 'Legacy register shell reconstructed from the active checklist template. The published record retained only a summary corrective row, so the exact question-level No/Partial responses are not recoverable for this assessment.'
+              : (isReconstructed
+              ? 'Legacy exception register reconstructed from retained item-level corrective findings because the original locked checklist snapshot is unavailable for this assessment.'
+              : 'Question-by-question record generated from the locked checklist snapshot for this published assessment.')
+            )
+          + '</p>'
+          + '    </div>'
+          + '    <div class="ar-ref-box">'
+          + '      <div class="ar-ref-k">Assessment Reference</div>'
+          + '      <div class="ar-ref-v">' + esc(referenceNo) + '</div>'
+          + '      <div class="ar-sheet-note" style="margin-top:8px">Version V' + esc(String(displayVersion || 1)) + '</div>'
+          + '    </div>'
+          + '  </div>'
+          + '  <div class="ar-meta">'
+          + '    <div class="ar-meta-item"><div class="ar-meta-k">Assessment Date</div><div class="ar-meta-sep">:</div><div class="ar-meta-v">' + esc(assessmentDate) + '</div></div>'
+          + '    <div class="ar-meta-item"><div class="ar-meta-k">Facility</div><div class="ar-meta-sep">:</div><div class="ar-meta-v">' + esc(facilityName) + '</div></div>'
+          + '    <div class="ar-meta-item"><div class="ar-meta-k">Assessor</div><div class="ar-meta-sep">:</div><div class="ar-meta-v">' + esc(assessor) + '</div></div>'
+          + '    <div class="ar-meta-item"><div class="ar-meta-k">Zone / Location</div><div class="ar-meta-sep">:</div><div class="ar-meta-v">' + esc(zone) + '</div></div>'
+          + '  </div>'
+          + '  <div class="ar-table-wrap">'
+          + '    <table class="ar-table">'
+          + '      <tbody>' + tableMarkup + '</tbody>'
+          + '    </table>'
+          + '  </div>'
+          + '  <div class="ar-footer">'
+          + (isDocumentRecovery
+              ? 'Archived recovery note: this register was restored from the attached historical document because the original locked checklist snapshot is no longer present in retained storage for this assessment. Only ' + esc(String(recoveredAnswerCount || 0)) + ' question responses were recoverable from that document, so every other row remains blank instead of being guessed.'
+              : isSummaryOnlyReconstruction
+              ? 'Legacy reconstruction note: this published record preserved only the summary corrective count and not the itemized exception rows, so the register cannot truthfully mark any question as Yes, No, or Partial beyond what was retained.'
+              : (isReconstructed
+              ? 'Legacy reconstruction note: only retained item-level exception rows are shown. Compliant Yes rows cannot be proven or recreated without the original locked checklist snapshot.'
+              : 'Generated from the saved assessment snapshot. This view is read-only and mirrors the checklist responses recorded for the selected published assessment.')
+            )
+          + '  </div>'
+          + '</div>';
+      }
+
+      function pdfResponseMeta(response) {
+        if (response === 'N') return { label: 'No', colorStyle: 'no' };
+        if (response === 'P') return { label: 'Partial', colorStyle: 'partial' };
+        if (response === 'Y') return { label: 'Yes', colorStyle: 'yes' };
+        if (response === 'NA') return { label: 'N/A', colorStyle: 'na' };
+        return { label: '\u2014', colorStyle: 'blank' };
+      }
+
+      function loadPDFScript(src) {
+        return new Promise(function (resolve, reject) {
+          var s = document.createElement('script');
+          s.src = src;
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      function fetchImageDataUrl(src) {
+        return fetch(src)
+          .then(function (res) { return res.blob(); })
+          .then(function (blob) {
+            return new Promise(function (resolve, reject) {
+              var reader = new FileReader();
+              reader.onload = function () { resolve(reader.result); };
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          })
+          .catch(function () { return null; });
+      }
+
+      async function generatePDF() {
+        var state = _pdfState;
+        if (!state) return;
+
+        var btn = document.getElementById('printBtn');
+        var origText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Generating PDF\u2026';
+
+        try {
+          if (!_pdfLibsLoaded) {
+            await loadPDFScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+            await loadPDFScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
+            _pdfLibsLoaded = true;
+          }
+
+          var jsPDF = window.jspdf.jsPDF;
+          var W = 297, H = 210;
+          var ORANGE = [244, 121, 32];
+          var DARK_BG = [13, 17, 23];
+          var SECT_BG = [26, 33, 43];
+          var WHITE = [255, 255, 255];
+          var MUTED = [155, 167, 181];
+          var GREEN = [22, 163, 74];
+          var RED_C = [220, 38, 38];
+          var AMBER = [217, 119, 6];
+          var GRAY_C = [107, 114, 128];
+
+          var doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+          // ── Cover Page ────────────────────────────────────────────
+          doc.setFillColor(DARK_BG[0], DARK_BG[1], DARK_BG[2]);
+          doc.rect(0, 0, W, H, 'F');
+
+          doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+          doc.rect(0, 0, W, 14, 'F');
+
+          var logoDataUrl = await fetchImageDataUrl('../assets/img/goil-logo.png');
+          if (logoDataUrl) {
+            doc.addImage(logoDataUrl, 'PNG', W / 2 - 28, 22, 56, 28);
+          }
+
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(62);
+          doc.setTextColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+          doc.text('HSSEQ', W / 2, 96, { align: 'center' });
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(20);
+          doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+          doc.text('ASSESSMENT REGISTER', W / 2, 110, { align: 'center' });
+
+          doc.setDrawColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+          doc.setLineWidth(0.5);
+          doc.line(W / 2 - 70, 116, W / 2 + 70, 116);
+
+          function metaBlock(x, y, label, value) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(6.5);
+            doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+            doc.text(label.toUpperCase(), x, y);
+            doc.setFontSize(11);
+            doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+            doc.text(value || '\u2014', x, y + 7);
+          }
+
+          var MX = 68, RX = 168, MY = 130;
+          metaBlock(MX, MY,      'Facility',         state.facilityName);
+          metaBlock(RX, MY,      'Reference No.',    '(' + state.referenceNo + ')  Version V' + state.displayVersion);
+          metaBlock(MX, MY + 18, 'Assessment Date',  state.assessmentDate);
+          metaBlock(RX, MY + 18, 'Assessor',         state.assessor);
+          metaBlock(MX, MY + 36, 'Zone / Location',  state.zone || '\u2014');
+          metaBlock(RX, MY + 36, 'Classification',   'Confidential \u2013 Internal Use Only');
+
+          // ── Table Pages ───────────────────────────────────────────
+          var session = state.session;
+          var catalog = (session && session.catalog) || {};
+          var sectionStates = (session && session.sectionStates) || {};
+          var caItems = state.correctiveItems || [];
+          var secOrder = buildSectionOrder(session || {}, catalog);
+          var caLookup = buildCorrectiveLookup(caItems);
+          var strictOnly = !!(session && session.strictExceptionRowsOnly);
+          var allCodes = Object.keys(catalog);
+
+          var tableBody = [];
+          secOrder.forEach(function (sec) {
+            var sid = trimString(sec.id);
+            var slabel = displayValue(sec.label, sid).toUpperCase();
+            var ss = sectionStates[sid] || {};
+            var resp = ss.responses || {};
+            var coms = ss.comments || {};
+
+            var codes = allCodes.filter(function (c) {
+              return trimString((catalog[c] || {}).sectionId) === sid;
+            });
+            if (strictOnly) {
+              codes = codes.filter(function (c) { return !!trimString(resp[c]); });
+            }
+            if (!codes.length) return;
+
+            tableBody.push([{ content: slabel, colSpan: 8, _isSect: true }]);
+
+            var rIdx = 0;
+            codes.forEach(function (code) {
+              var item = catalog[code] || {};
+              var response = trimString(resp[code]);
+              var rm = pdfResponseMeta(response);
+              var metric = metricForResponse(item, response);
+              var caMatch = caLookup.byCode[code]
+                || caLookup.byQuestion[normalizeQuestion(item.question)]
+                || null;
+              var action = (response === 'N' || response === 'P')
+                ? displayValue(caMatch && caMatch.correctiveAction, item.action)
+                : '\u2014';
+              var comment = displayValue(coms[code], caMatch && caMatch.sourceComment);
+              if (comment === '-') comment = '\u2014';
+              if (action === '-') action = '\u2014';
+              rIdx++;
+
+              var riskNum = parseFloat(metric.risk);
+              tableBody.push([
+                String(rIdx) + '.',
+                displayValue(item.question, code),
+                { content: rm.label, _resp: rm.colorStyle },
+                (metric.possibility !== '-') ? metric.possibility : '\u2014',
+                (metric.severity !== '-') ? metric.severity : '\u2014',
+                { content: (metric.risk !== '-') ? String(metric.risk) : '\u2014', _risk: isNaN(riskNum) ? 0 : riskNum },
+                comment,
+                action
+              ]);
+            });
+          });
+
+          var hLeft   = 'GOIL HSSEQ \u2013 Assessment Register';
+          var hCenter = state.facilityName + ' \u00B7 ' + state.referenceNo;
+
+          doc.addPage();
+
+          doc.autoTable({
+            startY: 15,
+            margin: { left: 8, right: 8, top: 15 },
+            head: [[
+              { content: 'No.',          styles: { halign: 'center' } },
+              'Question',
+              { content: 'Response',     styles: { halign: 'center' } },
+              { content: 'Possibility',  styles: { halign: 'center' } },
+              { content: 'Severity',     styles: { halign: 'center' } },
+              { content: 'Risk',         styles: { halign: 'center' } },
+              'Comment',
+              'Corrective Action'
+            ]],
+            body: tableBody,
+            theme: 'grid',
+            headStyles: {
+              fillColor: ORANGE,
+              textColor: WHITE,
+              fontStyle: 'bold',
+              fontSize: 8,
+              cellPadding: { top: 3, bottom: 3, left: 3, right: 3 }
+            },
+            bodyStyles: {
+              fontSize: 7.5,
+              cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 },
+              valign: 'middle',
+              textColor: [30, 30, 30],
+              lineColor: [209, 213, 219],
+              lineWidth: 0.15
+            },
+            columnStyles: {
+              0: { cellWidth: 12, halign: 'center' },
+              1: { cellWidth: 78 },
+              2: { cellWidth: 22, halign: 'center' },
+              3: { cellWidth: 18, halign: 'center' },
+              4: { cellWidth: 18, halign: 'center' },
+              5: { cellWidth: 16, halign: 'center' },
+              6: { cellWidth: 52 }
+            },
+            didParseCell: function (data) {
+              if (data.section !== 'body') return;
+              var raw0 = data.row.raw[0];
+              if (raw0 && typeof raw0 === 'object' && raw0._isSect) {
+                data.cell.styles.fillColor = SECT_BG;
+                data.cell.styles.textColor = WHITE;
+                data.cell.styles.fontStyle = 'bold';
+                data.cell.styles.fontSize = 8.5;
+                data.cell.styles.cellPadding = { top: 4, bottom: 4, left: 5, right: 5 };
+                return;
+              }
+              var rawCell = data.row.raw[data.column.index];
+              if (!rawCell || typeof rawCell !== 'object') return;
+              if (rawCell._resp === 'yes') {
+                data.cell.styles.textColor = GREEN;
+                data.cell.styles.fontStyle = 'bold';
+              } else if (rawCell._resp === 'no') {
+                data.cell.styles.textColor = RED_C;
+                data.cell.styles.fontStyle = 'bold';
+              } else if (rawCell._resp === 'partial') {
+                data.cell.styles.textColor = AMBER;
+                data.cell.styles.fontStyle = 'bold';
+              } else if (rawCell._resp === 'na') {
+                data.cell.styles.textColor = GRAY_C;
+              }
+              if (rawCell._risk > 0) {
+                if (rawCell._risk >= 15) {
+                  data.cell.styles.fillColor = RED_C;
+                  data.cell.styles.textColor = WHITE;
+                  data.cell.styles.fontStyle = 'bold';
+                } else if (rawCell._risk >= 8) {
+                  data.cell.styles.fillColor = [251, 146, 60];
+                  data.cell.styles.textColor = WHITE;
+                  data.cell.styles.fontStyle = 'bold';
+                } else {
+                  data.cell.styles.fillColor = [254, 240, 138];
+                  data.cell.styles.textColor = [120, 53, 15];
+                  data.cell.styles.fontStyle = 'bold';
+                }
+              }
+            },
+            didDrawPage: function () {
+              var pageNum = doc.internal.getNumberOfPages();
+              doc.setFillColor(ORANGE[0], ORANGE[1], ORANGE[2]);
+              doc.rect(0, 0, W, 13, 'F');
+              doc.setFont('helvetica', 'bold');
+              doc.setFontSize(7.5);
+              doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+              doc.text(hLeft,              8,       8.5);
+              doc.text(hCenter,            W / 2,   8.5, { align: 'center' });
+              doc.text('Page ' + String(pageNum), W - 8, 8.5, { align: 'right' });
+            }
+          });
+
+          var safeFacility = state.facilityName.replace(/[^a-zA-Z0-9]/g, '_');
+          var safeRef      = state.referenceNo.replace(/[^a-zA-Z0-9\-]/g, '_');
+          doc.save('GOIL_Assessment_Register_' + safeFacility + '_' + safeRef + '.pdf');
+
+        } catch (err) {
+          console.error('[generatePDF] failed:', err);
+          alert('PDF export failed. Please try again.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = origText;
+        }
+      }
+
+      async function init() {
+        var context = getRouteContext();
+        document.getElementById('backBtn').addEventListener('click', function () {
+          window.location.href = getBackHref(context);
+        });
+        document.getElementById('printBtn').addEventListener('click', function () {
+          generatePDF();
+        });
+
+        renderLoading('Hydrating the selected assessment and checklist template...');
+
+        if (!context.ref) {
+          renderEmpty('No assessment reference was provided for this register view.');
+          return;
+        }
+
+        var record = getFilePreviewRecord(context) || hydrateRecord(context) || buildLegacyRecoveryRecord(context);
+        if (!record) {
+          renderEmpty('The selected assessment could not be loaded from the local register data.');
+          return;
+        }
+
+        await renderRegister(context, record);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        init().catch(function (error) {
+          console.error('assessment register init failed', error);
+          renderEmpty('The assessment register could not be loaded for this published assessment.');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

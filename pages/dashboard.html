@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GOIL HSSEQ | HSE Unit</title>
+  <title>GOIL HSSEQ | Welcome</title>
   <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -251,43 +251,9 @@
       gap: 12px;
     }
 
-    .search-bar {
-      flex: 1;
-      max-width: 440px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      height: 36px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 0 12px;
-    }
-    .search-bar svg { width: 14px; height: 14px; color: rgba(255,255,255,0.3); flex-shrink: 0; }
-    .search-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-family: 'Barlow', sans-serif;
-      font-size: 13px;
-      color: #e6edf3;
-    }
-    .search-input::placeholder { color: rgba(255,255,255,0.28); }
-    .search-kbd {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 5px;
-      background: rgba(255,255,255,0.07);
-      color: rgba(255,255,255,0.3);
-      font-family: monospace;
-      flex-shrink: 0;
-    }
-
     .topbar-spacer { flex: 1; }
 
     .icon-btn {
-      position: relative;
       width: 36px;
       height: 36px;
       border-radius: 10px;
@@ -302,21 +268,6 @@
     }
     .icon-btn:hover { background: rgba(255,255,255,0.09); }
     .icon-btn svg { width: 16px; height: 16px; }
-    .icon-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #EF4444;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
 
     .topbar-divider {
       width: 1px;
@@ -354,114 +305,120 @@
     .user-pill-name { font-size: 13px; font-weight: 500; }
     .user-pill svg { width: 13px; height: 13px; color: rgba(255,255,255,0.4); }
 
+    /* Theme toggle */
+    .goil-theme-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.65);
+      transition: background 0.15s;
+    }
+    .goil-theme-btn:hover { background: rgba(255,255,255,0.09); }
+    .goil-theme-btn svg { width: 16px; height: 16px; }
+
     /* ── Content ─────────────────────────────────────────────── */
     .content {
       flex: 1;
       overflow-y: auto;
-    }
-
-    /* ── HSE Unit Hero ───────────────────────────────────────── */
-    .hse-hero {
-      background: linear-gradient(135deg, #0f1a0f 0%, #0d1117 60%, #1a0e00 100%);
-      border-bottom: 1px solid rgba(255,107,0,0.12);
-      padding: 28px 32px 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    .hse-hero::before {
-      content: '';
-      position: absolute;
-      top: -60px;
-      right: -60px;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,107,0,0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hse-unit-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #FF6B00;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .hse-unit-label::before {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 2px;
-      background: #FF6B00;
-      border-radius: 1px;
-    }
-    .hse-hero-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 34px;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 1px;
-      line-height: 1.1;
-      text-transform: uppercase;
-    }
-
-    /* ── Module Selection Area ───────────────────────────────── */
-    .module-section {
-      padding: 28px 32px;
-    }
-    .module-section-header {
-      margin-bottom: 20px;
-    }
-    .module-section-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 4px;
-    }
-    .module-section-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    /* ── Launch Cards ────────────────────────────────────────── */
-    .launch-cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-    @media (max-width: 800px) { .launch-cards { grid-template-columns: 1fr; } }
-
-    .launch-card {
-      background: #161d2a;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 24px;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      text-decoration: none;
-    }
-    .launch-card:hover {
-      transform: translateY(-4px);
+      align-items: center;
+      justify-content: flex-start;
     }
 
-    .launch-card-top {
+    /* ── Welcome Hero ────────────────────────────────────────── */
+    .welcome-hero {
+      width: 100%;
+      background: linear-gradient(180deg, #161d2a 0%, #0d1117 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 44px 40px 36px;
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
     }
-    .launch-card-icon {
+
+    .welcome-logo {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+
+    .welcome-greeting {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.3px;
+    }
+    .welcome-greeting span { color: #FF6B00; }
+
+    .welcome-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .welcome-divider {
+      width: 40px;
+      height: 3px;
+      border-radius: 2px;
+      background: #FF6B00;
+      margin-top: 4px;
+    }
+
+    /* ── Module Grid ─────────────────────────────────────────── */
+    .modules-section {
+      width: 100%;
+      padding: 32px 32px 48px;
+    }
+
+    .modules-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 18px;
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 900px)  { .welcome-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 660px)  { .welcome-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .wcard {
+      background: #161d2a;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .wcard:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,107,0,0.25);
+      border-color: rgba(255,107,0,0.3);
+    }
+
+    .wcard-icon {
       width: 52px;
       height: 52px;
       border-radius: 14px;
@@ -470,77 +427,44 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .launch-card-icon svg { width: 24px; height: 24px; }
+    .wcard-icon svg { width: 26px; height: 26px; }
 
-    .launch-card-badge {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid;
-    }
-
-    .launch-card-title {
+    .wcard-title {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 18px;
-      font-weight: 900;
-      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      color: #fff;
       line-height: 1.2;
     }
-    .launch-card-desc {
-      font-size: 12px;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.55;
-      margin-top: 6px;
+
+    .wcard-desc {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.5;
     }
 
-    .launch-card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-    .launch-card-meta {
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
+    .wcard-arrow {
+      margin-top: auto;
       display: flex;
       align-items: center;
       gap: 5px;
-    }
-    .launch-card-meta svg { width: 11px; height: 11px; }
-    .launch-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: 10px;
-      border: none;
-      font-family: 'Barlow', sans-serif;
       font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-      transition: filter 0.15s;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(255,107,0,0.7);
     }
-    .launch-btn:hover { filter: brightness(1.14); }
-    .launch-btn svg { width: 13px; height: 13px; }
+    .wcard-arrow svg { width: 13px; height: 13px; }
+    .wcard:hover .wcard-arrow { color: #FF6B00; }
   </style>
 </head>
 <body>
 <div class="app">
 
   <!-- ════════════════════════════════════════
-       SIDEBAR (identical to dashboard)
+       SIDEBAR
   ════════════════════════════════════════ -->
   <aside class="sidebar" id="sidebar">
-    <!-- Logo -->
     <div class="sidebar-logo">
       <img src="../assets/img/goil-logo.png" alt="GOIL" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;border-radius:9px;" />
       <div class="logo-text">
@@ -549,7 +473,6 @@
       </div>
     </div>
 
-    <!-- Collapse toggle -->
     <button class="collapse-btn" id="collapseBtn" title="Toggle sidebar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round">
@@ -557,16 +480,14 @@
       </svg>
     </button>
 
-    <!-- Nav -->
     <nav class="sidebar-nav" id="sidebarNav"></nav>
 
-    <!-- User -->
     <div class="sidebar-user">
       <button class="user-btn">
         <div class="user-avatar" id="sidebarUserAvatar">AD</div>
         <div class="user-info-wrap">
           <div class="user-name" id="sidebarUserName">Admin User</div>
-          <div class="user-role">System Administrator</div>
+          <div class="user-role">HSSEQ Platform</div>
         </div>
       </button>
     </div>
@@ -579,21 +500,12 @@
 
     <!-- Topbar -->
     <header class="topbar">
-      <div class="search-bar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input class="search-input" type="text"
-          placeholder="Search modules, reports, alerts..." />
-        <span class="search-kbd">⌘K</span>
-      </div>
-
       <div class="topbar-spacer"></div>
+
+      <button class="goil-theme-btn" onclick="window.GoilTheme && GoilTheme.toggle()" title="Toggle theme"></button>
 
       <div class="topbar-divider"></div>
 
-      <!-- User pill -->
       <button class="user-pill">
         <div class="user-pill-avatar" id="topbarAvatar">AD</div>
         <span class="user-pill-name" id="topbarName">Admin User</span>
@@ -607,88 +519,18 @@
     <!-- Scrollable content -->
     <div class="content">
 
-      <!-- HSE Hero Banner -->
-      <div class="hse-hero">
-        <div class="hse-unit-label">HSE Unit</div>
-        <div class="hse-hero-title">Health &middot; Safety &middot; Environment</div>
+      <!-- Welcome Hero -->
+      <div class="welcome-hero">
+        <img class="welcome-logo" src="../assets/img/goil-logo.png" alt="GOIL" />
+        <div class="welcome-greeting">Welcome back, <span id="welcomeName">there</span></div>
+        <div class="welcome-sub">Your GOIL Health, Safety, Security, Environment &amp; Quality platform. Select a module below to get started.</div>
+        <div class="welcome-divider"></div>
       </div>
 
-      <!-- Module selection -->
-      <div class="module-section">
-        <div class="module-section-header">
-          <div class="module-section-label">Select Module</div>
-          <div class="module-section-title">Choose an HSE module to work in</div>
-        </div>
-
-        <div class="launch-cards">
-
-          <!-- Risk Assessment & Facility Inspection -->
-          <div class="launch-card" id="card-risk" data-href="risk-inspection.html">
-            <div class="launch-card-top">
-              <div class="launch-card-icon" style="background:rgba(255,107,0,0.15);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 11l3 3L22 4"/>
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                </svg>
-              </div>
-              <span class="launch-card-badge" style="color:#FF6B00;border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.08);">Active</span>
-            </div>
-            <div>
-              <div class="launch-card-title">Risk Assessment &amp;<br/>Facility Inspection</div>
-              <div class="launch-card-desc">
-                Conduct structured risk assessments and facility inspections across all GOIL operations. Identify hazards, evaluate risk levels, and track corrective actions.
-              </div>
-            </div>
-            <div class="launch-card-footer">
-              <div class="launch-card-meta">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                Updated 2h ago
-              </div>
-              <button class="launch-btn" style="background:#FF6B00;" onclick="window.location.href='risk-inspection.html'">
-                Launch Module
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Incident & Hazard Reporting -->
-          <div class="launch-card" id="card-incident" data-href="incident-reporting.html">
-            <div class="launch-card-top">
-              <div class="launch-card-icon" style="background:rgba(239,68,68,0.12);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </div>
-              <span class="launch-card-badge" style="color:#EF4444;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);">12 Open</span>
-            </div>
-            <div>
-              <div class="launch-card-title">Incident &amp; Hazard<br/>Reporting</div>
-              <div class="launch-card-desc">
-                Report, track, and manage workplace incidents and near-miss hazards. Ensure timely investigation, root cause analysis, and preventive action closure.
-              </div>
-            </div>
-            <div class="launch-card-footer">
-              <div class="launch-card-meta">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                Updated 5h ago
-              </div>
-              <button class="launch-btn" style="background:#EF4444;" onclick="window.location.href='incident-reporting.html'">
-                Launch Module
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-        </div>
+      <!-- Module Cards -->
+      <div class="modules-section">
+        <div class="modules-label">Platform Modules</div>
+        <div class="welcome-grid" id="welcomeGrid"></div>
       </div>
 
     </div><!-- /content -->
@@ -699,7 +541,93 @@
 (function () {
   'use strict';
 
-  /* ── Nav items (same as dashboard) ─────────────────────── */
+  /* ── Module definitions ─────────────────────────────────── */
+  var MODULES = [
+    {
+      title: 'HSE',
+      desc: 'Health, Safety &amp; Environment inspections and checklists',
+      href: 'unit-hse.html',
+      iconColor: '#22C55E',
+      iconBg: 'rgba(34,197,94,0.12)',
+      path: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
+    },
+    {
+      title: 'Compliance',
+      desc: 'Regulatory compliance tracking and documentation',
+      href: 'unit-compliance.html',
+      iconColor: '#3B82F6',
+      iconBg: 'rgba(59,130,246,0.12)',
+      path: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>'
+    },
+    {
+      title: 'Security',
+      desc: 'Physical security audits and access control reviews',
+      href: 'unit-security.html',
+      iconColor: '#A855F7',
+      iconBg: 'rgba(168,85,247,0.12)',
+      path: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+    },
+    {
+      title: 'Quality',
+      desc: 'Quality assurance processes and performance tracking',
+      href: 'unit-quality.html',
+      iconColor: '#F59E0B',
+      iconBg: 'rgba(245,158,11,0.12)',
+      path: '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>'
+    },
+    {
+      title: 'ISO',
+      desc: 'ISO standards audits and certification management',
+      href: 'unit-iso.html',
+      iconColor: '#06B6D4',
+      iconBg: 'rgba(6,182,212,0.12)',
+      path: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>'
+    },
+    {
+      title: 'Common',
+      desc: 'Shared facilities and cross-department inspections',
+      href: 'unit-common.html',
+      iconColor: '#EC4899',
+      iconBg: 'rgba(236,72,153,0.12)',
+      path: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'
+    },
+    {
+      title: 'Risk Analytics',
+      desc: 'Risk assessment register, dashboards and corrective actions',
+      href: 'risk-dashboard.html',
+      iconColor: '#FF6B00',
+      iconBg: 'rgba(255,107,0,0.12)',
+      path: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>'
+    },
+    {
+      title: 'Reports',
+      desc: 'Assessment reports, portal submissions and records',
+      href: 'portal.html',
+      iconColor: '#14B8A6',
+      iconBg: 'rgba(20,184,166,0.12)',
+      path: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>'
+    }
+  ];
+
+  /* ── Render welcome grid ─────────────────────────────────── */
+  function renderGrid() {
+    var grid = document.getElementById('welcomeGrid');
+    if (!grid) return;
+    grid.innerHTML = MODULES.map(function(m) {
+      var iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="' +
+        m.iconColor + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        m.path + '</svg>';
+      var arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+      return '<a class="wcard" href="' + m.href + '">' +
+        '<div class="wcard-icon" style="background:' + m.iconBg + ';">' + iconSvg + '</div>' +
+        '<div class="wcard-title">' + m.title + '</div>' +
+        '<div class="wcard-desc">' + m.desc + '</div>' +
+        '<div class="wcard-arrow">Open ' + arrowSvg + '</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  /* ── Nav items ───────────────────────────────────────────── */
   var NAV_ITEMS = [
     { id: 'dashboard',  label: 'Home',  badge: 0, href: 'dashboard.html',
       path: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
@@ -738,17 +666,14 @@
     nav.querySelectorAll('.nav-item').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var href = btn.getAttribute('data-href');
-        if (href) {
-          window.location.href = href;
-          return;
-        }
+        if (href) { window.location.href = href; return; }
         nav.querySelectorAll('.nav-item').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
       });
     });
   }
 
-  /* ── Sidebar collapse toggle ────────────────────────────── */
+  /* ── Sidebar collapse ───────────────────────────────────── */
   function initCollapse() {
     var sidebar = document.getElementById('sidebar');
     var btn = document.getElementById('collapseBtn');
@@ -762,7 +687,7 @@
     });
   }
 
-  /* ── Wire user identity ─────────────────────────────────── */
+  /* ── User identity ──────────────────────────────────────── */
   function initUserDisplay() {
     var attempts = 0;
     var poll = setInterval(function() {
@@ -770,50 +695,30 @@
       var ctx = window.GOIL_AUTH_CONTEXT;
       if (ctx && ctx.profile) {
         clearInterval(poll);
-        var name = ctx.profile.full_name || ctx.session.user.email || 'Admin User';
+        var name = ctx.profile.full_name || ctx.session.user.email || 'there';
+        var first = name.split(' ')[0];
         var initials = name.split(' ').map(function(w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
-        var nameEl   = document.getElementById('sidebarUserName');
-        var topName  = document.getElementById('topbarName');
-        var sbAvatar = document.getElementById('sidebarUserAvatar');
-        var tbAvatar = document.getElementById('topbarAvatar');
-        if (nameEl)   nameEl.textContent   = name;
-        if (topName)  topName.textContent  = name;
-        if (sbAvatar) sbAvatar.textContent = initials;
-        if (tbAvatar) tbAvatar.textContent = initials;
+        var nameEl    = document.getElementById('sidebarUserName');
+        var topName   = document.getElementById('topbarName');
+        var sbAvatar  = document.getElementById('sidebarUserAvatar');
+        var tbAvatar  = document.getElementById('topbarAvatar');
+        var welcomeEl = document.getElementById('welcomeName');
+        if (nameEl)    nameEl.textContent    = name;
+        if (topName)   topName.textContent   = name;
+        if (sbAvatar)  sbAvatar.textContent  = initials;
+        if (tbAvatar)  tbAvatar.textContent  = initials;
+        if (welcomeEl) welcomeEl.textContent = first;
       }
       if (attempts > 30) clearInterval(poll);
     }, 100);
   }
 
-  /* ── Launch card hover glow ─────────────────────────────── */
-  function initCards() {
-    var accents = { 'card-risk': '#FF6B00', 'card-incident': '#EF4444' };
-    Object.keys(accents).forEach(function(id) {
-      var card = document.getElementById(id);
-      if (!card) return;
-      var accent = accents[id];
-      var href = card.getAttribute('data-href');
-      card.addEventListener('mouseenter', function() {
-        card.style.boxShadow = '0 12px 36px rgba(0,0,0,0.5), 0 0 0 1px ' + accent + '44';
-        card.style.borderColor = accent + '55';
-      });
-      card.addEventListener('mouseleave', function() {
-        card.style.boxShadow = '';
-        card.style.borderColor = '';
-      });
-      card.addEventListener('click', function(e) {
-        if (e.target.closest('button')) return;
-        if (href) window.location.href = href;
-      });
-    });
-  }
-
   /* ── Init ───────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function() {
-    renderNav('hse');
+    renderNav('dashboard');
+    renderGrid();
     initCollapse();
     initUserDisplay();
-    initCards();
   });
 
 })();

@@ -186,12 +186,16 @@
         : (record.inspectionRef || record.assessment_reference || record.referenceNo || '-');
       var parentRef = stripVersionSuffix(parentRefRaw) || '-';
       var version = record.version || record.version_number || 1;
-      var displayRef = (window.RiskModuleUtils && typeof RiskModuleUtils.formatDisplayReference === 'function')
+      var showVersion = window.RiskModuleUtils && typeof RiskModuleUtils.shouldDisplayVersionForRecord === 'function'
+        ? RiskModuleUtils.shouldDisplayVersionForRecord(record)
+        : !!record.is_published;
+      var displayRef = showVersion && window.RiskModuleUtils && typeof RiskModuleUtils.formatDisplayReference === 'function'
         ? RiskModuleUtils.formatDisplayReference(parentRef, version)
-        : (String(parentRef) + '-v' + String(version));
+        : parentRef;
+      var versionLabel = showVersion ? ('V' + esc(version)) : '—';
       return '<tr>' +
         '<td title="Versioned: ' + esc(displayRef) + '">' + esc(parentRef) + '</td>' +
-        '<td>v' + esc(version) + '</td>' +
+        '<td>' + versionLabel + '</td>' +
         '<td>' + esc(record.facilityName || '-') + '</td>' +
         '<td>' + esc(record.facilityType || '-') + '</td>' +
         '<td>' + esc(record.location || '-') + '</td>' +

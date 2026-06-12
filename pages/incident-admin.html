@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOIL HSSEQ | Incident Admin</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #f5f5f5;
+      color: #1d2433;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.14); border-radius: 999px; }
+    .app {
+      display: flex;
+      min-height: 100vh;
+      background: #f5f5f5;
+    }
+    .sidebar {
+      width: 260px;
+      background: #151515;
+      color: #847d76;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .brand {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .brand img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brand-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f1ebe5;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #e8521a;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .side-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 22px 0 14px;
+    }
+    .side-section { margin-bottom: 18px; }
+    .side-label {
+      padding: 0 22px 10px;
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #48433d;
+      font-weight: 700;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 22px;
+      color: #8e8881;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: background 0.14s ease, color 0.14s ease;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: #f1ebe5; }
+    .nav-item.active {
+      background: rgba(232, 82, 26, 0.12);
+      color: #f1ebe5;
+      position: relative;
+    }
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #e8521a;
+    }
+    .nav-icon {
+      width: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+    .nav-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 16px 22px;
+    }
+    .nav-badge-soon {
+      margin-left: auto;
+      padding: 2px 7px;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6f695f;
+      font-weight: 700;
+    }
+    .main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .topbar {
+      height: 60px;
+      background: #151515;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      color: #f1ebe5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .crumbs {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .crumb {
+      color: #837b74;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .crumb.active {
+      color: #f1ebe5;
+      font-weight: 600;
+    }
+    .crumb-sep { color: #48433d; }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-shrink: 0;
+    }
+    .clock {
+      color: #d49a2a;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .topbar-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255,255,255,0.08);
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #e3841c;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .user-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      min-width: 0;
+    }
+    .user-copy strong {
+      color: #f1ebe5;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+    .user-copy span {
+      color: #8c847c;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    .content-shell {
+      width: min(1680px, calc(100vw - 320px));
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .utility-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .back-btn {
+      height: 46px;
+      padding: 0 18px;
+      border-radius: 16px;
+      border: 1px solid #dfe5ef;
+      background: #fff;
+      color: #516079;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(31, 42, 55, 0.06);
+    }
+    .back-btn:hover {
+      background: #fbfcfe;
+    }
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .hero-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: #fff3ea;
+      color: #ff7a1a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .hero-title {
+      font-size: 32px;
+      line-height: 1.08;
+      font-weight: 700;
+      color: #1d2433;
+    }
+    .hero-subtitle {
+      font-size: 16px;
+      color: #6b7892;
+    }
+    .status-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #edfff3;
+      border: 1px solid #a8f0be;
+      border-radius: 20px;
+      padding: 18px 24px;
+      color: #0d9d45;
+    }
+    .status-copy strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      color: #168f44;
+    }
+    .status-copy span {
+      display: block;
+      margin-top: 3px;
+      font-size: 14px;
+      color: #20a053;
+    }
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .panel-card {
+      background: #fff;
+      border: 1px solid #e6ebf3;
+      border-radius: 26px;
+      padding: 28px;
+      box-shadow: 0 10px 24px rgba(31, 42, 55, 0.08);
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .panel-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .panel-icon.export { background: #eaf1ff; color: #2c65ff; }
+    .panel-icon.import { background: #f2e7ff; color: #9b51ff; }
+    .panel-icon.backup { background: #e8faef; color: #13ad4e; }
+    .panel-icon.archive { background: #fff4e9; color: #ff7a1a; }
+    .panel-icon.cleanup { background: #ffe9ea; color: #ff5b6e; }
+    .panel-icon.audit { background: #f1f4fa; color: #6c7282; }
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1d2433;
+    }
+    .panel-copy {
+      margin-top: 4px;
+      font-size: 15px;
+      color: #7b879d;
+    }
+    .check-list {
+      display: grid;
+      gap: 12px;
+      margin: 10px 0 20px;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 15px;
+      color: #3c4659;
+    }
+    .check-row label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .check-row small {
+      color: #a2acbf;
+      font-size: 14px;
+    }
+    .check-row input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #2c65ff;
+    }
+    .field-row {
+      display: flex;
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+    .field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .field label {
+      font-size: 14px;
+      color: #5d6982;
+      font-weight: 600;
+    }
+    .field-input,
+    .field-select {
+      width: 100%;
+      height: 52px;
+      border: 1px solid #d7dfec;
+      border-radius: 16px;
+      background: #fff;
+      padding: 0 18px;
+      font: inherit;
+      color: #1d2433;
+      outline: none;
+    }
+    .field-input[readonly] {
+      background: #fafbfd;
+      color: #9aa4b8;
+    }
+    .primary-btn,
+    .secondary-btn,
+    .neutral-btn,
+    .ghost-btn,
+    .danger-btn,
+    .view-btn {
+      border: 0;
+      border-radius: 14px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .neutral-btn:hover,
+    .ghost-btn:hover,
+    .danger-btn:hover,
+    .view-btn:hover {
+      transform: translateY(-1px);
+    }
+    .primary-btn {
+      height: 48px;
+      padding: 0 18px;
+      background: #2c65ff;
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(44, 101, 255, 0.2);
+    }
+    .secondary-btn {
+      height: 48px;
+      padding: 0 18px;
+      background: #10b43d;
+      color: #fff;
+      box-shadow: 0 14px 26px rgba(16, 180, 61, 0.18);
+    }
+    .neutral-btn {
+      height: 48px;
+      padding: 0 18px;
+      background: #fff;
+      color: #ff7a1a;
+      border: 1px solid #ffd0af;
+    }
+    .ghost-btn {
+      height: 48px;
+      padding: 0 18px;
+      background: #fff;
+      color: #5b6782;
+      border: 1px solid #d9e0ed;
+    }
+    .danger-btn {
+      height: 36px;
+      padding: 0 14px;
+      background: #fff;
+      color: #ff4b58;
+      border: 1px solid #ffc8cf;
+      border-radius: 12px;
+    }
+    .upload-drop {
+      border: 2px dashed #d9dfeb;
+      border-radius: 22px;
+      min-height: 200px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #96a0b3;
+      padding: 24px;
+      margin-bottom: 18px;
+      cursor: pointer;
+    }
+    .upload-drop strong {
+      display: block;
+      color: #6f7a93;
+      font-size: 15px;
+      margin-top: 12px;
+    }
+    .upload-drop span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+    .backup-toggle {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .toggle-btn {
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid #d9e0ed;
+      background: #fff;
+      color: #6c7791;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      background: #10b43d;
+      color: #fff;
+      border-color: #10b43d;
+    }
+    .mini-log {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+    .mini-log-row,
+    .cleanup-row,
+    .archive-row {
+      background: #f7f9fc;
+      border: 1px solid #edf1f6;
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+    .mini-log-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      font-size: 15px;
+      color: #4a566d;
+    }
+    .mini-log-row strong,
+    .cleanup-row strong,
+    .archive-row strong {
+      color: #1d2433;
+      font-weight: 700;
+    }
+    .mini-log-row span,
+    .cleanup-row span,
+    .archive-row span {
+      color: #8f9ab0;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .status-pill.success {
+      background: #e9ffef;
+      color: #17a34a;
+    }
+    .status-pill.archive {
+      background: #deebff;
+      color: #2c65ff;
+    }
+    .status-pill.empty {
+      background: #f1f4f8;
+      color: #7c879b;
+    }
+    .warning-box {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: #fff9ea;
+      border: 1px solid #ffd874;
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      color: #c26d00;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    .archive-list {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .archive-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+    }
+    .archive-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cleanup-list {
+      display: grid;
+      gap: 14px;
+      margin: 10px 0 18px;
+    }
+    .cleanup-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+    }
+    .cleanup-copy p {
+      color: #8f9ab0;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    .audit-summary {
+      border-radius: 20px;
+      background: #f7f9fc;
+      border: 1px solid #edf1f6;
+      padding: 28px 22px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .audit-summary strong {
+      display: block;
+      font-size: 58px;
+      line-height: 1;
+      color: #11182a;
+      font-weight: 700;
+    }
+    .audit-summary span {
+      display: block;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #6e7890;
+    }
+    .audit-feed {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .audit-item {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #f7f9fc;
+      border: 1px solid #edf1f6;
+    }
+    .audit-item strong {
+      color: #1d2433;
+      font-weight: 700;
+    }
+    .audit-item p {
+      color: #6e7890;
+      font-size: 14px;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+    .audit-item time {
+      display: block;
+      margin-top: 8px;
+      color: #9aa4b8;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .hidden-input {
+      display: none;
+    }
+    @media (max-width: 1180px) {
+      .panel-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 960px) {
+      .app { display: block; }
+      .sidebar { display: none; }
+      .content-shell { width: min(95vw, 1200px); }
+      .field-row,
+      .backup-toggle,
+      .archive-row,
+      .cleanup-row,
+      .mini-log-row { grid-template-columns: 1fr; display: grid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="../assets/img/goil-logo.png" alt="GOIL logo" onerror="this.style.display='none'">
+        <div class="brand-copy">
+          <div class="brand-title">GOIL</div>
+          <div class="brand-sub">HSSEQ</div>
+        </div>
+      </div>
+      <div class="side-scroll">
+        <div class="side-section">
+          <div class="side-label">Platform</div>
+          <a class="nav-item" href="portal.html"><span class="nav-icon">▦</span><span>Dashboard</span></a>
+        </div>
+        <div class="side-section">
+          <div class="side-label">Units</div>
+          <a class="nav-item" href="unit-hse.html"><span class="nav-icon">◫</span><span>HSE</span></a>
+          <a class="nav-item" href="unit-compliance.html"><span class="nav-icon">☑</span><span>Compliance &amp; Regulatory</span></a>
+          <a class="nav-item" href="unit-security.html"><span class="nav-icon">◌</span><span>Security</span></a>
+          <a class="nav-item" href="unit-quality.html"><span class="nav-icon">⌁</span><span>Quality</span></a>
+          <a class="nav-item" href="unit-iso.html"><span class="nav-icon">◫</span><span>ISO</span></a>
+          <a class="nav-item" href="unit-common.html"><span class="nav-icon">□</span><span>Common</span></a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="side-section">
+          <div class="side-label" style="color:#e8521a;">Incident &amp; Hazard</div>
+          <a class="nav-item" href="incident-reporting.html?view=home"><span>Home</span></a>
+          <a class="nav-item" href="incident-reporting.html?view=report"><span>Report Incident / Hazard</span></a>
+          <a class="nav-item" href="incident-list.html"><span>Incident List</span></a>
+          <a class="nav-item" href="incident-dashboard.html"><span>Dashboard</span></a>
+          <a class="nav-item" href="incident-archive.html"><span>Year Archive</span></a>
+          <a class="nav-item active" href="incident-admin.html"><span>Admin</span></a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="side-section">
+          <div class="side-label">Reporting</div>
+          <div class="nav-item" style="cursor:default;">
+            <span>KPI &amp; Reporting</span>
+            <span class="nav-badge-soon">Soon</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="crumbs">
+          <span class="crumb">/</span>
+          <span class="crumb">HSE Unit</span>
+          <span class="crumb-sep">/</span>
+          <span class="crumb active">Admin Panel</span>
+        </div>
+        <div class="topbar-right">
+          <div class="clock" id="clockNow">12:38 • 14 MAY 2026</div>
+          <div class="topbar-divider"></div>
+          <div class="user-menu">
+            <div class="user-pill" id="topUserAvatar">GU</div>
+            <div class="user-copy">
+              <strong id="topUserName">GOIL User</strong>
+              <span>HSE Unit</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="content-shell">
+          <div class="utility-row">
+            <a class="back-btn" href="incident-dashboard.html">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6"></path>
+              </svg>
+              <span>Back to Dashboard</span>
+            </a>
+          </div>
+
+          <section class="hero">
+            <div class="hero-icon" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.86l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.08V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.86.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.08-.4H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.86l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.08V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.86-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c0 .38.14.74.4 1 .26.26.62.4 1 .4H21a2 2 0 0 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15z"></path>
+              </svg>
+            </div>
+            <div class="hero-copy">
+              <h1 class="hero-title">Admin Panel</h1>
+              <p class="hero-subtitle">Data management, export, backup, and system administration</p>
+            </div>
+          </section>
+
+          <section class="status-banner">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+            <div class="status-copy">
+              <strong id="systemStatus">System Status: Operational</strong>
+              <span id="systemMeta">Database connected • 0 Incidents • 3 users • Last backup: N/A</span>
+            </div>
+          </section>
+
+          <section class="panel-grid">
+            <article class="panel-card">
+              <div class="panel-head">
+                <div class="panel-icon export">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v12"></path>
+                    <path d="m7 10 5 5 5-5"></path>
+                    <path d="M5 21h14"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">Export Data</div>
+                  <div class="panel-copy">Download selected modules as file</div>
+                </div>
+              </div>
+
+              <div class="check-list" id="exportChecklist">
+                <div class="check-row"><label><input type="checkbox" value="incidents" checked> <span>Incidents &amp; Hazards</span></label><small id="incidentCountHint">0</small></div>
+                <div class="check-row"><label><input type="checkbox" value="facilities"> <span>Facilities</span></label></div>
+                <div class="check-row"><label><input type="checkbox" value="archive"> <span>Year Archive</span></label></div>
+                <div class="check-row"><label><input type="checkbox" value="audit"> <span>Audit Logs</span></label></div>
+              </div>
+
+              <div class="field-row">
+                <div class="field" style="max-width: 170px;">
+                  <label for="exportFormat">Format:</label>
+                  <select class="field-select" id="exportFormat">
+                    <option value="csv">CSV</option>
+                    <option value="json">JSON</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="primary-btn" id="exportBtn" type="button" style="width:100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v12"></path>
+                  <path d="m7 10 5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                Export Selected
+              </button>
+            </article>
+
+            <article class="panel-card" id="archivePanel">
+              <div class="panel-head">
+                <div class="panel-icon import">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 21V9"></path>
+                    <path d="m7 14 5-5 5 5"></path>
+                    <path d="M5 3h14"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">Import Data</div>
+                  <div class="panel-copy">Upload and import data from file</div>
+                </div>
+              </div>
+
+              <label class="upload-drop" for="importFile">
+                <div>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 16V4"></path>
+                    <path d="m7 9 5-5 5 5"></path>
+                    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 16.25"></path>
+                    <path d="M8 16h8"></path>
+                  </svg>
+                  <strong id="importFileName">Click to select file or drag and drop</strong>
+                  <span>CSV, JSON, XLSX supported</span>
+                </div>
+              </label>
+              <input class="hidden-input" id="importFile" type="file" accept=".csv,.json,.xlsx" />
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="importTarget">Target Module:</label>
+                  <select class="field-select" id="importTarget">
+                    <option value="incidents">Incidents &amp; Hazards</option>
+                    <option value="archive">Year Archive</option>
+                    <option value="audit">Audit Logs</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="ghost-btn" id="importBtn" type="button" style="width:100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 21V9"></path>
+                  <path d="m7 14 5-5 5 5"></path>
+                  <path d="M5 3h14"></path>
+                </svg>
+                Import File
+              </button>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div class="panel-icon backup">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                    <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+                    <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">Database Backup</div>
+                  <div class="panel-copy">Create snapshots of the database</div>
+                </div>
+              </div>
+
+              <div class="backup-toggle">
+                <button class="toggle-btn active" data-backup-type="full" type="button">Full</button>
+                <button class="toggle-btn" data-backup-type="incremental" type="button">Incremental</button>
+              </div>
+
+              <div class="mini-log" id="backupList"></div>
+
+              <button class="secondary-btn" id="backupBtn" type="button" style="width:100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                  <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+                </svg>
+                Create Full Backup
+              </button>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div class="panel-icon archive">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="5" rx="1"></rect>
+                    <path d="M5 9v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path>
+                    <path d="M10 13h4"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">Year Archive</div>
+                  <div class="panel-copy">Archive annual incident data</div>
+                </div>
+              </div>
+
+              <div class="warning-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+                  <path d="M12 9v4"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+                <div>Archiving moves data to read-only year records. This action can be undone by editing the archive directly.</div>
+              </div>
+
+              <div class="archive-list" id="archiveList"></div>
+
+              <a class="neutral-btn" href="incident-archive.html" style="width:100%;">Manage Year Archive</a>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div class="panel-icon cleanup">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4h8v2"></path>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">System Cleanup</div>
+                  <div class="panel-copy">Remove temporary and orphaned data</div>
+                </div>
+              </div>
+
+              <div class="cleanup-list" id="cleanupList"></div>
+
+              <button class="ghost-btn" id="scanCleanupBtn" type="button" style="width:100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+                  <path d="M21 3v6h-6"></path>
+                </svg>
+                Scan for Cleanup Items
+              </button>
+            </article>
+
+            <article class="panel-card">
+              <div class="panel-head">
+                <div class="panel-icon audit">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+                    <path d="M9 7h6"></path>
+                    <path d="M9 11h6"></path>
+                    <path d="M9 15h4"></path>
+                  </svg>
+                </div>
+                <div>
+                  <div class="panel-title">Audit Log</div>
+                  <div class="panel-copy">View all system activity and changes</div>
+                </div>
+              </div>
+
+              <div class="audit-summary">
+                <strong id="auditCount">0</strong>
+                <span>Total audit entries</span>
+              </div>
+
+              <button class="ghost-btn" id="viewAuditBtn" type="button" style="width:100%; background:#192132; color:#fff; border-color:#192132;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+                  <path d="M9 7h6"></path>
+                  <path d="M9 11h6"></path>
+                  <path d="M9 15h4"></path>
+                </svg>
+                View Audit Log
+              </button>
+
+              <div class="audit-feed" id="auditFeed"></div>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var REPORTS_KEY = 'goil_hsseq_incident_reports_v1';
+      var YEAR_TOTALS_KEY = 'goil_hsseq_incident_year_totals_v1';
+      var BACKUPS_KEY = 'goil_hsseq_incident_backups_v1';
+      var AUDIT_KEY = 'goil_hsseq_incident_audit_log_v1';
+      var DRAFT_KEY = 'goil_hsseq_incident_wizard_draft_v1';
+
+      var DEFAULT_YEAR_TOTALS = {
+        2025: { source: 'System Archive', total: 25, q1: 7, q2: 8, q3: 6, q4: 4, note: 'Current year — data actively being collected.' },
+        2024: { source: 'System Archive', total: 47, q1: 12, q2: 14, q3: 11, q4: 10, note: 'Year closed. All incidents reviewed and corrective actions verified.' },
+        2023: { source: 'System Archive', total: 52, q1: 13, q2: 15, q3: 12, q4: 12, note: 'Increase in near-miss reporting following culture change programme.' },
+        2022: { source: 'System Archive', total: 61, q1: 16, q2: 17, q3: 15, q4: 13, note: 'Higher vehicle incidents due to fleet expansion.' }
+      };
+
+      var DEFAULT_BACKUPS = [
+        { type: 'Full', size: '1.2 MB', createdAt: '2025-04-15', status: 'Completed' },
+        { type: 'Incremental', size: '0.3 MB', createdAt: '2025-03-31', status: 'Completed' },
+        { type: 'Full', size: '1.1 MB', createdAt: '2025-02-28', status: 'Completed' }
+      ];
+
+      function loadJson(key, fallback) {
+        try {
+          var raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function saveJson(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+          // ignore local storage errors
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function profileData() {
+        var profile = loadJson('goilUserProfile', {}) || {};
+        var name = profile.full_name || profile.email || 'GOIL User';
+        var initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (part) {
+          return part.charAt(0).toUpperCase();
+        }).join('') || 'GU';
+        return { name: name, initials: initials };
+      }
+
+      function setClock() {
+        var now = new Date();
+        var text = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) +
+          ' • ' +
+          now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+        var clock = document.getElementById('clockNow');
+        if (clock) clock.textContent = text;
+      }
+
+      function appendAudit(action, details) {
+        var audit = loadJson(AUDIT_KEY, []);
+        audit.unshift({
+          id: 'audit-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+          action: action,
+          details: details,
+          createdAt: new Date().toISOString()
+        });
+        saveJson(AUDIT_KEY, audit.slice(0, 100));
+        return audit;
+      }
+
+      function reports() {
+        return loadJson(REPORTS_KEY, []);
+      }
+
+      function yearTotals() {
+        return Object.assign({}, DEFAULT_YEAR_TOTALS, loadJson(YEAR_TOTALS_KEY, {}));
+      }
+
+      function backups() {
+        var list = loadJson(BACKUPS_KEY, null);
+        if (!Array.isArray(list) || !list.length) {
+          saveJson(BACKUPS_KEY, DEFAULT_BACKUPS);
+          return DEFAULT_BACKUPS.slice();
+        }
+        return list;
+      }
+
+      function auditEntries() {
+        return loadJson(AUDIT_KEY, []);
+      }
+
+      function formatDate(value) {
+        if (!value) return 'N/A';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+
+      function incidentCsv(records) {
+        var header = ['Incident ID', 'Date', 'Type', 'Status', 'Region', 'Location', 'Description'];
+        var lines = records.map(function (record) {
+          return [
+            record.incidentId || '',
+            record.incidentDate || '',
+            record.reportTypeLabel || record.reportType || '',
+            record.status || '',
+            record.region || '',
+            record.locationName || '',
+            (record.description || '').replace(/\s+/g, ' ').trim()
+          ];
+        });
+        return [header].concat(lines).map(function (row) {
+          return row.map(function (cell) {
+            var text = String(cell == null ? '' : cell);
+            return '"' + text.replace(/"/g, '""') + '"';
+          }).join(',');
+        }).join('\n');
+      }
+
+      function downloadFile(name, content, type) {
+        var blob = new Blob([content], { type: type });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function renderStatus() {
+        var reportCount = reports().length;
+        var backupList = backups();
+        var latestBackup = backupList[0] ? formatDate(backupList[0].createdAt) : 'N/A';
+        document.getElementById('systemStatus').textContent = 'System Status: Operational';
+        document.getElementById('systemMeta').textContent = 'Database connected • ' + reportCount + ' incidents • 3 users • Last backup: ' + latestBackup;
+        document.getElementById('incidentCountHint').textContent = String(reportCount);
+      }
+
+      function renderBackups() {
+        var list = backups();
+        document.getElementById('backupList').innerHTML = list.map(function (item) {
+          return (
+            '<div class="mini-log-row">' +
+              '<div><strong>' + escapeHtml(item.type) + '</strong><br><span>' + escapeHtml(item.size) + '</span></div>' +
+              '<div>' + escapeHtml(formatDate(item.createdAt)) + '</div>' +
+              '<span class="status-pill success">' + escapeHtml(item.status) + '</span>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function derivedArchiveYears() {
+        var totals = yearTotals();
+        return Object.keys(totals).sort(function (a, b) { return Number(b) - Number(a); }).slice(0, 3);
+      }
+
+      function renderArchiveCard() {
+        var totals = yearTotals();
+        var years = derivedArchiveYears();
+        document.getElementById('archiveList').innerHTML = years.map(function (year) {
+          var item = totals[year];
+          return (
+            '<div class="archive-row">' +
+              '<div class="archive-meta">' +
+                '<strong>Year ' + escapeHtml(year) + '</strong>' +
+                '<span class="status-pill archive">Archived</span>' +
+              '</div>' +
+              '<div>' + escapeHtml(item.total) + ' incidents</div>' +
+              '<a class="ghost-btn" href="incident-archive.html#year-' + escapeHtml(year) + '" style="height:40px;padding:0 16px;">View Archive</a>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function cleanupItems() {
+        var draftSize = sessionStorage.getItem(DRAFT_KEY);
+        var audit = auditEntries();
+        var oldAuditCount = audit.filter(function (entry) {
+          var created = new Date(entry.createdAt || 0);
+          return !Number.isNaN(created.getTime()) && (Date.now() - created.getTime()) > 365 * 24 * 60 * 60 * 1000;
+        }).length;
+        return [
+          { key: 'draft', title: 'Session Drafts', copy: 'Unsaved wizard drafts in session storage', size: draftSize ? (Math.ceil(draftSize.length / 1024) + ' KB') : '0 KB' },
+          { key: 'audit', title: 'Old Audit Logs (>1 year)', copy: 'Audit log entries older than 12 months', size: oldAuditCount ? (oldAuditCount * 4 + ' KB') : '0 KB' },
+          { key: 'attachments', title: 'Orphaned Attachments', copy: 'Attachment records without linked reports', size: '0 KB' }
+        ];
+      }
+
+      function renderCleanupCard() {
+        document.getElementById('cleanupList').innerHTML = cleanupItems().map(function (item) {
+          return (
+            '<div class="cleanup-row">' +
+              '<div class="cleanup-copy"><strong>' + escapeHtml(item.title) + '</strong><p>' + escapeHtml(item.copy) + '</p></div>' +
+              '<span class="status-pill empty">' + escapeHtml(item.size) + '</span>' +
+              '<button class="danger-btn" type="button" data-clean="' + escapeHtml(item.key) + '">Clean</button>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function renderAuditCard() {
+        var entries = auditEntries();
+        document.getElementById('auditCount').textContent = String(entries.length);
+        document.getElementById('auditFeed').innerHTML = entries.slice(0, 4).map(function (entry) {
+          return (
+            '<div class="audit-item">' +
+              '<strong>' + escapeHtml(entry.action) + '</strong>' +
+              '<p>' + escapeHtml(entry.details || '') + '</p>' +
+              '<time>' + escapeHtml(formatDate(entry.createdAt)) + '</time>' +
+            '</div>'
+          );
+        }).join('') || '<div class="audit-item"><strong>No audit activity yet</strong><p>Actions taken in the admin panel will appear here.</p></div>';
+      }
+
+      function exportSelected() {
+        var selected = Array.prototype.slice.call(document.querySelectorAll('#exportChecklist input:checked')).map(function (input) {
+          return input.value;
+        });
+        if (!selected.length) return;
+        var format = document.getElementById('exportFormat').value;
+        if (format === 'csv' && selected.length === 1 && selected[0] === 'incidents') {
+          downloadFile('goil-incident-reports.csv', incidentCsv(reports()), 'text/csv;charset=utf-8');
+          appendAudit('Export Data', 'Exported incidents & hazards as CSV.');
+        } else {
+          var payload = {};
+          if (selected.indexOf('incidents') !== -1) payload.incidents = reports();
+          if (selected.indexOf('facilities') !== -1) payload.facilities = [];
+          if (selected.indexOf('archive') !== -1) payload.archive = yearTotals();
+          if (selected.indexOf('audit') !== -1) payload.audit = auditEntries();
+          downloadFile('goil-hsseq-admin-export.json', JSON.stringify(payload, null, 2), 'application/json');
+          appendAudit('Export Data', 'Exported selected modules as JSON.');
+        }
+        renderAuditCard();
+      }
+
+      function importSelectedFile() {
+        var input = document.getElementById('importFile');
+        var file = input.files && input.files[0];
+        if (!file) return;
+        var target = document.getElementById('importTarget').value;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            if (target === 'incidents') {
+              if (file.name.toLowerCase().endsWith('.csv')) {
+                var lines = String(reader.result).trim().split(/\r?\n/).slice(1);
+                var imported = lines.filter(Boolean).map(function (line, index) {
+                  var cols = line.split(',').map(function (cell) { return cell.replace(/^"|"$/g, '').replace(/""/g, '"'); });
+                  return {
+                    id: 'import-' + Date.now() + '-' + index,
+                    incidentId: cols[0] || '',
+                    incidentDate: cols[1] || '',
+                    reportTypeLabel: cols[2] || '',
+                    status: cols[3] || 'Open',
+                    region: cols[4] || '',
+                    locationName: cols[5] || '',
+                    description: cols[6] || ''
+                  };
+                });
+                saveJson(REPORTS_KEY, imported);
+              } else {
+                var parsed = JSON.parse(reader.result);
+                saveJson(REPORTS_KEY, parsed.incidents || parsed || []);
+              }
+            } else if (target === 'archive') {
+              saveJson(YEAR_TOTALS_KEY, JSON.parse(reader.result).archive || JSON.parse(reader.result));
+            } else if (target === 'audit') {
+              saveJson(AUDIT_KEY, JSON.parse(reader.result).audit || JSON.parse(reader.result));
+            }
+            appendAudit('Import Data', 'Imported data into ' + target + '.');
+            renderStatus();
+            renderArchiveCard();
+            renderAuditCard();
+            input.value = '';
+            document.getElementById('importFileName').textContent = 'Import completed successfully';
+          } catch (error) {
+            document.getElementById('importFileName').textContent = 'Import failed. Check file format.';
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function createBackup() {
+        var type = document.querySelector('.toggle-btn.active').getAttribute('data-backup-type');
+        var list = backups().slice();
+        list.unshift({
+          type: type.charAt(0).toUpperCase() + type.slice(1),
+          size: type === 'full' ? '1.3 MB' : '0.4 MB',
+          createdAt: new Date().toISOString(),
+          status: 'Completed'
+        });
+        saveJson(BACKUPS_KEY, list.slice(0, 6));
+        appendAudit('Create Backup', 'Created a ' + type + ' backup.');
+        renderStatus();
+        renderBackups();
+        renderAuditCard();
+      }
+
+      function cleanItem(key) {
+        if (key === 'draft') sessionStorage.removeItem(DRAFT_KEY);
+        if (key === 'audit') {
+          var filtered = auditEntries().filter(function (entry) {
+            var created = new Date(entry.createdAt || 0);
+            return Number.isNaN(created.getTime()) || (Date.now() - created.getTime()) <= 365 * 24 * 60 * 60 * 1000;
+          });
+          saveJson(AUDIT_KEY, filtered);
+        }
+        appendAudit('System Cleanup', 'Cleaned ' + key + ' items.');
+        renderCleanupCard();
+        renderAuditCard();
+      }
+
+      function initEvents() {
+        document.getElementById('exportBtn').addEventListener('click', exportSelected);
+        document.getElementById('importBtn').addEventListener('click', importSelectedFile);
+        document.getElementById('backupBtn').addEventListener('click', createBackup);
+        document.getElementById('viewAuditBtn').addEventListener('click', function () {
+          var feed = document.getElementById('auditFeed');
+          feed.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        document.getElementById('scanCleanupBtn').addEventListener('click', function () {
+          renderCleanupCard();
+          appendAudit('System Cleanup', 'Scanned cleanup items.');
+          renderAuditCard();
+        });
+
+        document.querySelectorAll('.toggle-btn').forEach(function (button) {
+          button.addEventListener('click', function () {
+            document.querySelectorAll('.toggle-btn').forEach(function (item) { item.classList.remove('active'); });
+            button.classList.add('active');
+            document.getElementById('backupBtn').innerHTML =
+              '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path></svg>' +
+              'Create ' + button.textContent + ' Backup';
+          });
+        });
+
+        document.getElementById('importFile').addEventListener('change', function (event) {
+          var file = event.target.files && event.target.files[0];
+          document.getElementById('importFileName').textContent = file ? file.name : 'Click to select file or drag and drop';
+        });
+
+        document.getElementById('cleanupList').addEventListener('click', function (event) {
+          var target = event.target.closest('[data-clean]');
+          if (!target) return;
+          cleanItem(target.getAttribute('data-clean'));
+        });
+      }
+
+      function initProfile() {
+        var profile = profileData();
+        document.getElementById('topUserName').textContent = profile.name;
+        document.getElementById('topUserAvatar').textContent = profile.initials;
+      }
+
+      initProfile();
+      setClock();
+      setInterval(setClock, 60000);
+      renderStatus();
+      renderBackups();
+      renderArchiveCard();
+      renderCleanupCard();
+      renderAuditCard();
+      initEvents();
+    })();
+  </script>
+</body>
+</html>

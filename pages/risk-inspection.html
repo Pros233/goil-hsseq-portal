@@ -3,491 +3,650 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Assessment Management Center | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <title>Assessment Management Center | Risk Assessment &amp; Facility Inspection</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/risk-module.css?v=20260318-masterrefdeep6" />
   <style>
-    body.amc-landing {
-      position: relative;
+    /* ── Reset & base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
       min-height: 100vh;
-      overflow-x: hidden;
-      background: #0D1117;
+      font-family: 'Barlow', sans-serif;
+      background: #0b0d12;
+      color: #e6edf3;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Subtle single-colour ambient glow — orange only, top-left only */
-    body.amc-landing::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(900px 500px at -4% -10%, rgba(244,121,32,.09), transparent 62%);
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* ── Topbar ──────────────────────────────────────────────── */
+    .amc-topbar {
+      height: 64px;
+      background: #0d1017;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
-    body.amc-landing .rm-topbar {
-      background: rgba(13,17,23,.97);
-      border-bottom: 1px solid rgba(244,121,32,.18);
-      box-shadow: 0 1px 0 rgba(244,121,32,.08), 0 4px 24px rgba(0,0,0,.5);
+    .amc-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .amc-back-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-color: rgba(255,255,255,0.18);
+    }
+    .amc-back-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .amc-topbar-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
     }
 
-    body.amc-landing .rm-shell {
-      width: min(1450px, 95vw);
-      gap: 20px;
-      margin-top: 22px;
-    }
-
-    body.amc-landing .rm-primary-btn {
-      background: #F47920;
+    .amc-topbar-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: transparent;
       border: none;
-      box-shadow: 0 4px 18px rgba(244,121,32,.36);
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    body.amc-landing .rm-primary-btn:hover {
-      background: #e06b15;
+    .amc-topbar-text {}
+    .amc-topbar-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .amc-topbar-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 3px;
+    }
+
+    .amc-conduct-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #F47920;
+      color: #fff;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: filter 0.15s, transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 18px rgba(244,121,32,0.35);
+    }
+    .amc-conduct-btn:hover {
+      filter: brightness(1.1);
       transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(244,121,32,.46);
+      box-shadow: 0 8px 24px rgba(244,121,32,0.45);
+    }
+    .amc-conduct-btn svg { width: 15px; height: 15px; }
+
+    /* ── Publish success banner ──────────────────────────────── */
+    .amc-publish-banner {
+      display: none;
+      margin: 20px 24px 0;
+      border: 1px solid rgba(63,185,80,0.35);
+      background: linear-gradient(135deg, rgba(63,185,80,0.12), rgba(11,13,18,0.9));
+      border-radius: 12px;
+      padding: 14px 18px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .amc-publish-banner.show { display: flex; }
+    .amc-publish-banner h4 {
+      margin: 0 0 4px;
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .amc-publish-banner p { margin: 0; color: #cfe9d8; font-size: 12px; line-height: 1.45; }
+    .amc-publish-banner .meta { font-size: 11px; color: #a7d9b6; margin-top: 4px; }
+    .amc-publish-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .amc-publish-actions .rm-btn {
+      border: 1px solid rgba(63,185,80,0.45);
+      color: #cfe9d8;
+      background: rgba(11,13,18,0.35);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .amc-publish-actions .rm-btn:hover {
+      border-color: #3fb950;
+      color: #3fb950;
     }
 
-    body.amc-landing .rm-hero {
+    /* ── Hero ────────────────────────────────────────────────── */
+    .amc-hero {
       position: relative;
       overflow: hidden;
-      padding: 30px 32px;
-      border-radius: 16px;
-      border: 1px solid rgba(244,121,32,.22);
-      background: #161B22;
-      box-shadow: 0 2px 24px rgba(0,0,0,.4);
+      background: #111318;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 44px 48px 40px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
     }
 
-    /* Clean orange left-edge accent */
-    body.amc-landing .rm-hero::before {
+    /* Strong orange glow on right */
+    .amc-hero::before {
       content: '';
       position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      border-radius: 16px 0 0 16px;
-      background: linear-gradient(180deg, #F47920, rgba(244,121,32,.3));
+      top: -80px;
+      right: -80px;
+      width: 600px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, rgba(244,121,32,0.28) 0%, rgba(244,121,32,0.08) 40%, transparent 72%);
       pointer-events: none;
     }
 
-    body.amc-landing .rm-hero::after {
-      content: '';
+    /* Watermark shield/clipboard icon */
+    .amc-hero-watermark {
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 380px;
-      height: 100%;
-      background: radial-gradient(ellipse at 100% 50%, rgba(244,121,32,.07), transparent 68%);
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.07;
       pointer-events: none;
     }
+    .amc-hero-watermark svg { width: 180px; height: 180px; }
 
-    .amc-hero-content {
+    .amc-hero-content { position: relative; z-index: 1; }
+
+    .amc-hero-kicker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #F47920;
+    }
+    .amc-hero-kicker-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #F47920;
+      box-shadow: 0 0 8px rgba(244,121,32,0.8);
+      flex-shrink: 0;
+    }
+
+    .amc-hero-title {
+      font-family: 'Barlow', sans-serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .amc-hero-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.65;
+      max-width: 540px;
+    }
+
+    /* ── Navigation section ──────────────────────────────────── */
+    .amc-nav-section {
+      padding: 28px 32px 40px;
+    }
+
+    .amc-nav-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      gap: 16px;
+    }
+
+    .amc-nav-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
       position: relative;
-      z-index: 1;
+      padding-bottom: 8px;
+    }
+    .amc-nav-label::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #F47920;
+      border-radius: 1px;
     }
 
-    .amc-kicker {
+    .amc-nav-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Nav cards grid ──────────────────────────────────────── */
+    .amc-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 1200px) { .amc-cards-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 760px)  { .amc-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px)  { .amc-cards-grid { grid-template-columns: 1fr; } }
+
+    .amc-nav-card {
+      background: #14171e;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 20px 18px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .amc-nav-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(244,121,32,0.35);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(244,121,32,0.12);
+    }
+    .amc-nav-card.active {
+      border-color: #F47920;
+      box-shadow: 0 0 0 1px rgba(244,121,32,0.3), 0 8px 28px rgba(244,121,32,0.12);
+    }
+
+    .amc-card-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1e222c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .amc-card-icon-wrap svg { width: 22px; height: 22px; }
+
+    .amc-card-tag {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      height: 24px;
-      border-radius: 4px;
-      padding: 0 10px;
-      border: 1px solid rgba(244,121,32,.3);
-      background: rgba(244,121,32,.08);
-      color: #F47920;
-      font-size: 10px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 9px;
       font-weight: 800;
       letter-spacing: 1.2px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      color: #F47920;
+      background: rgba(244,121,32,0.1);
+      border: 1px solid rgba(244,121,32,0.22);
+      align-self: flex-start;
     }
 
-    .amc-kicker-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #F47920;
-      box-shadow: 0 0 8px rgba(244,121,32,.7);
-    }
+    .amc-card-body { flex: 1; }
 
-    body.amc-landing .rm-hero h2 {
-      margin-bottom: 8px;
-      font-size: clamp(32px, 3.6vw, 48px);
-      letter-spacing: .4px;
-      color: #E6EDF3;
-    }
-
-    body.amc-landing .rm-hero p {
-      font-size: 13px;
-      color: #8B949E;
-      max-width: 780px;
-      line-height: 1.6;
-    }
-
-    .amc-folder-wrap {
-      display: grid;
-      gap: 12px;
-    }
-
-    .amc-publish-banner{
-      display:none;
-      border:1px solid rgba(63,185,80,.35);
-      background:linear-gradient(135deg, rgba(63,185,80,.18), rgba(22,27,34,.88));
-      border-radius:12px;
-      padding:12px 14px;
-      box-shadow:0 10px 26px rgba(0,0,0,.26);
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-    .amc-publish-banner.show{display:flex}
-    .amc-publish-banner h4{
-      margin:0 0 4px;
-      color:var(--wh);
-      font-family:'Barlow Condensed',sans-serif;
-      font-size:20px;
-      letter-spacing:.3px;
-      line-height:1;
-    }
-    .amc-publish-banner p{margin:0;color:#CFE9D8;font-size:12px;line-height:1.45}
-    .amc-publish-banner .meta{font-size:11px;color:#A7D9B6;margin-top:4px}
-    .amc-publish-actions{display:flex;gap:8px;flex-wrap:wrap}
-    .amc-publish-actions .rm-btn{
-      border-color:rgba(63,185,80,.45);
-      color:#CFE9D8;
-      background:rgba(13,17,23,.35);
-    }
-    .amc-publish-actions .rm-btn:hover{
-      border-color:var(--ok);
-      color:var(--ok);
-    }
-
-    .amc-folder-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 0 2px 2px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      padding-bottom: 10px;
-    }
-
-    .amc-folder-head h3 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1.4px;
-      color: #8B949E;
-      line-height: 1;
+    .amc-card-title {
+      font-family: 'Barlow', sans-serif;
+      font-size: 17px;
       font-weight: 700;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 8px;
     }
 
-    .amc-folder-head p {
+    .amc-card-desc {
       font-size: 12px;
-      color: #484F58;
-      text-align: right;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.55;
     }
 
-    body.amc-landing .rm-folder-grid {
-      grid-template-columns: repeat(3, minmax(280px, 1fr));
-      gap: 14px;
-    }
-
-    body.amc-landing .rm-folder {
-      --accent: #F47920;
-      --accent-rgb: 244,121,32;
-      position: relative;
-      min-height: 190px;
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.07);
-      background: #161B22;
-      box-shadow: 0 2px 12px rgba(0,0,0,.3);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-      display: grid;
-      align-content: space-between;
-      gap: 14px;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    /* Top accent bar — solid colour, no shimmer */
-    body.amc-landing .rm-folder::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 3px;
-      border-radius: 12px 12px 0 0;
-      background: var(--accent);
-      pointer-events: none;
-    }
-
-    /* Subtle ambient glow behind icon area */
-    body.amc-landing .rm-folder::after {
-      content: '';
-      position: absolute;
-      top: -40px;
-      left: -20px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(var(--accent-rgb), .08), transparent 70%);
-      pointer-events: none;
-      transition: opacity .2s ease;
-    }
-
-    body.amc-landing .rm-folder:hover {
-      transform: translateY(-4px);
-      border-color: rgba(var(--accent-rgb), .35);
-      box-shadow: 0 12px 28px rgba(0,0,0,.4), 0 0 0 1px rgba(var(--accent-rgb),.15);
-    }
-
-    body.amc-landing .rm-folder:hover::after { opacity: 1.4; }
-
-    .amc-folder-top {
-      position: relative;
-      z-index: 1;
+    .amc-card-footer {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
-      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
     }
 
-    .amc-folder-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      display: inline-flex;
+    .amc-card-count-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 34px;
+      font-weight: 900;
+      color: #F47920;
+      line-height: 1;
+    }
+
+    .amc-card-count-lbl {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 3px;
+    }
+
+    .amc-card-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .9px;
-      color: var(--accent);
-      border: 1px solid rgba(var(--accent-rgb), .28);
-      background: rgba(var(--accent-rgb), .1);
+      color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-
-    .amc-folder-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .9px;
-      text-transform: uppercase;
-      color: #8B949E;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      border-radius: 4px;
-      padding: 3px 8px;
-      white-space: nowrap;
+    .amc-nav-card:hover .amc-card-arrow {
+      background: rgba(244,121,32,0.15);
+      border-color: rgba(244,121,32,0.4);
+      color: #F47920;
     }
-
-    body.amc-landing .rm-folder-name {
-      position: relative;
-      z-index: 1;
-      font-size: 22px;
-      line-height: 1.1;
-      letter-spacing: .2px;
-      color: #E6EDF3;
-      font-weight: 800;
-    }
-
-    body.amc-landing .rm-folder-meta {
-      position: relative;
-      z-index: 1;
-      align-items: flex-end;
-    }
-
-    body.amc-landing .rm-folder-k {
-      font-size: 10px;
-      letter-spacing: 1px;
-      color: #8B949E;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    body.amc-landing .rm-folder-v {
-      font-size: 44px;
-      font-weight: 900;
-      color: var(--accent);
-      line-height: .95;
-    }
-
-    /* Folder accent colours — using GOIL palette */
-    .folder-dashboard   { --accent: #F47920; --accent-rgb: 244,121,32; }
-    .folder-uncompleted { --accent: #E6A817; --accent-rgb: 230,168,23; }
-    .folder-published   { --accent: #3FB950; --accent-rgb: 63,185,80; }
-    .folder-corrections { --accent: #DA3633; --accent-rgb: 218,54,51; }
-    .folder-profile     { --accent: #58A6FF; --accent-rgb: 88,166,255; }
-
-    @media (max-width: 1280px) {
-      body.amc-landing .rm-folder-grid {
-        grid-template-columns: repeat(2, minmax(260px, 1fr));
-      }
-    }
-
-    @media (max-width: 760px) {
-      body.amc-landing .rm-shell {
-        width: 94vw;
-      }
-
-      body.amc-landing .rm-hero {
-        padding: 20px 18px;
-      }
-
-      .amc-folder-head {
-        display: grid;
-        gap: 4px;
-      }
-
-      .amc-folder-head p { text-align: left; }
-
-      body.amc-landing .rm-folder-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      body.amc-landing .rm-folder {
-        min-height: 172px;
-      }
-    }
+    .amc-card-arrow svg { width: 14px; height: 14px; }
   </style>
 </head>
-<body class="amc-landing">
-  <header class="rm-topbar">
-    <div class="rm-topbar-left">
-      <button class="rm-back-btn" id="backPortalBtn">Back to Modules</button>
-      <div class="rm-title-wrap">
-        <h1 class="rm-title">Assessment Management Center</h1>
-        <p class="rm-subtitle">Risk Assessment &amp; Facility Inspection module landing page</p>
+<body>
+
+  <!-- ── Topbar ── -->
+  <header class="amc-topbar">
+    <button class="amc-back-btn" id="backPortalBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Back to Home
+    </button>
+
+    <div class="amc-topbar-center">
+      <div class="amc-topbar-icon">
+        <img src="../assets/img/goil-logo.png" alt="GOIL" style="width:28px;height:28px;object-fit:contain;" />
+      </div>
+      <div class="amc-topbar-text">
+        <div class="amc-topbar-title">Assessment Management Center</div>
+        <div class="amc-topbar-sub">Risk Assessment &amp; Facility Inspection</div>
       </div>
     </div>
-    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
+
+    <button class="amc-conduct-btn" id="conductAssessmentBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+      Conduct Assessment
+    </button>
   </header>
 
-  <main class="rm-shell">
-    <section class="amc-publish-banner" id="publishSuccessBanner">
-      <div>
-        <h4>Assessment Published</h4>
-        <p id="publishSuccessText">Assessment was successfully published to the register.</p>
-        <div class="meta" id="publishSuccessMeta"></div>
-      </div>
-      <div class="amc-publish-actions">
-        <button class="rm-btn" id="viewPublishedRecordBtn">View Published Record</button>
-        <button class="rm-btn" id="goPublishedRegisterBtn">Go to Published Register</button>
-        <button class="rm-btn" id="startNewAssessmentBtn">Start New Assessment</button>
-      </div>
-    </section>
+  <!-- ── Publish success banner ── -->
+  <div class="amc-publish-banner" id="publishSuccessBanner">
+    <div>
+      <h4>Assessment Published</h4>
+      <p id="publishSuccessText">Assessment was successfully published to the register.</p>
+      <div class="meta" id="publishSuccessMeta"></div>
+    </div>
+    <div class="amc-publish-actions">
+      <button class="rm-btn" id="viewPublishedRecordBtn">View Published Record</button>
+      <button class="rm-btn" id="goPublishedRegisterBtn">Go to Published Register</button>
+      <button class="rm-btn" id="startNewAssessmentBtn">Start New Assessment</button>
+    </div>
+  </div>
 
-    <section class="rm-hero">
-      <div class="amc-hero-content">
-        <div class="amc-kicker"><span class="amc-kicker-dot"></span>Risk Assessment &amp; Facility Inspection</div>
-        <h2>Assessment Management Center</h2>
-        <p>
-          Central workspace for conducting assessments, tracking unpublished records, managing corrective actions, and reviewing published results.
-        </p>
-      </div>
-      <button class="rm-primary-btn" id="conductAssessmentBtn2">Conduct Assessment</button>
-    </section>
+  <!-- ── Hero banner ── -->
+  <section class="amc-hero">
+    <div class="amc-hero-watermark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="0.6"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+        <line x1="12" y1="11" x2="12" y2="17"/>
+        <line x1="9" y1="14" x2="15" y2="14"/>
+      </svg>
+    </div>
 
-    <section class="amc-folder-wrap">
-      <div class="amc-folder-head">
-        <h3>Navigation Folders</h3>
-        <p>Select a workspace to continue. Each folder opens a dedicated page.</p>
+    <div class="amc-hero-content">
+      <div class="amc-hero-kicker">
+        <span class="amc-hero-kicker-dot"></span>
+        Risk Assessment &amp; Facility Inspection
       </div>
+      <div class="amc-hero-title">Assessment Management Center</div>
+      <div class="amc-hero-desc">
+        Central workspace for conducting assessments, tracking unpublished records,<br/>
+        managing corrective actions, and reviewing published results.
+      </div>
+    </div>
+  </section>
 
-      <div class="rm-folder-grid">
-      <a class="rm-folder folder-dashboard" href="risk-dashboard.html?v=20260318-masterrefdeep6">
-        <div class="amc-folder-top">
-          <span class="amc-folder-icon">DB</span>
-          <span class="amc-folder-tag">Operational</span>
+  <!-- ── Navigation cards ── -->
+  <section class="amc-nav-section">
+    <div class="amc-nav-header">
+      <div class="amc-nav-label">Navigation</div>
+      <div class="amc-nav-hint">Select a workspace to continue. Each module opens in a dedicated page.</div>
+    </div>
+
+    <div class="amc-cards-grid">
+
+      <!-- Dashboard -->
+      <a class="amc-nav-card active" href="risk-dashboard.html?v=20260601-registerroute1">
+        <div class="amc-card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+          </svg>
         </div>
-        <div class="rm-folder-name">Dashboard</div>
-        <div class="rm-folder-meta">
-          <span class="rm-folder-k">Critical Items</span>
-          <span class="rm-folder-v" id="cntDashboard">0</span>
+        <span class="amc-card-tag">Operational</span>
+        <div class="amc-card-body">
+          <div class="amc-card-title">Dashboard</div>
+          <div class="amc-card-desc">Overview of critical items requiring attention.</div>
+        </div>
+        <div class="amc-card-footer">
+          <div>
+            <div class="amc-card-count-val" id="cntDashboard">0</div>
+            <div class="amc-card-count-lbl">Critical Items</div>
+          </div>
+          <div class="amc-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
         </div>
       </a>
 
-      <a class="rm-folder folder-uncompleted" href="risk-uncompleted.html?v=20260318-uncompletedfix4">
-        <div class="amc-folder-top">
-          <span class="amc-folder-icon">UC</span>
-          <span class="amc-folder-tag">Workflow</span>
+      <!-- Uncompleted Assessments -->
+      <a class="amc-nav-card" href="risk-uncompleted.html?v=20260318-uncompletedfix4">
+        <div class="amc-card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+            <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/>
+          </svg>
         </div>
-        <div class="rm-folder-name">Uncompleted Assessments</div>
-        <div class="rm-folder-meta">
-          <span class="rm-folder-k">Unpublished</span>
-          <span class="rm-folder-v" id="cntUncompleted">0</span>
+        <span class="amc-card-tag">Workflow</span>
+        <div class="amc-card-body">
+          <div class="amc-card-title">Uncompleted Assessments</div>
+          <div class="amc-card-desc">View and manage assessments not yet published.</div>
         </div>
-      </a>
-
-      <a class="rm-folder folder-published" href="risk-published-register.html?v=20260318-pubmirror4">
-        <div class="amc-folder-top">
-          <span class="amc-folder-icon">PR</span>
-          <span class="amc-folder-tag">Register</span>
-        </div>
-        <div class="rm-folder-name">Published Register</div>
-        <div class="rm-folder-meta">
-          <span class="rm-folder-k">Published</span>
-          <span class="rm-folder-v" id="cntPublished">0</span>
-        </div>
-      </a>
-
-      <a class="rm-folder folder-corrections" href="risk-corrections.html?v=20260319-corrwidth1">
-        <div class="amc-folder-top">
-          <span class="amc-folder-icon">CA</span>
-          <span class="amc-folder-tag">Action Tracking</span>
-        </div>
-        <div class="rm-folder-name">Corrections &amp; Corrective Actions</div>
-        <div class="rm-folder-meta">
-          <span class="rm-folder-k">Open / Overdue Actions</span>
-          <span class="rm-folder-v" id="cntCorrections">0</span>
+        <div class="amc-card-footer">
+          <div>
+            <div class="amc-card-count-val" id="cntUncompleted">0</div>
+            <div class="amc-card-count-lbl">Unpublished</div>
+          </div>
+          <div class="amc-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
         </div>
       </a>
 
-      <a class="rm-folder folder-profile" href="risk-facility-profile.html?v=20260318-masterrefdeep6">
-        <div class="amc-folder-top">
-          <span class="amc-folder-icon">FP</span>
-          <span class="amc-folder-tag">Analytics</span>
+      <!-- Published Register -->
+      <a class="amc-nav-card" href="risk-published-register.html?v=20260601-registerroute1">
+        <div class="amc-card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/>
+          </svg>
         </div>
-        <div class="rm-folder-name">Facility Profile</div>
-        <div class="rm-folder-meta">
-          <span class="rm-folder-k">Facilities</span>
-          <span class="rm-folder-v" id="cntFacilities">0</span>
+        <span class="amc-card-tag">Register</span>
+        <div class="amc-card-body">
+          <div class="amc-card-title">Published Register</div>
+          <div class="amc-card-desc">Browse and search all published assessments.</div>
+        </div>
+        <div class="amc-card-footer">
+          <div>
+            <div class="amc-card-count-val" id="cntPublished">0</div>
+            <div class="amc-card-count-lbl">Published</div>
+          </div>
+          <div class="amc-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
         </div>
       </a>
-      </div>
-    </section>
-  </main>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+      <!-- Corrections & Corrective Actions -->
+      <a class="amc-nav-card" href="risk-corrections.html?v=20260319-corrwidth1">
+        <div class="amc-card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <span class="amc-card-tag">Action Tracking</span>
+        <div class="amc-card-body">
+          <div class="amc-card-title">Corrections &amp; Corrective Actions</div>
+          <div class="amc-card-desc">Track open and overdue corrective actions.</div>
+        </div>
+        <div class="amc-card-footer">
+          <div>
+            <div class="amc-card-count-val" id="cntCorrections">0</div>
+            <div class="amc-card-count-lbl">Open / Overdue Actions</div>
+          </div>
+          <div class="amc-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- Facility Profile -->
+      <a class="amc-nav-card" href="risk-facility-profile.html?v=20260318-masterrefdeep6">
+        <div class="amc-card-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#F47920" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <span class="amc-card-tag">Analytics</span>
+        <div class="amc-card-body">
+          <div class="amc-card-title">Facility Profile</div>
+          <div class="amc-card-desc">View facility information and related analytics.</div>
+        </div>
+        <div class="amc-card-footer">
+          <div>
+            <div class="amc-card-count-val" id="cntFacilities">0</div>
+            <div class="amc-card-count-lbl">Facilities</div>
+          </div>
+          <div class="amc-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <script src="../assets/js/workflow-core.js?v=20260601-registerroute1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260601-registerroute1"></script>
   <script>
     const PUBLISH_FLASH_KEY = 'goil_publish_success_flash';
 
     function renderCounts() {
       const counts = RiskModuleUtils.getFolderCounts();
-      document.getElementById('cntDashboard').textContent = String(counts.dashboard);
+      document.getElementById('cntDashboard').textContent   = String(counts.dashboard);
       document.getElementById('cntUncompleted').textContent = String(counts.uncompleted);
-      document.getElementById('cntPublished').textContent = String(counts.published);
+      document.getElementById('cntPublished').textContent   = String(counts.published);
       document.getElementById('cntCorrections').textContent = String(counts.corrections);
-      document.getElementById('cntFacilities').textContent = String(counts.facilities);
+      document.getElementById('cntFacilities').textContent  = String(counts.facilities);
     }
 
     function readPublishFlash() {
-      try {
-        return JSON.parse(localStorage.getItem(PUBLISH_FLASH_KEY) || 'null');
-      } catch (error) {
-        return null;
-      }
+      try { return JSON.parse(localStorage.getItem(PUBLISH_FLASH_KEY) || 'null'); }
+      catch (e) { return null; }
     }
 
     function clearPublishFlash() {
@@ -495,12 +654,9 @@
     }
 
     function renderPublishBanner() {
-      const flash = readPublishFlash();
+      const flash  = readPublishFlash();
       const banner = document.getElementById('publishSuccessBanner');
-      if (!flash || !flash.referenceNo) {
-        banner.classList.remove('show');
-        return;
-      }
+      if (!flash || !flash.referenceNo) { banner.classList.remove('show'); return; }
 
       document.getElementById('publishSuccessText').textContent =
         flash.message || `Assessment ${flash.referenceNo} was successfully published to the register.`;
@@ -509,10 +665,10 @@
       banner.classList.add('show');
 
       document.getElementById('viewPublishedRecordBtn').onclick = () => {
-        window.location.href = `risk-published-register.html?v=20260318-pubmirror4&ref=${encodeURIComponent(flash.referenceNo)}&_=${Date.now()}`;
+        window.location.href = `risk-published-register.html?v=20260601-registerroute1&ref=${encodeURIComponent(flash.referenceNo)}&_=${Date.now()}`;
       };
       document.getElementById('goPublishedRegisterBtn').onclick = () => {
-        window.location.href = `risk-published-register.html?v=20260318-pubmirror4&_=${Date.now()}`;
+        window.location.href = `risk-published-register.html?v=20260601-registerroute1&_=${Date.now()}`;
       };
       document.getElementById('startNewAssessmentBtn').onclick = () => {
         RiskModuleUtils.goFacilityDetails();
@@ -525,7 +681,6 @@
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       document.getElementById('backPortalBtn').addEventListener('click', RiskModuleUtils.goPortal);
       document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
-      document.getElementById('conductAssessmentBtn2').addEventListener('click', RiskModuleUtils.goFacilityDetails);
       renderPublishBanner();
       renderCounts();
     }

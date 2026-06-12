@@ -1,7 +1,7 @@
 'use strict';
 
 // ── Cache names ───────────────────────────────────────────────────────────────
-var CACHE_APP   = 'goil-hsseq-app-v1';
+var CACHE_APP   = 'goil-hsseq-app-v6-assessmentregister2';
 var CACHE_FONTS = 'goil-hsseq-fonts-v1';
 var CACHE_IMGS  = 'goil-hsseq-imgs-v1';
 
@@ -22,6 +22,7 @@ var PRECACHE_URLS = [
   '/pages/GOIL_Review_Submit.html',
   '/pages/risk-uncompleted.html',
   '/pages/risk-dashboard.html',
+  '/pages/risk-assessment-register.html',
   '/pages/risk-published-register.html',
   '/pages/risk-corrections.html',
   '/pages/risk-corrections-detail.html',
@@ -116,6 +117,7 @@ self.addEventListener('fetch', function (event) {
   if (url.origin !== self.location.origin) return;
 
   var path = url.pathname;
+  var hasVersionToken = url.searchParams.has('v') || url.searchParams.has('_');
 
   // Images — cache-first, populate on miss, works offline forever after first load
   if (/\.(png|jpe?g|gif|svg|webp|ico)$/i.test(path)) {
@@ -126,6 +128,12 @@ self.addEventListener('fetch', function (event) {
   // HTML pages — network-first so users always get the latest when online,
   // but falls back to cache when offline
   if (path.endsWith('.html') || path === '/' || path === '') {
+    event.respondWith(networkFirst(event.request, CACHE_APP));
+    return;
+  }
+
+  // Versioned assets should fetch fresh on first load after deployment.
+  if (hasVersionToken && /\.(css|js|json)$/i.test(path)) {
     event.respondWith(networkFirst(event.request, CACHE_APP));
     return;
   }

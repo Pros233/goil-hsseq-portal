@@ -247,6 +247,7 @@
 
   function getTemplateFileKeyByType(facilityType) {
     if (facilityType === "Fuel Station") return "fuelStation";
+    if (facilityType === "Consumer") return "fuelStation";
     if (facilityType === "LPG Plant") return "lpgPlant";
     if (facilityType === "Office") return "office";
     if (facilityType === "Office & Depot") return "officeDepot";
@@ -513,12 +514,12 @@
     }
 
     var existingActions = state.activeAssessment.actions || [];
-    var activeFindingIds = findings.map(function (finding) {
+    var actionableFindingIds = findings.map(function (finding) {
       return finding.findingId;
     });
 
     existingActions = existingActions.filter(function (action) {
-      return !action.findingId || activeFindingIds.indexOf(action.findingId) >= 0;
+      return !action.findingId || actionableFindingIds.indexOf(action.findingId) >= 0;
     });
 
     findings.forEach(function (finding) {

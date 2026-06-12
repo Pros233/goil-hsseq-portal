@@ -7,8 +7,9 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Fuel Station Inspection - Documentation</title>
-<script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
-<script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
+<script src="../assets/js/auth-guard.js?v=20260520-publishsync1" defer></script>
+<script src="../assets/js/workflow-core.js?v=20260514-recordrestore1"></script>
+<script src="../assets/js/risk-module-utils.js?v=20260514-recordrestore1"></script>
 <script>
 (function traceChecklistRoute() {
   try {
@@ -221,7 +222,6 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--wh2);displ
   background:var(--crit-dim);color:var(--crit);text-transform:uppercase;flex-shrink:0;
 }
 .cl-question{font-size:13px;color:var(--wh);line-height:1.5;font-weight:400}
-.cl-scope{font-size:10px;color:var(--wh4);margin-top:3px;font-style:italic}
 
 .cl-resp-btns{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;padding-top:1px}
 .resp-btn{
@@ -554,7 +554,7 @@ input[type=file]{display:none}
 <body>
 
 <nav class="top-nav">
-  <button class="nav-home" onclick="window.location.href='portal.html'" title="Go to Home">
+  <button class="nav-home" onclick="window.location.href='risk-inspection.html?v=20260318-masterrefdeep6&_=' + Date.now()" title="Go to Assessment Management Center">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6.5L8 2l6 4.5V14a1 1 0 01-1 1H3a1 1 0 01-1-1V6.5z"/><path d="M6 15V9h4v6"/></svg>
     Home
   </button>
@@ -3241,6 +3241,7 @@ const OTHER_ITEMS = [
 const SAVE_KEY = 'goil_checklist_session';
 const FACILITY_KEY = 'goil_facility_details';
 const CURRENT_SEC_KEY = 'goil_current_section';
+const PENDING_ROUTE_KEY = 'goil_pending_record_route';
 const INSPECTION_META_KEY = 'goil_inspection_meta';
 const AUDIT_KEY = 'goil_audit_trail';
 
@@ -3385,9 +3386,24 @@ function getBlockedRedirectFromChecklist() {
   return '';
 }
 
+function getChecklistFacilityType(facilityType) {
+  if (facilityType === 'Consumer') return 'Fuel Station';
+  return facilityType || '';
+}
+
+function isReadonlyChecklistView() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('readonly') === '1';
+  } catch (error) {
+    return false;
+  }
+}
+
 function isApplicableFacilityType(facilityType) {
-  if (!facilityType) return true;
-  return facilityType === 'Fuel Station' || facilityType === 'LPG Plant';
+  const normalizedType = getChecklistFacilityType(facilityType);
+  if (!normalizedType) return true;
+  return normalizedType === 'Fuel Station' || normalizedType === 'LPG Plant';
 }
 
 function supportsCameraCapture() {
@@ -3421,8 +3437,89 @@ function findItem(code) {
     FIRE_ITEMS.find(i => i.code === code) || null;
 }
 
+function getPendingRoutePayload() {
+  try {
+    const raw = localStorage.getItem(PENDING_ROUTE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function getRouteHydrationParams() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ref = (params.get('ref') || '').trim();
+    const version = (params.get('version') || '').trim();
+    const focusCode = (params.get('focusCode') || '').trim();
+    if (ref) {
+      return { ref, version, focusCode };
+    }
+  } catch (error) {}
+
+  const pending = getPendingRoutePayload();
+  if (!pending || !pending.ref) return { ref:'', version:'', focusCode:'' };
+  return {
+    ref: String(pending.ref || '').trim(),
+    version: String(pending.version || '').trim(),
+    focusCode: String(pending.focusCode || '').trim()
+  };
+}
+
+function rerenderHydratedChecklist() {
+  loadFacilityMeta();
+  loadSavedState();
+  state.currentSection = parseInt(localStorage.getItem(CURRENT_SEC_KEY) || '0', 10);
+  if (!Number.isFinite(state.currentSection) || state.currentSection < 0) {
+    state.currentSection = 0;
+  }
+  buildSectionProgress();
+  renderSection(state.currentSection);
+  updateStatus();
+}
+
+function hydrateRecordFromRouteParams(attempt = 0) {
+  try {
+    const route = getRouteHydrationParams();
+    if (!route.ref) return false;
+
+    if (route.focusCode) {
+      localStorage.setItem('goil_focus_item_code', route.focusCode);
+    }
+
+    if (!window.RiskModuleUtils || typeof RiskModuleUtils.prepareAssessmentRecord !== 'function') {
+      if (attempt < 12) {
+        setTimeout(() => hydrateRecordFromRouteParams(attempt + 1), 80);
+      }
+      return false;
+    }
+
+    const prepared = RiskModuleUtils.prepareAssessmentRecord(route.ref, route.version);
+    if (!prepared) {
+      if (attempt < 12) {
+        setTimeout(() => hydrateRecordFromRouteParams(attempt + 1), 80);
+      }
+      return false;
+    }
+
+    try {
+      localStorage.removeItem(PENDING_ROUTE_KEY);
+    } catch (error) {}
+
+    if (attempt > 0) {
+      rerenderHydratedChecklist();
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   applyCameraModeClass();
+  hydrateRecordFromRouteParams();
   loadFacilityMeta();
   const blockedTarget = getBlockedRedirectFromChecklist();
   if (blockedTarget) {
@@ -3467,24 +3564,32 @@ function loadFacilityMeta() {
     state.facility = details;
     applyFacilityTypeLabels(details.facilityType || '');
     if (details.facilityType && !isApplicableFacilityType(details.facilityType)) {
-      toast('This checklist only applies to Fuel Station and LPG Plant facilities.', 'error');
+      if (!isReadonlyChecklistView()) {
+        toast('This checklist only applies to Fuel Station, Consumer, and LPG Plant facilities.', 'error');
+        setTimeout(() => {
+          window.location.href = 'GOIL_Facility_Details.html';
+        }, 900);
+        return;
+      }
+    }
+
+    const navName = details.nameDisplay || details.nameVal || 'Assessment Record';
+    const navMeta = [details.facilityType, details.zone, details.assessorName]
+      .filter(Boolean)
+      .join(' · ');
+    document.getElementById('navFacilityName').textContent = navName;
+    document.getElementById('navFacilityMeta').textContent = navMeta || (isReadonlyChecklistView() ? 'Read-only checklist view' : 'Fuel Station Assessment');
+  } catch (error) {
+    if (!isReadonlyChecklistView()) {
+      toast('Facility details were not found. Redirecting...', 'error');
       setTimeout(() => {
         window.location.href = 'GOIL_Facility_Details.html';
       }, 900);
       return;
     }
-
-    const navName = details.nameDisplay || details.nameVal || 'Unnamed Facility';
-    const navMeta = [details.facilityType, details.zone, details.assessorName]
-      .filter(Boolean)
-      .join(' · ');
-    document.getElementById('navFacilityName').textContent = navName;
-    document.getElementById('navFacilityMeta').textContent = navMeta || 'Fuel Station Assessment';
-  } catch (error) {
-    toast('Facility details were not found. Redirecting...', 'error');
-    setTimeout(() => {
-      window.location.href = 'GOIL_Facility_Details.html';
-    }, 900);
+    state.facility = {};
+    document.getElementById('navFacilityName').textContent = 'Assessment Record';
+    document.getElementById('navFacilityMeta').textContent = 'Read-only checklist view';
   }
 }
 
@@ -3570,7 +3675,7 @@ function getSectionPct(sectionId) {
 }
 
 function getItemsForSection(secId) {
-  const fType = (state.facility && state.facility.facilityType) || '';
+  const fType = getChecklistFacilityType((state.facility && state.facility.facilityType) || '');
   const filter = items => items.filter(it => !it.facilityTypes || it.facilityTypes.includes(fType));
   if (secId === 'doc') return filter(DOC_ITEMS);
   if (secId === 'hsse') return filter(HSSE_ITEMS);
@@ -4042,7 +4147,6 @@ function buildItemCard(item, sectionState) {
           ${criticalTag}
         </div>
         <div class="cl-question">${escapeHtml(item.question)}</div>
-        <div class="cl-scope">${item.scope}</div>
       </div>
       <div class="cl-resp-btns">
         ${['Y', 'P', 'N', 'NA'].map(value => `

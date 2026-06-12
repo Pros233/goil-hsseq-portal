@@ -5,6 +5,7 @@
   'use strict';
 
   var SUPABASE_STORAGE_KEY = 'sb-qpldcpendvdobtbkygxo-auth-token';
+  var ASSET_VERSION = '20260520-publishsync1';
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -16,6 +17,15 @@
 
   function redirect(path) {
     window.location.replace(path);
+  }
+
+  function normalizeRole(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  function isAdminRole(value) {
+    var role = normalizeRole(value);
+    return role === 'admin' || role === 'administrator' || role === 'super-admin' || role === 'super admin';
   }
 
   // Determine base path for assets (pages/ is one level deep)
@@ -35,7 +45,7 @@
     if (document.querySelector('link[data-goil-theme]')) return;
     var link = document.createElement('link');
     link.rel  = 'stylesheet';
-    link.href = base + 'assets/css/theme.css';
+    link.href = base + 'assets/css/theme.css?v=' + ASSET_VERSION;
     link.setAttribute('data-goil-theme', '1');
     document.head.appendChild(link);
   }
@@ -92,8 +102,8 @@
     } catch (e) {}
 
     // Apply role class to <body> for CSS-driven role gating
-    var role = profile.role || 'submitter';
-    document.body.classList.add('role-' + role);
+    var role = normalizeRole(profile.role || 'submitter') || 'submitter';
+    document.body.classList.add('role-' + role.replace(/[^a-z0-9]+/g, '-'));
 
     // Keep session-active marker alive across page navigations
     sessionStorage.setItem('goilActive', '1');
@@ -103,13 +113,13 @@
       session: session,
       profile: profile,
       role:    role,
-      isAdmin: role === 'admin'
+      isAdmin: isAdminRole(role)
     };
 
     // ── Register Service Worker ──────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
-        .register(base + 'sw.js', { scope: '/' })
+        .register(base + 'sw.js', { scope: '/', updateViaCache: 'none' })
         .catch(function () {});
     }
 
@@ -121,13 +131,15 @@
       document.head.appendChild(el);
     }
 
-    injectScript(base + 'assets/js/theme.js');
+    injectScript(base + 'assets/js/theme.js?v=' + ASSET_VERSION, function () {
+      injectScript(base + 'assets/js/goil-user-tools.js?v=' + ASSET_VERSION);
+    });
 
     // ── Load Supabase CDN then the sync module ───────────────────────────────
     injectScript(
       'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
       function () {
-        injectScript(base + 'assets/js/goil-supabase.js');
+        injectScript(base + 'assets/js/goil-supabase.js?v=' + ASSET_VERSION);
       }
     );
   }

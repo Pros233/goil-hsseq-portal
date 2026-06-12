@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Corrections & Corrective Actions | Risk Assessment & Facility Inspection</title>
-  <script src="../assets/js/auth-guard.js?v=20260318-masterrefdeep6" defer></script>
+  <script src="../assets/js/auth-guard.js?v=20260513-datatransfer1" defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -26,55 +26,969 @@
         width: 94vw;
       }
     }
+
+    /* New AMC-style layout */
+    html, body {
+      min-height: 100vh;
+      background: #0b0d12;
+      color: #e6edf3;
+      font-family: 'Barlow', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.10); border-radius: 999px; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(1200px 600px at 100% -10%, rgba(244,121,32,.16), transparent 55%),
+        linear-gradient(180deg, #0b0d12 0%, #0d1016 42%, #0b0d12 100%);
+    }
+
+    .ca-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 24px;
+      min-height: 80px;
+      background: rgba(11,13,18,.98);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .ca-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.72);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .15s ease;
+      flex-shrink: 0;
+    }
+    .ca-back-btn:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+    }
+
+    .ca-topbar-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ca-topbar-text {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .ca-topbar-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 34px;
+      line-height: .9;
+      font-weight: 900;
+      letter-spacing: .1px;
+      color: #F47920;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .ca-topbar-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.42);
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .ca-topbar-actions,
+    .goil-page-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .ca-topbar-actions {
+      margin-left: auto;
+    }
+
+    .ca-shell {
+      width: min(1760px, 98.5vw);
+      margin: 14px auto 18px;
+    }
+
+    .ca-panel {
+      min-height: calc(100vh - 112px);
+      display: flex;
+      flex-direction: column;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.07);
+      background:
+        linear-gradient(180deg, rgba(20,24,32,.98) 0%, rgba(16,20,28,.98) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.03),
+        0 18px 50px rgba(0,0,0,.32);
+    }
+
+    .ca-status-tabs {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin: 14px 24px 10px;
+      padding: 0 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .ca-status-tab {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 0 14px;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.48);
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      cursor: pointer;
+      transition: color .15s ease;
+    }
+
+    .ca-status-tab .count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .ca-status-tab.active {
+      color: #F47920;
+    }
+
+    .ca-status-tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 3px;
+      border-radius: 999px 999px 0 0;
+      background: #F47920;
+    }
+
+    .ca-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 24px 14px;
+    }
+
+    .ca-summary-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-height: 112px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(23,28,38,.96), rgba(17,21,29,.96));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .ca-summary-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid currentColor;
+      background: rgba(255,255,255,.02);
+    }
+
+    .ca-summary-content {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .ca-summary-label {
+      color: rgba(255,255,255,.54);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .ca-summary-value {
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 46px;
+      line-height: .9;
+      font-weight: 900;
+    }
+
+    .ca-summary-sub {
+      color: rgba(255,255,255,.42);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .ca-summary-card.open { color: #f5a12a; }
+    .ca-summary-card.overdue { color: #ff5b64; }
+    .ca-summary-card.closed { color: #34d06a; }
+
+    html.light-mode .ca-summary-card {
+      background: #fff;
+      border-color: rgba(0,0,0,.08);
+      box-shadow: 0 14px 32px rgba(15,23,42,.08);
+    }
+    html.light-mode .ca-summary-label,
+    html.light-mode .ca-summary-sub {
+      color: #606770;
+    }
+    html.light-mode .ca-summary-value {
+      color: #1c1e21;
+    }
+
+    .ca-export-wrap {
+      position: relative;
+    }
+
+    .ca-export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 42px;
+      padding: 0 16px;
+      min-width: 142px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.84);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .ca-export-btn:hover {
+      border-color: rgba(244,121,32,.38);
+      color: #fff;
+      background: rgba(244,121,32,.10);
+    }
+
+    .ca-export-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 178px;
+      padding: 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #11151d;
+      box-shadow: 0 18px 36px rgba(0,0,0,.36);
+      z-index: 40;
+    }
+
+    .ca-export-menu button {
+      width: 100%;
+      height: 38px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255,255,255,.82);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .ca-export-menu button:hover {
+      background: rgba(244,121,32,.12);
+      color: #fff;
+    }
+
+    .ca-filter-panel {
+      margin: 0 24px 16px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg, rgba(18,23,31,.94), rgba(16,20,28,.94));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .ca-filter-grid {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr .9fr .9fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .ca-field { min-width: 0; }
+    .ca-field label {
+      display: block;
+      margin: 0 0 8px;
+      color: rgba(255,255,255,.48);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .ca-input,
+    .ca-select,
+    .ca-date {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #0d1118;
+      color: #e6edf3;
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .ca-input:focus,
+    .ca-select:focus,
+    .ca-date:focus {
+      border-color: rgba(244,121,32,.45);
+      background: #111620;
+    }
+
+    .ca-search-wrap {
+      position: relative;
+    }
+    .ca-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,.38);
+      pointer-events: none;
+    }
+    .ca-search-wrap .ca-input {
+      padding-left: 40px;
+    }
+
+    .ca-filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .ca-btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.82);
+      font-family: 'Barlow', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+    .ca-btn:hover {
+      border-color: rgba(244,121,32,.38);
+      color: #fff;
+      background: rgba(244,121,32,.10);
+    }
+    .ca-btn.primary {
+      border: 0;
+      background: linear-gradient(180deg, #ff9b35 0%, #f47920 100%);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(244,121,32,.24);
+    }
+
+    .ca-table-shell {
+      margin: 0 24px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: linear-gradient(180deg, rgba(18,23,31,.94), rgba(16,20,28,.94));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .ca-table-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .ca-table-meta .left {
+      color: rgba(255,255,255,.64);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .ca-table-meta .left strong {
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 30px;
+      font-weight: 900;
+    }
+    .ca-table-meta .right {
+      color: rgba(255,255,255,.34);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .ca-table-wrap {
+      overflow: hidden;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .ca-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1280px;
+    }
+
+    .ca-table th,
+    .ca-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 12px;
+    }
+
+    .ca-table th {
+      color: rgba(255,255,255,.36);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.05px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .ca-table tbody tr:hover td { background: rgba(255,255,255,.015); }
+
+    .ca-row.high { border-left: 3px solid #F47920; }
+    .ca-row.medium { border-left: 3px solid #D29922; }
+    .ca-row.low { border-left: 3px solid #3FB950; }
+    .ca-row.critical { border-left: 3px solid #DA3633; }
+
+    .ca-ref {
+      display: grid;
+      gap: 2px;
+      min-width: 220px;
+    }
+    .ca-ref .main {
+      color: #F47920;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      line-height: .96;
+      font-weight: 900;
+    }
+    .ca-ref .sub {
+      color: rgba(255,255,255,.34);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .ca-fac {
+      display: grid;
+      gap: 2px;
+    }
+    .ca-fac .main {
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 19px;
+      line-height: .95;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .ca-fac .sub {
+      color: rgba(255,255,255,.34);
+      font-size: 11px;
+    }
+
+    .ca-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.86);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 800;
+    }
+    .ca-pill.open { border-color: rgba(47,129,247,.45); color: #5AA3FF; background: rgba(47,129,247,.10); }
+    .ca-pill.overdue { border-color: rgba(218,54,51,.42); color: #FF6A66; background: rgba(218,54,51,.10); }
+    .ca-pill.closed { border-color: rgba(63,185,80,.40); color: #3FB950; background: rgba(63,185,80,.10); }
+
+    .ca-date {
+      display: grid;
+      gap: 1px;
+    }
+    .ca-date .main {
+      color: #F47920;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 800;
+    }
+    .ca-date .sub {
+      color: rgba(255,255,255,.34);
+      font-size: 11px;
+      line-height: 1.05;
+    }
+
+    .ca-risk {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .ca-risk.low { color: #3FB950; border-color: rgba(63,185,80,.32); background: rgba(63,185,80,.08); }
+    .ca-risk.medium { color: #D29922; border-color: rgba(210,153,34,.32); background: rgba(210,153,34,.08); }
+    .ca-risk.high { color: #F47920; border-color: rgba(244,121,32,.35); background: rgba(244,121,32,.10); }
+    .ca-risk.critical { color: #DA3633; border-color: rgba(218,54,51,.35); background: rgba(218,54,51,.10); }
+
+    .ca-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 168px;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.86);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .ca-action-btn:hover {
+      border-color: rgba(244,121,32,.38);
+      color: #fff;
+      background: rgba(244,121,32,.10);
+    }
+
+    .ca-table-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      flex-wrap: wrap;
+    }
+
+    .ca-results-meta {
+      color: rgba(255,255,255,.46);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .ca-pager {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-left: auto;
+    }
+
+    .ca-page-btn {
+      min-width: 42px;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.78);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .ca-page-btn:hover:not(:disabled) { border-color: rgba(244,121,32,.38); color: #fff; }
+    .ca-page-btn.active {
+      background: linear-gradient(180deg, #ff9b35 0%, #f47920 100%);
+      border-color: rgba(244,121,32,.55);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(244,121,32,.24);
+    }
+    .ca-page-btn:disabled { opacity: .45; cursor: default; }
+
+    .ca-page-size {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,.46);
+      font-size: 12px;
+    }
+    .ca-page-size select {
+      width: 92px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: #e6edf3;
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    .ca-empty {
+      padding: 28px 18px;
+      color: rgba(255,255,255,.40);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    html.light-mode body {
+      background:
+        radial-gradient(1200px 600px at 100% -10%, rgba(244,121,32,.12), transparent 55%),
+        linear-gradient(180deg, #f3f5f8 0%, #eff2f6 100%);
+      color: #1c1e21;
+    }
+
+    html.light-mode .ca-topbar,
+    html.light-mode .ca-panel,
+    html.light-mode .ca-filter-panel,
+    html.light-mode .ca-table-shell {
+      background: rgba(255,255,255,.95);
+      border-color: rgba(0,0,0,.08);
+    }
+    html.light-mode .ca-topbar { box-shadow: 0 10px 24px rgba(15,23,42,.06); }
+    html.light-mode .ca-topbar-title,
+    html.light-mode .ca-fac .main,
+    html.light-mode .ca-table-meta .left strong { color: #1c1e21; }
+    html.light-mode .ca-topbar-sub,
+    html.light-mode .ca-results-meta,
+    html.light-mode .ca-table-meta .right,
+    html.light-mode .ca-ref .sub,
+    html.light-mode .ca-fac .sub,
+    html.light-mode .ca-date .sub { color: #606770; }
+    html.light-mode .ca-back-btn,
+    html.light-mode .ca-export-btn,
+    html.light-mode .ca-input,
+    html.light-mode .ca-select,
+    html.light-mode .ca-date,
+    html.light-mode .ca-btn,
+    html.light-mode .ca-page-btn,
+    html.light-mode .ca-page-size select,
+    html.light-mode .ca-action-btn {
+      background: #fff;
+      color: #3a3b3c;
+      border-color: rgba(0,0,0,.10);
+    }
+    html.light-mode .ca-filter-panel,
+    html.light-mode .ca-table-shell {
+      box-shadow: 0 14px 32px rgba(15,23,42,.08);
+    }
+    html.light-mode .ca-table th {
+      background: rgba(0,0,0,.03);
+      color: #606770;
+    }
+    html.light-mode .ca-table td {
+      color: #1c1e21;
+    }
+    html.light-mode .ca-table-meta .right,
+    html.light-mode .ca-results-meta {
+      color: #606770;
+    }
+    html.light-mode .ca-status-tabs {
+      border-bottom-color: rgba(0,0,0,.08);
+    }
+    html.light-mode .ca-status-tab {
+      color: #5f6670;
+    }
+    html.light-mode .ca-status-tab .count {
+      border-color: rgba(0,0,0,.10);
+      background: #fff;
+    }
+    html.light-mode .ca-status-tab.active {
+      color: #f47920;
+    }
+    html.light-mode .ca-pill,
+    html.light-mode .ca-risk {
+      background: #fff;
+    }
+    @media (max-width: 1400px) {
+      .ca-filter-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .ca-filter-actions { grid-column: 1 / -1; justify-content: flex-end; }
+      .ca-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 920px) {
+      .ca-topbar { flex-wrap: wrap; }
+      .ca-topbar-main { width: 100%; order: 3; }
+      .ca-filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ca-summary-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .ca-shell { width: 96vw; }
+      .ca-topbar-title { font-size: 30px; }
+      .ca-filter-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <header class="rm-topbar">
-    <div class="rm-topbar-left">
-      <button class="rm-back-btn" id="backLandingBtn">← Assessment Management Center</button>
-      <div class="rm-title-wrap">
-        <h1 class="rm-title">Corrections &amp; Corrective Actions</h1>
-        <p class="rm-subtitle">Facility-level corrective action register and closure entry</p>
+  <header class="ca-topbar">
+    <button class="ca-back-btn" id="backLandingBtn" type="button">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      Assessment Management Center
+    </button>
+    <div class="ca-topbar-main">
+      <div class="ca-topbar-text">
+        <div class="ca-topbar-title">Corrections &amp; Corrective Actions</div>
+        <div class="ca-topbar-sub">Facility-level corrective action register and closure entry</div>
       </div>
     </div>
-    <button class="rm-primary-btn" id="conductAssessmentBtn">Conduct Assessment</button>
+    <div class="ca-topbar-actions">
+      <div class="ca-export-wrap">
+        <button class="ca-export-btn" id="exportBtn" type="button" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 4V14M12 14L8.5 10.5M12 14L15.5 10.5M5 18H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          Export
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </button>
+        <div class="ca-export-menu" id="exportMenu" hidden>
+          <button type="button" id="exportCsvBtn">Export CSV</button>
+        </div>
+      </div>
+      <div class="goil-page-tools"></div>
+    </div>
   </header>
 
-  <main class="rm-shell">
-    <section class="rm-card">
-      <div class="rm-section-head">
-        <h3>Facility Corrective Action Register</h3>
+  <main class="ca-shell">
+    <section class="ca-panel">
+      <div class="ca-summary-grid" aria-label="Summary cards">
+        <article class="ca-summary-card open">
+          <div class="ca-summary-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path d="M6 4.5h12v15H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+              <path d="M9 8h6M9 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div class="ca-summary-content">
+            <div class="ca-summary-label">Open Actions</div>
+            <div class="ca-summary-value" id="mOpen">0</div>
+            <div class="ca-summary-sub">Requiring attention</div>
+          </div>
+        </article>
+
+        <article class="ca-summary-card overdue">
+          <div class="ca-summary-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2"></circle>
+              <path d="M12 8v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <div class="ca-summary-content">
+            <div class="ca-summary-label">Overdue Actions</div>
+            <div class="ca-summary-value" id="mOverdue">0</div>
+            <div class="ca-summary-sub">Past due date</div>
+          </div>
+        </article>
+
+        <article class="ca-summary-card closed">
+          <div class="ca-summary-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="2"></circle>
+              <path d="M9.2 12.2l2 2 3.8-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <div class="ca-summary-content">
+            <div class="ca-summary-label">Closed Actions</div>
+            <div class="ca-summary-value" id="mClosed">0</div>
+            <div class="ca-summary-sub">Actions completed</div>
+          </div>
+        </article>
       </div>
-      <div class="rm-table-wrap" style="margin-top:10px;">
-        <table class="rm-table">
-          <thead>
-            <tr>
-              <th>Master Reference</th>
-              <th>Facility</th>
-              <th>Open Actions</th>
-              <th>Overdue Actions</th>
-              <th>Closed Actions</th>
-              <th>Latest Assessment Date</th>
-              <th>Highest Risk</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="facilityTbody"></tbody>
-        </table>
+
+      <div class="ca-status-tabs" id="statusTabs" aria-label="Status tabs">
+        <button class="ca-status-tab active" type="button" data-status="">
+          All <span class="count" id="tabCountAll">0</span>
+        </button>
+        <button class="ca-status-tab" type="button" data-status="Open">
+          Open <span class="count" id="tabCountOpen">0</span>
+        </button>
+        <button class="ca-status-tab" type="button" data-status="Overdue">
+          Overdue <span class="count" id="tabCountOverdue">0</span>
+        </button>
+        <button class="ca-status-tab" type="button" data-status="Closed">
+          Closed <span class="count" id="tabCountClosed">0</span>
+        </button>
       </div>
-    </section>
+
+      <section class="ca-filter-panel">
+        <div class="ca-filter-grid">
+          <div class="ca-field">
+            <label for="fltSearch">Search</label>
+            <div class="ca-search-wrap">
+              <span class="ca-search-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+                  <path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <input class="ca-input" id="fltSearch" placeholder="Search facilities or reference..." />
+            </div>
+          </div>
+          <div class="ca-field">
+            <label for="fltZone">Zone</label>
+            <select class="ca-select" id="fltZone">
+              <option value="">All Zones</option>
+            </select>
+          </div>
+          <div class="ca-field">
+            <label for="fltRisk">Risk Level</label>
+            <select class="ca-select" id="fltRisk">
+              <option value="">All Risk Levels</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+          <div class="ca-field">
+            <label for="fltStatus">Status</label>
+            <select class="ca-select" id="fltStatus">
+              <option value="">All Statuses</option>
+              <option value="Open">Open</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="ca-field">
+            <label for="fltDateRange">Date Range</label>
+            <select class="ca-select" id="fltDateRange">
+              <option value="">Select date range</option>
+              <option value="today">Today</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="year">This year</option>
+            </select>
+          </div>
+          <div class="ca-filter-actions">
+            <button class="ca-btn" type="button" id="resetFiltersBtn">Reset</button>
+            <button class="ca-btn primary" type="button" id="applyFiltersBtn">Apply Filters</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="ca-table-shell">
+        <div class="ca-table-meta">
+          <div class="left"><strong id="metaCount">0</strong> <span id="metaCountLabel">facilities</span></div>
+          <div class="right">Row border = Highest Risk</div>
+        </div>
+        <div class="ca-table-wrap">
+          <table class="ca-table">
+            <thead>
+              <tr>
+                <th>Master Reference</th>
+                <th>Facility</th>
+                <th>Open Actions</th>
+                <th>Overdue Actions</th>
+                <th>Closed Actions</th>
+                <th>Latest Assessment Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="facilityTbody"></tbody>
+          </table>
+        </div>
+        <div class="ca-table-foot">
+          <div class="ca-results-meta" id="resultsMeta">Showing 0 to 0 of 0 facilities</div>
+          <div class="ca-pager" id="pager"></div>
+          <div class="ca-page-size">
+            <span>Show</span>
+            <select id="pageSizeSelect">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+        </div>
+      </section>
   </main>
 
-  <script src="../assets/js/workflow-core.js?v=20260319-riskmatrix3"></script>
-  <script src="../assets/js/risk-module-utils.js?v=20260319-riskmatrix3"></script>
+  <script src="../assets/js/workflow-core.js?v=20260513-snapshotlatest1"></script>
+  <script src="../assets/js/risk-module-utils.js?v=20260513-snapshotlatest1"></script>
   <script>
-    function riskClass(level) {
-      const raw = String(level || '').toLowerCase();
-      if (raw === 'critical') return 'b-overdue';
-      if (raw === 'high') return 'b-high';
-      if (raw === 'moderate' || raw === 'medium') return 'b-pending';
-      if (raw === 'low') return 'b-published';
-      return 'b-draft';
+    const state = {
+      page: 1,
+      pageSize: 5,
+      allRows: [],
+      filteredRows: [],
+      exportMenuOpen: false
+    };
+
+    function esc(value) {
+      return RiskModuleUtils.esc ? RiskModuleUtils.esc(value) : String(value == null ? '' : value);
     }
 
     function normalizeRef(ref) {
@@ -116,33 +1030,62 @@
       return riskRank(b) > riskRank(a) ? b : a;
     }
 
+    function rowStatus(row) {
+      if (row.overdue > 0) return 'Overdue';
+      if (row.open > 0) return 'Open';
+      return 'Closed';
+    }
+
+    function countByStatus(rows) {
+      const base = Array.isArray(rows) ? rows : [];
+      return {
+        all: base.length,
+        open: base.filter((row) => rowStatus(row) === 'Open').length,
+        overdue: base.filter((row) => rowStatus(row) === 'Overdue').length,
+        closed: base.filter((row) => rowStatus(row) === 'Closed').length
+      };
+    }
+
+    function latestDateMs(value) {
+      const d = new Date(value || 0);
+      return Number.isFinite(d.getTime()) ? d.getTime() : 0;
+    }
+
     function summarizeActionsByMaster(actions, records) {
       const map = new Map();
+
       (actions || []).forEach((action) => {
         const masterRef = actionMasterReference(action);
         if (!masterRef) return;
         if (!map.has(masterRef)) {
           map.set(masterRef, {
-            masterRef: masterRef,
-            facilityName: action.facilityName || 'Unknown Facility',
+            masterRef,
+            facilityName: action.facilityName || action.facility_name || 'Unknown Facility',
+            zone: action.zone || action.location || '-',
             open: 0,
             overdue: 0,
             closed: 0,
             latestAssessmentDate: action.latestAssessmentDate || '',
             highestRisk: action.riskLevel || 'Low'
-          });
+        });
         }
         const row = map.get(masterRef);
         const status = String(action.status || '').toLowerCase();
-        if (status === 'closed' || status === 'verified closed') row.closed += 1;
+        const isClosedAction = RiskModuleUtils.hasConfirmedClosure
+          ? RiskModuleUtils.hasConfirmedClosure(action)
+          : (status === 'closed' || status === 'verified closed') && !!(action.closedBy || action.verifiedClosedBy || action.closureDate || action.verifiedClosedAt || action.closureOutcome || action.closedHow || action.closureMethod);
+        if (isClosedAction) row.closed += 1;
         else if (status === 'overdue') row.overdue += 1;
         else row.open += 1;
 
-        const dNew = new Date(action.latestAssessmentDate || 0).getTime();
-        const dPrev = new Date(row.latestAssessmentDate || 0).getTime();
-        if (Number.isFinite(dNew) && dNew > dPrev) row.latestAssessmentDate = action.latestAssessmentDate || row.latestAssessmentDate;
+        if (!row.facilityName || row.facilityName === 'Unknown Facility') {
+          row.facilityName = action.facilityName || action.facility_name || row.facilityName;
+        }
+        if (!row.zone || row.zone === '-') row.zone = action.zone || action.location || row.zone;
         row.highestRisk = bestRisk(row.highestRisk, action.riskLevel || row.highestRisk);
-        if (!row.facilityName && action.facilityName) row.facilityName = action.facilityName;
+        if (latestDateMs(action.latestAssessmentDate) > latestDateMs(row.latestAssessmentDate)) {
+          row.latestAssessmentDate = action.latestAssessmentDate || row.latestAssessmentDate;
+        }
       });
 
       (records || []).forEach((record) => {
@@ -154,14 +1097,28 @@
         if (!masterRef || !map.has(masterRef)) return;
         const row = map.get(masterRef);
         row.facilityName = row.facilityName || record.facilityName || record.facility_name || 'Unknown Facility';
+        row.zone = row.zone && row.zone !== '-' ? row.zone : (record.zone || record.location || '-');
         row.highestRisk = bestRisk(row.highestRisk, record.overallRiskLevel || record.overall_risk_level || row.highestRisk);
         const recDate = record.inspectionDate || record.assessment_date || '';
-        const dNew = new Date(recDate || 0).getTime();
-        const dPrev = new Date(row.latestAssessmentDate || 0).getTime();
-        if (Number.isFinite(dNew) && dNew > dPrev) row.latestAssessmentDate = recDate;
+        if (latestDateMs(recDate) > latestDateMs(row.latestAssessmentDate)) {
+          row.latestAssessmentDate = recDate;
+        }
       });
 
-      return Array.from(map.values()).sort((a, b) => (b.overdue - a.overdue) || (b.open - a.open));
+      return Array.from(map.values()).sort((a, b) => {
+        const aScore = (a.overdue * 1000) + (a.open * 100) + latestDateMs(a.latestAssessmentDate);
+        const bScore = (b.overdue * 1000) + (b.open * 100) + latestDateMs(b.latestAssessmentDate);
+        return bScore - aScore;
+      });
+    }
+
+    function latestRecordByVersion(records) {
+      return (Array.isArray(records) ? records : []).slice().sort((a, b) => {
+        const aVersion = Number(a.version || a.version_number || 0);
+        const bVersion = Number(b.version || b.version_number || 0);
+        if (aVersion !== bVersion) return bVersion - aVersion;
+        return latestDateMs(b.lastUpdatedAt || b.last_updated_at || b.inspectionDate || b.assessment_date) - latestDateMs(a.lastUpdatedAt || a.last_updated_at || a.inspectionDate || a.assessment_date);
+      })[0] || {};
     }
 
     function openDetail(masterRef, facilityName) {
@@ -170,10 +1127,232 @@
       window.location.href = 'risk-corrections-detail.html?v=20260319-corrwidth1&ref=' + ref + '&facility=' + facility + '&_=' + Date.now();
     }
 
-    function render() {
-      if (RiskModuleUtils.purgeUnpublishedActions) {
-        RiskModuleUtils.purgeUnpublishedActions({ latestByMaster: true });
+    function statusMatches(row, status) {
+      if (!status) return true;
+      return rowStatus(row) === status;
+    }
+
+    function matchesDateRange(row, range) {
+      if (!range) return true;
+      const ts = latestDateMs(row.latestAssessmentDate);
+      if (!ts) return false;
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      if (range === 'today') return ts >= startOfToday;
+      if (range === '7d') return ts >= (startOfToday - (6 * 86400000));
+      if (range === '30d') return ts >= (startOfToday - (29 * 86400000));
+      if (range === 'year') return ts >= new Date(now.getFullYear(), 0, 1).getTime();
+      return true;
+    }
+
+    function collectFilters() {
+      return {
+        search: String(document.getElementById('fltSearch').value || '').trim().toLowerCase(),
+        zone: String(document.getElementById('fltZone').value || '').trim().toLowerCase(),
+        risk: String(document.getElementById('fltRisk').value || '').trim(),
+        status: String(document.getElementById('fltStatus').value || '').trim(),
+        dateRange: String(document.getElementById('fltDateRange').value || '').trim()
+      };
+    }
+
+    function applyFilters(baseRows) {
+      const filters = collectFilters();
+      return baseRows.filter((row) => {
+        const haystack = [
+          row.masterRef,
+          row.facilityName,
+          row.zone,
+          row.highestRisk
+        ].join(' ').toLowerCase();
+        if (filters.search && haystack.indexOf(filters.search) < 0) return false;
+        if (filters.zone && String(row.zone || '').toLowerCase() !== filters.zone) return false;
+        if (filters.risk && String(row.highestRisk || '').toLowerCase() !== filters.risk.toLowerCase()) return false;
+        if (!statusMatches(row, filters.status)) return false;
+        if (!matchesDateRange(row, filters.dateRange)) return false;
+        return true;
+      });
+    }
+
+    function setSummary(baseRows) {
+      const totalEl = document.getElementById('mTotal');
+      const openEl = document.getElementById('mOpen');
+      const overdueEl = document.getElementById('mOverdue');
+      const closedEl = document.getElementById('mClosed');
+      const latestEl = document.getElementById('mLatest');
+      const highestEl = document.getElementById('mHighest');
+      if (totalEl) totalEl.textContent = String(baseRows.length);
+      if (openEl) openEl.textContent = String(baseRows.reduce((acc, row) => acc + row.open, 0));
+      if (overdueEl) overdueEl.textContent = String(baseRows.reduce((acc, row) => acc + row.overdue, 0));
+      if (closedEl) closedEl.textContent = String(baseRows.reduce((acc, row) => acc + row.closed, 0));
+      if (latestEl) {
+        const latest = baseRows.reduce((acc, row) => latestDateMs(row.latestAssessmentDate) > latestDateMs(acc.latestAssessmentDate) ? row : acc, { latestAssessmentDate: '' });
+        latestEl.textContent = latest.latestAssessmentDate ? RiskModuleUtils.fmtDate(latest.latestAssessmentDate) : '—';
       }
+      if (highestEl) {
+        const highest = baseRows.reduce((acc, row) => bestRisk(acc, row.highestRisk || 'Low'), 'Low');
+        highestEl.textContent = highest;
+      }
+    }
+
+    function syncStatusTabs(rows) {
+      const counts = countByStatus(rows);
+      const tabAll = document.getElementById('tabCountAll');
+      const tabOpen = document.getElementById('tabCountOpen');
+      const tabOverdue = document.getElementById('tabCountOverdue');
+      const tabClosed = document.getElementById('tabCountClosed');
+      if (tabAll) tabAll.textContent = String(counts.all);
+      if (tabOpen) tabOpen.textContent = String(counts.open);
+      if (tabOverdue) tabOverdue.textContent = String(counts.overdue);
+      if (tabClosed) tabClosed.textContent = String(counts.closed);
+
+      const activeStatus = String(document.getElementById('fltStatus').value || '');
+      const tabs = document.getElementById('statusTabs');
+      if (!tabs) return;
+      tabs.querySelectorAll('.ca-status-tab').forEach((button) => {
+        const status = String(button.getAttribute('data-status') || '');
+        const isActive = status === activeStatus;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function buildCsv(rows) {
+      const header = ['Master Reference','Facility','Zone','Open Actions','Overdue Actions','Closed Actions','Latest Assessment Date'];
+      const lines = [header.join(',')];
+      rows.forEach((row) => {
+        lines.push([
+          row.masterRef,
+          row.facilityName,
+          row.zone,
+          row.open,
+          row.overdue,
+          row.closed,
+          RiskModuleUtils.fmtDate(row.latestAssessmentDate)
+        ].map((value) => '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"').join(','));
+      });
+      return lines.join('\n');
+    }
+
+    function downloadCsv(rows) {
+      const blob = new Blob([buildCsv(rows)], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'corrections-corrective-actions.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function renderExportMenu() {
+      const menu = document.getElementById('exportMenu');
+      const btn = document.getElementById('exportBtn');
+      menu.hidden = !state.exportMenuOpen;
+      btn.setAttribute('aria-expanded', state.exportMenuOpen ? 'true' : 'false');
+    }
+
+    function renderPager(total) {
+      const pager = document.getElementById('pager');
+      const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+      state.page = Math.min(state.page, totalPages);
+
+      const pages = [];
+      const pushPage = (p, label) => {
+        pages.push('<button class="ca-page-btn' + (p === state.page ? ' active' : '') + '" data-page="' + p + '">' + (label || p) + '</button>');
+      };
+
+      pages.push('<button class="ca-page-btn" data-page="' + Math.max(1, state.page - 1) + '" ' + (state.page === 1 ? 'disabled' : '') + '>&lsaquo;</button>');
+      if (totalPages <= 5) {
+        for (let p = 1; p <= totalPages; p += 1) pushPage(p);
+      } else {
+        pushPage(1);
+        if (state.page > 3) pages.push('<span style="color:rgba(255,255,255,.34);padding:0 4px;">...</span>');
+        const start = Math.max(2, state.page - 1);
+        const end = Math.min(totalPages - 1, state.page + 1);
+        for (let p = start; p <= end; p += 1) pushPage(p);
+        if (state.page < totalPages - 2) pages.push('<span style="color:rgba(255,255,255,.34);padding:0 4px;">...</span>');
+        pushPage(totalPages);
+      }
+      pages.push('<button class="ca-page-btn" data-page="' + Math.min(totalPages, state.page + 1) + '" ' + (state.page === totalPages ? 'disabled' : '') + '>&rsaquo;</button>');
+      pager.innerHTML = pages.join('');
+      pager.querySelectorAll('button[data-page]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const next = Number(button.getAttribute('data-page') || 1);
+          if (!Number.isFinite(next)) return;
+          state.page = next;
+          render();
+        });
+      });
+    }
+
+    function renderTable(rows) {
+      const tbody = document.getElementById('facilityTbody');
+      const total = rows.length;
+      const pageSize = state.pageSize;
+      const totalPages = Math.max(1, Math.ceil(total / pageSize));
+      state.page = Math.min(state.page, totalPages);
+      const start = (state.page - 1) * pageSize;
+      const pageRows = rows.slice(start, start + pageSize);
+
+      document.getElementById('metaCount').textContent = String(total);
+      document.getElementById('metaCountLabel').textContent = total === 1 ? 'facility' : 'facilities';
+      document.getElementById('resultsMeta').textContent = total
+        ? ('Showing ' + (start + 1) + ' to ' + Math.min(total, start + pageSize) + ' of ' + total + ' ' + (total === 1 ? 'facility' : 'facilities'))
+        : 'Showing 0 to 0 of 0 facilities';
+
+      if (!pageRows.length) {
+        tbody.innerHTML = '<tr><td colspan="7"><div class="ca-empty">No published corrective actions available yet.</div></td></tr>';
+        renderPager(total);
+        return;
+      }
+
+      tbody.innerHTML = pageRows.map((row) => {
+        const refToken = encodeURIComponent(row.masterRef || '');
+        const facilityToken = encodeURIComponent(row.facilityName || 'Unknown Facility');
+        const rowClass = String(row.highestRisk || 'low').toLowerCase();
+        return ''
+          + '<tr class="ca-row ' + esc(rowClass) + '">'
+          + '<td><div class="ca-ref"><span class="main">' + esc(row.masterRef) + '</span><span class="sub">' + esc((row.zone && row.zone !== '-') ? row.zone : 'Fuel Station') + ' · ' + esc(RiskModuleUtils.fmtDate(row.latestAssessmentDate)) + '</span></div></td>'
+          + '<td><div class="ca-fac"><span class="main">' + esc(row.facilityName) + '</span><span class="sub">' + esc(row.zone || '-') + '</span></div></td>'
+          + '<td><span class="ca-pill open">' + esc(row.open) + '</span></td>'
+          + '<td><span class="ca-pill overdue">' + esc(row.overdue) + '</span></td>'
+          + '<td><span class="ca-pill closed">' + esc(row.closed) + '</span></td>'
+          + '<td><div class="ca-date"><span class="main">' + esc(RiskModuleUtils.fmtDate(row.latestAssessmentDate)) + '</span><span class="sub">' + esc(row.latestAssessmentDate ? relativeDay(row.latestAssessmentDate) : '-') + '</span></div></td>'
+          + '<td><button class="ca-action-btn" data-ref="' + refToken + '" data-facility="' + facilityToken + '">View Details <span aria-hidden="true">›</span></button></td>'
+          + '</tr>';
+      }).join('');
+
+      tbody.querySelectorAll('button[data-ref]').forEach((button) => {
+        button.addEventListener('click', () => {
+          openDetail(decodeURIComponent(button.getAttribute('data-ref')), decodeURIComponent(button.getAttribute('data-facility') || ''));
+        });
+      });
+
+      renderPager(total);
+    }
+
+    function relativeDay(value) {
+      const d = new Date(value || 0);
+      if (!Number.isFinite(d.getTime())) return '-';
+      const now = new Date();
+      const diff = Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+      if (diff <= 0) return 'Today';
+      if (diff === 1) return '1 day ago';
+      return diff + ' days ago';
+    }
+
+    function renderZoneOptions(rows) {
+      const sel = document.getElementById('fltZone');
+      const current = String(sel.value || '');
+      const zones = Array.from(new Set(rows.map((row) => String(row.zone || '').trim()).filter(Boolean))).sort();
+      sel.innerHTML = '<option value="">All Zones</option>' + zones.map((zone) => '<option value="' + esc(zone) + '">' + esc(zone) + '</option>').join('');
+      if (zones.some((zone) => String(zone).toLowerCase() === current.toLowerCase())) {
+        sel.value = current;
+      }
+    }
+
+    function render() {
       const actions = (RiskModuleUtils.getPublishedActions
         ? RiskModuleUtils.getPublishedActions({ latestByMaster: true })
         : RiskModuleUtils.getActions()
@@ -182,39 +1361,66 @@
         ? RiskModuleUtils.getPublishedLatestRecordsByMaster(RiskModuleUtils.getRecords())
         : RiskModuleUtils.getRecords()
       );
-      const rows = summarizeActionsByMaster(actions, records);
-      const tbody = document.getElementById('facilityTbody');
+      const baseRows = summarizeActionsByMaster(actions, records);
+      state.allRows = baseRows;
+      renderZoneOptions(baseRows);
+      syncStatusTabs(baseRows);
+      const filtered = applyFilters(baseRows);
+      state.filteredRows = filtered;
+      setSummary(baseRows);
+      renderTable(filtered);
+    }
 
-      if (!rows.length) {
-        tbody.innerHTML = '<tr><td colspan="8">No published corrective actions available yet.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = rows.map((row) => {
-        const facilityToken = encodeURIComponent(row.facilityName || 'Unknown Facility');
-        const refToken = encodeURIComponent(row.masterRef || '');
-        return '<tr>' +
-          '<td><a href="risk-corrections-detail.html?v=20260319-corrwidth1&ref=' + refToken + '&facility=' + facilityToken + '&_=' + Date.now() + '" style="color:var(--or);font-weight:700;">' + RiskModuleUtils.esc(row.masterRef) + '</a></td>' +
-          '<td>' + RiskModuleUtils.esc(row.facilityName) + '</td>' +
-          '<td>' + RiskModuleUtils.esc(row.open) + '</td>' +
-          '<td><span class="rm-badge ' + (row.overdue > 0 ? 'b-overdue' : 'b-draft') + '">' + RiskModuleUtils.esc(row.overdue) + '</span></td>' +
-          '<td>' + RiskModuleUtils.esc(row.closed) + '</td>' +
-          '<td>' + RiskModuleUtils.esc(RiskModuleUtils.fmtDate(row.latestAssessmentDate)) + '</td>' +
-          '<td><span class="rm-badge ' + riskClass(row.highestRisk) + '">' + RiskModuleUtils.esc(row.highestRisk) + '</span></td>' +
-          '<td><button class="rm-btn" data-ref="' + refToken + '" data-facility="' + facilityToken + '">Open</button></td>' +
-        '</tr>';
-      }).join('');
-
-      Array.from(tbody.querySelectorAll('button[data-ref]')).forEach((btn) => {
-        btn.addEventListener('click', function () {
-          openDetail(decodeURIComponent(btn.getAttribute('data-ref')), decodeURIComponent(btn.getAttribute('data-facility') || ''));
-        });
-      });
+    function resetFilters() {
+      document.getElementById('fltSearch').value = '';
+      document.getElementById('fltZone').value = '';
+      document.getElementById('fltRisk').value = '';
+      document.getElementById('fltStatus').value = '';
+      document.getElementById('fltDateRange').value = '';
+      state.page = 1;
+      render();
     }
 
     function init() {
       document.getElementById('backLandingBtn').addEventListener('click', RiskModuleUtils.goLanding);
-      document.getElementById('conductAssessmentBtn').addEventListener('click', RiskModuleUtils.goFacilityDetails);
+      document.getElementById('applyFiltersBtn').addEventListener('click', () => { state.page = 1; render(); });
+      document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+      document.getElementById('pageSizeSelect').addEventListener('change', (event) => {
+        state.pageSize = Number(event.target.value || 5) || 5;
+        state.page = 1;
+        render();
+      });
+
+      const exportBtn = document.getElementById('exportBtn');
+      const exportMenu = document.getElementById('exportMenu');
+      exportBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        state.exportMenuOpen = !state.exportMenuOpen;
+        renderExportMenu();
+      });
+      document.getElementById('exportCsvBtn').addEventListener('click', () => {
+        state.exportMenuOpen = false;
+        renderExportMenu();
+        downloadCsv(state.filteredRows.length ? state.filteredRows : state.allRows);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('#exportBtn') && !exportMenu.contains(event.target)) {
+          state.exportMenuOpen = false;
+          renderExportMenu();
+        }
+      });
+      document.getElementById('fltSearch').addEventListener('input', () => { state.page = 1; render(); });
+      document.getElementById('fltZone').addEventListener('change', () => { state.page = 1; render(); });
+      document.getElementById('fltRisk').addEventListener('change', () => { state.page = 1; render(); });
+      document.getElementById('fltStatus').addEventListener('change', () => { state.page = 1; render(); });
+      document.getElementById('fltDateRange').addEventListener('change', () => { state.page = 1; render(); });
+      document.getElementById('statusTabs').addEventListener('click', (event) => {
+        const button = event.target.closest('.ca-status-tab');
+        if (!button) return;
+        document.getElementById('fltStatus').value = button.getAttribute('data-status') || '';
+        state.page = 1;
+        render();
+      });
       render();
     }
 

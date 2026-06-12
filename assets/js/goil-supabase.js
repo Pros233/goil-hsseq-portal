@@ -69,6 +69,146 @@
     return ref + '::' + String(ver);
   }
 
+  function parseTime(value) {
+    var stamp = Date.parse(value || '');
+    return Number.isFinite(stamp) ? stamp : 0;
+  }
+
+  function getRecordMoment(rec, syncedAt) {
+    if (!rec || typeof rec !== 'object') return parseTime(syncedAt);
+    var stamps = [
+      rec.lastUpdatedAt,
+      rec.last_updated_at,
+      rec.updatedAt,
+      rec.updated_at,
+      rec.publishedAt,
+      rec.published_at,
+      rec.final_submitted_at,
+      rec.correctiveSubmittedAt,
+      rec.corrective_submitted_at,
+      rec.checklistSubmittedAt,
+      rec.checklist_submitted_at,
+      rec.submissionRiskCalculatedAt,
+      rec.submission_risk_calculated_at,
+      rec.overallRiskCalculatedAt,
+      rec.overall_risk_calculated_at,
+      rec.snapshotBackfilledAt,
+      rec.snapshot_backfilled_at,
+      syncedAt
+    ];
+    return stamps.reduce(function (maxStamp, value) {
+      var stamp = parseTime(value);
+      return stamp > maxStamp ? stamp : maxStamp;
+    }, 0);
+  }
+
+  function getChecklistPayloadRank(rec) {
+    if (!rec || typeof rec !== 'object') return 0;
+    var checklist = rec.checklistSnapshot && typeof rec.checklistSnapshot === 'object'
+      ? rec.checklistSnapshot
+      : rec.checklist_snapshot;
+    if (!checklist || typeof checklist !== 'object') return 0;
+    var rank = 1;
+    if (checklist.catalog && typeof checklist.catalog === 'object') rank += 1;
+    if (checklist.sectionStates && typeof checklist.sectionStates === 'object') rank += 1;
+    if (Array.isArray(checklist.sectionsMeta) && checklist.sectionsMeta.length) rank += 1;
+    return rank;
+  }
+
+  function getCorrectivePayloadRank(rec) {
+    if (!rec || typeof rec !== 'object') return 0;
+    var items = [];
+    if (Array.isArray(rec.correctiveItems)) items = rec.correctiveItems;
+    else if (Array.isArray(rec.corrective_items)) items = rec.corrective_items;
+    else if (rec.correctiveSession && Array.isArray(rec.correctiveSession.items)) items = rec.correctiveSession.items;
+    else if (rec.corrective_session && Array.isArray(rec.corrective_session.items)) items = rec.corrective_session.items;
+    if (!items.length) return 0;
+
+    var hasDetailedItem = items.some(function (item) {
+      if (!item || typeof item !== 'object') return false;
+      var code = String(item.sourceCode || item.code || '').trim();
+      var sectionId = String(item.sectionId || '').trim().toLowerCase();
+      var question = String(item.sourceQuestion || item.issue || '').trim().toLowerCase();
+      if (sectionId && sectionId !== 'summary') return true;
+      if (code && !/^(A\d+|ITEM-\d+)$/i.test(code)) return true;
+      return question && question.indexOf('assessment generated corrective actions') < 0;
+    });
+
+    return hasDetailedItem ? 3 : 1;
+  }
+
+  function getStatusRank(rec) {
+    if (!rec || typeof rec !== 'object') return 0;
+    var status = String(rec.status || rec.currentStatus || '').trim().toLowerCase();
+    if (rec.is_published || rec.final_submitted_at || rec.publishedAt || status === 'published') return 50;
+    if (status.indexOf('reopened') >= 0 || status.indexOf('revised') >= 0) return 40;
+    if (status.indexOf('pending_corrective') >= 0 || status.indexOf('pending corrective') >= 0) return 30;
+    if (status.indexOf('draft') >= 0 || status.indexOf('progress') >= 0) return 20;
+    return status ? 10 : 0;
+  }
+
+  function isRemotePreferred(localRec, remoteRec, remoteSyncedAt) {
+    var localMoment = getRecordMoment(localRec);
+    var remoteMoment = getRecordMoment(remoteRec, remoteSyncedAt);
+    var localRank = getStatusRank(localRec);
+    var remoteRank = getStatusRank(remoteRec);
+    var localChecklistRank = getChecklistPayloadRank(localRec);
+    var remoteChecklistRank = getChecklistPayloadRank(remoteRec);
+    var localCorrectiveRank = getCorrectivePayloadRank(localRec);
+    var remoteCorrectiveRank = getCorrectivePayloadRank(remoteRec);
+
+    if (remoteMoment !== localMoment) return remoteMoment > localMoment;
+    if (remoteRank !== localRank) return remoteRank > localRank;
+    if (remoteChecklistRank !== localChecklistRank) return remoteChecklistRank > localChecklistRank;
+    if (remoteCorrectiveRank !== localCorrectiveRank) return remoteCorrectiveRank > localCorrectiveRank;
+    return false;
+  }
+
+  function shouldPushLocal(localRec, remoteRec, remoteSyncedAt) {
+    if (!remoteRec) return true;
+    if (isRemotePreferred(localRec, remoteRec, remoteSyncedAt)) return false;
+
+    var localMoment = getRecordMoment(localRec);
+    var remoteMoment = getRecordMoment(remoteRec, remoteSyncedAt);
+    var localRank = getStatusRank(localRec);
+    var remoteRank = getStatusRank(remoteRec);
+    var localChecklistRank = getChecklistPayloadRank(localRec);
+    var remoteChecklistRank = getChecklistPayloadRank(remoteRec);
+    var localCorrectiveRank = getCorrectivePayloadRank(localRec);
+    var remoteCorrectiveRank = getCorrectivePayloadRank(remoteRec);
+
+    if (localMoment !== remoteMoment) return localMoment > remoteMoment;
+    if (localRank !== remoteRank) return localRank > remoteRank;
+    if (localChecklistRank !== remoteChecklistRank) return localChecklistRank > remoteChecklistRank;
+    if (localCorrectiveRank !== remoteCorrectiveRank) return localCorrectiveRank > remoteCorrectiveRank;
+    return false;
+  }
+
+  function emitRecordsSynced(detail) {
+    try {
+      window.dispatchEvent(new CustomEvent('goil:synced-records', { detail: detail || {} }));
+    } catch (e) {}
+  }
+
+  async function fetchRemoteRecordIndex() {
+    var res = await db
+      .from(TBL_RECORDS)
+      .select('inspection_ref, version_number, record_data, synced_at');
+
+    if (res.error) {
+      console.warn('[GoilSync] Remote index error:', res.error.message);
+      return {};
+    }
+
+    return (res.data || []).reduce(function (index, row) {
+      var rec = row && row.record_data;
+      if (!rec) return index;
+      var key = recordKey(rec);
+      index[key] = row;
+      return index;
+    }, {});
+  }
+
   function currentUserEmail() {
     var ctx = window.GOIL_AUTH_CONTEXT;
     return (ctx && ctx.user && (ctx.user.email || ctx.user.username)) || '';
@@ -80,10 +220,17 @@
     var records = readLS(LS_RECORDS);
     if (!records.length) return 0;
 
+    var remoteIndex = await fetchRemoteRecordIndex();
+
     var rows = records
       .map(function (r) {
         var ref = r.inspectionRef || r.inspection_ref || r.referenceNo || '';
         if (!ref) return null;
+        var key = recordKey(r);
+        var remoteRow = remoteIndex[key];
+        if (!shouldPushLocal(r, remoteRow && remoteRow.record_data, remoteRow && remoteRow.synced_at)) {
+          return null;
+        }
         return {
           inspection_ref: ref,
           version_number: r.version || r.version_number || 1,
@@ -155,6 +302,7 @@
     local.forEach(function (r) { localIndex[recordKey(r)] = r; });
 
     var added = 0;
+    var updated = 0;
     remote.forEach(function (row) {
       var rec = row.record_data;
       if (!rec) return;
@@ -162,15 +310,21 @@
       if (!localIndex[key]) {
         localIndex[key] = rec;
         added++;
+        return;
+      }
+      if (isRemotePreferred(localIndex[key], rec, row.synced_at)) {
+        localIndex[key] = rec;
+        updated++;
       }
     });
 
-    if (added > 0) {
+    if (added > 0 || updated > 0) {
       writeLS(LS_RECORDS, Object.values(localIndex));
-      console.log('[GoilSync] Pulled ' + added + ' new record(s) from Supabase.');
+      console.log('[GoilSync] Pulled ' + added + ' new and ' + updated + ' updated record(s) from Supabase.');
+      emitRecordsSynced({ added: added, updated: updated, total: added + updated });
     }
 
-    return added;
+    return added + updated;
   }
 
   // ── Full sync ──────────────────────────────────────────────────────────────
