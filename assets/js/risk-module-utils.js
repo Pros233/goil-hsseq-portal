@@ -1436,6 +1436,47 @@
     var publishedLatestByMaster = getPublishedLatestRecordsByMaster(records);
     var publishedActions = getPublishedActions({ records: records, latestByMaster: true });
 
+    // Drop orphaned records that have no valid inspectionRef (keyed __UNREF__ during grouping).
+    function hasValidRef(record) {
+      return !!(record && String(
+        record.inspectionRef || record.assessment_reference || record.assessmentReference || ''
+      ).trim());
+    }
+    latestByMaster = latestByMaster.filter(hasValidRef);
+    publishedLatestByMaster = publishedLatestByMaster.filter(hasValidRef);
+
+    // For non-admin users scope the unpublished count to their own assessments only.
+    // Admins and supervisors see the full org-wide picture.
+    var currentUser = getCurrentUser();
+    var userRole = normalizeRole(currentUser.role || currentUser.userRole || currentUser.accessRole);
+    var isAdmin = isAdminLikeRole(userRole) || !!(getAuthContext() && getAuthContext().isAdmin);
+
+    var unpublishedPool = latestByMaster.filter(function (record) {
+      return !record.is_published;
+    });
+
+    if (!isAdmin) {
+      // Build candidate identity strings for the current user.
+      var userCandidates = [
+        currentUser.email,
+        currentUser.username,
+        currentUser.full_name,
+        currentUser.fullName,
+        currentUser.name,
+        currentUser.displayName
+      ].map(function (v) { return String(v || '').trim().toLowerCase(); }).filter(Boolean);
+
+      if (userCandidates.length) {
+        unpublishedPool = unpublishedPool.filter(function (record) {
+          var owner = String(
+            record.assessor_name || record.inspector || record.assessor || ''
+          ).trim().toLowerCase();
+          // Include if owned by this user OR has no owner (could be theirs).
+          return !owner || userCandidates.indexOf(owner) >= 0;
+        });
+      }
+    }
+
     // Dashboard card: keep "Critical Items" aligned to published operational risk load.
     var criticalItems = publishedActions.filter(function (action) {
       var status = String(action.status || '').toLowerCase();
@@ -1451,11 +1492,6 @@
       return status === 'open' || status === 'in progress' || status === 'overdue' || status === 'closed pending verification';
     }).length;
 
-    // Uncompleted card: distinct master references whose latest record is not published.
-    var unpublishedMasterCount = latestByMaster.filter(function (record) {
-      return !record.is_published;
-    }).length;
-
     // Published card: same master-reference scope as Published Register default latest view.
     var publishedMasterCount = publishedLatestByMaster.length;
 
@@ -1464,7 +1500,7 @@
 
     return {
       dashboard: criticalItems,
-      uncompleted: unpublishedMasterCount,
+      uncompleted: unpublishedPool.length,
       published: publishedMasterCount,
       corrections: correctiveOpenOrOverdue,
       facilities: publishedFacilitiesCount
