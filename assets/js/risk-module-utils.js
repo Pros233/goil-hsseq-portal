@@ -495,7 +495,9 @@
       var expectedCount = Math.max(1, reopenCount + 1);
       if (expectedCount > family.length) expectedCount = family.length;
 
+      var wasTrimmed = false;
       if (family.length > expectedCount) {
+        wasTrimmed = true;
         if (expectedCount <= 1) {
           family = [family[family.length - 1]];
         } else {
@@ -551,29 +553,53 @@
         writeJSON(metaKey, meta);
       }
 
-      if (expectedCount === 2 && family.length === 2) {
-        var keepVersions = new Set([
-          getRecordVersionNumber(family[0].record),
-          getRecordVersionNumber(family[1].record)
-        ]);
+      // Remove discarded records/snapshots/actions whenever the family was trimmed.
+      // Previously this only ran for expectedCount===2; now it covers all trim cases,
+      // preventing orphaned old-version entries from causing duplicate action IDs.
+      if (wasTrimmed) {
+        var keepVersions = new Set(family.map(function (e) { return getRecordVersionNumber(e.record); }));
         records = records.filter(function (record) {
           if (!isPublishedRecord(record)) return true;
-          var recordRef = getParentInspectionReference(record);
-          if (recordRef !== parentRef) return true;
+          var rRef = getParentInspectionReference(record);
+          if (rRef !== parentRef) return true;
           return keepVersions.has(getRecordVersionNumber(record));
         });
         snapshots = snapshots.filter(function (snapshot) {
-          var snapshotRef = stripVersionSuffix(normalizeReference(snapshot.inspectionRef || snapshot.referenceNo || ''));
-          if (snapshotRef !== parentRef) return true;
+          var sRef = stripVersionSuffix(normalizeReference(snapshot.inspectionRef || snapshot.referenceNo || ''));
+          if (sRef !== parentRef) return true;
           return keepVersions.has(normalizeVersionNumber(snapshot.version || snapshot.version_number || parseVersionFromToken(snapshot.snapshotId) || 0));
         });
         actions = actions.filter(function (action) {
-          var actionRef = stripVersionSuffix(normalizeReference(action.inspectionRef || action.assessment_reference || action.assessmentReference || ''));
-          if (actionRef !== parentRef) return true;
+          var aRef = stripVersionSuffix(normalizeReference(action.inspectionRef || action.assessment_reference || action.assessmentReference || ''));
+          if (aRef !== parentRef) return true;
           return keepVersions.has(normalizeVersionNumber(action.version_number || action.version || actionVersionFromId(action.actionId)));
         });
+        mutated = true;
       }
     });
+
+    // Deduplicate actions by actionId — renaming during version normalisation can
+    // produce collisions when old-version entries share the same renamed ID.
+    var seenActionIds = {};
+    var dedupedActions = [];
+    actions.forEach(function (action) {
+      var id = action && action.actionId;
+      if (!id) { dedupedActions.push(action); return; }
+      if (!Object.prototype.hasOwnProperty.call(seenActionIds, id)) {
+        seenActionIds[id] = dedupedActions.length;
+        dedupedActions.push(action);
+      } else {
+        // Keep the entry with the higher version number (more up-to-date).
+        var existingIdx = seenActionIds[id];
+        var existingV = normalizeVersionNumber(dedupedActions[existingIdx].version_number || dedupedActions[existingIdx].version || 0);
+        var incomingV = normalizeVersionNumber(action.version_number || action.version || 0);
+        if (incomingV > existingV) dedupedActions[existingIdx] = action;
+      }
+    });
+    if (dedupedActions.length !== actions.length) {
+      actions = dedupedActions;
+      mutated = true;
+    }
 
     if (mutated) {
       writeJSON(recordKey, records);
@@ -1056,6 +1082,17 @@
   function seedActionsFromRecords(records) {
     var stored = readJSON(ACTION_KEY, []);
     if (!Array.isArray(stored)) stored = [];
+
+    // Safety-net: deduplicate by actionId in case a previous normalisation pass
+    // created collisions (e.g. after version renumbering without audit trail).
+    var _seenIds = {};
+    stored = stored.filter(function (action) {
+      var id = action && action.actionId;
+      if (!id) return true;
+      if (_seenIds[id]) return false;
+      _seenIds[id] = true;
+      return true;
+    });
 
     var merged = stored.slice();
     var snapshots = getSnapshots();
