@@ -373,6 +373,12 @@ input[type=file]{display:none}
   .find-grid{grid-template-columns:1fr}
   .section-finding-bar{display:grid}
 }
+@media(max-width:480px){
+  .top-nav{gap:8px}
+  .footer-nav{flex-wrap:wrap;gap:6px}
+  .footer-nav .nav-btn{flex:1;min-width:100px;justify-content:center}
+  .preset-row{grid-template-columns:1fr}
+}
 
 /* --- PRE-SET LOCKED VALUE DISPLAY --- */
 .preset-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}

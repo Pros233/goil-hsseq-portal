@@ -400,6 +400,12 @@ body{
   .preview-grid{grid-template-columns:1fr 1fr}
   .card-body{padding:20px 16px}
   .card-head{padding:20px 16px}
+  .topbar{padding:0 14px}
+  .topbar-brand{display:none}
+  .topbar-divider{display:none}
+  .topbar-logo{height:28px}
+  .page-footer{flex-wrap:wrap;gap:8px}
+  .page-footer .btn{flex:1;min-width:120px}
 }
 </style>
 </head>
@@ -661,6 +667,10 @@ body{
     Details are saved before proceeding
   </div>
   <div class="btn-group">
+    <button class="btn btn-ghost" onclick="window.location.href='dashboard.html'">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6.5L8 2l6 4.5V14a.5.5 0 0 1-.5.5h-4V10H6.5v4.5h-4A.5.5 0 0 1 2 14z"/></svg>
+      Home
+    </button>
     <button class="btn btn-ghost" onclick="goBack()">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 12L6 8l4-4"/></svg>
       Back

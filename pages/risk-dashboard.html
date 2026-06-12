@@ -18,8 +18,8 @@
 
     /* ── Page header ── */
     .db-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;}
-    .db-back-link{background:none;border:none;color:rgba(255,255,255,.38);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;padding:0 0 6px;letter-spacing:.3px;transition:color .15s;}
-    .db-back-link:hover{color:var(--or);}
+    .db-back-link{background:none;border:none;color:#F47920;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;cursor:pointer;padding:0 0 6px;letter-spacing:.3px;transition:color .15s;}
+    .db-back-link:hover{color:#ff8c3a;}
     .db-eyebrow{font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--or);margin-bottom:2px;}
     .db-page-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,5vw,80px);font-weight:900;line-height:.85;text-transform:uppercase;color:#fff;letter-spacing:-1px;}
     .db-page-sub{margin-top:8px;font-size:13px;color:rgba(255,255,255,.45);max-width:600px;line-height:1.45;}
@@ -351,7 +351,6 @@
   <header class="db-page-header">
     <div>
       <button class="db-back-link" id="backLandingBtn">&#8592; Assessment Management Center</button>
-      <div class="db-eyebrow">Executive Command View</div>
       <h1 class="db-page-title">Dashboard</h1>
       <p class="db-page-sub">Live risk posture and corrective-action intelligence across facilities, zones, and assessors.</p>
     </div>
@@ -410,6 +409,7 @@
     </button>
     <button class="db-filter-conduct" type="button" id="conductAssessmentBtn">+ Conduct Assessment</button>
   </div>
+
 
   <!-- ── 6 KPI cards ── -->
   <div class="db-kpi-grid">
@@ -687,7 +687,7 @@
       .replace(/(?:\s*\/\s*|[-_ ]+)v(?:ersion)?[-_ ]?\d+$/i,'')
       .replace(/[-_ ]+$/,'').trim();
   }
-  function toMs(v){const ms=new Date(v||0).getTime();return Number.isFinite(ms)?ms:0;}
+  function toMs(v){if(!v)return 0;const ms=new Date(v).getTime();return(Number.isFinite(ms)&&ms>0)?ms:0;}
   function fmtScore(v){
     const n=Number(v||0);if(!Number.isFinite(n))return'0';
     const r=Math.round(n*10)/10;return Number.isInteger(r)?String(Math.trunc(r)):String(r);
@@ -759,8 +759,10 @@
   }
   function getRecordDateLabel(r){return r.assessment_date||r.inspectionDate||r.final_submitted_at||r.publishedAt||'';}
   function monthKeyFromTs(ts){
-    const d=new Date(ts||0);if(Number.isNaN(d.getTime()))return'';
-    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    if(!ts)return'';
+    const d=new Date(ts);if(Number.isNaN(d.getTime()))return'';
+    const y=d.getFullYear();if(y<2000||y>2100)return'';
+    return y+'-'+String(d.getMonth()+1).padStart(2,'0');
   }
   function monthLabel(k){
     if(!k)return'-';const p=k.split('-');if(p.length!==2)return k;
