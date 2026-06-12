@@ -1027,7 +1027,35 @@ function toast(msg, type){
   }, 3400);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+function applyCAReadOnlyBannerIfNeeded(attempt) {
+  attempt = attempt || 0;
+  if (!window.RiskModuleUtils || !window.GOIL_AUTH_CONTEXT) {
+    if (attempt < 40) setTimeout(() => applyCAReadOnlyBannerIfNeeded(attempt + 1), 150);
+    return;
+  }
+  const records = RiskModuleUtils.getRecords ? RiskModuleUtils.getRecords() : [];
+  const ref = String((facility && facility.referenceNo) || '').trim();
+  if (!ref) return;
+  const record = records.find(r => String(r.inspectionRef || r.inspection_ref || r.referenceNo || '').trim() === ref);
+  if (!record) return;
+  const currentUser = RiskModuleUtils.getCurrentUser ? RiskModuleUtils.getCurrentUser() : {};
+  const canEdit = RiskModuleUtils.canUserEditRecord ? RiskModuleUtils.canUserEditRecord(record, currentUser) : true;
+  if (canEdit) return;
+  // Force read-only
+  readOnly = true;
+  const submitBtn = document.getElementById('finalSubmitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+  document.querySelectorAll('.ca-action-btn, .ca-edit-btn, .ca-save-btn').forEach(btn => { btn.disabled = true; });
+  if (document.getElementById('goil-readonly-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'goil-readonly-banner';
+  banner.style.cssText = 'position:sticky;top:0;left:0;right:0;z-index:9000;background:#2d2200;border-bottom:2px solid #f59e0b;padding:9px 20px;display:flex;align-items:center;gap:10px;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;color:#f59e0b;';
+  banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>\u00a0View Only \u2014 Only the original assessor or an admin can edit this assessment.';
+  const main = document.querySelector('.ca-main') || document.querySelector('main') || document.body;
+  main.prepend(banner);
+}
+
+document.addEventListener('DOMContentLoaded', () => { init(); applyCAReadOnlyBannerIfNeeded(); });
 window.addEventListener('beforeunload', event => {
   if (correctiveDirty) {
     event.preventDefault();

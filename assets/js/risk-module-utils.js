@@ -1946,6 +1946,28 @@
     return candidates.indexOf(recordOwner) >= 0;
   }
 
+  function canUserEditRecord(record, user) {
+    var actor = user || getCurrentUser();
+    var role = normalizeRole(actor.role || actor.userRole || actor.accessRole);
+    if (isAdminLikeRole(role) || !!(getAuthContext() && getAuthContext().isAdmin)) return true;
+
+    var recordOwner = String(record && (record.assessor_name || record.inspector || record.assessor) || '').trim().toLowerCase();
+    if (!recordOwner) return true; // legacy records with no owner set — allow
+
+    var candidates = [
+      actor.email,
+      actor.username,
+      actor.full_name,
+      actor.fullName,
+      actor.name,
+      actor.displayName
+    ].map(function (value) {
+      return String(value || '').trim().toLowerCase();
+    }).filter(Boolean);
+
+    return candidates.indexOf(recordOwner) >= 0;
+  }
+
   function canUserVerifyAction(action, user) {
     var actor = user || getCurrentUser();
     var role = normalizeRole(actor.role || actor.userRole || actor.accessRole);
@@ -2002,6 +2024,7 @@
     canUserCloseAction: canUserCloseAction,
     canUserReopenRecord: canUserReopenRecord,
     canUserReviseRecord: canUserReviseRecord,
+    canUserEditRecord: canUserEditRecord,
     canUserVerifyAction: canUserVerifyAction,
     hasConfirmedClosure: hasConfirmedClosure,
     isOverrideRole: isOverrideRole,

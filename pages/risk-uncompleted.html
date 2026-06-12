@@ -623,6 +623,20 @@
       transform: translateY(-1px);
     }
 
+    .uc-btn-view-only {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      border-color: rgba(255,255,255,.06) !important;
+      background: transparent !important;
+      color: var(--wh3, #8B949E) !important;
+    }
+    .uc-btn-view-only:hover {
+      transform: none !important;
+      border-color: rgba(255,255,255,.06) !important;
+      background: transparent !important;
+      color: var(--wh3, #8B949E) !important;
+    }
+
     .uc-empty {
       padding: 28px 20px;
       text-align: center;
@@ -832,6 +846,13 @@
       border-color: rgba(0,0,0,.12) !important;
       color: #1c1e21 !important;
       box-shadow: none !important;
+    }
+
+    html.light-mode .uc-btn-view-only,
+    html.light-mode .uc-btn-view-only:hover {
+      background: transparent !important;
+      border-color: rgba(0,0,0,.08) !important;
+      color: #9ca3af !important;
     }
 
     html.light-mode .uc-btn:hover,
@@ -1478,6 +1499,8 @@
         return;
       }
 
+      const currentUser = RiskModuleUtils.getCurrentUser ? RiskModuleUtils.getCurrentUser() : {};
+
       tbody.innerHTML = visibleRows.map(function (row) {
         const urgent = row.overdueCA > 0;
         const parts = updatedParts(row.lastUpdated);
@@ -1485,6 +1508,15 @@
         const facilitySub = row.facilityType && row.facilityType.toLowerCase() !== row.facility.toLowerCase()
           ? '<span class="sub">' + RiskModuleUtils.esc(row.facilityType) + '</span>'
           : '';
+
+        const canEdit = RiskModuleUtils.canUserEditRecord
+          ? RiskModuleUtils.canUserEditRecord(row.latestRecord, currentUser)
+          : true;
+
+        const actionBtn = canEdit
+          ? '<button class="uc-btn" data-action="continue" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '" data-status="' + RiskModuleUtils.esc(row.status) + '">Resume Assessment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>'
+          : '<button class="uc-btn uc-btn-view-only" disabled title="You can view this assessment but only the assessor or an admin can edit it.">View Only <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+
         return ''
           + '<tr class="' + (urgent ? 'uc-row-urgent' : '') + '">'
           + '<td><div class="uc-ref-cell"><div class="uc-ref-lines"><span class="main">' + RiskModuleUtils.esc(row.masterRef) + '</span></div></div></td>'
@@ -1493,7 +1525,7 @@
           + '<td><span class="uc-stage-pill ' + stageTone + '">' + RiskModuleUtils.esc(row.statusLabel) + '</span></td>'
           + '<td><div class="uc-progress"><span class="pct">' + RiskModuleUtils.esc(String(row.progress)) + '%</span><div class="uc-progress-line"><span class="uc-progress-fill ' + stageTone + '" style="width:' + RiskModuleUtils.esc(String(row.progress)) + '%;"></span></div><span class="sub">' + RiskModuleUtils.esc(progressSummary(row.progress)) + '</span></div></td>'
           + '<td><div class="uc-updated"><span class="date">' + RiskModuleUtils.esc(parts.date) + '</span><span class="time">' + RiskModuleUtils.esc(parts.time) + '</span><span class="rel">' + RiskModuleUtils.esc(parts.relative) + '</span></div></td>'
-          + '<td class="uc-col-action-cell"><div class="uc-actions"><button class="uc-btn" data-action="continue" data-ref="' + RiskModuleUtils.esc(row.masterRef) + '" data-version="' + RiskModuleUtils.esc(String(row.latestVersion)) + '" data-status="' + RiskModuleUtils.esc(row.status) + '">Resume Assessment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button></div></td>'
+          + '<td class="uc-col-action-cell"><div class="uc-actions">' + actionBtn + '</div></td>'
           + '</tr>';
       }).join('');
 

@@ -3549,6 +3549,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toast('Checklist is locked (submitted snapshot). Tabs are visible in read-only mode until reopened for revision.', 'info');
     }
   }
+  applyReadOnlyBannerIfNeeded();
 
   const findingOverlay = document.getElementById('findingOverlay');
   if (findingOverlay) {
@@ -3631,12 +3632,44 @@ function loadSavedState() {
   if (state.sectionStates.af) state.sectionStates.af.status = state.findings.length ? 'completed' : 'not-started';
 }
 
+function isReadOnlyForCurrentUser() {
+  if (!window.RiskModuleUtils || !window.GOIL_AUTH_CONTEXT) return false;
+  const records = RiskModuleUtils.getRecords ? RiskModuleUtils.getRecords() : [];
+  const facility = RiskModuleUtils.readJSON ? RiskModuleUtils.readJSON('goil_facility_details', {}) : {};
+  const ref = String(facility.referenceNo || facility.inspection_ref || '').trim();
+  if (!ref) return false;
+  const record = records.find(r => String(r.inspectionRef || r.inspection_ref || r.referenceNo || '').trim() === ref);
+  if (!record) return false;
+  const currentUser = RiskModuleUtils.getCurrentUser ? RiskModuleUtils.getCurrentUser() : {};
+  return !(RiskModuleUtils.canUserEditRecord ? RiskModuleUtils.canUserEditRecord(record, currentUser) : true);
+}
+
 function guardChecklistEditable() {
+  if (isReadOnlyForCurrentUser()) {
+    toast('View only — only the original assessor or an admin can edit this assessment.', 'warn');
+    return false;
+  }
   if (!window.GoilWorkflow) return true;
   const meta = window.GoilWorkflow.getMeta(state.facility || {});
   if (!window.GoilWorkflow.isChecklistLocked(meta)) return true;
   toast('Checklist is locked. Reopen for revision to edit answers.', 'warn');
   return false;
+}
+
+function applyReadOnlyBannerIfNeeded(attempt) {
+  attempt = attempt || 0;
+  if (!window.RiskModuleUtils || !window.GOIL_AUTH_CONTEXT) {
+    if (attempt < 40) setTimeout(() => applyReadOnlyBannerIfNeeded(attempt + 1), 150);
+    return;
+  }
+  if (!isReadOnlyForCurrentUser()) return;
+  if (document.getElementById('goil-readonly-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'goil-readonly-banner';
+  banner.style.cssText = 'position:sticky;top:0;left:0;right:0;z-index:9000;background:#2d2200;border-bottom:2px solid #f59e0b;padding:9px 20px;display:flex;align-items:center;gap:10px;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;color:#f59e0b;';
+  banner.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>\u00a0View Only \u2014 Only the original assessor or an admin can edit this assessment.';
+  const main = document.querySelector('.checklist-main') || document.querySelector('main') || document.body;
+  main.prepend(banner);
 }
 
 function buildSectionProgress() {
