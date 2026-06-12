@@ -1482,19 +1482,16 @@
     latestByMaster = latestByMaster.filter(hasValidRef);
     publishedLatestByMaster = publishedLatestByMaster.filter(hasValidRef);
 
-    // For non-admin users scope the unpublished count to their own assessments only.
-    // Admins and supervisors see the full org-wide picture.
+    // For non-admin users scope all counts to their own assessments only.
+    // Admins see the full org-wide picture.
     var currentUser = getCurrentUser();
     var userRole = normalizeRole(currentUser.role || currentUser.userRole || currentUser.accessRole);
     var isAdmin = isAdminLikeRole(userRole) || !!(getAuthContext() && getAuthContext().isAdmin);
 
-    var unpublishedPool = latestByMaster.filter(function (record) {
-      return !record.is_published;
-    });
-
+    // Build candidate identity strings once, used for both record- and action-level filters.
+    var userCandidates = [];
     if (!isAdmin) {
-      // Build candidate identity strings for the current user.
-      var userCandidates = [
+      userCandidates = [
         currentUser.email,
         currentUser.username,
         currentUser.full_name,
@@ -1502,16 +1499,28 @@
         currentUser.name,
         currentUser.displayName
       ].map(function (v) { return String(v || '').trim().toLowerCase(); }).filter(Boolean);
+    }
 
-      if (userCandidates.length) {
-        unpublishedPool = unpublishedPool.filter(function (record) {
-          var owner = String(
-            record.assessor_name || record.inspector || record.assessor || ''
-          ).trim().toLowerCase();
-          // Include if owned by this user OR has no owner (could be theirs).
-          return !owner || userCandidates.indexOf(owner) >= 0;
-        });
-      }
+    function ownedByCurrentUser(ownerStr) {
+      if (isAdmin) return true;
+      if (!userCandidates.length) return true; // can't determine — include
+      var owner = String(ownerStr || '').trim().toLowerCase();
+      return !owner || userCandidates.indexOf(owner) >= 0;
+    }
+
+    var unpublishedPool = latestByMaster.filter(function (record) {
+      if (record.is_published) return false;
+      return ownedByCurrentUser(record.assessor_name || record.inspector || record.assessor);
+    });
+
+    // Scope published actions to current user's records so the action-based counts
+    // (Critical Items, Open/Overdue) reflect the user's own portfolio, not the
+    // entire org when pulled from Supabase.
+    // Published count and Facilities count remain org-wide so they match the Register.
+    if (!isAdmin && userCandidates.length) {
+      publishedActions = publishedActions.filter(function (action) {
+        return ownedByCurrentUser(action.originalAssessor || action.assessor_name || action.inspector);
+      });
     }
 
     // Dashboard card: keep "Critical Items" aligned to published operational risk load.
