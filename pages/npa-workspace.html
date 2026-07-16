@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOIL HSSEQ | NPA Monitoring Shortcomings</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Barlow', sans-serif; background: #0d1117; color: #e6edf3; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    .app { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 220px; flex-shrink: 0; height: 100vh; background: #0b0e14; border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; position: relative; transition: width 0.26s ease; overflow: hidden; z-index: 40; }
+    .sidebar.collapsed { width: 62px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 18px 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; overflow: hidden; }
+    .logo-text { overflow: hidden; white-space: nowrap; }
+    .logo-title { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 800; color: #FF9D4D; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1; }
+    .logo-sub { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; border: none; background: transparent; color: rgba(255,255,255,0.5); font-family: 'Barlow', sans-serif; font-size: 13.5px; font-weight: 500; width: 100%; text-align: left; transition: background 0.15s, color 0.15s; white-space: nowrap; overflow: hidden; position: relative; }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(255,107,0,0.15); color: #FF6B00; font-weight: 600; }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px; border-radius: 0 3px 3px 0; background: #FF6B00; }
+    .nav-icon { flex-shrink: 0; width: 17px; height: 17px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 17px; height: 17px; }
+    .nav-label { flex: 1; overflow: hidden; }
+    .sidebar-user { border-top: 1px solid rgba(255,255,255,0.06); padding: 10px 8px; flex-shrink: 0; }
+    .user-btn { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: transparent; border: none; width: 100%; cursor: pointer; color: #fff; overflow: hidden; white-space: nowrap; transition: background 0.15s; }
+    .user-btn:hover { background: rgba(255,255,255,0.06); }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #FF6B00; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .user-info-wrap { overflow: hidden; }
+    .user-name { font-size: 12px; font-weight: 600; color: #fff; line-height: 1; }
+    .user-role { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .collapse-btn { position: absolute; right: -11px; top: 64px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: #1a1d22; color: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .collapse-btn:hover { background: #FF6B00; color: #fff; border-color: #FF6B00; }
+    .collapse-btn svg { width: 11px; height: 11px; }
+    .sidebar.collapsed .nav-label, .sidebar.collapsed .logo-text, .sidebar.collapsed .user-info-wrap { display: none; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 9px 0; }
+    .sidebar.collapsed .user-btn { justify-content: center; padding: 8px 0; }
+    .sidebar.collapsed .sidebar-logo { justify-content: center; padding: 18px 0 16px; }
+
+    /* ── Main ── */
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .topbar { height: 54px; flex-shrink: 0; background: #0d1117; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.09); margin: 0 4px; }
+    .user-pill { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 10px; cursor: pointer; background: transparent; border: none; color: #fff; transition: background 0.15s; }
+    .user-pill:hover { background: rgba(255,255,255,0.06); }
+    .user-pill-avatar { width: 28px; height: 28px; border-radius: 50%; background: #FF6B00; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .user-pill-name { font-size: 13px; font-weight: 500; }
+    .user-pill svg { width: 13px; height: 13px; color: rgba(255,255,255,0.4); }
+    .mobile-menu-btn { display: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .mobile-menu-btn svg { width: 18px; height: 18px; }
+
+    /* ── Content shell ── */
+    .content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* ── Page Header ── */
+    .page-header { background: linear-gradient(135deg, #0d1117 0%, #111827 70%, #0c1a0e 100%); border-bottom: 1px solid rgba(255,107,0,0.12); padding: 22px 28px 20px; position: relative; overflow: hidden; flex-shrink: 0; }
+    .page-header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,0,0.07) 0%, transparent 70%); pointer-events: none; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
+    .breadcrumb a { color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: #FF6B00; }
+    .breadcrumb svg { width: 10px; height: 10px; }
+    .page-module-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #FF6B00; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .page-module-label::before { content: ''; display: inline-block; width: 18px; height: 2px; background: #FF6B00; border-radius: 1px; }
+    .page-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; line-height: 1.1; }
+    .page-subtitle { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; line-height: 1.5; }
+
+    /* ── Module nav ── */
+    .mod-nav { display: flex; align-items: stretch; background: #0b0e14; border-bottom: 1px solid rgba(255,255,255,0.07); padding: 0 28px; gap: 2px; flex-shrink: 0; overflow-x: auto; }
+    .mod-nav::-webkit-scrollbar { height: 0; }
+    .mod-tab { display: flex; align-items: center; gap: 8px; padding: 13px 16px 11px; background: transparent; border: none; border-bottom: 2px solid transparent; color: rgba(255,255,255,0.4); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; cursor: pointer; white-space: nowrap; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; flex-shrink: 0; }
+    .mod-tab:hover { color: rgba(255,255,255,0.8); }
+    .mod-tab.active { color: #FF6B00; border-bottom-color: #FF6B00; }
+    .mod-tab .mod-tab-icon { width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.5; transition: opacity 0.15s; }
+    .mod-tab .mod-tab-icon svg { width: 15px; height: 15px; }
+    .mod-tab:hover .mod-tab-icon { opacity: 0.85; }
+    .mod-tab.active .mod-tab-icon { opacity: 1; }
+
+    /* ── Panel container ── */
+    .panel-wrap { flex: 1; overflow: hidden; position: relative; }
+    .panel { display: none; height: 100%; overflow-y: auto; }
+    .panel.active { display: block; }
+
+    /* ── Shared stat cards ── */
+    .stat-grid-8 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 800px) { .stat-grid-8 { grid-template-columns: repeat(2, 1fr); } }
+    .stat-grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    @media (max-width: 1200px) { .stat-grid-6 { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  { .stat-grid-6 { grid-template-columns: repeat(2, 1fr); } }
+    .stat-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    @media (max-width: 1100px) { .stat-grid-5 { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  { .stat-grid-5 { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card { background: #161d2a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px 16px; transition: border-color 0.15s; }
+    .stat-card:hover { border-color: rgba(255,255,255,0.12); }
+    .stat-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+    .stat-value { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .stat-trend { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* ── Shared panel header bar ── */
+    .panel-header-bar { padding: 20px 28px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .panel-title-block .panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+    .panel-title-block .panel-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 3px; line-height: 1.5; }
+    .panel-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+
+    /* ── Shared buttons ── */
+    .btn-primary { display: flex; align-items: center; gap: 6px; padding: 9px 18px; background: #FF6B00; border: none; border-radius: 8px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: filter 0.15s; }
+    .btn-primary:hover { filter: brightness(1.12); }
+    .btn-primary svg { width: 14px; height: 14px; }
+    .btn-ghost { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.7); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.2); }
+    .btn-ghost svg { width: 14px; height: 14px; }
+
+    /* ── Shared inner tab bar ── */
+    .inner-tab-bar { display: flex; align-items: center; gap: 2px; padding: 14px 28px 0; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
+    .inner-tab-btn { padding: 8px 14px; background: transparent; border: none; border-bottom: 2px solid transparent; color: rgba(255,255,255,0.45); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; white-space: nowrap; margin-bottom: -1px; }
+    .inner-tab-btn:hover { color: rgba(255,255,255,0.8); }
+    .inner-tab-btn.active { color: #FF6B00; border-bottom-color: #FF6B00; }
+    .inner-tab-count { display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border-radius: 999px; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 5px; }
+    .inner-tab-btn.active .inner-tab-count { background: rgba(255,107,0,0.2); color: #FF6B00; }
+
+    /* ── Shared filter / search bar ── */
+    .filter-bar { display: flex; align-items: center; gap: 10px; padding: 14px 28px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 200px; max-width: 360px; display: flex; align-items: center; gap: 8px; height: 36px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; padding: 0 12px; }
+    .search-box svg { width: 14px; height: 14px; color: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .search-input { flex: 1; background: transparent; border: none; outline: none; font-family: 'Barlow', sans-serif; font-size: 13px; color: #e6edf3; }
+    .search-input::placeholder { color: rgba(255,255,255,0.28); }
+    .filter-chip { display: flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .filter-chip:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .filter-chip.active { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.3); color: #FF6B00; }
+    .filter-chip svg { width: 13px; height: 13px; }
+
+    /* ── Shared data table ── */
+    .table-wrap { padding: 0 28px 28px; overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    .data-table th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.07); white-space: nowrap; background: #0d1117; position: sticky; top: 0; z-index: 5; }
+    .data-table td { padding: 12px 12px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .cell-id   { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: #FF6B00; font-size: 13px; white-space: nowrap; }
+    .cell-date { font-size: 12px; color: rgba(255,255,255,0.5); white-space: nowrap; }
+    .cell-ref  { font-size: 12px; color: rgba(255,255,255,0.7); white-space: nowrap; }
+    .cell-name { font-size: 12px; color: rgba(255,255,255,0.8); }
+    .cell-muted{ font-size: 12px; color: rgba(255,255,255,0.4); }
+    .cell-trunc{ font-size: 12px; color: rgba(255,255,255,0.7); max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cell-num  { font-size: 12px; text-align: center; color: rgba(255,255,255,0.6); }
+
+    /* ── Status badges ── */
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; border: 1px solid; }
+    .badge.draft        { color: rgba(255,255,255,0.5);  border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); }
+    .badge.open         { color: #60A5FA;                border-color: rgba(96,165,250,0.3);   background: rgba(96,165,250,0.08); }
+    .badge.active       { color: #F87171;                border-color: rgba(248,113,113,0.3);  background: rgba(248,113,113,0.08); }
+    .badge.in-progress  { color: #FBBF24;                border-color: rgba(251,191,36,0.3);   background: rgba(251,191,36,0.08); }
+    .badge.pending      { color: #A78BFA;                border-color: rgba(167,139,250,0.3);  background: rgba(167,139,250,0.08); }
+    .badge.closed       { color: #34D399;                border-color: rgba(52,211,153,0.3);   background: rgba(52,211,153,0.08); }
+    .badge.resolved     { color: #34D399;                border-color: rgba(52,211,153,0.3);   background: rgba(52,211,153,0.08); }
+    .badge.overdue      { color: #F87171;                border-color: rgba(248,113,113,0.3);  background: rgba(248,113,113,0.08); }
+    .badge.reopened     { color: #F87171;                border-color: rgba(248,113,113,0.3);  background: rgba(248,113,113,0.08); }
+    .badge.partial      { color: #A78BFA;                border-color: rgba(167,139,250,0.3);  background: rgba(167,139,250,0.08); }
+    .badge.appealed     { color: #FBBF24;                border-color: rgba(251,191,36,0.3);   background: rgba(251,191,36,0.08); }
+    .badge.cancelled    { color: rgba(255,255,255,0.3);  border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); }
+    .badge.submitted    { color: #60A5FA;                border-color: rgba(96,165,250,0.3);   background: rgba(96,165,250,0.08); }
+    .badge.yes          { color: #34D399;                border-color: rgba(52,211,153,0.3);   background: rgba(52,211,153,0.06); }
+    .badge.no           { color: rgba(255,255,255,0.3);  border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); }
+
+    /* ── Action menu ── */
+    .action-wrap { position: relative; display: inline-block; }
+    .action-btn { display: flex; align-items: center; gap: 4px; padding: 5px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .action-btn:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .action-btn svg { width: 12px; height: 12px; }
+    .action-menu { display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 50; background: #1a2030; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; min-width: 175px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .action-menu.open { display: block; }
+    .action-menu-item { display: flex; align-items: center; gap: 8px; padding: 9px 14px; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); cursor: pointer; transition: background 0.12s; white-space: nowrap; }
+    .action-menu-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .action-menu-item.success { color: #34D399; }
+    .action-menu-item.success:hover { background: rgba(52,211,153,0.08); }
+    .action-menu-item.warning { color: #FBBF24; }
+    .action-menu-item.warning:hover { background: rgba(251,191,36,0.08); }
+    .action-menu-item.danger { color: #F87171; }
+    .action-menu-item.danger:hover { background: rgba(248,113,113,0.08); }
+    .action-menu-item svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .action-menu-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px 0; }
+
+    /* ── Empty states ── */
+    .empty-state { text-align: center; padding: 64px 32px; }
+    .empty-icon { width: 60px; height: 60px; border-radius: 16px; background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+    .empty-icon svg { width: 26px; height: 26px; color: #FF6B00; }
+    .empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 8px; }
+    .empty-desc { font-size: 13px; color: rgba(255,255,255,0.3); line-height: 1.6; max-width: 380px; margin: 0 auto 22px; }
+
+    /* ── Dashboard ── */
+    .dash-body { padding: 24px 28px 32px; }
+    .dash-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    @media (max-width: 900px) { .dash-sections { grid-template-columns: 1fr; } }
+    .dash-card { background: #161d2a; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px; }
+    .dash-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .dash-card-action { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600; color: #FF6B00; cursor: pointer; letter-spacing: 0; text-transform: none; transition: opacity 0.15s; }
+    .dash-card-action:hover { opacity: 0.7; }
+    .bar-list { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; }
+    .bar-row-label { font-size: 12px; color: rgba(255,255,255,0.6); min-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .bar-row-count { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); min-width: 28px; text-align: right; flex-shrink: 0; }
+    .dash-list { display: flex; flex-direction: column; gap: 8px; }
+    .dash-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; cursor: default; }
+    .dash-list-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.09); }
+    .dash-list-num { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; color: #FF6B00; flex-shrink: 0; }
+    .dash-list-main { flex: 1; min-width: 0; }
+    .dash-list-name { font-size: 12px; font-weight: 500; color: #e6edf3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dash-list-sub  { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .dash-list-meta { font-size: 11px; color: rgba(255,255,255,0.35); flex-shrink: 0; text-align: right; white-space: nowrap; }
+    .dash-list-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; border: 1px solid; flex-shrink: 0; }
+    .dash-list-badge.overdue  { color: #F87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+    .dash-list-badge.upcoming { color: #FBBF24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.08); }
+    .dash-list-badge.open     { color: #60A5FA; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.08); }
+    .dash-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 16px; gap: 8px; text-align: center; }
+    .dash-empty-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: center; }
+    .dash-empty-icon svg { width: 18px; height: 18px; color: rgba(255,255,255,0.2); }
+    .dash-empty-text { font-size: 12px; color: rgba(255,255,255,0.3); line-height: 1.5; max-width: 240px; }
+    .closure-rate-wrap { display: flex; flex-direction: column; align-items: center; padding: 16px 0 8px; gap: 16px; }
+    .closure-rate-num { font-family: 'Barlow Condensed', sans-serif; font-size: 64px; font-weight: 900; line-height: 1; color: #34D399; }
+    .closure-rate-pct { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: #34D399; }
+    .closure-rate-bar-track { width: 100%; height: 8px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+    .closure-rate-bar-fill { height: 100%; background: linear-gradient(90deg, #34D399, #6EE7B7); border-radius: 4px; transition: width 0.5s ease; }
+    .closure-rate-label { font-size: 12px; color: rgba(255,255,255,0.4); text-align: center; }
+
+    /* ── Add Shortcoming stat wrap ── */
+    .add-stat-wrap { padding: 20px 28px 0; }
+
+    /* ── Records table (Add Shortcoming) ── */
+    .rec-table-wrap { padding: 0 28px 28px; overflow-x: auto; }
+    .records-table { width: 100%; border-collapse: collapse; }
+    .records-table th { padding: 10px 12px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.07); white-space: nowrap; background: #0d1117; position: sticky; top: 0; z-index: 5; }
+    .records-table td { padding: 12px 12px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+    .records-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .records-table tr:last-child td { border-bottom: none; }
+    .rec-number  { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: #FF6B00; font-size: 13px; white-space: nowrap; }
+    .rec-ref     { font-size: 12px; color: rgba(255,255,255,0.7); white-space: nowrap; }
+    .rec-date    { font-size: 12px; color: rgba(255,255,255,0.5); white-space: nowrap; }
+    .rec-small   { font-size: 12px; color: rgba(255,255,255,0.6); text-align: center; }
+    .rec-creator { font-size: 12px; color: rgba(255,255,255,0.5); }
+    .status-badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; border: 1px solid; }
+    .status-badge.draft       { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); }
+    .status-badge.open        { color: #60A5FA; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.08); }
+    .status-badge.in-progress { color: #FBBF24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.08); }
+    .status-badge.partial     { color: #A78BFA; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.08); }
+    .status-badge.closed      { color: #34D399; border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.08); }
+    .status-badge.overdue     { color: #F87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+    .status-badge.archived    { color: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); }
+
+    /* ── Modals ── */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(4px); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #1a2235; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; }
+    .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 900; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
+    .modal-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 22px; line-height: 1.5; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 6px; display: block; }
+    .modal-required { color: #F87171; }
+    .modal-input, .modal-textarea, .modal-select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 12px; color: #e6edf3; font-family: 'Barlow', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s; }
+    .modal-input:focus, .modal-textarea:focus, .modal-select:focus { border-color: rgba(255,107,0,0.4); }
+    .modal-textarea { resize: vertical; min-height: 80px; }
+    .modal-select { appearance: none; cursor: pointer; }
+    .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 18px 0; }
+    .modal-section-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 12px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+    .btn-modal-cancel { padding: 9px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-modal-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-modal-confirm { padding: 9px 20px; background: #FF6B00; border: none; border-radius: 8px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .btn-modal-confirm:hover { filter: brightness(1.1); }
+    .btn-modal-confirm.green { background: #059669; }
+    .btn-modal-confirm.green:hover { filter: brightness(1.1); }
+    .btn-modal-confirm.red   { background: #DC2626; }
+    .requirement-note { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; line-height: 1.5; }
+    .requirement-note span { color: #F87171; font-weight: 600; }
+
+    /* ── Filter slide panel ── */
+    .filter-panel-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 200; align-items: flex-start; justify-content: flex-end; padding: 54px 0 0; }
+    .filter-panel-backdrop.open { display: flex; }
+    .filter-panel { width: 340px; max-width: 100%; height: calc(100vh - 54px); background: #131a24; border-left: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; overflow: hidden; }
+    .filter-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+    .filter-panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 800; text-transform: uppercase; color: #fff; }
+    .filter-panel-close { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s; }
+    .filter-panel-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .filter-panel-close svg { width: 14px; height: 14px; }
+    .filter-panel-body { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+    .filter-group-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+    .filter-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; color: #e6edf3; font-family: 'Barlow', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s; }
+    .filter-input:focus { border-color: rgba(255,107,0,0.4); }
+    .filter-select { appearance: none; cursor: pointer; }
+    .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .filter-panel-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; display: flex; gap: 8px; }
+    .btn-filter-apply { flex: 1; padding: 9px; background: #FF6B00; border: none; border-radius: 8px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: filter 0.15s; }
+    .btn-filter-apply:hover { filter: brightness(1.12); }
+    .btn-filter-clear { padding: 9px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-filter-clear:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; top: 70px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #1a2235; border: 1px solid; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); min-width: 260px; max-width: 360px; animation: toastIn 0.25s ease; font-size: 13px; }
+    .toast.success { border-color: rgba(52,211,153,0.3); }
+    .toast.success .toast-icon { color: #34D399; }
+    .toast.error   { border-color: rgba(248,113,113,0.3); }
+    .toast.error   .toast-icon { color: #F87171; }
+    .toast.info    { border-color: rgba(255,107,0,0.3); }
+    .toast.info    .toast-icon { color: #FF6B00; }
+    .toast-icon svg { width: 16px; height: 16px; }
+    .toast-text { flex: 1; color: rgba(255,255,255,0.8); }
+    @keyframes toastIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── Mobile ── */
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 299; backdrop-filter: blur(2px); }
+    .mobile-overlay.active { display: block; }
+
+    @media (max-width: 768px) {
+      .sidebar { position: fixed !important; left: -250px; top: 0; height: 100vh; z-index: 300; transition: left 0.28s cubic-bezier(0.4,0,0.2,1); width: 240px !important; }
+      .sidebar.mobile-open { left: 0 !important; box-shadow: 4px 0 40px rgba(0,0,0,0.55); }
+      .collapse-btn { display: none !important; }
+      .mobile-menu-btn { display: flex; }
+      .main { width: 100% !important; min-width: 0; }
+      .topbar { padding: 0 12px; gap: 8px; }
+      .user-pill-name { display: none; }
+      .page-header { padding: 16px 16px 14px; }
+      .mod-nav { padding: 0 12px; }
+      .dash-body { padding: 16px; }
+      .panel-header-bar { padding: 16px; flex-direction: column; align-items: flex-start; }
+      .add-stat-wrap, .stat-wrap-pad { padding: 14px 16px 0; }
+      .inner-tab-bar { padding: 12px 16px 0; }
+      .filter-bar { padding: 10px 16px; }
+      .table-wrap, .rec-table-wrap { padding: 0 16px 24px; }
+      .fp-filter-row { padding: 10px 16px; }
+      .fp-stat-strip { padding: 12px 16px; }
+      .fp-cards-grid { padding: 14px 16px 24px; grid-template-columns: 1fr; }
+      .fp-drawer { width: 100vw; }
+      .fp-drawer-stat-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .mod-tab { font-size: 11px; padding: 10px 12px; gap: 6px; }
+      .fp-stat-strip { grid-template-columns: repeat(2, 1fr); }
+      .fp-drawer-stat-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Module nav: touch enhancements ── */
+    .mod-nav { -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+    .mod-tab { scroll-snap-align: start; min-height: 44px; }
+
+    /* ── Facility Profile Panel ── */
+    .fp-filter-row { display: flex; align-items: center; gap: 8px; padding: 14px 28px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.06); background: #0d1117; position: sticky; top: 0; z-index: 10; }
+    .fp-select { height: 36px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; padding: 0 10px; color: rgba(255,255,255,0.7); font-family: 'Barlow', sans-serif; font-size: 12px; cursor: pointer; outline: none; transition: border-color 0.15s; }
+    .fp-select:focus { border-color: rgba(255,107,0,0.4); }
+    .fp-select option { background: #161d2a; color: #e6edf3; }
+    .fp-toggle { display: flex; align-items: center; gap: 5px; padding: 0 12px; height: 36px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 8px; color: rgba(255,255,255,0.55); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .fp-toggle:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .fp-toggle.active { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.3); color: #FF6B00; }
+    .fp-toggle svg { width: 13px; height: 13px; }
+    .fp-stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; padding: 16px 28px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    @media (max-width: 1000px) { .fp-stat-strip { grid-template-columns: repeat(3, 1fr); } }
+    .fp-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; padding: 20px 28px 32px; }
+    .facility-card { background: #161d2a; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px 18px; transition: border-color 0.15s; }
+    .facility-card:hover { border-color: rgba(255,107,0,0.22); }
+    .facility-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+    .facility-card-name { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.2; }
+    .facility-card-meta { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+    .facility-card-badges { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+    .facility-card-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .fc-stat { text-align: center; padding: 8px 4px; background: rgba(255,255,255,0.03); border-radius: 8px; }
+    .fc-stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; line-height: 1; }
+    .fc-stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-top: 3px; }
+    .facility-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .facility-card-rate { font-size: 11px; color: rgba(255,255,255,0.3); }
+    .btn-view-profile { padding: 6px 14px; background: rgba(255,107,0,0.1); border: 1px solid rgba(255,107,0,0.25); border-radius: 7px; color: #FF6B00; font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; }
+    .btn-view-profile:hover { background: rgba(255,107,0,0.2); border-color: rgba(255,107,0,0.45); }
+    /* ── Facility Profile Drawer ── */
+    .fp-drawer-backdrop { display: none; position: fixed; inset: 0; z-index: 260; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); align-items: stretch; justify-content: flex-end; }
+    .fp-drawer-backdrop.open { display: flex; }
+    .fp-drawer { width: 700px; max-width: 100vw; height: 100%; background: #0d1117; border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; overflow: hidden; }
+    .fp-drawer-top { padding: 20px 24px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-shrink: 0; background: linear-gradient(135deg, #0b0e14 0%, #111827 100%); }
+    .fp-drawer-name { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.1; }
+    .fp-drawer-meta-text { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 5px; }
+    .fp-close-btn { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .fp-close-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .fp-close-btn svg { width: 14px; height: 14px; }
+    .fp-drawer-stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+    .fp-ds { padding: 14px 16px; background: #0d1117; text-align: center; }
+    .fp-ds-val { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 800; line-height: 1; }
+    .fp-ds-lbl { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 4px; }
+    .fp-drawer-body { flex: 1; overflow-y: auto; }
+    .fp-section { padding: 0 24px; }
+    .fp-section-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #FF6B00; padding: 18px 0 10px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .fp-section-heading::before { content: ''; display: inline-block; width: 3px; height: 14px; background: #FF6B00; border-radius: 2px; flex-shrink: 0; }
+    .fp-id-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; padding-bottom: 4px; }
+    .fp-id-key { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.28); margin-bottom: 3px; }
+    .fp-id-val { font-size: 13px; color: rgba(255,255,255,0.85); }
+    .fp-comm-block { background: #161d2a; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+    .fp-comm-block-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .fp-comm-ref { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: #FF6B00; font-size: 14px; }
+    .fp-comm-date { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .fp-sc-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .fp-sc-row:last-child { border-bottom: none; }
+    .fp-sc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .fp-sc-desc { flex: 1; color: rgba(255,255,255,0.75); line-height: 1.5; }
+    .fp-san-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .fp-san-row:last-child { border-bottom: none; }
+    .fp-act-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .fp-act-row:last-child { border-bottom: none; }
+    .fp-act-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,107,0,0.45); flex-shrink: 0; margin-top: 4px; }
+    .fp-empty { font-size: 12px; color: rgba(255,255,255,0.2); font-style: italic; padding: 6px 0 4px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="../assets/img/goil-logo.png" alt="GOIL" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;border-radius:9px;" />
+      <div class="logo-text"><div class="logo-title">GOIL HSSEQ</div><div class="logo-sub">Department</div></div>
+    </div>
+    <button class="collapse-btn" id="collapseBtn" title="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-user">
+      <button class="user-btn">
+        <div class="user-avatar" id="sidebarUserAvatar">AD</div>
+        <div class="user-info-wrap"><div class="user-name" id="sidebarUserName">Admin User</div><div class="user-role">Compliance Officer</div></div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="main">
+    <header class="topbar">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-divider"></div>
+      <button class="user-pill">
+        <div class="user-pill-avatar" id="topbarAvatar">AD</div>
+        <span class="user-pill-name" id="topbarName">Admin User</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </header>
+
+    <div class="content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="breadcrumb">
+          <a href="unit-compliance.html">Compliance</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          <a href="npa-workspace.html#dashboard">NPA Monitoring</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="bcChevron"><polyline points="9 18 15 12 9 6"/></svg>
+          <span id="bcActive"></span>
+        </div>
+        <div class="page-module-label">Compliance Module</div>
+        <div class="page-title">NPA Monitoring Shortcomings</div>
+        <div class="page-subtitle">Capture, monitor, sanction, and close NPA regulatory shortcomings across company facilities.</div>
+      </div>
+
+      <!-- Module Nav -->
+      <nav class="mod-nav" id="modNav" role="tablist">
+        <button class="mod-tab" role="tab" data-hash="#dashboard">
+          <span class="mod-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+          Dashboard
+        </button>
+        <button class="mod-tab" role="tab" data-hash="#add-shortcoming">
+          <span class="mod-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg></span>
+          Add Shortcoming
+        </button>
+        <button class="mod-tab" role="tab" data-hash="#sanctions">
+          <span class="mod-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          NPA Sanctions
+        </button>
+        <button class="mod-tab" role="tab" data-hash="#close-shortcoming">
+          <span class="mod-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          Close Shortcoming
+        </button>
+        <button class="mod-tab" role="tab" data-hash="#facility-profile">
+          <span class="mod-tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          Facility Profile
+        </button>
+      </nav>
+
+      <!-- Panel Wrap -->
+      <div class="panel-wrap">
+
+        <!-- ══════════════════════════════════════
+             PANEL: DASHBOARD
+        ══════════════════════════════════════ -->
+        <div class="panel" id="panel-dashboard" role="tabpanel">
+          <div class="dash-body">
+            <div class="stat-grid-8">
+              <div class="stat-card"><div class="stat-label">Total Communiqu&eacute;s</div><div class="stat-value" id="dStatTotal"       style="color:#e6edf3;">—</div><div class="stat-trend">All records</div></div>
+              <div class="stat-card"><div class="stat-label">Facilities Affected</div><div class="stat-value" id="dStatFacilities"  style="color:#60A5FA;">—</div><div class="stat-trend">Stations across records</div></div>
+              <div class="stat-card"><div class="stat-label">Open Shortcomings</div><div class="stat-value" id="dStatOpen"        style="color:#60A5FA;">—</div><div class="stat-trend">Awaiting action</div></div>
+              <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value"        id="dStatInProgress"  style="color:#FBBF24;">—</div><div class="stat-trend">Active work</div></div>
+              <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value"            id="dStatOverdue"     style="color:#F87171;">—</div><div class="stat-trend">Past target date</div></div>
+              <div class="stat-card"><div class="stat-label">Closed</div><div class="stat-value"             id="dStatClosed"      style="color:#34D399;">—</div><div class="stat-trend">Resolved shortcomings</div></div>
+              <div class="stat-card"><div class="stat-label">Active Sanctions</div><div class="stat-value"  id="dStatSanctions"   style="color:#F87171;">—</div><div class="stat-trend">NPA-issued sanctions</div></div>
+              <div class="stat-card"><div class="stat-label">Closure Rate</div><div class="stat-value"      id="dStatRate"        style="color:#34D399;">—</div><div class="stat-trend">Of total shortcomings</div></div>
+            </div>
+            <div class="dash-sections">
+              <div class="dash-card"><div class="dash-card-title">Shortcomings by Status</div><div id="chartStatus"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Shortcomings by Facility Type</div><div id="chartFacilityType"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Overdue Shortcomings <span class="dash-card-action" onclick="goTo('#close-shortcoming')">View all &rarr;</span></div><div id="listOverdue"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Recently Added Records <span class="dash-card-action" onclick="goTo('#add-shortcoming')">View all &rarr;</span></div><div id="listRecent"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Upcoming Target Dates <span style="font-size:10px;color:rgba(255,255,255,0.25);font-family:'Barlow',sans-serif;font-weight:500;letter-spacing:0;text-transform:none;">Next 30 days</span></div><div id="listUpcoming"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Closure Performance</div><div id="closurePerf"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Shortcomings by Zone</div><div id="chartZone"></div></div>
+              <div class="dash-card"><div class="dash-card-title">Sanctions Summary <span class="dash-card-action" onclick="goTo('#sanctions')">View all &rarr;</span></div><div id="sanctionsSummary"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             PANEL: ADD SHORTCOMING
+        ══════════════════════════════════════ -->
+        <div class="panel" id="panel-add" role="tabpanel">
+          <div class="panel-header-bar">
+            <div class="panel-title-block">
+              <div class="panel-title">NPA Monitoring Shortcomings</div>
+              <div class="panel-sub">Create a communiqu&eacute; record, add covered facilities, and capture all associated shortcomings.</div>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-ghost" id="btnExport">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+              </button>
+              <button class="btn-primary" onclick="window.location.href='npa-new-record.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New NPA Record
+              </button>
+            </div>
+          </div>
+          <div class="add-stat-wrap">
+            <div class="stat-grid-6">
+              <div class="stat-card"><div class="stat-label">Total Communiqu&eacute;s</div><div class="stat-value" id="statTotal"      style="color:#e6edf3;">0</div><div class="stat-trend">All records</div></div>
+              <div class="stat-card"><div class="stat-label">Stations Affected</div><div class="stat-value"    id="statStations"   style="color:#60A5FA;">0</div><div class="stat-trend">Across all records</div></div>
+              <div class="stat-card"><div class="stat-label">Open Shortcomings</div><div class="stat-value"   id="statOpen"       style="color:#60A5FA;">0</div><div class="stat-trend">Awaiting action</div></div>
+              <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-value"         id="statInProgress" style="color:#FBBF24;">0</div><div class="stat-trend">Active work</div></div>
+              <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value"             id="statOverdue"    style="color:#F87171;">0</div><div class="stat-trend">Past target date</div></div>
+              <div class="stat-card"><div class="stat-label">Closed</div><div class="stat-value"              id="statClosed"     style="color:#34D399;">0</div><div class="stat-trend">Resolved items</div></div>
+            </div>
+          </div>
+          <div class="inner-tab-bar" id="recTabBar">
+            <button class="inner-tab-btn active" data-tab="all">All Records <span class="inner-tab-count" id="countAll">0</span></button>
+            <button class="inner-tab-btn" data-tab="open">Open <span class="inner-tab-count" id="countOpen">0</span></button>
+            <button class="inner-tab-btn" data-tab="mine">My Assigned <span class="inner-tab-count" id="countMine">0</span></button>
+            <button class="inner-tab-btn" data-tab="overdue">Overdue <span class="inner-tab-count" id="countOverdue">0</span></button>
+            <button class="inner-tab-btn" data-tab="pending">Pending Verification <span class="inner-tab-count" id="countPending">0</span></button>
+            <button class="inner-tab-btn" data-tab="closed">Closed <span class="inner-tab-count" id="countClosed">0</span></button>
+          </div>
+          <div class="filter-bar">
+            <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="search-input" type="text" id="searchInput" placeholder="Search records, stations, references..." /></div>
+            <button class="filter-chip" id="btnFilter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filters</button>
+            <button class="filter-chip" id="btnOverdueOnly"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Overdue Only</button>
+          </div>
+          <div class="rec-table-wrap">
+            <table class="records-table" id="recordsTable">
+              <thead><tr>
+                <th>Record No.</th><th>Date Created</th><th>Inspection Period</th><th>Communiqu&eacute; Date</th><th>Reference</th>
+                <th style="text-align:center;">Stations</th><th style="text-align:center;">Total</th><th style="text-align:center;">Open</th><th style="text-align:center;">Closed</th>
+                <th>Status</th><th>Created By</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="recordsBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState" style="display:none;">
+              <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg></div>
+              <div class="empty-title">No records found</div>
+              <div class="empty-desc" id="emptyDesc">No NPA monitoring records yet. Click &ldquo;New NPA Record&rdquo; to capture your first communiqu&eacute;.</div>
+              <button class="btn-primary" onclick="window.location.href='npa-new-record.html'" style="margin:0 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New NPA Record</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             PANEL: NPA SANCTIONS
+        ══════════════════════════════════════ -->
+        <div class="panel" id="panel-sanctions" role="tabpanel">
+          <div class="panel-header-bar">
+            <div class="panel-title-block">
+              <div class="panel-title">NPA Sanctions</div>
+              <div class="panel-sub">Record and monitor sanctions, penalties, directives, and enforcement actions issued by the National Petroleum Authority.</div>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-ghost" id="btnSanctionsExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+              <button class="btn-ghost" id="btnSanctionsFilter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filters</button>
+              <button class="btn-primary" id="btnAddSanction"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Sanction</button>
+            </div>
+          </div>
+          <!-- Summary cards -->
+          <div style="padding:20px 28px 0;">
+            <div class="stat-grid-5">
+              <div class="stat-card"><div class="stat-label">Total Sanctions</div><div class="stat-value" id="sanStatTotal"    style="color:#e6edf3;">0</div><div class="stat-trend">All sanctions</div></div>
+              <div class="stat-card"><div class="stat-label">Active Sanctions</div><div class="stat-value" id="sanStatActive"   style="color:#F87171;">0</div><div class="stat-trend">Currently enforced</div></div>
+              <div class="stat-card"><div class="stat-label">Pending Response</div><div class="stat-value" id="sanStatPending"  style="color:#FBBF24;">0</div><div class="stat-trend">Response required</div></div>
+              <div class="stat-card"><div class="stat-label">Financial Penalties</div><div class="stat-value" id="sanStatFinancial" style="color:#A78BFA;">0</div><div class="stat-trend">Monetary sanctions</div></div>
+              <div class="stat-card"><div class="stat-label">Resolved</div><div class="stat-value" id="sanStatResolved"  style="color:#34D399;">0</div><div class="stat-trend">Fully resolved</div></div>
+            </div>
+          </div>
+          <!-- Status tabs -->
+          <div class="inner-tab-bar" id="sanctionTabBar">
+            <button class="inner-tab-btn active" data-san-tab="all">All <span class="inner-tab-count" id="sanCountAll">0</span></button>
+            <button class="inner-tab-btn" data-san-tab="Active">Active <span class="inner-tab-count" id="sanCountActive">0</span></button>
+            <button class="inner-tab-btn" data-san-tab="Draft">Draft <span class="inner-tab-count" id="sanCountDraft">0</span></button>
+            <button class="inner-tab-btn" data-san-tab="Response Submitted">Response Submitted <span class="inner-tab-count" id="sanCountResponse">0</span></button>
+            <button class="inner-tab-btn" data-san-tab="Under Review">Under Review <span class="inner-tab-count" id="sanCountReview">0</span></button>
+            <button class="inner-tab-btn" data-san-tab="Resolved">Resolved <span class="inner-tab-count" id="sanCountResolved">0</span></button>
+          </div>
+          <!-- Search -->
+          <div class="filter-bar">
+            <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="search-input" type="text" id="sanctionSearch" placeholder="Search sanctions, facilities, references..." /></div>
+          </div>
+          <!-- Table -->
+          <div class="table-wrap">
+            <table class="data-table" id="sanctionsTable">
+              <thead><tr>
+                <th>Sanction No.</th><th>Date Issued</th><th>NPA Reference</th><th>Communiqu&eacute; Ref.</th>
+                <th>Facility</th><th>Sanction Type</th><th>Amount</th><th>Required Action</th>
+                <th>Due Date</th><th>Status</th><th>Responsible</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="sanctionsBody"></tbody>
+            </table>
+            <div class="empty-state" id="sanctionsEmpty">
+              <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="empty-title">No NPA sanctions have been recorded.</div>
+              <div class="empty-desc">NPA sanctions, penalties, and directives will appear here once recorded.</div>
+              <button class="btn-primary" id="btnAddFirstSanction" style="margin:0 auto;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add First Sanction</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             PANEL: CLOSE SHORTCOMING
+        ══════════════════════════════════════ -->
+        <div class="panel" id="panel-close" role="tabpanel">
+          <div class="panel-header-bar">
+            <div class="panel-title-block">
+              <div class="panel-title">Close Shortcoming</div>
+              <div class="panel-sub">Review corrective actions, verify evidence, and close completed NPA shortcomings.</div>
+            </div>
+            <div class="panel-actions">
+              <button class="btn-ghost" id="btnCloseRefresh" title="Refresh">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+          <!-- Summary cards -->
+          <div style="padding:20px 28px 0;">
+            <div class="stat-grid-5">
+              <div class="stat-card"><div class="stat-label">Ready for Closure</div><div class="stat-value" id="clStatReady"    style="color:#FBBF24;">0</div><div class="stat-trend">Open &amp; In Progress</div></div>
+              <div class="stat-card"><div class="stat-label">Pending Verification</div><div class="stat-value" id="clStatPending"  style="color:#A78BFA;">0</div><div class="stat-trend">Awaiting review</div></div>
+              <div class="stat-card"><div class="stat-label">Returned for Correction</div><div class="stat-value" id="clStatReturned" style="color:#F87171;">0</div><div class="stat-trend">Sent back</div></div>
+              <div class="stat-card"><div class="stat-label">Closed This Month</div><div class="stat-value" id="clStatThisMonth" style="color:#34D399;">0</div><div class="stat-trend">Current month</div></div>
+              <div class="stat-card"><div class="stat-label">Reopened</div><div class="stat-value" id="clStatReopened"  style="color:#F87171;">0</div><div class="stat-trend">Previously closed</div></div>
+            </div>
+          </div>
+          <!-- Tabs -->
+          <div class="inner-tab-bar" id="closeTabBar">
+            <button class="inner-tab-btn active" data-close-tab="ready">Ready for Closure <span class="inner-tab-count" id="clCountReady">0</span></button>
+            <button class="inner-tab-btn" data-close-tab="pending">Pending Verification <span class="inner-tab-count" id="clCountPending">0</span></button>
+            <button class="inner-tab-btn" data-close-tab="recent">Recently Closed <span class="inner-tab-count" id="clCountRecent">0</span></button>
+            <button class="inner-tab-btn" data-close-tab="reopened">Reopened <span class="inner-tab-count" id="clCountReopened">0</span></button>
+            <button class="inner-tab-btn" data-close-tab="all">All <span class="inner-tab-count" id="clCountAll">0</span></button>
+          </div>
+          <!-- Search -->
+          <div class="filter-bar">
+            <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="search-input" type="text" id="closeSearch" placeholder="Search shortcomings, facilities, records..." /></div>
+          </div>
+          <!-- Table -->
+          <div class="table-wrap">
+            <table class="data-table" id="closeTable">
+              <thead><tr>
+                <th>SC Ref.</th><th>Communiqu&eacute; Ref.</th><th>Facility</th><th>Shortcoming Summary</th>
+                <th>Responsible Person</th><th>Target Date</th><th>Evidence</th>
+                <th>Status</th><th>Submitted By</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="closeBody"></tbody>
+            </table>
+            <div class="empty-state" id="closeEmpty" style="display:none;">
+              <div class="empty-icon" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.15);"><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div class="empty-title">No shortcomings in this view</div>
+              <div class="empty-desc" id="closeEmptyDesc">No shortcomings match the selected filter.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             PANEL: FACILITY PROFILE
+        ══════════════════════════════════════ -->
+        <div class="panel" id="panel-facility" role="tabpanel">
+
+          <!-- Filter Row -->
+          <div class="fp-filter-row" id="fpFilterRow">
+            <select class="fp-select" id="fpFilterType" title="Filter by facility type">
+              <option value="">All Facility Types</option>
+              <option>Fuel Station</option>
+              <option>LPG Plant</option>
+              <option>Office</option>
+              <option value="Office &amp; Depot">Office &amp; Depot</option>
+              <option>Consumer</option>
+            </select>
+            <select class="fp-select" id="fpFilterZone" title="Filter by zone" style="display:none;">
+              <option value="">All Zones</option>
+              <option>Greater Accra</option>
+              <option>Ashanti</option>
+              <option>Western</option>
+              <option>Northern</option>
+              <option>Central</option>
+              <option>Eastern</option>
+              <option>Volta</option>
+              <option>Brong-Ahafo</option>
+              <option>Upper East</option>
+              <option>Upper West</option>
+            </select>
+            <input type="text" class="fp-select" id="fpFilterName" placeholder="Search facility name…" style="min-width:180px;" />
+            <select class="fp-select" id="fpFilterStatus" title="Filter by status">
+              <option value="">All Statuses</option>
+              <option>Active</option>
+              <option>Temporarily Closed</option>
+              <option>Inactive</option>
+            </select>
+            <button class="fp-toggle" id="fpToggleOpen" title="Show only facilities with open shortcomings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Has Open Shortcomings
+            </button>
+            <button class="fp-toggle" id="fpToggleSanctions" title="Show only facilities with active sanctions">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Has Active Sanctions
+            </button>
+          </div>
+
+          <!-- Summary Strip -->
+          <div class="fp-stat-strip">
+            <div class="stat-card"><div class="stat-label">Facilities</div><div class="stat-value" id="fpStatFacilities" style="color:#e6edf3;">0</div><div class="stat-trend">In scope</div></div>
+            <div class="stat-card"><div class="stat-label">Total Shortcomings</div><div class="stat-value" id="fpStatTotal" style="color:#60A5FA;">0</div><div class="stat-trend">Across all records</div></div>
+            <div class="stat-card"><div class="stat-label">Open Shortcomings</div><div class="stat-value" id="fpStatOpen" style="color:#F87171;">0</div><div class="stat-trend">Requiring action</div></div>
+            <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value" id="fpStatOverdue" style="color:#FBBF24;">0</div><div class="stat-trend">Past target date</div></div>
+            <div class="stat-card"><div class="stat-label">Active Sanctions</div><div class="stat-value" id="fpStatSanctions" style="color:#A78BFA;">0</div><div class="stat-trend">Sanctions in effect</div></div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div class="fp-cards-grid" id="fpCardsGrid"></div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="fpEmptyState" style="display:none;">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="empty-title">No facilities match your filters</div>
+            <div class="empty-desc">Try changing or clearing the active filters.</div>
+          </div>
+
+        </div>
+
+      </div><!-- /panel-wrap -->
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ══════════════════════════════════════
+     FACILITY PROFILE DRAWER
+══════════════════════════════════════ -->
+<div class="fp-drawer-backdrop" id="fpDrawerBackdrop">
+  <div class="fp-drawer" id="fpDrawer" role="dialog" aria-modal="true" aria-labelledby="fpDrawerName">
+    <div class="fp-drawer-top">
+      <div style="min-width:0;">
+        <div class="fp-drawer-name" id="fpDrawerName">—</div>
+        <div class="fp-drawer-meta-text" id="fpDrawerMeta">—</div>
+      </div>
+      <button class="fp-close-btn" id="fpDrawerClose" aria-label="Close facility profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="fp-drawer-stat-row" id="fpDrawerStats"></div>
+    <div class="fp-drawer-body" id="fpDrawerBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     RECORDS FILTER PANEL
+══════════════════════════════════════ -->
+<div class="filter-panel-backdrop" id="filterModal">
+  <div class="filter-panel">
+    <div class="filter-panel-header">
+      <div class="filter-panel-title">Filters</div>
+      <button class="filter-panel-close" id="filterClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="filter-panel-body">
+      <div class="filter-group"><div class="filter-group-label">Communiqu&eacute; Reference</div><input type="text" class="filter-input" id="filterRef" placeholder="e.g. NPA/OPS/INS/2026/014" /></div>
+      <div class="filter-group"><div class="filter-group-label">Status</div><select class="filter-input filter-select" id="filterStatus"><option value="">All Statuses</option><option>Draft</option><option>Open</option><option>In Progress</option><option>Partially Closed</option><option>Closed</option><option>Archived</option></select></div>
+      <div class="filter-group"><div class="filter-group-label">Type of Outlet</div><select class="filter-input filter-select" id="filterOutletType"><option value="">All Types</option><option>Fuel Station</option><option>LPG Plant</option><option>Office</option><option value="Office &amp; Depot">Office &amp; Depot</option></select></div>
+      <div class="filter-group"><div class="filter-group-label">Inspection Date Range</div><div class="filter-row"><div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">From</div><input type="date" class="filter-input" id="filterInspFrom" /></div><div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">To</div><input type="date" class="filter-input" id="filterInspTo" /></div></div></div>
+      <div class="filter-group"><div class="filter-group-label">Communiqu&eacute; Date Range</div><div class="filter-row"><div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">From</div><input type="date" class="filter-input" id="filterCommFrom" /></div><div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">To</div><input type="date" class="filter-input" id="filterCommTo" /></div></div></div>
+      <div class="filter-group"><div class="filter-group-label">Created By</div><input type="text" class="filter-input" id="filterCreatedBy" placeholder="Name or email" /></div>
+    </div>
+    <div class="filter-panel-footer"><button class="btn-filter-clear" id="filterClear">Clear</button><button class="btn-filter-apply" id="filterApply">Apply Filters</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADD SANCTION MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalAddSanction">
+  <div class="modal">
+    <div class="modal-title" id="sanctionModalTitle">Add NPA Sanction</div>
+    <div class="modal-sub">Record a sanction, penalty, directive, or enforcement action issued by the NPA.</div>
+    <input type="hidden" id="sanctionEditId" />
+    <div class="modal-row">
+      <div class="modal-field"><label class="modal-label">Date Issued <span class="modal-required">*</span></label><input type="date" class="modal-input" id="sanDateIssued" /></div>
+      <div class="modal-field"><label class="modal-label">Due Date</label><input type="date" class="modal-input" id="sanDueDate" /></div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field"><label class="modal-label">NPA Reference</label><input type="text" class="modal-input" id="sanNpaRef" placeholder="e.g. NPA/ENF/2026/001" /></div>
+      <div class="modal-field"><label class="modal-label">Communiqu&eacute; Reference</label><input type="text" class="modal-input" id="sanCommRef" placeholder="Linked communiqu&eacute;" /></div>
+    </div>
+    <div class="modal-field"><label class="modal-label">Facility / Station <span class="modal-required">*</span></label><input type="text" class="modal-input" id="sanFacility" placeholder="Name of affected facility" /></div>
+    <div class="modal-row">
+      <div class="modal-field"><label class="modal-label">Sanction Type <span class="modal-required">*</span></label>
+        <select class="modal-select modal-input" id="sanType">
+          <option value="">Select type…</option>
+          <option>Warning</option><option>Directive</option><option>Administrative Penalty</option>
+          <option>Financial Penalty</option><option>Suspension</option><option>Closure Order</option>
+          <option>Licence-related Action</option><option>Other</option>
+        </select>
+      </div>
+      <div class="modal-field"><label class="modal-label">Status</label>
+        <select class="modal-select modal-input" id="sanStatus">
+          <option>Draft</option><option>Active</option><option>Response Submitted</option>
+          <option>Under Review</option><option>Resolved</option><option>Appealed</option><option>Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-field"><label class="modal-label">Amount (GHS)</label><input type="number" class="modal-input" id="sanAmount" placeholder="0.00" min="0" step="0.01" /></div>
+      <div class="modal-field"><label class="modal-label">Responsible Person</label><input type="text" class="modal-input" id="sanResponsible" placeholder="Name or department" /></div>
+    </div>
+    <div class="modal-field"><label class="modal-label">Required Action <span class="modal-required">*</span></label><textarea class="modal-textarea" id="sanAction" placeholder="Describe the corrective or compliance action required by the NPA…"></textarea></div>
+    <div class="modal-field"><label class="modal-label">Notes</label><textarea class="modal-textarea" id="sanNotes" placeholder="Additional context, appeal grounds, or remarks…" style="min-height:60px;"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModalById('modalAddSanction')">Cancel</button>
+      <button class="btn-modal-confirm" id="btnSaveSanction">Save Sanction</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CLOSE SHORTCOMING MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalCloseShortcoming">
+  <div class="modal">
+    <div class="modal-title">Close Shortcoming</div>
+    <div class="modal-sub">Complete all fields to formally close this shortcoming. Incomplete submissions will not be accepted.</div>
+    <input type="hidden" id="csRecordId" />
+    <input type="hidden" id="csStationId" />
+    <input type="hidden" id="csScId" />
+
+    <div class="modal-section-label">Corrective Action</div>
+    <div class="modal-field"><label class="modal-label">Corrective Action Description <span class="modal-required">*</span></label><textarea class="modal-textarea" id="csCorrectiveAction" placeholder="Describe the corrective action taken to address this shortcoming…"></textarea></div>
+
+    <div class="modal-divider"></div>
+    <div class="modal-section-label">Closure Details</div>
+    <div class="modal-field"><label class="modal-label">Closure Remarks <span class="modal-required">*</span></label><textarea class="modal-textarea" id="csClosureRemarks" placeholder="Provide remarks confirming resolution of this shortcoming…"></textarea></div>
+    <div class="modal-row">
+      <div class="modal-field"><label class="modal-label">Closed By <span class="modal-required">*</span></label><input type="text" class="modal-input" id="csClosedBy" placeholder="Your full name" /></div>
+      <div class="modal-field"><label class="modal-label">Date Closed <span class="modal-required">*</span></label><input type="date" class="modal-input" id="csDateClosed" /></div>
+    </div>
+
+    <div class="modal-divider"></div>
+    <div class="modal-section-label">Evidence</div>
+    <div class="modal-field"><label class="modal-label">Evidence Reference / Description</label><input type="text" class="modal-input" id="csEvidence" placeholder="Document title, reference number, or brief description" /></div>
+    <p class="requirement-note">Evidence documentation is <span>strongly recommended</span> for audit purposes. Shortcomings may not be approved for closure without supporting evidence.</p>
+
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModalById('modalCloseShortcoming')">Cancel</button>
+      <button class="btn-modal-confirm green" onclick="confirmCloseShortcoming()">Approve &amp; Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SUBMIT FOR VERIFICATION MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalSubmitVerification">
+  <div class="modal">
+    <div class="modal-title">Submit for Verification</div>
+    <div class="modal-sub">Provide corrective action details to submit this shortcoming for closure verification.</div>
+    <input type="hidden" id="svRecordId" />
+    <input type="hidden" id="svStationId" />
+    <input type="hidden" id="svScId" />
+    <div class="modal-field"><label class="modal-label">Corrective Action Taken <span class="modal-required">*</span></label><textarea class="modal-textarea" id="svCorrectiveAction" placeholder="Describe what was done to address this shortcoming…"></textarea></div>
+    <div class="modal-field"><label class="modal-label">Evidence Reference</label><input type="text" class="modal-input" id="svEvidence" placeholder="Document title or reference number" /></div>
+    <div class="modal-field"><label class="modal-label">Submitted By <span class="modal-required">*</span></label><input type="text" class="modal-input" id="svSubmittedBy" placeholder="Your full name" /></div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModalById('modalSubmitVerification')">Cancel</button>
+      <button class="btn-modal-confirm" onclick="confirmSubmitVerification()">Submit for Verification</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     RETURN FOR CORRECTION MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalReturnCorrection">
+  <div class="modal">
+    <div class="modal-title">Return for Correction</div>
+    <div class="modal-sub">Explain why this closure submission is being returned. The shortcoming will revert to &ldquo;In Progress&rdquo;.</div>
+    <input type="hidden" id="rcRecordId" />
+    <input type="hidden" id="rcStationId" />
+    <input type="hidden" id="rcScId" />
+    <div class="modal-field"><label class="modal-label">Reason for Return <span class="modal-required">*</span></label><textarea class="modal-textarea" id="rcReason" placeholder="Specify what needs to be corrected or what evidence is missing…"></textarea></div>
+    <div class="modal-field"><label class="modal-label">Returned By <span class="modal-required">*</span></label><input type="text" class="modal-input" id="rcReturnedBy" placeholder="Your full name" /></div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModalById('modalReturnCorrection')">Cancel</button>
+      <button class="btn-modal-confirm red" onclick="confirmReturnCorrection()">Return for Correction</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     REOPEN SHORTCOMING MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalReopenSc">
+  <div class="modal">
+    <div class="modal-title">Reopen Shortcoming</div>
+    <div class="modal-sub">Provide a reason for reopening this previously closed shortcoming.</div>
+    <input type="hidden" id="roRecordId" />
+    <input type="hidden" id="roStationId" />
+    <input type="hidden" id="roScId" />
+    <div class="modal-field"><label class="modal-label">Reason for Reopening <span class="modal-required">*</span></label><textarea class="modal-textarea" id="roReason" placeholder="Explain why this shortcoming needs to be reopened…"></textarea></div>
+    <div class="modal-field"><label class="modal-label">Reopened By <span class="modal-required">*</span></label><input type="text" class="modal-input" id="roReopenedBy" placeholder="Your full name" /></div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModalById('modalReopenSc')">Cancel</button>
+      <button class="btn-modal-confirm red" onclick="confirmReopenSc()">Reopen Shortcoming</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ═══ ROUTING ═══════════════════════════════════════════════ */
+  var HASH_TO_PANEL = {
+    '#dashboard':         'panel-dashboard',
+    '#add-shortcoming':   'panel-add',
+    '#sanctions':         'panel-sanctions',
+    '#close-shortcoming': 'panel-close',
+    '#facility-profile':  'panel-facility'
+  };
+  var PANEL_TO_HASH = {};
+  Object.keys(HASH_TO_PANEL).forEach(function(h){ PANEL_TO_HASH[HASH_TO_PANEL[h]] = h; });
+
+  /* ─ Permission helpers ─────────────────────────────────── */
+  var TAB_PERMS = {
+    '#dashboard':        'view',
+    '#add-shortcoming':  'create',
+    '#sanctions':        'sanctions',
+    '#close-shortcoming':'close',
+    '#facility-profile': 'view'
+  };
+
+  var BREADCRUMB_LABELS = {
+    '#dashboard':        'Dashboard',
+    '#add-shortcoming':  'Add Shortcoming',
+    '#sanctions':        'NPA Sanctions',
+    '#close-shortcoming':'Close Shortcoming',
+    '#facility-profile': 'Facility Profile'
+  };
+
+  function npaCanDo(perm) {
+    var ctx = window.GOIL_AUTH_CONTEXT;
+    if (!ctx) return true; // auth not yet loaded — allow (guard runs later)
+    if (ctx.isAdmin) return true;
+    var role = (ctx.role || '').toLowerCase();
+    if (perm === 'view') return true;
+    var isOfficer = role.indexOf('officer') !== -1 || role.indexOf('compliance') !== -1 ||
+                    role.indexOf('manager') !== -1 || role.indexOf('supervisor') !== -1 ||
+                    role.indexOf('hse') !== -1;
+    if (perm === 'create' || perm === 'edit' || perm === 'close') return isOfficer;
+    if (perm === 'sanctions') return isOfficer;
+    return false;
+  }
+
+  function applyTabPermissions() {
+    document.querySelectorAll('.mod-tab[data-hash]').forEach(function(tab) {
+      var h    = tab.getAttribute('data-hash');
+      var perm = TAB_PERMS[h] || 'view';
+      var allowed = npaCanDo(perm);
+      tab.style.display  = allowed ? '' : 'none';
+      tab.style.pointerEvents = allowed ? '' : 'none';
+    });
+  }
+
+  function applyHash() {
+    var hash    = window.location.hash || '#dashboard';
+    // Guard: if user lacks permission for this hash, redirect to dashboard
+    var perm = TAB_PERMS[hash] || 'view';
+    if (!npaCanDo(perm)) {
+      window.location.replace('#dashboard');
+      hash = '#dashboard';
+    }
+    var panelId = HASH_TO_PANEL[hash] || 'panel-dashboard';
+    document.querySelectorAll('.mod-tab').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-hash') === hash); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.toggle('active', p.id === panelId); });
+    // Update breadcrumb
+    var label = BREADCRUMB_LABELS[hash] || 'Dashboard';
+    var bcActive  = document.getElementById('bcActive');
+    var bcChevron = document.getElementById('bcChevron');
+    if (bcActive)  bcActive.textContent = label;
+    if (bcChevron) bcChevron.style.display = label ? '' : 'none';
+    if (panelId === 'panel-dashboard')  renderDashboard();
+    if (panelId === 'panel-sanctions')  renderSanctions();
+    if (panelId === 'panel-close')      renderClosePanel();
+    if (panelId === 'panel-facility')   renderFacilityProfile();
+  }
+  window.addEventListener('hashchange', applyHash);
+  window.goTo = function(hash) { window.location.hash = hash; };
+
+  /* ═══ DATA ══════════════════════════════════════════════════ */
+  var LS_RECORDS   = 'goil_npa_records';
+  var LS_SANCTIONS = 'goil_npa_sanctions';
+
+  var allRecords   = [];
+  var sanctions    = [];
+  var currentUser  = '';
+
+  var recActiveTab   = 'all';
+  var recFilters     = { ref:'', status:'', outletType:'', inspFrom:'', inspTo:'', commFrom:'', commTo:'', createdBy:'' };
+  var recOverdue     = false;
+  var recSearch      = '';
+  var db             = null;
+
+  /* ── Filter-state persistence (survives navigating to record detail and back) ── */
+  var SS_FILTER_KEY = 'goil_npa_add_filter_state';
+
+  function saveFilterState() {
+    try {
+      sessionStorage.setItem(SS_FILTER_KEY, JSON.stringify({
+        tab: recActiveTab, search: recSearch, filters: recFilters, overdue: recOverdue
+      }));
+    } catch(e){}
+  }
+
+  function restoreFilterState() {
+    try {
+      var raw = sessionStorage.getItem(SS_FILTER_KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s.tab)     recActiveTab = s.tab;
+      if (s.search)  recSearch    = s.search;
+      if (s.filters) recFilters   = s.filters;
+      if (s.overdue) recOverdue   = s.overdue;
+    } catch(e){}
+  }
+
+  /* ── Sanction modal dirty-state tracking ── */
+  var sanctionModalDirty = false;
+
+  var sanActiveTab   = 'all';
+  var sanSearch      = '';
+
+  var closeActiveTab = 'ready';
+  var closeSearch    = '';
+
+  var SUPABASE_URL   = 'https://qpldcpendvdobtbkygxo.supabase.co';
+  var SUPABASE_ANON  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg';
+
+  function readLS(key)       { try { return JSON.parse(localStorage.getItem(key)||'[]')||[]; } catch(e){ return []; } }
+  function writeLS(key, data){ try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){} }
+  function todayStr()        { return new Date().toISOString().split('T')[0]; }
+  function thisMonthStart()  { var d=new Date(); d.setDate(1); return d.toISOString().split('T')[0]; }
+  function fmtDate(d)        { if (!d) return '\u2014'; var dt=new Date(d+'T00:00:00'); return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+  function fmtCurrency(n)    { if (!n && n!==0) return '\u2014'; return 'GHS ' + Number(n).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function daysDiff(d)       { return Math.round((new Date(d+'T00:00:00')-new Date())/86400000); }
+  function esc(s)            { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function setText(id,v)     { var el=document.getElementById(id); if(el) el.textContent=v; }
+  function setHTML(id,h)     { var el=document.getElementById(id); if(el) el.innerHTML=h; }
+  function uid()             { return 'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,8); }
+
+  function isOverdue(sc)     { return !!sc.targetCompletionDate && sc.status!=='Closed' && sc.targetCompletionDate<todayStr(); }
+
+  function computeStatus(r) {
+    var all=[]; (r.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ all.push(sc); }); });
+    if (!all.length) return r.status||'Draft';
+    var cl=all.filter(function(sc){ return sc.status==='Closed'; }).length;
+    if (cl===all.length) return 'Closed';
+    if (cl>0) return 'Partially Closed';
+    return all.some(function(sc){ return sc.status==='In Progress'||sc.status==='Pending Verification'; }) ? 'In Progress' : 'Open';
+  }
+  function countSC(r,st)    { var n=0; (r.stations||[]).forEach(function(s){ (s.shortcomings||[]).forEach(function(sc){ if(!st||sc.status===st) n++; }); }); return n; }
+  function countOvSC(r)     { var n=0; (r.stations||[]).forEach(function(s){ (s.shortcomings||[]).forEach(function(sc){ if(isOverdue(sc)) n++; }); }); return n; }
+  function recStatusClass(s){ return {'Draft':'draft','Open':'open','In Progress':'in-progress','Partially Closed':'partial','Closed':'closed','Archived':'archived'}[s]||'draft'; }
+
+  function allSC() {
+    var list=[];
+    allRecords.forEach(function(r){ (r.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ list.push({sc:sc,station:st,record:r}); }); }); });
+    return list;
+  }
+
+  function logActivity(recordId, type, remarks) {
+    var key='goil_npa_activity_'+recordId;
+    try {
+      var log=JSON.parse(localStorage.getItem(key)||'[]')||[];
+      log.unshift({id:'act_'+Date.now(),recordId:recordId,actionType:type,remarks:remarks||'',performedBy:currentUser||'—',performedAt:new Date().toISOString()});
+      localStorage.setItem(key,JSON.stringify(log.slice(0,200)));
+    } catch(e){}
+  }
+
+  /* ═══ TOAST ════════════════════════════════════════════════ */
+  function showToast(msg, type) {
+    type = type||'info';
+    var icons = { success:'<polyline points="20 6 9 17 4 12"/>', error:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>' };
+    var el=document.createElement('div'); el.className='toast '+type;
+    el.innerHTML='<div class="toast-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'+icons[type]+'</svg></div><span class="toast-text">'+esc(msg)+'</span>';
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(function(){ el.remove(); }, 3500);
+  }
+
+  /* ═══ DASHBOARD ════════════════════════════════════════════ */
+  function emptyCard(msg) {
+    return '<div class="dash-empty"><div class="dash-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div><div class="dash-empty-text">'+esc(msg)+'</div></div>';
+  }
+  function barChart(rows, max) {
+    if (!rows.length) return emptyCard('No NPA monitoring data is available yet.');
+    return '<div class="bar-list">'+rows.map(function(r){ var pct=max?Math.round(r.count/max*100):0; return '<div class="bar-row"><div class="bar-row-label" title="'+esc(r.label)+'">'+esc(r.label)+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+r.color+';"></div></div><div class="bar-row-count">'+r.count+'</div></div>'; }).join('')+'</div>';
+  }
+
+  function renderDashboard() {
+    var scs=allSC();
+    var total=allRecords.length, stations=0, cO=0,cP=0,cPend=0,cCl=0,cOv=0;
+    allRecords.forEach(function(r){ stations+=(r.stations||[]).length; });
+    scs.forEach(function(e){ var sc=e.sc; if(sc.status==='Open') cO++; else if(sc.status==='In Progress') cP++; else if(sc.status==='Pending Verification') cPend++; else if(sc.status==='Closed') cCl++; if(isOverdue(sc)) cOv++; });
+    var totalSC=scs.length, rate=totalSC?Math.round(cCl/totalSC*100):0;
+    var activeSanctions=sanctions.filter(function(s){ return s.status==='Active'; }).length;
+
+    setText('dStatTotal',      total||'0'); setText('dStatFacilities', stations||'0');
+    setText('dStatOpen',       cO||'0');    setText('dStatInProgress', (cP+cPend)||'0');
+    setText('dStatOverdue',    cOv||'0');   setText('dStatClosed',     cCl||'0');
+    setText('dStatSanctions',  activeSanctions||'0'); setText('dStatRate', rate+'%');
+
+    var statusRows=[{label:'Open',count:cO,color:'#60A5FA'},{label:'In Progress',count:cP,color:'#FBBF24'},{label:'Pending Verification',count:cPend,color:'#A78BFA'},{label:'Overdue',count:cOv,color:'#F87171'},{label:'Closed',count:cCl,color:'#34D399'}].filter(function(r){ return r.count>0; });
+    setHTML('chartStatus', barChart(statusRows, statusRows.reduce(function(m,r){ return Math.max(m,r.count); },0)));
+
+    var typeMap={};
+    scs.forEach(function(e){ var t=e.station.outletType||'Unspecified'; typeMap[t]=(typeMap[t]||0)+1; });
+    var typeRows=Object.keys(typeMap).sort(function(a,b){ return typeMap[b]-typeMap[a]; }).map(function(t){ return {label:t,count:typeMap[t],color:'#FF6B00'}; });
+    setHTML('chartFacilityType', barChart(typeRows, typeRows.reduce(function(m,r){ return Math.max(m,r.count); },0)));
+
+    var ovList=scs.filter(function(e){ return isOverdue(e.sc); }).sort(function(a,b){ return a.sc.targetCompletionDate<b.sc.targetCompletionDate?-1:1; }).slice(0,5);
+    setHTML('listOverdue', !ovList.length ? emptyCard('No overdue shortcomings. All targets are on track.') :
+      '<div class="dash-list">'+ovList.map(function(e){ var d=Math.abs(daysDiff(e.sc.targetCompletionDate)); return '<div class="dash-list-item"><div class="dash-list-num">'+esc(e.record.recordNumber||'—')+'</div><div class="dash-list-main"><div class="dash-list-name">'+esc(e.station.facilityName||'Unknown facility')+'</div><div class="dash-list-sub">'+esc((e.sc.description||'').substring(0,55))+(e.sc.description&&e.sc.description.length>55?'&hellip;':'')+'</div></div><div class="dash-list-meta"><div class="dash-list-badge overdue">'+d+'d overdue</div><div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px;">'+fmtDate(e.sc.targetCompletionDate)+'</div></div></div>'; }).join('')+'</div>');
+
+    var recent=allRecords.slice().sort(function(a,b){ return (b.recordDate||b.createdAt||'')>(a.recordDate||a.createdAt||'')?1:-1; }).slice(0,5);
+    setHTML('listRecent', !recent.length ? emptyCard('No NPA monitoring records have been created yet.') :
+      '<div class="dash-list">'+recent.map(function(r){ var s=computeStatus(r); return '<div class="dash-list-item" style="cursor:pointer;" onclick="viewRecord(\''+esc(r.id)+'\')"><div class="dash-list-num">'+esc(r.recordNumber||'—')+'</div><div class="dash-list-main"><div class="dash-list-name">'+esc(r.communiqueReference||r.communiqueSubject||'No reference')+'</div><div class="dash-list-sub">'+fmtDate(r.recordDate)+(r.createdBy?' &middot; '+esc(r.createdBy):'')+'</div></div><span class="status-badge '+recStatusClass(s)+'">'+esc(s)+'</span></div>'; }).join('')+'</div>');
+
+    var td=todayStr(), d30=new Date(); d30.setDate(d30.getDate()+30); var d30s=d30.toISOString().split('T')[0];
+    var upcoming=scs.filter(function(e){ return e.sc.targetCompletionDate&&e.sc.targetCompletionDate>=td&&e.sc.targetCompletionDate<=d30s&&e.sc.status!=='Closed'; }).sort(function(a,b){ return a.sc.targetCompletionDate<b.sc.targetCompletionDate?-1:1; }).slice(0,5);
+    setHTML('listUpcoming', !upcoming.length ? emptyCard('No shortcomings have target dates in the next 30 days.') :
+      '<div class="dash-list">'+upcoming.map(function(e){ var d=daysDiff(e.sc.targetCompletionDate); var u=d<=3?'overdue':d<=7?'upcoming':'open'; return '<div class="dash-list-item"><div class="dash-list-num">'+esc(e.record.recordNumber||'—')+'</div><div class="dash-list-main"><div class="dash-list-name">'+esc(e.station.facilityName||'Unknown facility')+'</div><div class="dash-list-sub">'+fmtDate(e.sc.targetCompletionDate)+'</div></div><div class="dash-list-badge '+u+'">'+d+'d left</div></div>'; }).join('')+'</div>');
+
+    setHTML('closurePerf', !totalSC ? emptyCard('No shortcoming data is available yet.') :
+      '<div class="closure-rate-wrap"><div style="display:flex;align-items:baseline;gap:4px;"><div class="closure-rate-num">'+rate+'</div><div class="closure-rate-pct">%</div></div><div style="width:100%;"><div class="closure-rate-bar-track"><div class="closure-rate-bar-fill" style="width:'+rate+'%;"></div></div></div><div class="closure-rate-label">'+cCl+' of '+totalSC+' shortcomings closed &mdash; '+(totalSC-cCl)+' remaining</div></div>');
+
+    var zoneMap={};
+    scs.forEach(function(e){ var z=e.station.zone||''; if(z){zoneMap[z]=(zoneMap[z]||0)+1;} });
+    var zKeys=Object.keys(zoneMap);
+    if (!zKeys.length) { setHTML('chartZone', emptyCard('Zone data is not yet available for the current records.')); }
+    else {
+      var zRows=zKeys.sort(function(a,b){ return zoneMap[b]-zoneMap[a]; }).map(function(z,i){ var c=['#60A5FA','#FBBF24','#A78BFA','#34D399','#F87171','#FF6B00']; return {label:z,count:zoneMap[z],color:c[i%c.length]}; });
+      setHTML('chartZone', barChart(zRows, zRows.reduce(function(m,r){ return Math.max(m,r.count); },0)));
+    }
+
+    if (!sanctions.length) { setHTML('sanctionsSummary', emptyCard('No sanctions recorded yet.')); }
+    else {
+      var ss=sanctions.slice(0,5);
+      setHTML('sanctionsSummary','<div class="dash-list">'+ss.map(function(s){ return '<div class="dash-list-item"><div class="dash-list-num">'+esc(s.sanctionNumber||'—')+'</div><div class="dash-list-main"><div class="dash-list-name">'+esc(s.facility||'—')+'</div><div class="dash-list-sub">'+esc(s.sanctionType||'—')+' &middot; '+fmtDate(s.dateIssued)+'</div></div><span class="badge '+sanBadgeClass(s.status)+'">'+esc(s.status)+'</span></div>'; }).join('')+'</div>');
+    }
+  }
+
+  /* ═══ ADD SHORTCOMING (records list) ═══════════════════════ */
+  function updateAddStats() {
+    var st=0,op=0,pr=0,ov=0,cl=0;
+    allRecords.forEach(function(r){ st+=(r.stations||[]).length; (r.stations||[]).forEach(function(s){ (s.shortcomings||[]).forEach(function(sc){ if(sc.status==='Open') op++; else if(sc.status==='In Progress'||sc.status==='Pending Verification') pr++; else if(sc.status==='Closed') cl++; if(isOverdue(sc)) ov++; }); }); });
+    setText('statTotal',allRecords.length); setText('statStations',st); setText('statOpen',op); setText('statInProgress',pr); setText('statOverdue',ov); setText('statClosed',cl);
+  }
+
+  function getFiltered() {
+    var q=recSearch.toLowerCase(), email='';
+    try{ var ctx=window.GOIL_AUTH_CONTEXT; if(ctx&&ctx.session&&ctx.session.user) email=ctx.session.user.email||''; }catch(e){}
+    return allRecords.filter(function(r){
+      if (recActiveTab==='open')   { var s=computeStatus(r); if(s!=='Open'&&s!=='Draft') return false; }
+      else if (recActiveTab==='mine') { var f=r.createdByEmail===email; (r.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ if(sc.responsiblePersonEmail===email) f=true; }); }); if(!f) return false; }
+      else if (recActiveTab==='overdue')  { if(!countOvSC(r)) return false; }
+      else if (recActiveTab==='pending')  { var hp=(r.stations||[]).some(function(st){ return (st.shortcomings||[]).some(function(sc){ return sc.status==='Pending Verification'; }); }); if(!hp) return false; }
+      else if (recActiveTab==='closed')   { if(computeStatus(r)!=='Closed') return false; }
+      if (recOverdue && !countOvSC(r)) return false;
+      if (recFilters.ref        && !(r.communiqueReference||'').toLowerCase().includes(recFilters.ref.toLowerCase())) return false;
+      if (recFilters.status     && computeStatus(r)!==recFilters.status) return false;
+      if (recFilters.outletType){ var ht=(r.stations||[]).some(function(st){ return st.outletType===recFilters.outletType; }); if(!ht) return false; }
+      if (recFilters.inspFrom   && r.inspectionDateFrom && r.inspectionDateFrom<recFilters.inspFrom) return false;
+      if (recFilters.inspTo     && r.inspectionDateTo   && r.inspectionDateTo>recFilters.inspTo)     return false;
+      if (recFilters.commFrom   && r.communiqueDate     && r.communiqueDate<recFilters.commFrom)      return false;
+      if (recFilters.commTo     && r.communiqueDate     && r.communiqueDate>recFilters.commTo)        return false;
+      if (recFilters.createdBy  && !(r.createdBy||'').toLowerCase().includes(recFilters.createdBy.toLowerCase())) return false;
+      if (q) { var hay=[r.recordNumber,r.communiqueReference,r.communiqueSubject,r.createdBy,(r.stations||[]).map(function(s){ return s.facilityName; }).join(' ')].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+      return true;
+    });
+  }
+
+  function renderTable() {
+    var filtered=getFiltered();
+    var tbody=document.getElementById('recordsBody'), empty=document.getElementById('emptyState'), table=document.getElementById('recordsTable');
+    var email=''; try{ var ctx=window.GOIL_AUTH_CONTEXT; if(ctx&&ctx.session&&ctx.session.user) email=ctx.session.user.email||''; }catch(e){}
+    setText('countAll',    allRecords.length);
+    setText('countOpen',   allRecords.filter(function(r){ var s=computeStatus(r); return s==='Open'||s==='Draft'; }).length);
+    setText('countMine',   allRecords.filter(function(r){ var f=r.createdByEmail===email; (r.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ if(sc.responsiblePersonEmail===email) f=true; }); }); return f; }).length);
+    setText('countOverdue',allRecords.filter(function(r){ return countOvSC(r)>0; }).length);
+    setText('countPending',allRecords.filter(function(r){ return (r.stations||[]).some(function(st){ return (st.shortcomings||[]).some(function(sc){ return sc.status==='Pending Verification'; }); }); }).length);
+    setText('countClosed', allRecords.filter(function(r){ return computeStatus(r)==='Closed'; }).length);
+    if (!filtered.length) { table.style.display='none'; empty.style.display='block'; document.getElementById('emptyDesc').textContent=allRecords.length?'No records match your current filters.':'No NPA monitoring records yet. Click \u201cNew NPA Record\u201d to capture your first communiqu\u00e9.'; return; }
+    table.style.display=''; empty.style.display='none';
+    tbody.innerHTML=filtered.map(function(r){ var status=computeStatus(r); var od=countOvSC(r)>0&&status!=='Closed'; var ip=r.inspectionDateFrom?(fmtDate(r.inspectionDateFrom)+(r.inspectionDateTo?' &ndash; '+fmtDate(r.inspectionDateTo):'')):'&mdash;'; return '<tr><td><span class="rec-number">'+esc(r.recordNumber)+'</span></td><td><span class="rec-date">'+fmtDate(r.recordDate)+'</span></td><td><span class="rec-date">'+ip+'</span></td><td><span class="rec-date">'+fmtDate(r.communiqueDate)+'</span></td><td><span class="rec-ref">'+esc(r.communiqueReference||'\u2014')+'</span></td><td class="rec-small">'+(r.stations||[]).length+'</td><td class="rec-small">'+countSC(r,null)+'</td><td class="rec-small" style="color:#60A5FA;">'+countSC(r,'Open')+'</td><td class="rec-small" style="color:#34D399;">'+countSC(r,'Closed')+'</td><td><span class="status-badge '+(od?'overdue':recStatusClass(status))+'">'+esc(od?'Overdue':status)+'</span></td><td><span class="rec-creator">'+esc(r.createdBy||'\u2014')+'</span></td><td>'+renderRecActionMenu(r)+'</td></tr>'; }).join('');
+    wireActionMenus();
+  }
+
+  function renderRecActionMenu(r) {
+    return '<div class="action-wrap"><button class="action-btn action-trigger" data-id="'+esc(r.id)+'">Actions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div class="action-menu"><div class="action-menu-item" onclick="viewRecord(\''+esc(r.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View</div><div class="action-menu-item" onclick="editRecord(\''+esc(r.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</div><div class="action-menu-item" onclick="addStation(\''+esc(r.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Station</div><div class="action-menu-divider"></div><div class="action-menu-item" onclick="exportRecord(\''+esc(r.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</div><div class="action-menu-item danger" onclick="archiveRecord(\''+esc(r.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>Archive</div></div></div>';
+  }
+
+  function wireActionMenus() {
+    document.querySelectorAll('.action-trigger').forEach(function(btn){ btn.addEventListener('click',function(e){ e.stopPropagation(); var m=btn.nextElementSibling; var o=m.classList.contains('open'); document.querySelectorAll('.action-menu.open').forEach(function(x){ x.classList.remove('open'); }); if(!o) m.classList.add('open'); }); });
+  }
+  document.addEventListener('click', function(){ document.querySelectorAll('.action-menu.open').forEach(function(m){ m.classList.remove('open'); }); });
+
+  /* ═══ RECORD ACTIONS ════════════════════════════════════════ */
+  window.viewRecord   = function(id){ window.location.href='npa-record-detail.html?id='+encodeURIComponent(id); };
+  window.editRecord   = function(id){ window.location.href='npa-new-record.html?id='+encodeURIComponent(id)+'&mode=edit'; };
+  window.addStation   = function(id){ window.location.href='npa-new-record.html?id='+encodeURIComponent(id)+'&mode=add-station'; };
+  window.exportRecord = function(id){ var rec=allRecords.find(function(r){ return r.id===id; }); if(!rec) return; var blob=new Blob([JSON.stringify(rec,null,2)],{type:'application/json'}); var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download=(rec.recordNumber||'npa-record')+'.json'; a.click(); URL.revokeObjectURL(url); };
+  window.archiveRecord= function(id){ if(!confirm('Archive this record?')) return; var recs=readLS(LS_RECORDS); var rec=recs.find(function(r){ return r.id===id; }); if(rec){ rec.status='Archived'; rec.archivedAt=new Date().toISOString(); } writeLS(LS_RECORDS,recs); loadAndRender(); showToast('Record archived.','info'); };
+
+  /* ═══ NPA SANCTIONS ════════════════════════════════════════ */
+  function sanBadgeClass(s){ return {Draft:'draft',Active:'active','Response Submitted':'submitted','Under Review':'in-progress',Resolved:'resolved',Appealed:'appealed',Cancelled:'cancelled'}[s]||'draft'; }
+
+  function genSanctionNumber() {
+    var y=new Date().getFullYear(); var existing=sanctions.filter(function(s){ return (s.sanctionNumber||'').includes(String(y)); }); var n=existing.length+1; return 'NPA-SAN-'+y+'-'+String(n).padStart(3,'0');
+  }
+
+  function updateSanctionStats() {
+    var total=sanctions.length, active=0, pending=0, financial=0, resolved=0;
+    sanctions.forEach(function(s){ if(s.status==='Active') active++; if(s.status==='Draft'||s.status==='Active') pending++; if(s.sanctionType==='Financial Penalty'&&s.amount>0) financial++; if(s.status==='Resolved') resolved++; });
+    setText('sanStatTotal',total); setText('sanStatActive',active); setText('sanStatPending',pending); setText('sanStatFinancial',financial); setText('sanStatResolved',resolved);
+    setText('sanCountAll',total);
+    ['Active','Draft','Response Submitted','Under Review','Resolved'].forEach(function(st,i){ var ids=['sanCountActive','sanCountDraft','sanCountResponse','sanCountReview','sanCountResolved']; setText(ids[i],sanctions.filter(function(s){ return s.status===st; }).length); });
+  }
+
+  function getSanctionsFiltered() {
+    var q=sanSearch.toLowerCase();
+    return sanctions.filter(function(s){
+      if (sanActiveTab!=='all' && s.status!==sanActiveTab) return false;
+      if (q) { var hay=[s.sanctionNumber,s.npaReference,s.communiqueReference,s.facility,s.sanctionType,s.responsiblePerson].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+      return true;
+    });
+  }
+
+  function renderSanctions() {
+    updateSanctionStats();
+    var filtered=getSanctionsFiltered();
+    var tbody=document.getElementById('sanctionsBody'), empty=document.getElementById('sanctionsEmpty'), table=document.getElementById('sanctionsTable');
+    if (!filtered.length) { table.style.display='none'; empty.style.display='block'; return; }
+    table.style.display=''; empty.style.display='none';
+    tbody.innerHTML=filtered.map(function(s){
+      var od=s.dueDate&&s.dueDate<todayStr()&&s.status!=='Resolved'&&s.status!=='Cancelled';
+      return '<tr>'+
+        '<td><span class="cell-id">'+esc(s.sanctionNumber||'—')+'</span></td>'+
+        '<td><span class="cell-date">'+fmtDate(s.dateIssued)+'</span></td>'+
+        '<td><span class="cell-ref">'+esc(s.npaReference||'—')+'</span></td>'+
+        '<td><span class="cell-ref">'+esc(s.communiqueReference||'—')+'</span></td>'+
+        '<td><span class="cell-name">'+esc(s.facility||'—')+'</span></td>'+
+        '<td><span class="cell-muted">'+esc(s.sanctionType||'—')+'</span></td>'+
+        '<td><span class="cell-muted">'+(s.amount?fmtCurrency(s.amount):'—')+'</span></td>'+
+        '<td><span class="cell-trunc" title="'+esc(s.requiredAction||'')+'">'+esc((s.requiredAction||'').substring(0,40))+((s.requiredAction||'').length>40?'&hellip;':'')+'</span></td>'+
+        '<td><span class="cell-date" style="'+(od?'color:#F87171;':'')+'">'+fmtDate(s.dueDate)+(od?' &bull; Overdue':'')+'</span></td>'+
+        '<td><span class="badge '+sanBadgeClass(s.status)+'">'+esc(s.status)+'</span></td>'+
+        '<td><span class="cell-muted">'+esc(s.responsiblePerson||'—')+'</span></td>'+
+        '<td>'+renderSanctionMenu(s)+'</td>'+
+      '</tr>';
+    }).join('');
+    wireActionMenus();
+  }
+
+  function renderSanctionMenu(s) {
+    return '<div class="action-wrap"><button class="action-btn action-trigger">Actions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div class="action-menu">'+
+      '<div class="action-menu-item" onclick="editSanction(\''+esc(s.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</div>'+
+      (s.status!=='Resolved'?'<div class="action-menu-item success" onclick="resolveSanction(\''+esc(s.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Mark Resolved</div>':'')+'<div class="action-menu-divider"></div>'+
+      '<div class="action-menu-item danger" onclick="deleteSanction(\''+esc(s.id)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>Delete</div>'+
+    '</div></div>';
+  }
+
+  window.editSanction = function(id) {
+    var s=sanctions.find(function(x){ return x.id===id; }); if(!s) return;
+    document.getElementById('sanctionModalTitle').textContent='Edit NPA Sanction';
+    document.getElementById('sanctionEditId').value=id;
+    document.getElementById('sanDateIssued').value=s.dateIssued||'';
+    document.getElementById('sanDueDate').value=s.dueDate||'';
+    document.getElementById('sanNpaRef').value=s.npaReference||'';
+    document.getElementById('sanCommRef').value=s.communiqueReference||'';
+    document.getElementById('sanFacility').value=s.facility||'';
+    document.getElementById('sanType').value=s.sanctionType||'';
+    document.getElementById('sanStatus').value=s.status||'Draft';
+    document.getElementById('sanAmount').value=s.amount||'';
+    document.getElementById('sanResponsible').value=s.responsiblePerson||'';
+    document.getElementById('sanAction').value=s.requiredAction||'';
+    document.getElementById('sanNotes').value=s.notes||'';
+    sanctionModalDirty=false;
+    document.getElementById('modalAddSanction').classList.add('open');
+  };
+  window.resolveSanction = function(id) {
+    var sans=readLS(LS_SANCTIONS); var s=sans.find(function(x){ return x.id===id; }); if(s){ s.status='Resolved'; s.resolvedAt=new Date().toISOString(); s.resolvedBy=currentUser; }
+    writeLS(LS_SANCTIONS,sans); sanctions=sans; renderSanctions(); showToast('Sanction marked as resolved.','success');
+  };
+  window.deleteSanction = function(id) {
+    if(!confirm('Delete this sanction? This cannot be undone.')) return;
+    var sans=readLS(LS_SANCTIONS).filter(function(x){ return x.id!==id; });
+    writeLS(LS_SANCTIONS,sans); sanctions=sans; renderSanctions(); showToast('Sanction deleted.','info');
+  };
+
+  function saveSanction() {
+    var editId=document.getElementById('sanctionEditId').value.trim();
+    var dateIssued=document.getElementById('sanDateIssued').value;
+    var facility=document.getElementById('sanFacility').value.trim();
+    var type=document.getElementById('sanType').value;
+    var action=document.getElementById('sanAction').value.trim();
+    if (!dateIssued||!facility||!type||!action) { showToast('Please fill in all required fields.','error'); return; }
+    var sans=readLS(LS_SANCTIONS);
+    if (editId) {
+      var s=sans.find(function(x){ return x.id===editId; });
+      if (s) { s.dateIssued=dateIssued; s.dueDate=document.getElementById('sanDueDate').value; s.npaReference=document.getElementById('sanNpaRef').value.trim(); s.communiqueReference=document.getElementById('sanCommRef').value.trim(); s.facility=facility; s.sanctionType=type; s.status=document.getElementById('sanStatus').value; s.amount=parseFloat(document.getElementById('sanAmount').value)||0; s.responsiblePerson=document.getElementById('sanResponsible').value.trim(); s.requiredAction=action; s.notes=document.getElementById('sanNotes').value.trim(); s.updatedAt=new Date().toISOString(); }
+    } else {
+      sans.push({ id:uid(), sanctionNumber:genSanctionNumber(), dateIssued:dateIssued, dueDate:document.getElementById('sanDueDate').value, npaReference:document.getElementById('sanNpaRef').value.trim(), communiqueReference:document.getElementById('sanCommRef').value.trim(), facility:facility, sanctionType:type, status:document.getElementById('sanStatus').value||'Draft', amount:parseFloat(document.getElementById('sanAmount').value)||0, responsiblePerson:document.getElementById('sanResponsible').value.trim(), requiredAction:action, notes:document.getElementById('sanNotes').value.trim(), createdBy:currentUser, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+    }
+    writeLS(LS_SANCTIONS,sans); sanctions=sans;
+    closeModalById('modalAddSanction'); renderSanctions(); showToast(editId?'Sanction updated.':'Sanction saved.','success');
+  }
+
+  /* ═══ CLOSE SHORTCOMING PANEL ══════════════════════════════ */
+  function scBadgeClass(s){ return {Open:'open','In Progress':'in-progress','Pending Verification':'pending',Closed:'closed',Reopened:'reopened',Draft:'draft'}[s]||'draft'; }
+
+  function getClosePanelItems() {
+    var q=closeSearch.toLowerCase();
+    var scs=allSC();
+    var month=thisMonthStart();
+    var filtered=scs.filter(function(e){
+      var sc=e.sc;
+      if (closeActiveTab==='ready')   { if(sc.status!=='Open'&&sc.status!=='In Progress'&&sc.status!=='Reopened') return false; }
+      else if (closeActiveTab==='pending') { if(sc.status!=='Pending Verification') return false; }
+      else if (closeActiveTab==='recent')  { if(sc.status!=='Closed'||!sc.closedAt||sc.closedAt.split('T')[0]<month) return false; }
+      else if (closeActiveTab==='reopened'){ if(sc.status!=='Reopened') return false; }
+      // 'all' shows everything except archived records
+      if (q) { var hay=[e.record.recordNumber,e.record.communiqueReference,e.station.facilityName,sc.description,sc.responsiblePerson].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+      return true;
+    });
+    return filtered;
+  }
+
+  function updateCloseStats() {
+    var scs=allSC(), month=thisMonthStart();
+    var ready=0, pend=0, returned=0, thisMonth=0, reopened=0;
+    scs.forEach(function(e){ var sc=e.sc;
+      if(sc.status==='Open'||sc.status==='In Progress') ready++;
+      if(sc.status==='Pending Verification') pend++;
+      if((sc.returnCount||0)>0) returned++;
+      if(sc.status==='Closed'&&sc.closedAt&&sc.closedAt.split('T')[0]>=month) thisMonth++;
+      if(sc.status==='Reopened') reopened++;
+    });
+    setText('clStatReady',ready); setText('clStatPending',pend); setText('clStatReturned',returned); setText('clStatThisMonth',thisMonth); setText('clStatReopened',reopened);
+    // tab counts
+    var allScs=allSC(), m=thisMonthStart();
+    setText('clCountReady',  allScs.filter(function(e){ return e.sc.status==='Open'||e.sc.status==='In Progress'||e.sc.status==='Reopened'; }).length);
+    setText('clCountPending',allScs.filter(function(e){ return e.sc.status==='Pending Verification'; }).length);
+    setText('clCountRecent', allScs.filter(function(e){ return e.sc.status==='Closed'&&e.sc.closedAt&&e.sc.closedAt.split('T')[0]>=m; }).length);
+    setText('clCountReopened',allScs.filter(function(e){ return e.sc.status==='Reopened'; }).length);
+    setText('clCountAll',    allScs.length);
+  }
+
+  function renderClosePanel() {
+    updateCloseStats();
+    var items=getClosePanelItems();
+    var tbody=document.getElementById('closeBody'), empty=document.getElementById('closeEmpty'), table=document.getElementById('closeTable');
+    if (!items.length) {
+      table.style.display='none'; empty.style.display='block';
+      var msgs={ready:'No shortcomings are currently ready for closure.',pending:'No shortcomings are pending verification.',recent:'No shortcomings have been closed this month.',reopened:'No shortcomings have been reopened.',all:'No shortcomings have been recorded yet.'};
+      document.getElementById('closeEmptyDesc').textContent=msgs[closeActiveTab]||'No shortcomings match the selected filter.';
+      return;
+    }
+    table.style.display=''; empty.style.display='none';
+    tbody.innerHTML=items.map(function(e){ var sc=e.sc, st=e.station, rec=e.record; var od=isOverdue(sc);
+      return '<tr>'+
+        '<td><span class="cell-id">'+(rec.recordNumber||'—')+'-SC'+'</span></td>'+
+        '<td><span class="cell-ref">'+esc(rec.communiqueReference||'—')+'</span></td>'+
+        '<td><span class="cell-name">'+esc(st.facilityName||'—')+'</span></td>'+
+        '<td><span class="cell-trunc" title="'+esc(sc.description||'')+'">'+esc((sc.description||'').substring(0,50))+((sc.description||'').length>50?'&hellip;':'')+'</span></td>'+
+        '<td><span class="cell-muted">'+esc(sc.responsiblePerson||sc.responsiblePersonEmail||'—')+'</span></td>'+
+        '<td><span class="cell-date" style="'+(od?'color:#F87171;':'')+'">'+fmtDate(sc.targetCompletionDate)+(od?' &bull; Overdue':'')+'</span></td>'+
+        '<td><span class="badge '+(sc.evidence?'yes':'no')+'">'+(sc.evidence?'Yes':'No')+'</span></td>'+
+        '<td><span class="badge '+scBadgeClass(sc.status)+'">'+esc(sc.status)+'</span></td>'+
+        '<td><span class="cell-muted">'+esc(sc.submittedForClosureBy||'—')+'</span></td>'+
+        '<td>'+renderCloseMenu(rec.id, st.id, sc.id, sc.status)+'</td>'+
+      '</tr>';
+    }).join('');
+    wireActionMenus();
+  }
+
+  function renderCloseMenu(recId, stId, scId, status) {
+    var items='<div class="action-menu-item" onclick="openViewSc(\''+esc(recId)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View Full Record</div>';
+    if (status==='Open'||status==='In Progress'||status==='Reopened') {
+      items+='<div class="action-menu-item" onclick="openSubmitVerification(\''+esc(recId)+'\',\''+esc(stId)+'\',\''+esc(scId)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>Submit for Verification</div>';
+    }
+    if (status==='Pending Verification') {
+      items+='<div class="action-menu-divider"></div>'+
+        '<div class="action-menu-item success" onclick="openCloseSc(\''+esc(recId)+'\',\''+esc(stId)+'\',\''+esc(scId)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Approve &amp; Close</div>'+
+        '<div class="action-menu-item warning" onclick="openReturnCorrection(\''+esc(recId)+'\',\''+esc(stId)+'\',\''+esc(scId)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>Return for Correction</div>';
+    }
+    if (status==='Closed') {
+      items+='<div class="action-menu-divider"></div>'+
+        '<div class="action-menu-item danger" onclick="openReopenSc(\''+esc(recId)+'\',\''+esc(stId)+'\',\''+esc(scId)+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>Reopen</div>';
+    }
+    return '<div class="action-wrap"><button class="action-btn action-trigger">Actions<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div class="action-menu">'+items+'</div></div>';
+  }
+
+  window.openViewSc              = function(recId){ window.location.href='npa-record-detail.html?id='+encodeURIComponent(recId); };
+  window.openSubmitVerification  = function(recId,stId,scId){ document.getElementById('svRecordId').value=recId; document.getElementById('svStationId').value=stId; document.getElementById('svScId').value=scId; document.getElementById('svCorrectiveAction').value=''; document.getElementById('svEvidence').value=''; document.getElementById('svSubmittedBy').value=currentUser; document.getElementById('modalSubmitVerification').classList.add('open'); };
+  window.openCloseSc             = function(recId,stId,scId){ document.getElementById('csRecordId').value=recId; document.getElementById('csStationId').value=stId; document.getElementById('csScId').value=scId; document.getElementById('csCorrectiveAction').value=''; document.getElementById('csClosureRemarks').value=''; document.getElementById('csClosedBy').value=currentUser; document.getElementById('csDateClosed').value=todayStr(); document.getElementById('csEvidence').value=''; document.getElementById('modalCloseShortcoming').classList.add('open'); };
+  window.openReturnCorrection    = function(recId,stId,scId){ document.getElementById('rcRecordId').value=recId; document.getElementById('rcStationId').value=stId; document.getElementById('rcScId').value=scId; document.getElementById('rcReason').value=''; document.getElementById('rcReturnedBy').value=currentUser; document.getElementById('modalReturnCorrection').classList.add('open'); };
+  window.openReopenSc            = function(recId,stId,scId){ document.getElementById('roRecordId').value=recId; document.getElementById('roStationId').value=stId; document.getElementById('roScId').value=scId; document.getElementById('roReason').value=''; document.getElementById('roReopenedBy').value=currentUser; document.getElementById('modalReopenSc').classList.add('open'); };
+
+  window.confirmSubmitVerification = function() {
+    var recId=document.getElementById('svRecordId').value, stId=document.getElementById('svStationId').value, scId=document.getElementById('svScId').value;
+    var ca=document.getElementById('svCorrectiveAction').value.trim(), by=document.getElementById('svSubmittedBy').value.trim();
+    if(!ca||!by){ showToast('Corrective action and submitter name are required.','error'); return; }
+    updateScInStorage(recId,stId,scId,function(sc){ sc.status='Pending Verification'; sc.correctiveAction=ca; sc.evidence=document.getElementById('svEvidence').value.trim(); sc.submittedForClosureBy=by; sc.submittedAt=new Date().toISOString(); });
+    logActivity(recId,'status_changed','Submitted for verification by '+by+'. '+ca);
+    closeModalById('modalSubmitVerification'); reloadAfterScUpdate(); showToast('Shortcoming submitted for verification.','success');
+  };
+
+  window.confirmCloseShortcoming = function() {
+    var recId=document.getElementById('csRecordId').value, stId=document.getElementById('csStationId').value, scId=document.getElementById('csScId').value;
+    var ca=document.getElementById('csCorrectiveAction').value.trim();
+    var rem=document.getElementById('csClosureRemarks').value.trim();
+    var by=document.getElementById('csClosedBy').value.trim();
+    var dt=document.getElementById('csDateClosed').value;
+    if(!ca)  { showToast('Corrective action description is required.','error'); return; }
+    if(!rem) { showToast('Closure remarks are required.','error'); return; }
+    if(!by)  { showToast('Closed By is required.','error'); return; }
+    if(!dt)  { showToast('Date Closed is required.','error'); return; }
+    updateScInStorage(recId,stId,scId,function(sc){ sc.status='Closed'; sc.correctiveAction=ca; sc.closureRemarks=rem; sc.closedBy=by; sc.closedAt=new Date(dt+'T00:00:00').toISOString(); sc.evidence=document.getElementById('csEvidence').value.trim()||sc.evidence; });
+    logActivity(recId,'shortcoming_closed','Approved and closed by '+by+'. '+rem);
+    closeModalById('modalCloseShortcoming'); reloadAfterScUpdate(); showToast('Shortcoming closed successfully.','success');
+  };
+
+  window.confirmReturnCorrection = function() {
+    var recId=document.getElementById('rcRecordId').value, stId=document.getElementById('rcStationId').value, scId=document.getElementById('rcScId').value;
+    var reason=document.getElementById('rcReason').value.trim(), by=document.getElementById('rcReturnedBy').value.trim();
+    if(!reason||!by){ showToast('Reason and name are required.','error'); return; }
+    updateScInStorage(recId,stId,scId,function(sc){ sc.status='In Progress'; sc.lastReturnedReason=reason; sc.lastReturnedBy=by; sc.lastReturnedAt=new Date().toISOString(); sc.returnCount=(sc.returnCount||0)+1; sc.submittedForClosureBy=''; sc.submittedAt=''; });
+    logActivity(recId,'status_changed','Returned for correction by '+by+'. Reason: '+reason);
+    closeModalById('modalReturnCorrection'); reloadAfterScUpdate(); showToast('Shortcoming returned for correction.','info');
+  };
+
+  window.confirmReopenSc = function() {
+    var recId=document.getElementById('roRecordId').value, stId=document.getElementById('roStationId').value, scId=document.getElementById('roScId').value;
+    var reason=document.getElementById('roReason').value.trim(), by=document.getElementById('roReopenedBy').value.trim();
+    if(!reason||!by){ showToast('Reason and name are required.','error'); return; }
+    updateScInStorage(recId,stId,scId,function(sc){ sc.status='Reopened'; sc.reopenedBy=by; sc.reopenedAt=new Date().toISOString(); sc.closedBy=''; sc.closedAt=''; sc.closureRemarks=''; });
+    logActivity(recId,'shortcoming_reopened','Reopened by '+by+'. Reason: '+reason);
+    closeModalById('modalReopenSc'); reloadAfterScUpdate(); showToast('Shortcoming reopened.','info');
+  };
+
+  function updateScInStorage(recId,stId,scId,fn) {
+    var recs=readLS(LS_RECORDS); var rec=recs.find(function(r){ return r.id===recId; });
+    if (rec) { (rec.stations||[]).forEach(function(st){ if(st.id!==stId) return; (st.shortcomings||[]).forEach(function(sc){ if(sc.id===scId) fn(sc); }); }); rec.updatedAt=new Date().toISOString(); }
+    writeLS(LS_RECORDS,recs); allRecords=recs;
+  }
+
+  function reloadAfterScUpdate() { updateAddStats(); renderTable(); renderClosePanel(); updateSanctionStats(); if(document.getElementById('panel-dashboard').classList.contains('active')) renderDashboard(); }
+
+  window.closeModalById = function(id){ document.getElementById(id).classList.remove('open'); };
+
+  /* ═══ LOAD DATA ════════════════════════════════════════════ */
+  function loadAndRender() {
+    allRecords = readLS(LS_RECORDS);
+    sanctions  = readLS(LS_SANCTIONS);
+    updateAddStats(); renderTable(); updateSanctionStats();
+    if (document.getElementById('panel-dashboard').classList.contains('active'))    renderDashboard();
+    if (document.getElementById('panel-sanctions').classList.contains('active'))    renderSanctions();
+    if (document.getElementById('panel-close').classList.contains('active'))        renderClosePanel();
+    if (document.getElementById('panel-facility').classList.contains('active'))    renderFacilityProfile();
+  }
+
+  function initSupabase() {
+    var sb=window.supabase; if(!sb||typeof sb.createClient!=='function') return;
+    if(!db) db=sb.createClient(SUPABASE_URL,SUPABASE_ANON);
+    db.from('npa_monitoring_records').select('*').order('created_at',{ascending:false}).then(function(res){
+      if(res.error){ console.warn('[NPA]',res.error.message); return; }
+      if(res.data&&res.data.length){ var local=readLS(LS_RECORDS); var localIds=local.map(function(r){ return r.id; }); var merged=local.slice(); res.data.forEach(function(dbRec){ if(!localIds.includes(dbRec.id)) merged.push(dbRec.record_data?dbRec.record_data:dbRec); }); writeLS(LS_RECORDS,merged); allRecords=merged; updateAddStats(); renderTable(); if(document.getElementById('panel-dashboard').classList.contains('active')) renderDashboard(); if(document.getElementById('panel-close').classList.contains('active')) renderClosePanel(); }
+    });
+  }
+
+  /* ═══ SIDEBAR / SHELL ══════════════════════════════════════ */
+  var NAV_ITEMS=[
+    {id:'dashboard', label:'Home',      href:'dashboard.html',       path:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>'},
+    {id:'hse',       label:'HSE',       href:'unit-hse.html',        path:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'},
+    {id:'compliance',label:'Compliance',href:'unit-compliance.html', path:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>'},
+    {id:'security',  label:'Security',  href:'unit-security.html',   path:'<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'},
+    {id:'quality',   label:'Quality',   href:'unit-quality.html',    path:'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>'},
+    {id:'iso',       label:'ISO',       href:'unit-iso.html',        path:'<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>'},
+    {id:'common',    label:'Common',    href:'unit-common.html',     path:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+  ];
+
+  function renderNav(activeId){ var nav=document.getElementById('sidebarNav'); if(!nav) return; nav.innerHTML=NAV_ITEMS.map(function(item){ var active=item.id===activeId; var svg='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+item.path+'</svg>'; return '<button class="nav-item'+(active?' active':'')+'" data-href="'+item.href+'"><span class="nav-icon">'+svg+'</span><span class="nav-label">'+item.label+'</span></button>'; }).join(''); nav.querySelectorAll('.nav-item').forEach(function(btn){ btn.addEventListener('click',function(){ var h=btn.getAttribute('data-href'); if(h) window.location.href=h; }); }); }
+  function initCollapse(){ var sb=document.getElementById('sidebar'),btn=document.getElementById('collapseBtn'); if(!sb||!btn) return; var c=false; btn.addEventListener('click',function(){ c=!c; sb.classList.toggle('collapsed',c); btn.querySelector('polyline').setAttribute('points',c?'9 18 15 12 9 6':'15 18 9 12 15 6'); }); }
+  function initMobileSidebar(){ var h=document.getElementById('mobileMenuBtn'),sb=document.getElementById('sidebar'),ov=document.getElementById('mobileOverlay'); if(!h||!sb||!ov) return; h.addEventListener('click',function(){ sb.classList.add('mobile-open'); ov.classList.add('active'); }); ov.addEventListener('click',function(){ sb.classList.remove('mobile-open'); ov.classList.remove('active'); }); }
+  function recheckHashPermission() {
+    var hash = window.location.hash || '#dashboard';
+    var perm = TAB_PERMS[hash] || 'view';
+    if (!npaCanDo(perm)) window.location.replace('#dashboard');
+  }
+
+  function initUserDisplay(){ var a=0,poll=setInterval(function(){ a++; var ctx=window.GOIL_AUTH_CONTEXT; if(ctx&&ctx.profile){ clearInterval(poll); var name=ctx.profile.full_name||ctx.session.user.email||'Admin User'; var ini=name.split(' ').map(function(w){ return w[0]; }).slice(0,2).join('').toUpperCase(); currentUser=ctx.profile.full_name||ctx.session.user.email||''; setText('sidebarUserName',name); setText('topbarName',name); setText('sidebarUserAvatar',ini); setText('topbarAvatar',ini); applyTabPermissions(); recheckHashPermission(); loadAndRender(); initSupabase(); } if(a>30){ clearInterval(poll); applyTabPermissions(); loadAndRender(); initSupabase(); } },100); }
+
+  /* ═══ FACILITY PROFILE ═════════════════════════════════════ */
+  var fpFacilities = [];
+  var fpFilterType = '', fpFilterZone = '', fpFilterName = '', fpFilterStatus = '';
+  var fpOnlyOpen = false, fpOnlySanctions = false;
+
+  function fpTypeHasZone(type) {
+    return type === 'Fuel Station' || type === 'LPG Plant';
+  }
+
+  function fpComputeFacilityData(facilityName) {
+    var nameLower = (facilityName||'').toLowerCase();
+    var comms = [], allScForFac = [];
+    allRecords.forEach(function(r) {
+      var stationsForFac = (r.stations||[]).filter(function(st) {
+        return (st.facilityName||'').toLowerCase() === nameLower;
+      });
+      if (stationsForFac.length) {
+        comms.push({record: r, stations: stationsForFac});
+        stationsForFac.forEach(function(st) {
+          (st.shortcomings||[]).forEach(function(sc) {
+            allScForFac.push({sc:sc, station:st, record:r});
+          });
+        });
+      }
+    });
+    var totalSC = allScForFac.length;
+    var openSC = allScForFac.filter(function(e){ return e.sc.status==='Open'||e.sc.status==='In Progress'; }).length;
+    var overdueSC = allScForFac.filter(function(e){ return isOverdue(e.sc); }).length;
+    var closedSC = allScForFac.filter(function(e){ return e.sc.status==='Closed'; }).length;
+    var activeSanctionsCount = sanctions.filter(function(s) {
+      return s.status==='Active' && (s.facility||'').toLowerCase()===nameLower;
+    }).length;
+    var closureRate = totalSC ? Math.round(closedSC/totalSC*100) : 0;
+    var inspDates = comms.map(function(c){ return c.record.inspectionDateTo||c.record.inspectionDateFrom||''; }).filter(Boolean).sort();
+    return {
+      comms: comms,
+      allSC: allScForFac,
+      totalSC: totalSC,
+      openSC: openSC,
+      overdueSC: overdueSC,
+      closedSC: closedSC,
+      activeSanctions: activeSanctionsCount,
+      closureRate: closureRate,
+      lastInspection: inspDates.length ? inspDates[inspDates.length-1] : null,
+      totalComms: comms.length
+    };
+  }
+
+  function fpGetFiltered() {
+    var list = fpFacilities.slice();
+    if (fpFilterType) list = list.filter(function(f){ return f.type===fpFilterType; });
+    if (fpFilterZone) list = list.filter(function(f){ return (f.zone||'')===fpFilterZone; });
+    if (fpFilterName) { var q=fpFilterName.toLowerCase(); list = list.filter(function(f){ return (f.name||'').toLowerCase().indexOf(q)!==-1; }); }
+    if (fpFilterStatus) list = list.filter(function(f){ return f.status===fpFilterStatus; });
+    if (fpOnlyOpen) list = list.filter(function(f){ var d=fpComputeFacilityData(f.name); return d.openSC>0||d.overdueSC>0; });
+    if (fpOnlySanctions) list = list.filter(function(f){ var d=fpComputeFacilityData(f.name); return d.activeSanctions>0; });
+    return list;
+  }
+
+  function fpScStatusColor(status) {
+    return {Open:'#60A5FA','In Progress':'#FBBF24','Pending Verification':'#A78BFA',Closed:'#34D399'}[status]||'rgba(255,255,255,0.3)';
+  }
+  function fpRateColor(rate) { return rate>=80?'#34D399':rate>=50?'#FBBF24':'#F87171'; }
+
+  function renderFacilityProfile() {
+    if (!fpFacilities.length) return;
+    var list = fpGetFiltered();
+
+    // Summary stats (always from full set)
+    var totalSCAll=0, openSCAll=0, overdueSCAll=0, activeSancAll=0;
+    fpFacilities.forEach(function(f) {
+      var d=fpComputeFacilityData(f.name);
+      totalSCAll+=d.totalSC; openSCAll+=d.openSC; overdueSCAll+=d.overdueSC; activeSancAll+=d.activeSanctions;
+    });
+    setText('fpStatFacilities', list.length+(list.length!==fpFacilities.length?' / '+fpFacilities.length:''));
+    setText('fpStatTotal', totalSCAll);
+    setText('fpStatOpen', openSCAll);
+    setText('fpStatOverdue', overdueSCAll);
+    setText('fpStatSanctions', activeSancAll);
+
+    var grid = document.getElementById('fpCardsGrid');
+    var empty = document.getElementById('fpEmptyState');
+    if (!list.length) {
+      if (grid)  grid.style.display  = 'none';
+      if (empty) empty.style.display = '';
+      return;
+    }
+    if (grid)  grid.style.display  = '';
+    if (empty) empty.style.display = 'none';
+    if (!grid) return;
+
+    grid.innerHTML = list.map(function(f) {
+      var d = fpComputeFacilityData(f.name);
+      var metaParts = [f.type];
+      if (fpTypeHasZone(f.type) && f.zone) metaParts.push(f.zone);
+      var statusColor = f.status==='Active'?'#34D399':f.status==='Temporarily Closed'?'#FBBF24':'rgba(255,255,255,0.3)';
+      var openColor   = d.openSC>0?'#F87171':'#34D399';
+      var overdueColor= d.overdueSC>0?'#FBBF24':'rgba(255,255,255,0.3)';
+      return '<div class="facility-card">'+
+        '<div class="facility-card-header">'+
+          '<div style="min-width:0;">'+
+            '<div class="facility-card-name">'+esc(f.name)+'</div>'+
+            '<div class="facility-card-meta">'+metaParts.join(' \u00b7 ')+'</div>'+
+          '</div>'+
+          '<div class="facility-card-badges">'+
+            '<span class="badge" style="background:rgba(255,255,255,0.05);color:'+statusColor+';border:1px solid '+statusColor+'44;white-space:nowrap;">'+esc(f.status)+'</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="facility-card-stats">'+
+          '<div class="fc-stat"><div class="fc-stat-val" style="color:#60A5FA;">'+d.totalComms+'</div><div class="fc-stat-lbl">Communiqu&eacute;s</div></div>'+
+          '<div class="fc-stat"><div class="fc-stat-val" style="color:#e6edf3;">'+d.totalSC+'</div><div class="fc-stat-lbl">Total SC</div></div>'+
+          '<div class="fc-stat"><div class="fc-stat-val" style="color:'+openColor+';">'+d.openSC+'</div><div class="fc-stat-lbl">Open</div></div>'+
+          '<div class="fc-stat"><div class="fc-stat-val" style="color:'+overdueColor+';">'+d.overdueSC+'</div><div class="fc-stat-lbl">Overdue</div></div>'+
+        '</div>'+
+        '<div class="facility-card-footer">'+
+          '<div>'+
+            '<div class="facility-card-rate">Closure&nbsp;<strong style="color:'+fpRateColor(d.closureRate)+';">'+d.closureRate+'%</strong>'+(d.lastInspection?' &middot; Last: '+fmtDate(d.lastInspection):'')+'</div>'+
+            (d.activeSanctions?'<div style="font-size:10px;color:#A78BFA;margin-top:3px;">'+d.activeSanctions+' active sanction'+(d.activeSanctions>1?'s':'')+'</div>':'')+
+          '</div>'+
+          '<button class="btn-view-profile" onclick="window.openFacilityDrawer(\''+f.facilityId+'\')">View Profile</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  window.openFacilityDrawer = function(facilityId) {
+    var f = fpFacilities.filter(function(x){ return x.facilityId===facilityId; })[0];
+    if (!f) return;
+    var d = fpComputeFacilityData(f.name);
+
+    setText('fpDrawerName', f.name);
+    var metaParts = [f.type];
+    if (fpTypeHasZone(f.type) && f.zone) metaParts.push(f.zone);
+    metaParts.push(f.status);
+    setText('fpDrawerMeta', metaParts.join(' \u00b7 '));
+
+    var statRow = document.getElementById('fpDrawerStats');
+    if (statRow) statRow.innerHTML =
+      '<div class="fp-ds"><div class="fp-ds-val" style="color:#60A5FA;">'+d.totalComms+'</div><div class="fp-ds-lbl">Communiqu&eacute;s</div></div>'+
+      '<div class="fp-ds"><div class="fp-ds-val" style="color:#e6edf3;">'+d.totalSC+'</div><div class="fp-ds-lbl">Total SC</div></div>'+
+      '<div class="fp-ds"><div class="fp-ds-val" style="color:#F87171;">'+d.openSC+'</div><div class="fp-ds-lbl">Open</div></div>'+
+      '<div class="fp-ds"><div class="fp-ds-val" style="color:#FBBF24;">'+d.overdueSC+'</div><div class="fp-ds-lbl">Overdue</div></div>'+
+      '<div class="fp-ds"><div class="fp-ds-val" style="color:'+fpRateColor(d.closureRate)+';">'+d.closureRate+'%</div><div class="fp-ds-lbl">Closure Rate</div></div>';
+
+    fpRenderDrawerBody(f, d);
+    document.getElementById('fpDrawerBackdrop').classList.add('open');
+    document.getElementById('fpDrawerBody').scrollTop = 0;
+  };
+
+  function fpRenderDrawerBody(f, d) {
+    var body = document.getElementById('fpDrawerBody');
+    if (!body) return;
+    var html = '';
+
+    /* 1 ─ Facility Identification */
+    html += '<div class="fp-section"><div class="fp-section-heading">Facility Identification</div>';
+    html += '<div class="fp-id-grid">';
+    html += '<div><div class="fp-id-key">Facility ID</div><div class="fp-id-val">'+esc(f.facilityId)+'</div></div>';
+    html += '<div><div class="fp-id-key">Facility Name</div><div class="fp-id-val">'+esc(f.name)+'</div></div>';
+    html += '<div><div class="fp-id-key">Facility Type</div><div class="fp-id-val">'+esc(f.type)+'</div></div>';
+    if (fpTypeHasZone(f.type) && f.zone) {
+      html += '<div><div class="fp-id-key">Zone</div><div class="fp-id-val">'+esc(f.zone)+'</div></div>';
+    }
+    html += '<div><div class="fp-id-key">Status</div><div class="fp-id-val">'+esc(f.status)+'</div></div>';
+    html += '<div><div class="fp-id-key">Last NPA Inspection</div><div class="fp-id-val">'+(d.lastInspection?fmtDate(d.lastInspection):'None recorded')+'</div></div>';
+    html += '<div><div class="fp-id-key">Closure Rate</div><div class="fp-id-val"><strong style="color:'+fpRateColor(d.closureRate)+';">'+d.closureRate+'%</strong> ('+d.closedSC+' / '+d.totalSC+')</div></div>';
+    html += '<div><div class="fp-id-key">Active Sanctions</div><div class="fp-id-val">'+(d.activeSanctions?'<span style="color:#A78BFA;">'+d.activeSanctions+'</span>':'0')+'</div></div>';
+    html += '</div></div>';
+
+    /* 2 ─ NPA Inspection History */
+    html += '<div class="fp-section"><div class="fp-section-heading">NPA Inspection History</div>';
+    if (!d.comms.length) {
+      html += '<div class="fp-empty">No NPA communiqu\u00e9s have covered this facility yet.</div>';
+    } else {
+      d.comms.forEach(function(c) {
+        var r = c.record;
+        var tot=0, cl=0, op=0;
+        c.stations.forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ tot++; if(sc.status==='Closed') cl++; else op++; }); });
+        html += '<div class="fp-comm-block">'+
+          '<div class="fp-comm-block-head">'+
+            '<div>'+
+              '<div class="fp-comm-ref">'+esc(r.communiqueReference||r.recordNumber||'\u2014')+'</div>'+
+              (r.communiqueSubject?'<div class="fp-comm-date">'+esc(r.communiqueSubject)+'</div>':'')+
+              '<div class="fp-comm-date">Communiqu\u00e9: '+fmtDate(r.communiqueDate)+
+                (r.inspectionDateFrom?' &middot; Inspection: '+fmtDate(r.inspectionDateFrom)+(r.inspectionDateTo&&r.inspectionDateTo!==r.inspectionDateFrom?' \u2013 '+fmtDate(r.inspectionDateTo):'')+'' : '')+
+              '</div>'+
+            '</div>'+
+            '<span class="badge '+recStatusClass(computeStatus(r))+'">'+esc(computeStatus(r))+'</span>'+
+          '</div>'+
+          '<div style="display:flex;gap:14px;font-size:11px;color:rgba(255,255,255,0.38);">'+
+            '<span>'+tot+' shortcoming'+(tot!==1?'s':'')+'</span>'+
+            (cl?'<span style="color:#34D399;">'+cl+' closed</span>':'')+
+            (op?'<span style="color:#F87171;">'+op+' open</span>':'')+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    /* 3 ─ Open & Overdue Shortcomings */
+    var openSCs = d.allSC.filter(function(e){ return e.sc.status!=='Closed'; });
+    html += '<div class="fp-section"><div class="fp-section-heading">Open Shortcomings ('+openSCs.length+')</div>';
+    if (!openSCs.length) {
+      html += '<div class="fp-empty">No open shortcomings. All items closed.</div>';
+    } else {
+      openSCs.forEach(function(e) {
+        var overdue = isOverdue(e.sc);
+        var col = overdue ? '#FBBF24' : fpScStatusColor(e.sc.status);
+        html += '<div class="fp-sc-row">'+
+          '<div class="fp-sc-dot" style="background:'+col+';"></div>'+
+          '<div class="fp-sc-desc">'+
+            '<div>'+esc(e.sc.description||'No description')+(overdue?' <span style="font-size:9px;font-weight:700;letter-spacing:0.8px;color:#FBBF24;">OVERDUE</span>':'')+'</div>'+
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">'+
+              esc(e.record.communiqueReference||e.record.recordNumber||'\u2014')+
+              ' &middot; '+esc(e.sc.status||'Open')+
+              (e.sc.responsiblePerson?' &middot; '+esc(e.sc.responsiblePerson):'')+
+              (e.sc.targetCompletionDate?' &middot; Due: '+fmtDate(e.sc.targetCompletionDate):'')+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    /* 4 ─ Closed Shortcomings */
+    var closedSCs = d.allSC.filter(function(e){ return e.sc.status==='Closed'; });
+    html += '<div class="fp-section"><div class="fp-section-heading">Closed Shortcomings ('+closedSCs.length+')</div>';
+    if (!closedSCs.length) {
+      html += '<div class="fp-empty">No shortcomings have been closed for this facility yet.</div>';
+    } else {
+      closedSCs.forEach(function(e) {
+        html += '<div class="fp-sc-row">'+
+          '<div class="fp-sc-dot" style="background:#34D399;"></div>'+
+          '<div class="fp-sc-desc">'+
+            '<div>'+esc(e.sc.description||'No description')+'</div>'+
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">'+
+              esc(e.record.communiqueReference||e.record.recordNumber||'\u2014')+
+              (e.sc.closureDate?' &middot; Closed: '+fmtDate(e.sc.closureDate):'')+
+              (e.sc.responsiblePerson?' &middot; '+esc(e.sc.responsiblePerson):'')+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    /* 5 ─ Corrective Actions */
+    var withActions = d.allSC.filter(function(e){ return e.sc.correctiveAction||e.sc.responsiblePerson; });
+    html += '<div class="fp-section"><div class="fp-section-heading">Corrective Actions</div>';
+    if (!withActions.length) {
+      html += '<div class="fp-empty">No corrective actions recorded.</div>';
+    } else {
+      withActions.forEach(function(e) {
+        html += '<div class="fp-act-row">'+
+          '<div class="fp-act-dot"></div>'+
+          '<div style="flex:1;font-size:12px;">'+
+            (e.sc.correctiveAction?'<div style="color:rgba(255,255,255,0.75);">'+esc(e.sc.correctiveAction)+'</div>':'')+
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">'+
+              esc(e.record.communiqueReference||e.record.recordNumber||'\u2014')+
+              (e.sc.responsiblePerson?' &middot; '+esc(e.sc.responsiblePerson):'')+
+              (e.sc.targetCompletionDate?' &middot; Due: '+fmtDate(e.sc.targetCompletionDate):'')+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    /* 6 ─ Sanctions */
+    var facSanctions = sanctions.filter(function(s){ return (s.facility||'').toLowerCase()===(f.name||'').toLowerCase(); });
+    html += '<div class="fp-section"><div class="fp-section-heading">Sanctions ('+facSanctions.length+')</div>';
+    if (!facSanctions.length) {
+      html += '<div class="fp-empty">No sanctions recorded for this facility.</div>';
+    } else {
+      facSanctions.forEach(function(s) {
+        html += '<div class="fp-san-row">'+
+          '<div style="flex:1;">'+
+            '<div style="font-size:12px;font-weight:600;color:#e6edf3;">'+esc(s.sanctionNumber||'\u2014')+
+              ' <span class="badge '+sanBadgeClass(s.status)+'">'+esc(s.status)+'</span></div>'+
+            '<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;">'+
+              esc(s.sanctionType||'\u2014')+
+              ' &middot; Issued: '+fmtDate(s.dateIssued)+
+              (s.dueDate?' &middot; Due: '+fmtDate(s.dueDate):'')+
+            '</div>'+
+            (s.requiredAction?'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">'+esc(s.requiredAction)+'</div>':'')+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div>';
+
+    /* 7 ─ Activity History */
+    var actLogs = [];
+    d.comms.forEach(function(c) {
+      try {
+        var log = JSON.parse(localStorage.getItem('goil_npa_activity_'+c.record.id)||'[]')||[];
+        log.forEach(function(a){ actLogs.push({act:a, recordNum:c.record.recordNumber||c.record.id}); });
+      } catch(e){}
+    });
+    actLogs.sort(function(a,b){ return (b.act.performedAt||'')>(a.act.performedAt||'')?1:-1; });
+    actLogs = actLogs.slice(0, 20);
+    html += '<div class="fp-section"><div class="fp-section-heading">Activity History</div>';
+    if (!actLogs.length) {
+      html += '<div class="fp-empty">No activity history recorded for this facility.</div>';
+    } else {
+      actLogs.forEach(function(entry) {
+        html += '<div class="fp-act-row">'+
+          '<div class="fp-act-dot"></div>'+
+          '<div style="flex:1;font-size:12px;">'+
+            '<div style="color:rgba(255,255,255,0.75);">'+esc(entry.act.actionType||'Action')+'</div>'+
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">'+
+              esc(entry.recordNum)+
+              ' &middot; '+esc(entry.act.performedBy||'System')+
+              (entry.act.performedAt?' &middot; '+fmtDate(entry.act.performedAt.split('T')[0]):'')+
+            '</div>'+
+            (entry.act.remarks?'<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">'+esc(entry.act.remarks)+'</div>':'')+
+          '</div>'+
+        '</div>';
+      });
+    }
+    html += '</div><div style="height:32px;"></div>';
+
+    body.innerHTML = html;
+  }
+
+  function initFacilityProfile() {
+    fetch('../assets/data/facilities.json')
+      .then(function(r){ return r.json(); })
+      .then(function(data){ fpFacilities = data||[]; renderFacilityProfile(); })
+      .catch(function(){ fpFacilities = []; });
+
+    var typeEl   = document.getElementById('fpFilterType');
+    var zoneEl   = document.getElementById('fpFilterZone');
+    var nameEl   = document.getElementById('fpFilterName');
+    var statusEl = document.getElementById('fpFilterStatus');
+
+    if (typeEl) typeEl.addEventListener('change', function() {
+      fpFilterType = typeEl.value;
+      var showZone = !fpFilterType || fpTypeHasZone(fpFilterType);
+      if (zoneEl) {
+        zoneEl.style.display = showZone ? '' : 'none';
+        if (!showZone){ zoneEl.value=''; fpFilterZone=''; }
+      }
+      renderFacilityProfile();
+    });
+    if (zoneEl)   zoneEl.addEventListener('change', function(){ fpFilterZone=zoneEl.value; renderFacilityProfile(); });
+    if (nameEl)   nameEl.addEventListener('input',  function(){ fpFilterName=nameEl.value; renderFacilityProfile(); });
+    if (statusEl) statusEl.addEventListener('change',function(){ fpFilterStatus=statusEl.value; renderFacilityProfile(); });
+
+    var togOpen = document.getElementById('fpToggleOpen');
+    var togSan  = document.getElementById('fpToggleSanctions');
+    if (togOpen) togOpen.addEventListener('click', function(){ fpOnlyOpen=!fpOnlyOpen; togOpen.classList.toggle('active',fpOnlyOpen); renderFacilityProfile(); });
+    if (togSan)  togSan.addEventListener('click',  function(){ fpOnlySanctions=!fpOnlySanctions; togSan.classList.toggle('active',fpOnlySanctions); renderFacilityProfile(); });
+
+    var backdrop = document.getElementById('fpDrawerBackdrop');
+    var closeBtn = document.getElementById('fpDrawerClose');
+    if (closeBtn) closeBtn.addEventListener('click', function(){ backdrop.classList.remove('open'); });
+    if (backdrop) backdrop.addEventListener('click', function(e){ if(e.target===backdrop) backdrop.classList.remove('open'); });
+  }
+
+  /* ═══ MODULE TABS ══════════════════════════════════════════ */
+  function initModNav(){ document.querySelectorAll('.mod-tab').forEach(function(tab){ tab.addEventListener('click',function(){ window.location.hash=tab.getAttribute('data-hash'); }); }); }
+
+  /* ═══ RECORDS TABS / FILTER ════════════════════════════════ */
+  function initRecordsTabs(){ document.querySelectorAll('#recTabBar .inner-tab-btn').forEach(function(btn){ btn.addEventListener('click',function(){ document.querySelectorAll('#recTabBar .inner-tab-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); recActiveTab=btn.getAttribute('data-tab'); saveFilterState(); renderTable(); }); }); }
+  function initSearch(){ var inp=document.getElementById('searchInput'); if(!inp) return; inp.addEventListener('input',function(){ recSearch=inp.value; saveFilterState(); renderTable(); }); }
+  function initOverdueToggle(){ var btn=document.getElementById('btnOverdueOnly'); if(!btn) return; btn.addEventListener('click',function(){ recOverdue=!recOverdue; btn.classList.toggle('active',recOverdue); saveFilterState(); renderTable(); }); }
+
+  function initFilterPanel(){
+    var modal=document.getElementById('filterModal'),openBtn=document.getElementById('btnFilter'),closeBtn=document.getElementById('filterClose'),applyBtn=document.getElementById('filterApply'),clearBtn=document.getElementById('filterClear');
+    if(openBtn)  openBtn.addEventListener('click', function(){ modal.classList.add('open'); });
+    if(closeBtn) closeBtn.addEventListener('click',function(){ modal.classList.remove('open'); });
+    modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('open'); });
+    if(applyBtn) applyBtn.addEventListener('click',function(){ recFilters.ref=document.getElementById('filterRef').value.trim(); recFilters.status=document.getElementById('filterStatus').value; recFilters.outletType=document.getElementById('filterOutletType').value; recFilters.inspFrom=document.getElementById('filterInspFrom').value; recFilters.inspTo=document.getElementById('filterInspTo').value; recFilters.commFrom=document.getElementById('filterCommFrom').value; recFilters.commTo=document.getElementById('filterCommTo').value; recFilters.createdBy=document.getElementById('filterCreatedBy').value.trim(); modal.classList.remove('open'); saveFilterState(); renderTable(); if(openBtn) openBtn.classList.toggle('active',Object.values(recFilters).some(function(v){ return !!v; })); });
+    if(clearBtn) clearBtn.addEventListener('click',function(){ ['filterRef','filterStatus','filterOutletType','filterInspFrom','filterInspTo','filterCommFrom','filterCommTo','filterCreatedBy'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; }); recFilters={ref:'',status:'',outletType:'',inspFrom:'',inspTo:'',commFrom:'',commTo:'',createdBy:''}; saveFilterState(); renderTable(); if(openBtn) openBtn.classList.remove('active'); });
+  }
+
+  function initExport(){ var btn=document.getElementById('btnExport'); if(!btn) return; btn.addEventListener('click',function(){ var f=getFiltered(); if(!f.length){ alert('No records to export.'); return; } var rows=[['Record No.','Date Created','Inspection From','Inspection To','Communique Date','Reference','Stations','Total','Open','Closed','Status','Created By']]; f.forEach(function(r){ rows.push([r.recordNumber,r.recordDate,r.inspectionDateFrom,r.inspectionDateTo,r.communiqueDate,r.communiqueReference,(r.stations||[]).length,countSC(r,null),countSC(r,'Open'),countSC(r,'Closed'),computeStatus(r),r.createdBy]); }); var csv=rows.map(function(row){ return row.map(function(cell){ var s=String(cell==null?'':cell); return s.includes(',')||s.includes('"')||s.includes('\n')?'"'+s.replace(/"/g,'""')+'"':s; }).join(','); }).join('\n'); var blob=new Blob([csv],{type:'text/csv'}); var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download='npa-monitoring-'+todayStr()+'.csv'; a.click(); URL.revokeObjectURL(url); }); }
+
+  /* ═══ SANCTIONS INIT ═══════════════════════════════════════ */
+  function initSanctions(){
+    var addBtn=document.getElementById('btnAddSanction'), firstBtn=document.getElementById('btnAddFirstSanction');
+    var sanctionModal=document.getElementById('modalAddSanction');
+
+    function sanIsDirty(){
+      return ['sanDateIssued','sanNpaRef','sanCommRef','sanFacility','sanAmount','sanResponsible','sanAction','sanNotes'].some(function(id){
+        var el=document.getElementById(id); return el&&el.value.trim()!=='';
+      }) || (document.getElementById('sanType')&&document.getElementById('sanType').value!=='');
+    }
+
+    function trySanClose(){
+      if(sanctionModalDirty && sanIsDirty()){
+        if(!confirm('You have unsaved changes in this sanction. Discard them?')) return false;
+      }
+      sanctionModalDirty=false;
+      sanctionModal.classList.remove('open');
+      return true;
+    }
+
+    // Mark dirty on any input inside the modal
+    sanctionModal.addEventListener('input',  function(){ sanctionModalDirty=true; });
+    sanctionModal.addEventListener('change', function(){ sanctionModalDirty=true; });
+
+    // Override backdrop click to use dirty guard
+    sanctionModal.addEventListener('click', function(e){ if(e.target===sanctionModal) trySanClose(); });
+
+    // Override the generic backdrop listener for this modal by stopping propagation only for this element
+    // (the generic .modal-backdrop listener is set up later; we handle it here instead)
+
+    function openAddModal(){
+      document.getElementById('sanctionModalTitle').textContent='Add NPA Sanction';
+      document.getElementById('sanctionEditId').value='';
+      ['sanDateIssued','sanDueDate','sanNpaRef','sanCommRef','sanFacility','sanAmount','sanResponsible','sanAction','sanNotes'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+      document.getElementById('sanType').value='';
+      document.getElementById('sanStatus').value='Draft';
+      sanctionModalDirty=false;
+      sanctionModal.classList.add('open');
+    }
+
+    if(addBtn)   addBtn.addEventListener('click',openAddModal);
+    if(firstBtn) firstBtn.addEventListener('click',openAddModal);
+    document.getElementById('btnSaveSanction').addEventListener('click', function(){ sanctionModalDirty=false; saveSanction(); });
+    document.getElementById('btnSanctionsExport').addEventListener('click',function(){ var f=getSanctionsFiltered(); if(!f.length){ alert('No sanctions to export.'); return; } var rows=[['Sanction No.','Date Issued','NPA Reference','Communique Reference','Facility','Sanction Type','Amount','Required Action','Due Date','Status','Responsible Person']]; f.forEach(function(s){ rows.push([s.sanctionNumber,s.dateIssued,s.npaReference,s.communiqueReference,s.facility,s.sanctionType,s.amount||'',s.requiredAction,s.dueDate,s.status,s.responsiblePerson]); }); var csv=rows.map(function(r){ return r.map(function(c){ var s=String(c==null?'':c); return s.includes(',')||s.includes('"')?'"'+s.replace(/"/g,'""')+'"':s; }).join(','); }).join('\n'); var blob=new Blob([csv],{type:'text/csv'}); var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download='npa-sanctions-'+todayStr()+'.csv'; a.click(); URL.revokeObjectURL(url); });
+    document.querySelectorAll('#sanctionTabBar .inner-tab-btn').forEach(function(btn){ btn.addEventListener('click',function(){ document.querySelectorAll('#sanctionTabBar .inner-tab-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); sanActiveTab=btn.getAttribute('data-san-tab'); renderSanctions(); }); });
+    document.getElementById('sanctionSearch').addEventListener('input',function(){ sanSearch=this.value; renderSanctions(); });
+  }
+
+  /* ═══ CLOSE PANEL INIT ════════════════════════════════════ */
+  function initClosePanel(){
+    document.querySelectorAll('#closeTabBar .inner-tab-btn').forEach(function(btn){ btn.addEventListener('click',function(){ document.querySelectorAll('#closeTabBar .inner-tab-btn').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); closeActiveTab=btn.getAttribute('data-close-tab'); renderClosePanel(); }); });
+    document.getElementById('closeSearch').addEventListener('input',function(){ closeSearch=this.value; renderClosePanel(); });
+    document.getElementById('btnCloseRefresh').addEventListener('click',function(){ allRecords=readLS(LS_RECORDS); renderClosePanel(); showToast('Refreshed.','info'); });
+  }
+
+  /* ═══ MODAL CLOSE ON BACKDROP ══════════════════════════════ */
+  document.querySelectorAll('.modal-backdrop').forEach(function(bd){ bd.addEventListener('click',function(e){ if(e.target===bd) bd.classList.remove('open'); }); });
+
+  /* ═══ BOOT ═════════════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', function() {
+    renderNav('compliance');
+    initCollapse(); initMobileSidebar();
+    initModNav(); initRecordsTabs(); initSearch(); initOverdueToggle(); initFilterPanel(); initExport();
+    initSanctions(); initClosePanel(); initFacilityProfile();
+
+    // Restore filter state saved before navigating to record detail
+    restoreFilterState();
+    var searchEl = document.getElementById('searchInput');
+    if (searchEl && recSearch) searchEl.value = recSearch;
+    var btnOD = document.getElementById('btnOverdueOnly');
+    if (btnOD) btnOD.classList.toggle('active', recOverdue);
+    document.querySelectorAll('#recTabBar .inner-tab-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === recActiveTab);
+    });
+    // Restore filter panel inputs if filters active
+    if (recFilters.ref)        { var el=document.getElementById('filterRef');        if(el) el.value=recFilters.ref; }
+    if (recFilters.status)     { var el=document.getElementById('filterStatus');     if(el) el.value=recFilters.status; }
+    if (recFilters.outletType) { var el=document.getElementById('filterOutletType'); if(el) el.value=recFilters.outletType; }
+    if (recFilters.inspFrom)   { var el=document.getElementById('filterInspFrom');   if(el) el.value=recFilters.inspFrom; }
+    if (recFilters.inspTo)     { var el=document.getElementById('filterInspTo');     if(el) el.value=recFilters.inspTo; }
+    if (recFilters.commFrom)   { var el=document.getElementById('filterCommFrom');   if(el) el.value=recFilters.commFrom; }
+    if (recFilters.commTo)     { var el=document.getElementById('filterCommTo');     if(el) el.value=recFilters.commTo; }
+    if (recFilters.createdBy)  { var el=document.getElementById('filterCreatedBy');  if(el) el.value=recFilters.createdBy; }
+    var hasFilters = Object.values(recFilters).some(function(v){ return !!v; });
+    var btnF = document.getElementById('btnFilter'); if(btnF) btnF.classList.toggle('active', hasFilters);
+
+    initUserDisplay();
+    applyHash();
+    document.addEventListener('goilSupabaseReady', initSupabase);
+    setTimeout(initSupabase, 2000);
+  });
+
+})();
+</script>
+</body>
+</html>

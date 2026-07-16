@@ -760,49 +760,49 @@
       var draft = findDraftForFacility(facility.facilityId);
       var modules = (facility.enabledModules || [])
         .map(function (module) {
-          return '<span class="badge badge-neutral">' + module + "</span>";
+          return '<span class="badge badge-neutral">' + escapeHtml(module) + "</span>";
         })
         .join(" ");
 
       var row = document.createElement("tr");
       row.innerHTML =
         "<td>" +
-        facility.facilityId +
+        escapeHtml(facility.facilityId) +
         "</td>" +
         "<td>" +
-        facility.name +
+        escapeHtml(facility.name) +
         "</td>" +
         "<td>" +
-        facility.type +
+        escapeHtml(facility.type) +
         "</td>" +
         "<td>" +
-        facility.zone +
+        escapeHtml(facility.zone) +
         "</td>" +
         "<td>" +
-        facility.status +
+        escapeHtml(facility.status) +
         "</td>" +
         "<td>" +
         modules +
         "</td>" +
         "<td>" +
-        formatDate(facility.lastAssessmentDate) +
+        escapeHtml(formatDate(facility.lastAssessmentDate)) +
         "</td>" +
         "<td>" +
-        formatDate(facility.nextDueDate) +
+        escapeHtml(formatDate(facility.nextDueDate)) +
         "</td>" +
         "<td>" +
-        facility.openCriticalCount +
+        escapeHtml(String(facility.openCriticalCount ?? '')) +
         "</td>" +
         "<td>" +
-        facility.currentRiskClass +
+        escapeHtml(facility.currentRiskClass) +
         "</td>" +
         '<td><span class="badge ' +
-        dueState.className +
+        escapeHtml(dueState.className) +
         '">' +
-        dueState.label +
+        escapeHtml(dueState.label) +
         "</span></td>" +
         '<td><button class="btn btn-primary launch-assessment" data-facility-id="' +
-        facility.facilityId +
+        escapeHtml(facility.facilityId) +
         '">' +
         (draft ? "Resume Draft" : "Launch Assessment") +
         "</button></td>";

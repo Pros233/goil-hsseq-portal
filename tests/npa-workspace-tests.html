@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPA Workspace – Test Suite</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #e6edf3; padding: 32px; line-height: 1.5; }
+    h1 { font-size: 20px; font-weight: 700; color: #FF6B00; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .meta { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 28px; }
+    .summary { display: flex; gap: 20px; margin-bottom: 28px; }
+    .sum-box { padding: 14px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+    .sum-pass { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); color: #34D399; }
+    .sum-fail { background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.25); color: #F87171; }
+    .sum-skip { background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.2); color: #FBBF24; }
+    .sum-num  { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+    .test-list { display: flex; flex-direction: column; gap: 8px; }
+    .test { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: #161d2a; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; }
+    .test.pass { border-left: 3px solid #34D399; }
+    .test.fail { border-left: 3px solid #F87171; }
+    .test.skip { border-left: 3px solid #FBBF24; }
+    .test.pending { border-left: 3px solid rgba(255,255,255,0.15); }
+    .test-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .test-body { flex: 1; }
+    .test-name { font-size: 13px; font-weight: 600; color: #e6edf3; }
+    .test-desc { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+    .test-err  { font-size: 11px; color: #F87171; margin-top: 4px; font-family: monospace; background: rgba(248,113,113,0.08); padding: 4px 8px; border-radius: 5px; }
+    .test-manual { font-size: 11px; color: #FBBF24; margin-top: 4px; }
+    .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin: 24px 0 10px; }
+    #runBtn { padding: 10px 24px; background: #FF6B00; border: none; border-radius: 8px; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; transition: background 0.15s; margin-bottom: 28px; }
+    #runBtn:hover { background: #e05a00; }
+    #runBtn:disabled { background: rgba(255,107,0,0.35); cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<h1>NPA Workspace — Test Suite</h1>
+<p class="meta">
+  Tests the NPA Monitoring Workspace module.<br>
+  Static tests run in this browser tab (no auth required).<br>
+  Tests marked <span style="color:#FBBF24;">MANUAL</span> require opening the workspace in a browser with an active session.
+</p>
+
+<button id="runBtn">Run Static Tests</button>
+
+<div class="summary" id="summary" style="display:none;">
+  <div class="sum-box sum-pass"><div class="sum-num" id="passCount">0</div>Passed</div>
+  <div class="sum-box sum-fail"><div class="sum-num" id="failCount">0</div>Failed</div>
+  <div class="sum-box sum-skip"><div class="sum-num" id="skipCount">0</div>Manual</div>
+</div>
+
+<div class="test-list" id="testList"></div>
+
+<script>
+(function() {
+  var results = [];
+  var workspaceHtml = '';
+
+  /* ── Tiny test runner ──────────────────────────────────── */
+  function test(name, desc, fn) {
+    results.push({ name: name, desc: desc, fn: fn, type: 'auto' });
+  }
+  function manual(name, desc, steps) {
+    results.push({ name: name, desc: desc, steps: steps, type: 'manual' });
+  }
+  function assert(condition, message) {
+    if (!condition) throw new Error(message || 'Assertion failed');
+  }
+
+  /* ── Static tests (parse workspace HTML via fetch) ─────── */
+
+  test('TC-01', 'LAUNCH MODULE opens NPA workspace',
+    function() {
+      // unit-compliance.html must link to npa-workspace.html (checked separately)
+      // Here we verify the workspace page exists and has a <title>
+      assert(workspaceHtml.length > 0, 'npa-workspace.html could not be fetched');
+      assert(workspaceHtml.indexOf('NPA Monitoring') !== -1, 'Page title missing "NPA Monitoring"');
+    }
+  );
+
+  test('TC-02', 'Workspace contains five navigation items',
+    function() {
+      var matches = workspaceHtml.match(/class="mod-tab"/g) || [];
+      assert(matches.length === 5, 'Expected 5 .mod-tab elements, found ' + matches.length);
+    }
+  );
+
+  test('TC-03', 'Dashboard is the default section',
+    function() {
+      assert(workspaceHtml.indexOf("|| '#dashboard'") !== -1, 'Default hash fallback to #dashboard not found');
+      assert(workspaceHtml.indexOf("data-hash=\"#dashboard\"") !== -1, 'Dashboard tab hash not found');
+    }
+  );
+
+  test('TC-04', 'Add Shortcoming panel exists with records table',
+    function() {
+      assert(workspaceHtml.indexOf('id="panel-add"') !== -1, '#panel-add not found');
+      assert(workspaceHtml.indexOf('id="recordsTable"') !== -1, 'Records table #recordsTable missing from Add Shortcoming panel');
+      assert(workspaceHtml.indexOf("data-hash=\"#add-shortcoming\"") !== -1, '#add-shortcoming tab hash not found');
+    }
+  );
+
+  test('TC-05', 'Existing records localStorage key referenced',
+    function() {
+      assert(workspaceHtml.indexOf('goil_npa_records') !== -1, 'localStorage key goil_npa_records not referenced');
+      assert(workspaceHtml.indexOf('goil_npa_draft') !== -1 || workspaceHtml.indexOf('LS_RECORDS') !== -1, 'Records data references missing');
+    }
+  );
+
+  test('TC-06', '+ New NPA Record links to npa-new-record.html',
+    function() {
+      assert(workspaceHtml.indexOf('npa-new-record.html') !== -1, 'Link to npa-new-record.html not found');
+    }
+  );
+
+  test('TC-07', 'NPA Sanctions panel exists',
+    function() {
+      assert(workspaceHtml.indexOf('id="panel-sanctions"') !== -1, '#panel-sanctions not found');
+      assert(workspaceHtml.indexOf("data-hash=\"#sanctions\"") !== -1, '#sanctions tab hash not found');
+    }
+  );
+
+  test('TC-08', 'Close Shortcoming panel exists',
+    function() {
+      assert(workspaceHtml.indexOf('id="panel-close"') !== -1, '#panel-close not found');
+      assert(workspaceHtml.indexOf("data-hash=\"#close-shortcoming\"") !== -1, '#close-shortcoming tab hash not found');
+    }
+  );
+
+  test('TC-09', 'Facility Profile panel exists (no longer a placeholder)',
+    function() {
+      assert(workspaceHtml.indexOf('id="panel-facility"') !== -1, '#panel-facility not found');
+      assert(workspaceHtml.indexOf("data-hash=\"#facility-profile\"") !== -1, '#facility-profile tab hash not found');
+      assert(workspaceHtml.indexOf('Coming Soon') === -1, 'Panel still shows "Coming Soon" placeholder');
+      assert(workspaceHtml.indexOf('id="fpCardsGrid"') !== -1, 'Facility cards grid #fpCardsGrid not found');
+    }
+  );
+
+  test('TC-10', 'Active navigation styling is hash-driven',
+    function() {
+      assert(workspaceHtml.indexOf('applyHash') !== -1, 'applyHash function not found');
+      assert(workspaceHtml.indexOf("'hashchange', applyHash") !== -1, 'hashchange listener not wired');
+      assert(workspaceHtml.indexOf("classList.toggle('active'") !== -1, 'Active class toggle not found');
+    }
+  );
+
+  test('TC-11', 'Browser back/forward navigation works (hashchange listener)',
+    function() {
+      assert(workspaceHtml.indexOf("window.addEventListener('hashchange'") !== -1, 'hashchange event listener missing');
+    }
+  );
+
+  test('TC-12', 'Old NPA route (npa-monitoring.html) redirects correctly',
+    function() {
+      // Check the redirect is in npa-monitoring.html
+      // This test fetches npa-monitoring.html
+      return fetch('../pages/npa-monitoring.html')
+        .then(function(r){ return r.text(); })
+        .then(function(html){
+          assert(html.indexOf('npa-workspace.html#add-shortcoming') !== -1,
+            'npa-monitoring.html does not redirect to npa-workspace.html#add-shortcoming');
+          assert(html.indexOf("window.location.replace") !== -1,
+            'Redirect uses replace() for clean back-nav history');
+        });
+    }
+  );
+
+  test('TC-13a', 'Permission check function exists',
+    function() {
+      assert(workspaceHtml.indexOf('function npaCanDo') !== -1, 'npaCanDo() permission function not found');
+      assert(workspaceHtml.indexOf('function applyTabPermissions') !== -1, 'applyTabPermissions() not found');
+    }
+  );
+
+  test('TC-13b', 'Restricted hash redirects to #dashboard when access denied',
+    function() {
+      assert(workspaceHtml.indexOf("window.location.replace('#dashboard')") !== -1,
+        'Permission-denied redirect to #dashboard not found');
+    }
+  );
+
+  test('TC-15a', 'Record creation link present',
+    function() {
+      assert(workspaceHtml.indexOf('npa-new-record.html') !== -1, 'Link to record creation form missing');
+    }
+  );
+
+  test('TC-15b', 'Record editing/detail link present',
+    function() {
+      assert(workspaceHtml.indexOf('npa-record-detail.html') !== -1, 'Link to record detail page missing');
+    }
+  );
+
+  test('TC-16a', 'Filter state saved to sessionStorage on change',
+    function() {
+      assert(workspaceHtml.indexOf('saveFilterState') !== -1, 'saveFilterState() not found');
+      assert(workspaceHtml.indexOf('restoreFilterState') !== -1, 'restoreFilterState() not found');
+      assert(workspaceHtml.indexOf('goil_npa_add_filter_state') !== -1, 'sessionStorage key not found');
+    }
+  );
+
+  test('TC-16b', 'Sanction modal has unsaved-changes guard',
+    function() {
+      assert(workspaceHtml.indexOf('sanctionModalDirty') !== -1, 'sanctionModalDirty flag not found');
+      assert(workspaceHtml.indexOf('trySanClose') !== -1, 'trySanClose dirty-guard function not found');
+      assert(workspaceHtml.indexOf('Discard them?') !== -1, 'Unsaved changes confirmation message not found');
+    }
+  );
+
+  test('TC-17-breadcrumbs', 'Dynamic breadcrumbs update with active tab',
+    function() {
+      assert(workspaceHtml.indexOf('id="bcActive"') !== -1, '#bcActive breadcrumb span not found');
+      assert(workspaceHtml.indexOf('BREADCRUMB_LABELS') !== -1, 'BREADCRUMB_LABELS map not found');
+      assert(workspaceHtml.indexOf("bcActive.textContent") !== -1, 'Breadcrumb text update not found');
+    }
+  );
+
+  /* ── Manual tests ───────────────────────────────────────── */
+
+  manual('TC-14', 'Workspace is responsive on mobile and tablet',
+    [
+      'Open npa-workspace.html in browser DevTools at 375px width (mobile)',
+      'Verify: module nav scrolls horizontally without breaking layout',
+      'Verify: sidebar collapses or hides appropriately',
+      'Verify: stat cards stack into 2 columns',
+      'Open at 768px (tablet) and verify nav wraps or scrolls',
+      'Verify touch targets are ≥44px height on all tabs'
+    ]
+  );
+
+  manual('TC-10b', 'Active nav item persists after page refresh',
+    [
+      'Open npa-workspace.html#sanctions',
+      'Refresh the page',
+      'Verify: NPA Sanctions tab is still active after refresh',
+      'Verify: Breadcrumb shows "NPA Sanctions"'
+    ]
+  );
+
+  manual('TC-permissions', 'Permission restrictions are respected in-browser',
+    [
+      'Log in as a submitter/viewer role user',
+      'Open npa-workspace.html',
+      'Verify: Add Shortcoming, NPA Sanctions, Close Shortcoming tabs are hidden',
+      'Navigate directly to npa-workspace.html#sanctions',
+      'Verify: Redirected to #dashboard immediately',
+      'Log in as admin — verify all 5 tabs are visible'
+    ]
+  );
+
+  manual('TC-filterstate', 'Filter state preserved after visiting record detail',
+    [
+      'Go to Add Shortcoming tab',
+      'Set search input to a value and select "Overdue" tab',
+      'Click "View" on any record (navigates to npa-record-detail.html)',
+      'Click browser Back button to return to workspace',
+      'Verify: Search term is still in the search box',
+      'Verify: "Overdue" tab is still selected',
+      'Verify: Overdue Only toggle state is preserved'
+    ]
+  );
+
+  manual('TC-unsaved-modal', 'Unsaved sanction modal warns before close',
+    [
+      'Go to NPA Sanctions tab',
+      'Click Add Sanction',
+      'Fill in the Date Issued and Facility fields',
+      'Click outside the modal (backdrop)',
+      'Verify: Confirm dialog appears: "You have unsaved changes in this sanction. Discard them?"',
+      'Click Cancel — verify modal stays open with fields intact',
+      'Click OK — verify modal closes and fields are cleared'
+    ]
+  );
+
+  /* ── Runner ──────────────────────────────────────────────── */
+  document.getElementById('runBtn').addEventListener('click', function() {
+    var btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    btn.textContent = 'Running…';
+
+    fetch('../pages/npa-workspace.html?' + Date.now())
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        workspaceHtml = html;
+        return runAll();
+      })
+      .catch(function(err) {
+        workspaceHtml = '';
+        return runAll();
+      });
+  });
+
+  function runAll() {
+    var autoTests   = results.filter(function(t){ return t.type==='auto'; });
+    var manualTests = results.filter(function(t){ return t.type==='manual'; });
+    var promises = autoTests.map(function(t) {
+      try {
+        var ret = t.fn();
+        if (ret && typeof ret.then === 'function') {
+          return ret.then(function(){ t.status='pass'; }).catch(function(e){ t.status='fail'; t.error=e.message; });
+        }
+        t.status = 'pass';
+      } catch(e) {
+        t.status = 'fail';
+        t.error  = e.message;
+      }
+      return Promise.resolve();
+    });
+
+    return Promise.all(promises).then(function() {
+      manualTests.forEach(function(t){ t.status='manual'; });
+      render();
+    });
+  }
+
+  function render() {
+    var list     = document.getElementById('testList');
+    var summary  = document.getElementById('summary');
+    var passEl   = document.getElementById('passCount');
+    var failEl   = document.getElementById('failCount');
+    var skipEl   = document.getElementById('skipCount');
+    var btn      = document.getElementById('runBtn');
+
+    var allTests = results;
+    var pass  = allTests.filter(function(t){ return t.status==='pass'; }).length;
+    var fail  = allTests.filter(function(t){ return t.status==='fail'; }).length;
+    var skips = allTests.filter(function(t){ return t.type==='manual'; }).length;
+
+    passEl.textContent = pass;
+    failEl.textContent = fail;
+    skipEl.textContent = skips;
+    summary.style.display = 'flex';
+
+    var autoSection   = '<div class="section-label">Static / Automated Tests</div>';
+    var manualSection = '<div class="section-label">Manual Tests (require active browser session)</div>';
+
+    function renderTest(t) {
+      var icon    = t.status==='pass' ? '✓' : t.status==='fail' ? '✗' : t.status==='manual' ? '◎' : '○';
+      var cls     = t.status==='pass' ? 'pass' : t.status==='fail' ? 'fail' : t.status==='manual' ? 'skip' : 'pending';
+      var errHtml = t.error ? '<div class="test-err">' + escHtml(t.error) + '</div>' : '';
+      var stepsHtml = '';
+      if (t.status === 'manual' && t.steps) {
+        stepsHtml = '<div class="test-manual">Steps:<ol style="margin:4px 0 0 16px;">' +
+          t.steps.map(function(s){ return '<li>' + escHtml(s) + '</li>'; }).join('') +
+          '</ol></div>';
+      }
+      return '<div class="test ' + cls + '">' +
+        '<div class="test-icon">' + icon + '</div>' +
+        '<div class="test-body">' +
+          '<div class="test-name">' + escHtml(t.name) + ' — ' + escHtml(t.desc) + '</div>' +
+          (t.type === 'auto' ? '<div class="test-desc">Automated &middot; Static HTML analysis</div>' : '<div class="test-desc">Manual verification required</div>') +
+          errHtml + stepsHtml +
+        '</div>' +
+      '</div>';
+    }
+
+    var autoHtml   = results.filter(function(t){ return t.type==='auto'; }).map(renderTest).join('');
+    var manualHtml = results.filter(function(t){ return t.type==='manual'; }).map(renderTest).join('');
+
+    list.innerHTML = autoSection + autoHtml + manualSection + manualHtml;
+    btn.disabled = false;
+    btn.textContent = 'Run Static Tests';
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})();
+</script>
+</body>
+</html>

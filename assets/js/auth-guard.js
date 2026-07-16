@@ -23,9 +23,15 @@
     return String(value || '').trim().toLowerCase();
   }
 
-  function isAdminRole(value) {
+  var VALID_ROLES = ['admin', 'submitter'];
+
+  function sanitizeRole(value) {
     var role = normalizeRole(value);
-    return role === 'admin' || role === 'administrator' || role === 'super-admin' || role === 'super admin';
+    return VALID_ROLES.indexOf(role) !== -1 ? role : 'submitter';
+  }
+
+  function isAdminRole(value) {
+    return sanitizeRole(value) === 'admin';
   }
 
   // Determine base path for assets (pages/ is one level deep)
@@ -101,8 +107,8 @@
       if (raw) profile = JSON.parse(raw);
     } catch (e) {}
 
-    // Apply role class to <body> for CSS-driven role gating
-    var role = normalizeRole(profile.role || 'submitter') || 'submitter';
+    // Apply role class to <body> for CSS-driven role gating (whitelist-validated)
+    var role = sanitizeRole(profile.role || 'submitter');
     document.body.classList.add('role-' + role.replace(/[^a-z0-9]+/g, '-'));
 
     // Keep session-active marker alive across page navigations

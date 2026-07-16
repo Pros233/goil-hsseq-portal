@@ -99,7 +99,7 @@
     setError('');
 
     var email    = (document.getElementById('email').value    || '').trim().toLowerCase();
-    var password = (document.getElementById('password').value || '').trim();
+    var password = document.getElementById('password').value || '';
 
     if (!email || !password) {
       setError('Please enter your email and password.');
@@ -176,8 +176,8 @@
     event.preventDefault();
     setPwError('');
 
-    var newPw     = (document.getElementById('pwNew').value     || '').trim();
-    var confirmPw = (document.getElementById('pwConfirm').value || '').trim();
+    var newPw     = document.getElementById('pwNew').value     || '';
+    var confirmPw = document.getElementById('pwConfirm').value || '';
 
     if (newPw.length < 8) {
       setPwError('Password must be at least 8 characters.');
@@ -187,13 +187,22 @@
       setPwError('Passwords do not match.');
       return;
     }
-    if (newPw === 'Goilstaff1234') {
-      setPwError('Please choose a different password from the default.');
-      return;
-    }
 
     var client = getClient();
     if (!client) return;
+
+    // Reject if the new password matches the system default (compared via SHA-256, not plaintext)
+    var isDefault = false;
+    try {
+      var enc = new TextEncoder();
+      var hashBuf = await crypto.subtle.digest('SHA-256', enc.encode(newPw));
+      var hashHex = Array.from(new Uint8Array(hashBuf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      isDefault = hashHex === '9663d8df6d53f95731204a653359d3b900986b8a2d1963f0d9b092340b98b991';
+    } catch (e) { /* crypto not available – skip check */ }
+    if (isDefault) {
+      setPwError('Please choose a different password from the default.');
+      return;
+    }
 
     setPwLoading(true);
 

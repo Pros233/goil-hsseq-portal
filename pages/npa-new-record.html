@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOIL HSSEQ | New NPA Record</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { font-family: 'Barlow', sans-serif; background: #0d1117; color: #e6edf3; -webkit-font-smoothing: antialiased; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 54px; background: #0b0e14; border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; padding: 0 24px; gap: 14px; position: fixed;
+      top: 0; left: 0; right: 0; z-index: 100;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .logo-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800; color: #FF9D4D; letter-spacing: 1.5px; text-transform: uppercase; }
+    .topbar-sep { width: 1px; height: 24px; background: rgba(255,255,255,0.08); }
+    .topbar-page { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+    .topbar-spacer { flex: 1; }
+    .user-pill {
+      display: flex; align-items: center; gap: 8px; padding: 5px 10px;
+      border-radius: 8px; background: transparent; border: none; color: #fff; cursor: pointer;
+    }
+    .user-pill-avatar {
+      width: 28px; height: 28px; border-radius: 50%; background: #FF6B00; color: #fff;
+      font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+    .user-pill-name { font-size: 13px; font-weight: 500; }
+    .btn-back {
+      display: flex; align-items: center; gap: 5px; padding: 6px 12px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 7px; color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .btn-back svg { width: 13px; height: 13px; }
+
+    /* ── Layout ── */
+    .page-wrapper { padding-top: 54px; min-height: 100vh; display: flex; flex-direction: column; }
+    .form-layout { display: flex; flex: 1; }
+    .form-sidebar {
+      width: 260px; flex-shrink: 0; background: #0b0e14;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 20px; position: sticky; top: 54px; height: calc(100vh - 54px); overflow-y: auto;
+    }
+    .form-content { flex: 1; min-width: 0; padding: 28px 32px 120px; }
+
+    /* ── Step indicator ── */
+    .step-list { display: flex; flex-direction: column; gap: 4px; }
+    .step-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background 0.15s; position: relative;
+    }
+    .step-item.active { background: rgba(255,107,0,0.1); }
+    .step-item:hover:not(.active) { background: rgba(255,255,255,0.04); }
+    .step-number {
+      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; border: 2px solid;
+      transition: all 0.2s;
+    }
+    .step-item.pending   .step-number { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.3); background: transparent; }
+    .step-item.active    .step-number { border-color: #FF6B00; color: #FF6B00; background: rgba(255,107,0,0.1); }
+    .step-item.completed .step-number { border-color: #34D399; color: #34D399; background: rgba(52,211,153,0.1); }
+    .step-text {}
+    .step-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .step-item.pending   .step-label { color: rgba(255,255,255,0.35); }
+    .step-item.active    .step-label { color: #FF6B00; }
+    .step-item.completed .step-label { color: rgba(255,255,255,0.7); }
+    .step-desc { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .step-connector { width: 2px; height: 16px; background: rgba(255,255,255,0.08); margin: 0 13px; border-radius: 1px; }
+    .step-connector.done { background: rgba(52,211,153,0.3); }
+
+    .form-sidebar-note {
+      margin-top: 24px; padding: 12px 14px; background: rgba(255,107,0,0.06);
+      border: 1px solid rgba(255,107,0,0.15); border-radius: 8px;
+    }
+    .form-sidebar-note-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #FF6B00; margin-bottom: 6px; }
+    .form-sidebar-note-text { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+    /* ── Form sections ── */
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+    .section-title-block { margin-bottom: 24px; }
+    .section-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #FF6B00; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .section-eyebrow::before { content: ''; display: inline-block; width: 18px; height: 2px; background: #FF6B00; border-radius: 1px; }
+    .section-h { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+    .section-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #161d2a; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 24px; margin-bottom: 20px;
+    }
+    .form-card-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.5);
+      margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ── Form grid ── */
+    .form-grid { display: grid; gap: 16px; }
+    .form-grid-2 { grid-template-columns: 1fr 1fr; }
+    .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 640px) { .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } }
+
+    .form-field {}
+    .form-label {
+      display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 6px;
+    }
+    .required-star { color: #F87171; margin-left: 2px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 9px 12px; color: #e6edf3;
+      font-family: 'Barlow', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: rgba(255,107,0,0.5); }
+    .form-input.readonly, .form-input[readonly] {
+      background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.4); cursor: default;
+    }
+    .form-input.error, .form-select.error, .form-textarea.error { border-color: rgba(248,113,113,0.5); }
+    .form-select { appearance: none; cursor: pointer; }
+    .form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .form-textarea.large { min-height: 150px; }
+    .form-hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+    .form-error { font-size: 11px; color: #F87171; margin-top: 4px; display: none; }
+    .form-field.has-error .form-error { display: block; }
+    .form-field.has-error .form-input,
+    .form-field.has-error .form-select,
+    .form-field.has-error .form-textarea { border-color: rgba(248,113,113,0.5); }
+    .char-count { font-size: 10px; color: rgba(255,255,255,0.25); text-align: right; margin-top: 3px; }
+
+    /* ── Date pair ── */
+    .date-pair-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); margin-bottom: 10px;
+    }
+    .date-pair-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .date-pair-item { flex: 1; min-width: 140px; }
+    .date-sub-label { font-size: 10px; color: rgba(255,255,255,0.3); margin-bottom: 5px; letter-spacing: 0.5px; }
+
+    /* ── File upload ── */
+    .file-upload-zone {
+      border: 2px dashed rgba(255,255,255,0.12); border-radius: 10px; padding: 20px;
+      text-align: center; cursor: pointer; transition: all 0.15s;
+    }
+    .file-upload-zone:hover, .file-upload-zone.dragover { border-color: rgba(255,107,0,0.4); background: rgba(255,107,0,0.04); }
+    .file-upload-icon { width: 36px; height: 36px; margin: 0 auto 8px; color: rgba(255,255,255,0.3); }
+    .file-upload-icon svg { width: 36px; height: 36px; }
+    .file-upload-text { font-size: 12px; color: rgba(255,255,255,0.4); }
+    .file-upload-text strong { color: #FF6B00; }
+    .file-upload-types { font-size: 10px; color: rgba(255,255,255,0.25); margin-top: 4px; }
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .file-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+    .file-item-icon { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,107,0,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .file-item-icon svg { width: 14px; height: 14px; color: #FF6B00; }
+    .file-item-name { flex: 1; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); }
+    .file-item-size { font-size: 11px; color: rgba(255,255,255,0.3); }
+    .file-item-remove {
+      width: 22px; height: 22px; border-radius: 6px; background: transparent;
+      border: none; color: rgba(255,255,255,0.3); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
+    }
+    .file-item-remove:hover { background: rgba(248,113,113,0.1); color: #F87171; }
+    .file-item-remove svg { width: 12px; height: 12px; }
+
+    /* ── Station cards ── */
+    .stations-list { display: flex; flex-direction: column; gap: 16px; }
+    .station-card {
+      background: #1a2235; border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; overflow: hidden;
+    }
+    .station-card.collapsed .station-body { display: none; }
+    .station-header {
+      display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+      cursor: pointer; user-select: none;
+    }
+    .station-header:hover { background: rgba(255,255,255,0.02); }
+    .station-number {
+      width: 28px; height: 28px; border-radius: 8px; background: rgba(255,107,0,0.15);
+      color: #FF6B00; font-size: 13px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .station-title { flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; text-transform: uppercase; color: #fff; }
+    .station-subtitle { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .station-header-actions { display: flex; align-items: center; gap: 6px; }
+    .station-btn {
+      display: flex; align-items: center; gap: 4px; padding: 5px 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .station-btn:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .station-btn.danger:hover { background: rgba(248,113,113,0.1); color: #F87171; border-color: rgba(248,113,113,0.2); }
+    .station-btn svg { width: 12px; height: 12px; }
+    .station-chevron { width: 16px; height: 16px; color: rgba(255,255,255,0.3); transition: transform 0.2s; flex-shrink: 0; }
+    .station-card:not(.collapsed) .station-chevron { transform: rotate(180deg); }
+    .station-body { padding: 0 20px 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .station-fields { margin-bottom: 20px; }
+
+    /* ── Shortcomings ── */
+    .shortcomings-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 20px 0 12px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .shortcomings-label {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4);
+    }
+    .shortcomings-list { display: flex; flex-direction: column; gap: 12px; }
+    .shortcoming-card {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; overflow: hidden;
+    }
+    .shortcoming-card.collapsed .shortcoming-body { display: none; }
+    .shortcoming-header {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      cursor: pointer; user-select: none;
+    }
+    .shortcoming-header:hover { background: rgba(255,255,255,0.02); }
+    .shortcoming-number {
+      width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .shortcoming-title { flex: 1; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .shortcoming-status-badge {
+      padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid;
+    }
+    .shortcoming-header-actions { display: flex; align-items: center; gap: 5px; }
+    .sc-btn {
+      display: flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+      border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.15s;
+    }
+    .sc-btn:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .sc-btn.danger:hover { background: rgba(248,113,113,0.1); color: #F87171; border-color: rgba(248,113,113,0.2); }
+    .sc-btn svg { width: 12px; height: 12px; }
+    .shortcoming-body { padding: 0 16px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .sc-fields { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+    .sc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 640px) { .sc-grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Add buttons ── */
+    .add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px; border: 2px dashed rgba(255,255,255,0.12); border-radius: 12px;
+      background: transparent; color: rgba(255,255,255,0.4); font-family: 'Barlow', sans-serif;
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      cursor: pointer; transition: all 0.18s; width: 100%;
+    }
+    .add-btn:hover { border-color: rgba(255,107,0,0.4); color: #FF6B00; background: rgba(255,107,0,0.04); }
+    .add-btn svg { width: 16px; height: 16px; }
+
+    /* ── Closure section (inside shortcoming) ── */
+    .closure-section {
+      margin-top: 14px; padding: 14px; background: rgba(52,211,153,0.04);
+      border: 1px solid rgba(52,211,153,0.12); border-radius: 10px;
+    }
+    .closure-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(52,211,153,0.7); margin-bottom: 12px; }
+    .verification-section {
+      margin-top: 12px; padding: 14px; background: rgba(167,139,250,0.04);
+      border: 1px solid rgba(167,139,250,0.12); border-radius: 10px;
+    }
+    .verification-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(167,139,250,0.7); margin-bottom: 12px; }
+
+    /* ── Empty stations ── */
+    .stations-empty {
+      text-align: center; padding: 40px 24px;
+      background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.08);
+      border-radius: 14px;
+    }
+    .stations-empty-icon { width: 44px; height: 44px; margin: 0 auto 12px; color: rgba(255,255,255,0.15); }
+    .stations-empty-icon svg { width: 44px; height: 44px; }
+    .stations-empty-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 6px; }
+    .stations-empty-desc { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.5; max-width: 320px; margin: 0 auto; }
+
+    /* ── Review page ── */
+    .review-section { margin-bottom: 24px; }
+    .review-section-title {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.4);
+      margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .review-item {}
+    .review-item-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+    .review-item-value { font-size: 13px; color: rgba(255,255,255,0.8); word-break: break-word; }
+    .review-sc-card {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 14px; margin-bottom: 8px;
+    }
+    .review-sc-num { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .review-sc-desc { font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 10px; }
+    .review-sc-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .review-sc-tag {
+      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Sticky Footer ── */
+    .sticky-footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: rgba(11,14,20,0.97); backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .footer-left { display: flex; align-items: center; gap: 10px; }
+    .footer-right { display: flex; align-items: center; gap: 10px; }
+    .footer-progress { font-size: 12px; color: rgba(255,255,255,0.35); }
+    .footer-step { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); }
+    .btn-footer-ghost {
+      padding: 9px 18px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow', sans-serif;
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-footer-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .btn-footer-primary {
+      display: flex; align-items: center; gap: 6px; padding: 9px 20px;
+      background: #FF6B00; border: none; border-radius: 8px; color: #fff;
+      font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-footer-primary:hover { filter: brightness(1.12); }
+    .btn-footer-primary svg { width: 14px; height: 14px; }
+    .btn-footer-success {
+      display: flex; align-items: center; gap: 6px; padding: 9px 20px;
+      background: #059669; border: none; border-radius: 8px; color: #fff;
+      font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-footer-success:hover { filter: brightness(1.1); }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; top: 70px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      background: #1a2235; border: 1px solid; border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4); min-width: 260px; max-width: 360px;
+      animation: toastIn 0.25s ease; font-size: 13px;
+    }
+    .toast.success { border-color: rgba(52,211,153,0.3); }
+    .toast.success svg { color: #34D399; }
+    .toast.error   { border-color: rgba(248,113,113,0.3); }
+    .toast.error   svg { color: #F87171; }
+    .toast.info    { border-color: rgba(255,107,0,0.3); }
+    .toast.info    svg { color: #FF6B00; }
+    .toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .toast-text { flex: 1; color: rgba(255,255,255,0.8); }
+    @keyframes toastIn { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .form-sidebar { display: none; }
+      .form-content { padding: 20px 16px 120px; }
+      .sticky-footer { padding: 12px 16px; }
+      .footer-left { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <img src="../assets/img/goil-logo.png" alt="GOIL" style="width:32px;height:32px;object-fit:contain;border-radius:7px;" />
+    <div class="logo-title">GOIL HSSEQ</div>
+  </div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-page" id="topbarTitle">New NPA Record</div>
+  <div class="topbar-spacer"></div>
+  <button class="btn-back" onclick="confirmCancel()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Cancel
+  </button>
+  <button class="user-pill">
+    <div class="user-pill-avatar" id="topbarAvatar">AD</div>
+    <span class="user-pill-name" id="topbarName">Admin User</span>
+  </button>
+</div>
+
+<div class="page-wrapper">
+  <div class="form-layout">
+
+    <!-- Sidebar Step Indicator -->
+    <div class="form-sidebar">
+      <div class="step-list" id="stepList"></div>
+      <div class="form-sidebar-note">
+        <div class="form-sidebar-note-label">Auto-save</div>
+        <div class="form-sidebar-note-text">Progress is saved automatically as a draft. You can return to complete this record at any time.</div>
+      </div>
+    </div>
+
+    <!-- Main form content -->
+    <div class="form-content">
+
+      <!-- ─── Step 1: Communiqué Details ─── -->
+      <div class="form-section active" id="step-1">
+        <div class="section-title-block">
+          <div class="section-eyebrow">Step 1</div>
+          <div class="section-h">Communiqu&eacute; Details</div>
+          <div class="section-sub">Enter the system record information and NPA inspection details.</div>
+        </div>
+
+        <!-- Section A: System Record Details -->
+        <div class="form-card">
+          <div class="form-card-title">A &mdash; System Record Details</div>
+          <div class="form-grid form-grid-2">
+            <div class="form-field">
+              <label class="form-label">Date</label>
+              <input type="text" class="form-input readonly" id="recordDate" readonly />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Time</label>
+              <input type="text" class="form-input readonly" id="recordTime" readonly />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Record Number</label>
+              <input type="text" class="form-input readonly" id="recordNumber" readonly />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Created By</label>
+              <input type="text" class="form-input readonly" id="createdBy" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Inspection Details -->
+        <div class="form-card">
+          <div class="form-card-title">B &mdash; NPA Inspection Details</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <div class="date-pair-label">Date of NPA Inspection <span class="required-star">*</span></div>
+              <div class="date-pair-row">
+                <div class="date-pair-item">
+                  <div class="date-sub-label">From</div>
+                  <input type="date" class="form-input" id="inspectionDateFrom" required />
+                </div>
+                <div class="date-pair-item">
+                  <div class="date-sub-label">To</div>
+                  <input type="date" class="form-input" id="inspectionDateTo" required />
+                </div>
+              </div>
+              <div class="form-error" id="errInspDates">Inspection "To" date cannot be before the "From" date.</div>
+            </div>
+            <div class="form-field" id="fieldCommDate">
+              <label class="form-label">Date of NPA Communiqu&eacute; <span class="required-star">*</span></label>
+              <input type="date" class="form-input" id="communiqueDate" required />
+              <div class="form-error" id="errCommDate">Communiqu&eacute; date is required.</div>
+            </div>
+            <div class="form-field" id="fieldCommRef">
+              <label class="form-label">Communiqu&eacute; Reference <span class="required-star">*</span></label>
+              <input type="text" class="form-input" id="communiqueReference" placeholder="e.g. NPA/OPS/INS/2026/014" />
+              <div class="form-hint">Letters, numbers, hyphens, slashes, brackets, and spaces.</div>
+              <div class="form-error" id="errCommRef">Communiqu&eacute; reference is required.</div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Communiqu&eacute; Subject</label>
+              <input type="text" class="form-input" id="communiqueSubject" placeholder="Brief subject or title of the communiqu&eacute;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: Document Upload -->
+        <div class="form-card">
+          <div class="form-card-title">C &mdash; Upload NPA Communiqu&eacute;</div>
+          <div class="file-upload-zone" id="uploadZone">
+            <div class="file-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+            <div class="file-upload-text">Drop file here or <strong>click to browse</strong></div>
+            <div class="file-upload-types">PDF, DOC, DOCX, JPG, JPEG, PNG</div>
+          </div>
+          <div class="file-list" id="communiqueFileList"></div>
+          <input type="file" id="communiqueFileInput" style="display:none;" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" />
+        </div>
+
+        <!-- General Notes -->
+        <div class="form-card">
+          <div class="form-card-title">D &mdash; General Notes</div>
+          <div class="form-field">
+            <label class="form-label">Notes</label>
+            <textarea class="form-textarea" id="generalNotes" rows="4" placeholder="Any general notes or context about this communiqu&eacute;..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Step 2: Add Stations ─── -->
+      <div class="form-section" id="step-2">
+        <div class="section-title-block">
+          <div class="section-eyebrow">Step 2</div>
+          <div class="section-h">Stations / Outlets / Facilities</div>
+          <div class="section-sub">Add every station or facility covered by this communiqu&eacute;.</div>
+        </div>
+
+        <div class="stations-list" id="stationsList"></div>
+
+        <div class="stations-empty" id="stationsEmpty" style="display:none;">
+          <div class="stations-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+          <div class="stations-empty-title">No Stations Added</div>
+          <div class="stations-empty-desc">Click "Add Station Details" below to include an outlet or facility covered by this communiqu&eacute;.</div>
+        </div>
+
+        <button class="add-btn" id="btnAddStation" style="margin-top:16px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Station Details
+        </button>
+      </div>
+
+      <!-- ─── Step 3: Add Shortcomings ─── -->
+      <div class="form-section" id="step-3">
+        <div class="section-title-block">
+          <div class="section-eyebrow">Step 3</div>
+          <div class="section-h">Shortcomings</div>
+          <div class="section-sub">Add shortcomings for each station. Every shortcoming is tracked independently.</div>
+        </div>
+        <div id="shortcomingsStep3Container"></div>
+      </div>
+
+      <!-- ─── Step 4: Review ─── -->
+      <div class="form-section" id="step-4">
+        <div class="section-title-block">
+          <div class="section-eyebrow">Step 4</div>
+          <div class="section-h">Review &amp; Submit</div>
+          <div class="section-sub">Review all information before submitting the record.</div>
+        </div>
+        <div id="reviewContent"></div>
+      </div>
+
+    </div><!-- /form-content -->
+  </div><!-- /form-layout -->
+</div><!-- /page-wrapper -->
+
+<!-- Sticky Footer -->
+<div class="sticky-footer">
+  <div class="footer-left">
+    <span class="footer-progress" id="footerProgress">Step 1 of 4</span>
+    <span class="footer-step" id="footerStepName">Communiqu&eacute; Details</span>
+  </div>
+  <div class="footer-right">
+    <button class="btn-footer-ghost" id="btnBack" style="display:none;" onclick="goBack()">Back</button>
+    <button class="btn-footer-ghost" id="btnSaveDraft" onclick="saveDraft()">Save as Draft</button>
+    <button class="btn-footer-primary" id="btnNext" onclick="goNext()">
+      Continue
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="btn-footer-success" id="btnSubmit" style="display:none;" onclick="submitRecord()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Submit Record
+    </button>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Constants ────────────────────────────────────────────────────
+  var SUPABASE_URL  = 'https://qpldcpendvdobtbkygxo.supabase.co';
+  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbGRjcGVuZHZkb2J0Ymt5Z3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1ODE3OTksImV4cCI6MjA5MTE1Nzc5OX0.MZJFtZO6pjwj_Ni1CpIjJTxaubprS79Kmf-lr1fkMYg';
+  var LS_KEY        = 'goil_npa_records';
+  var LS_DRAFT_KEY  = 'goil_npa_draft';
+
+  var OUTLET_TYPES = ['Fuel Station', 'LPG Plant', 'Consumer', 'Office & Depot'];
+  var TYPES_REQUIRING_ZONE = ['Fuel Station', 'LPG Plant'];
+  var PRIORITIES   = ['Low', 'Medium', 'High', 'Critical'];
+  var SC_STATUSES  = ['Open', 'In Progress', 'Pending Verification', 'Closed', 'Reopened'];
+
+  var STEPS = [
+    { id: 1, label: 'Communiqu\u00e9 Details', desc: 'Record and inspection info' },
+    { id: 2, label: 'Add Stations',            desc: 'Outlets and facilities' },
+    { id: 3, label: 'Add Shortcomings',        desc: 'Detailed shortcomings' },
+    { id: 4, label: 'Review & Submit',         desc: 'Final check before submit' },
+  ];
+
+  // ── Facility data (mirrors GOIL_Facility_Details.html) ──────────
+  var DATA_STATIONS = {"Zonal Office South":["ABEKA LAPAZ","ABLEKUMA  MAIN","ABLEKUMA AYAWASO","ABLEKUMA NSUFA","ABLOR ADJEI","ACP - POKUASE","ADDEY JUNCTION","ADENTA AVIATION","AGBOBA","AGYIRIGANO","AKWETEYMAN NO. 2","AMAMOLEY","ANYAA MARKET","ASHALLEY BOTWE","ASHALLEY BOTWE HIGHWAYS","ASHONGMAN","ASHONGMAN CITY","AVIATION","AWOSHIE","BATSOONA","BAWJIASE","BAWJIASE NO. 2","BEREKUSO","BORTIANOR","BUBUASHIE","BURMA CAMP S/S","CANTOMENTS","CHRISTIAN VILLAGE","CIRCLE CAPRICE","CIRCLE OVERHEAD","COCA COLA","DANSOMAN MAIN","DANSOMAN ROUNDABOUT","DARKUMAN KOKOMPE","DARKUMAN KOKOMPE","DENCHIRA","DOME","GALILEA","GBAWE ZERO","GUGGISBERG AVENUE","HAATSO","IRON CITY","JUBA BARRACKS","KANESHIE MARKET","KANESHIE ODORKOR","KASOA BROADCASTING","KASOA CITY (AMANFROM KASOA)","KASOA MARKET","KASOA NYANYANOR","KASOA OBOUM","KASOA ODUPONKPEHE","KISSEIMAN","KOKROBITE","KORKORJOR","KORLE GONNOR","KPESHIE","KWABENYA","KWABENYA TAXI RANK","KWASHIEMAN","LA NKWANTANAN","LIBERATION RD (AIRPORT)","LIBERIA ROAD","LINK ROAD","MADINA","MADINA ZONGO JUNCTION","MALLAM JUNCTION","MALLAM MARKET","MAYERA","MILE 11","NIMA","NORTH LEGON","NYANYANO KAKRABA","NYANYANO TOWN","NYANYANOR ADADE","ODORKOR MAIN","ODORKOR TERRAZO","ODUPONGKPEHE SECTOR 23","OFANKOR","OPEIKUMA F/S","OPEIKUMA KRISPO CITY","PALLADIUM","POKUASE","PRESEC","PRINTEX JUNCTION","RACE COURSE","SANTOE","SOUTH LA","SOWUTUOM CAPITAL HILLS","SPINTEX","STC-KANESHIE","TABORA","TAIFA","TAIFA GHANEEMA","TANTRA HILL","TOLL BOOTH","TOUGA JUNCTION","TSE ADDO","TUBA  BY PASS","WEIJA 2","WEIJA OLD BARRIER","WEIJA WHITE CROSS"],"Zonal Office South East":["ABURI GYANKAMA","ACHIASE","ADENTA SUPERIOR (AMPOMAH JUNC)","ADUMANYA","AGONA SWEDRU","AKIM ODA","AKIM ODA GUGGISBERG","AKIM SUBI","AKOTSI","AMASAMAN-ABEHENASE","AMRAHIA","AMRAHIA NO. 2","ANYINAM","APOLLONIA CITY","ASAMANKESE","ASHIYIE-FULANI ROAD","ATIBE","ATIBIE AMANFROM","AWUTU","AWUTU BREKU","AYIKAI BOBLO (ASHALAGA)","AYIKAI DOBLO","BEGORO","BUDUBURAM","BUDUBURAM","BUNSO","DODOWA MARKET","FETTEH  KAKRABA","GOMOA FETTEH","HEBRON","JIDA","KADE","KOFORIDUA ADWESO","KOFORIDUA ASOKORE","KOFORIDUA HUHUNYA","KOFORIDUA OKOENYA","KOFORIDUA OKORASE","KOFORIDUA SUHUM","KUKURANTUMI","KUNTUNSE","KWAFOKROM","MAMPONG AKWAPIM","MENSAH KROM","MPRAESO","NKAWANDA","NSAWAM LORRY PARK","NSAWAM POLICE STATION","OBEYEYIE","OJOBI","OKOBEYEYIE","OSIEM","OYARIFA","OYIBI","POBIMAN","SAPEIMAN","SOWUTUOM","SUHUM","TEIMAN (ABOKOBI)","TOMAN","WINNEBA UNIVERSITY ROAD"],"Zonal Office Tema & Central Depot":["ABATTIOR","ABEKOPE","ADA","AFIENYA MATAHEKO","AFIENYA TOLLBOOTH","AFLAO","AGORTA KEDZI","AKATSI BYPASS","AKUSE- NEW SOMANYA ROAD","ANLOGA","ASHAIMAN ZENU","ASHIAMAN SEC. SCH","ASHIAMAN VALCO FLATS","ASHIAMAN ZONGO","ATIMPOKU F/S","BETHLEHEM - GULF CITY","BORTEYMAN","DAMBAI-BANKA","DAWHENYA","DAWHENYA - ADJUMADOR","DAWHENYA-DEVTRACO","DENU BARRIER","DENU TORKOR","DORYUMU","DZODZE AKANU","GBETILE","HO MAIN MARKET","HO MAIN S/S- OPPOSITE S.I.C","HO OLA","HO-HOSPITAL ROAD","HOHOE FIRE SERVICE","HOHOE KPOETA","HOHOE MAIN","JASIKAN","KETE KRACHI 1","KLAGON","KPANDO S/S","KPONE GPHA ROAD","KPONE JUNCTION","KPONE KATAMANSO / APPOLONIA / KUBEKROM","KPONE KOKOMPE","KPONG KOTOKOLI","KPONG S/S","LARPLEKU","LASHIBI","NUNGUA CHANNEL 5","NUNGUA JUNCTION MALL","SEBREPO","SHAI HILLS","SOGAKOPE","SOKODE","SOMANYA TROM","TEMA COMM.1 MARKET","TEMA COMM.9","TEMA TTL","TEMA VRA JUNCTION","TSOPOLI - TOLLBOOTH"],"Zonal Office Middle Belt":["ABIDJAN NKWANTA 1","ABIDJAN NKWANTA 2","ABRANKESE SOANDRO","ABREPOKESE","ABREPOKUMA","ADANSI ASOKWA","AFRANCHO","AFRANCHO (UNITY)","AGOGO HWEDIEM","AGOGO NO. 2","AHODWO ROUNDABOUT","AHODWO-DABAN","AHWIANKWANTA","AKYAWKROM","AMANFROM","ASAFO MARKET","ASOKORE MAMPONG","ATASOMANSO","AYIGYA","BANTAMA","BEBRE","BEDIESO-OBUASI","BEKWAI ROUNDABOUT","BOANKRA","BOMFA JUNCTION","BREMAN","BREMEN UGC","BUOKROM","DICHEMSO","DUNKWA ATECHEM","EFFIDUASE","EJISU","EJURA","EKOSO KONONGO","EMENA","ESRESO","FAWODE","HOMOASI","JACHIE PRAMSO","JUABEN","JUABEN - YAW NKRUMAH","KAASE","KEGYASE","KEJETIA - MBROM","KENTINKRONO KNUST","KENTINKRONO NO. 2","KENYASI","KONONGO ODUMASE","KRAPA","KROFROM","KROMOASE","KRONUM ABUOHIA","KUBEASE","KWABENA KWA-OBUASI","KWAMO","MAAKRO","MAASE","MABAN","MAMPONG BYPASS","MAMPONG TOWN","MANHYIA","MANHYIA HOSPITAL","MEDUMA","MFOUM-BIBANIHA","NEW AMAKOM","NEW KENTINKRONO (SIPODEMS)","NEW KYEKYEWERE-OBUASI","NSUTA","NYANKYERENIASI","OBUASI","OBUASI KYEKYEWERE","OLD TAFO","PAKYI NO. 1","PANKRONO NO. 2","PANKRONU KODUA JUNCTION","SANTASI","SANTASI ANYINAM","SUAME ROUNDABOUT","TAFO WESLEY (TAFO CEMETARY)","TAKYIKROM","TANOSO","TANOSO","TEWOBAABI","YAWKWEI","YEJI"],"Zonal Office Upper Mid Belt":["ABESIM","AHAFO HWIDIEM","AKROPONG","AKUMADAN","AYORYA","BECHEM TEPA JUNCTION","BENUE NKWANTA","BEREKUM MAIN","BEREKUM SEIKWA","BEREKUM-DORMAA ROAD","BIBIANI LINESO","BIBIANI MANUKROM","BUI JAMA","DOMFETE","DORMAA AHENKRO","DROBO 1","FIAPRE","GOASO HWIDIEM ROAD","GOASO KUKUOM ROAD","GOASO-MIM ROAD","KINTAMPO","MIM OPPONKROM","NEW DORMAA ROAD","NEW WENCHI","NKAWIE","NKORANZA","ODUMASI/TECHIMAN","OFFINSO ABOFOUR","OFFINSO ASAMANKAMA","OFFINSO DENASE","OFFINSO DENTIN","OFFINSO TUTUASE 1","OFFINSO TUTUASE 2","SAMPA","SANKORE","SEFWI AWAWSO","SEFWI BEKWAI","SEFWI BODI","SEFWI DIASO","SEFWI DWENASE","SUNYANI BYPASS","SUNYANI OLD BARRIER","SUNYANI RIDGE","SUNYANI TANOSO","SUNYANI ZONGO","TECHIMAN ANYINABREM","TECHIMAN BANKOMA EST.","TECHIMAN KUNTUNSO","TECHIMAN MARKET","TECHIMAN TANOSO","TUOBODOM","TUOBODOM","WAMFIE","WENCHI MAIN","WENCHI-WA ROAD"],"Zonal Office West":["ABANDZIE","ABOADE AGONA NKWANTA","ABURA STADIUM","ADISADEL (CAPE COAST)","ADJUMAKO","AGONA AMENFI","AIRPORT ROUNDABOUT","AKWAKROM","ANAJIE FIE","APOWA (OJK)","APREMDO","ASSIN BROFOYEDURU","ASSIN PRASO","BAKAANO","BAKAEKYIRE","BATANYA","BEPOSO","BOGOSO","BOGOSO PRESTEA JUNCTION","BREMAN ASIKUMA","BUELA LANE (ABEASI)","CAPE COAST BY PASS","ELMINA (SUPERIOR)","ELUBO (SUPERIOR)","ENCHI","ESSIAMA","FANTE NYANKOMASI","FIJAI (OJK)","HALF ASSINI","INCHABAN","KIKAM","KOJOKROM","MANKESSIM MAIN","MEMPEASEM","OLD AXIM  (CHAPEL HILL)","OLD SHAMA   (ESSIKADO)","PRESTEA","PRESTEA ANKOBRA","PRESTEA NAKABA","SEKONDI ROAD","SIWDO (CAPE COAST)","TARKWA BOBOOBO.","TARKWA BOGOSO JUNNTION","TARKWA MAIN","TWIFO PRASO","UCC","WASSA  AGONA","WEST ANAJI","YESUNKWA"],"Zonal Office North":["AIRPORT ROAD, TAMALE","BAWKU BY-PASS","BAWKU MAIN","BIMBILLA","BOLGA - BAWKU ROAD","BOLGA MAIN","BONGO","BUIPE","DUNGU","HOSPITAL ROAD","JISONAYILY - TAMALE","KALADAN","KONGO","NAVRONGO","RIVOLI","SALAGA","SANDEMA","SAVELUGU","SOE-BOLGATANTA","SOUTH VITTIN -TAMALE","TAMALE RICE CITY","VITTIN","WALEWALE (UNION OIL)","WALEWALE NALERIGU","WALEWALE WULUGU","YENDI","YENDI ROAD","YIKENE","ZEBILLA","ZUARUNGU NO.2"]};
+  var DATA_LPG = {"Zonal Office Middle Belt":["CAPTAIN 50/50","GAG ENTERPRISE","YAW FOSU LPG","ABDUL RAZAK ISSAH","AFI GAS","ABBAN GAS","MR. KWAME SEKYERE","GOIL GAS (KENTINKRONO GAS PLANT"],"Zonal Office North":["GOIL GAS(LT. COL. ABDULAI IBRAHIM)","IDDRISU TAULUT WABUGRI","NADE ENERGY (BOLGA GAS)"],"Zonal Office South":["GHANEEMA LPG FILLING PLANT","MUSDAC VENTURES - OYIBI PLANT","MIJUKAY ENTERPRISE","MOJO GAS","ASHALAJA LPG REFILLING PLANT","AUTO GAS","MILLODART","NADE ENERGY GH. LTD","YAW TWUMASI","ARETHA BAKER-WOODE (BURMA CAMP)","KPESHIE GOIL GAS PLANT"],"Zonal Office South East":["SUNRISE CLASSIC GAS","KASOA NYANYANO - GOIL GAS","GOIL GAS (LINDA DOR)","NELSON ANNOR","ATLANTIC GAS LTD","LINKWADO LIMITED","DANASO ENTERPRISE","MICHIKWAM GAS LTD","OFORI GAS","CONNORS GAS"],"Zonal Office Tema & Central Depot":["MUSDAC VENTURES","VALCO FLAT GAS","SUPREME GAS LTD","SALAKO ENTERPRISE","MACBARON LP GAS PLANT","ANTHOINETTE KUSH. (GOIL GAS)","ALHAJI JAMAL RAJI"],"Zonal Office Upper Mid Belt":["EMMANUEL GEORGE YEBOAH","FRANYEB COMPANY LTD","CHARLES BOFAH"],"Zonal Office West":["E K FOSU ENTERPRISE","HARTBOVAN GAS ENT.","CAPE COAST BY-PASS","NANA EFUA EDZII","ALIMEX ENTERPRISE","TAKORADI GAS PLANT (PACO GAS)","KOFI ANTWI-SEFWI BEKWAI LPG"]};
+  var DATA_OFFICES   = ["GOIL Head Office","GOIL Head Office Annex","GOUPSTREAM","GoEnergy","Liaison Office Bolga","Liaison Office Buipe","Quality Control Office","Ridge Office","Tema Bunkering Office"];
+  var DATA_OFF_DEPOT = ["GoBitumen","GoEnergy","GOIL Head Office","GOIL Head Office Annex","GOUPSTREAM","Kumasi Aviation Office","Kumasi Liaison Office","Kumasi LPG Plant","Liaison Office APD","Liaison Office Bolga","Liaison Office Buipe","Quality Control Office","Ridge Office","Takoradi Aviation Depot","Takoradi Harbour Bunkering","Takoradi Naval Base Bunkering","Tamale Aviation Depot","Tema Bunkering Office","Tema LPG Plant","Zonal Office Middle Belt","Zonal Office North","Zonal Office South","Zonal Office South East","Zonal Office Tema & Central Depot","Zonal Office Upper Mid Belt","Zonal Office West"];
+
+  function requiresZone(type) {
+    return TYPES_REQUIRING_ZONE.indexOf(type) !== -1;
+  }
+  function getZonesForType(type) {
+    var data = type === 'Fuel Station' ? DATA_STATIONS : type === 'LPG Plant' ? DATA_LPG : null;
+    if (!data) return [];
+    return Object.keys(data).sort();
+  }
+  function getFacilitiesForType(type, zone) {
+    if (type === 'Fuel Station')   return (zone ? DATA_STATIONS[zone] : []) || [];
+    if (type === 'LPG Plant')      return (zone ? DATA_LPG[zone] : []) || [];
+    if (type === 'Office & Depot') return DATA_OFF_DEPOT;
+    return []; // Consumer uses free-text inputs, not a list
+  }
+
+  // ── State ────────────────────────────────────────────────────────
+  var currentStep  = 1;
+  var editMode     = false;
+  var editRecordId = null;
+  var hasChanges   = false;
+  var db           = null;
+  var stationKey   = 0; // counter for unique station IDs
+  var scKey        = 0; // counter for unique shortcoming IDs
+
+  var formData = {
+    id: null, recordNumber: '', recordDate: '', recordTime: '',
+    createdBy: '', createdByEmail: '',
+    inspectionDateFrom: '', inspectionDateTo: '',
+    communiqueDate: '', communiqueReference: '',
+    communiqueSubject: '', generalNotes: '',
+    communiqueFiles: [], status: 'Draft',
+    stations: [],
+    createdAt: null, updatedAt: null,
+  };
+
+  // ── Helpers ──────────────────────────────────────────────────────
+  function genId() {
+    return 'npa_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+  }
+  function genRecordNumber() {
+    var yr = new Date().getFullYear();
+    var records = readLS();
+    var maxNum = 0;
+    records.forEach(function(r) {
+      var m = (r.recordNumber || '').match(/NPA-MSC-\d{4}-(\d+)$/);
+      if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+    });
+    return 'NPA-MSC-' + yr + '-' + String(maxNum + 1).padStart(4, '0');
+  }
+  function readLS() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]') || []; }
+    catch (e) { return []; }
+  }
+  function writeLS(data) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+    catch (e) {}
+  }
+  function saveDraftToLS() {
+    try { localStorage.setItem(LS_DRAFT_KEY, JSON.stringify(formData)); }
+    catch (e) {}
+  }
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmtDate(d) {
+    if (!d) return '—';
+    var dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function today() { return new Date().toISOString().split('T')[0]; }
+  function nowTime() {
+    var n = new Date();
+    return n.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  function fmtFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  // ── Toast ────────────────────────────────────────────────────────
+  function showToast(msg, type) {
+    type = type || 'info';
+    var container = document.getElementById('toastContainer');
+    var icons = {
+      success: '<polyline points="20 6 9 17 4 12"/>',
+      error:   '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+      info:    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+    };
+    var el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + icons[type] + '</svg><span class="toast-text">' + escHtml(msg) + '</span>';
+    container.appendChild(el);
+    setTimeout(function() { el.remove(); }, 3500);
+  }
+
+  // ── Step rendering ───────────────────────────────────────────────
+  function renderSteps() {
+    var list = document.getElementById('stepList');
+    if (!list) return;
+    var html = '';
+    STEPS.forEach(function(s, i) {
+      var state = s.id < currentStep ? 'completed' : (s.id === currentStep ? 'active' : 'pending');
+      var numContent = state === 'completed'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><polyline points="20 6 9 17 4 12"/></svg>'
+        : s.id;
+      html += '<div class="step-item ' + state + '" onclick="jumpToStep(' + s.id + ')">' +
+        '<div class="step-number">' + numContent + '</div>' +
+        '<div class="step-text"><div class="step-label">' + escHtml(s.label) + '</div>' +
+        '<div class="step-desc">' + escHtml(s.desc) + '</div></div></div>';
+      if (i < STEPS.length - 1) {
+        html += '<div class="step-connector' + (s.id < currentStep ? ' done' : '') + '"></div>';
+      }
+    });
+    list.innerHTML = html;
+  }
+
+  function updateFooter() {
+    var btnBack   = document.getElementById('btnBack');
+    var btnNext   = document.getElementById('btnNext');
+    var btnSubmit = document.getElementById('btnSubmit');
+    var prog      = document.getElementById('footerProgress');
+    var stepName  = document.getElementById('footerStepName');
+
+    if (btnBack)   btnBack.style.display   = currentStep > 1 ? '' : 'none';
+    if (btnNext)   btnNext.style.display   = currentStep < 4 ? '' : 'none';
+    if (btnSubmit) btnSubmit.style.display = currentStep === 4 ? '' : 'none';
+    if (prog)      prog.textContent        = 'Step ' + currentStep + ' of 4';
+    if (stepName)  stepName.textContent    = STEPS[currentStep - 1].label;
+
+    var title = document.getElementById('topbarTitle');
+    if (title) title.textContent = editMode ? 'Edit NPA Record' : 'New NPA Record';
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.form-section').forEach(function(s) { s.classList.remove('active'); });
+    var el = document.getElementById('step-' + n);
+    if (el) el.classList.add('active');
+    currentStep = n;
+    renderSteps();
+    updateFooter();
+    if (n === 3) renderStep3();
+    if (n === 4) renderReview();
+    window.scrollTo(0, 0);
+    document.querySelector('.form-content').scrollTop = 0;
+  }
+
+  window.jumpToStep = function(n) {
+    if (n >= currentStep) return; // Can only go back via jumpToStep
+    showStep(n);
+  };
+
+  function goNext() {
+    if (!validateStep(currentStep)) return;
+    collectStep(currentStep);
+    saveDraftToLS();
+    if (currentStep < 4) showStep(currentStep + 1);
+  }
+  window.goNext = goNext;
+
+  function goBack() {
+    collectStep(currentStep);
+    saveDraftToLS();
+    if (currentStep > 1) showStep(currentStep - 1);
+  }
+  window.goBack = goBack;
+
+  // ── Step 1 UI ────────────────────────────────────────────────────
+  function initStep1() {
+    // Auto-fill date/time
+    var dateEl = document.getElementById('recordDate');
+    var timeEl = document.getElementById('recordTime');
+    var numEl  = document.getElementById('recordNumber');
+    var byEl   = document.getElementById('createdBy');
+
+    if (dateEl) dateEl.value = fmtDate(formData.recordDate || today());
+    if (timeEl) timeEl.value = formData.recordTime || nowTime();
+    if (numEl)  numEl.value  = formData.recordNumber || '';
+    if (byEl)   byEl.value   = formData.createdBy || '';
+
+    // Set existing values
+    setVal('inspectionDateFrom', formData.inspectionDateFrom);
+    setVal('inspectionDateTo',   formData.inspectionDateTo);
+    setVal('communiqueDate',     formData.communiqueDate);
+    setVal('communiqueReference',formData.communiqueReference);
+    setVal('communiqueSubject',  formData.communiqueSubject);
+    setVal('generalNotes',       formData.generalNotes);
+
+    // File upload
+    initFileUpload('uploadZone', 'communiqueFileInput', 'communiqueFileList', 'communiqueFiles', false);
+
+    // Validation: inspection date range
+    var fromEl = document.getElementById('inspectionDateFrom');
+    var toEl   = document.getElementById('inspectionDateTo');
+    if (fromEl) fromEl.addEventListener('change', function() {
+      if (toEl && toEl.value && toEl.value < fromEl.value) {
+        toEl.value = fromEl.value;
+      }
+      hasChanges = true;
+    });
+    if (toEl) toEl.addEventListener('change', function() { hasChanges = true; });
+
+    // Mark changes
+    document.querySelectorAll('#step-1 .form-input:not([readonly]), #step-1 .form-textarea, #step-1 .form-select')
+      .forEach(function(el) { el.addEventListener('input', function() { hasChanges = true; }); });
+  }
+
+  function setVal(id, val) {
+    var el = document.getElementById(id);
+    if (el && val) el.value = val;
+  }
+
+  // ── File upload ──────────────────────────────────────────────────
+  function initFileUpload(zoneId, inputId, listId, stateKey, multiple) {
+    var zone  = document.getElementById(zoneId);
+    var input = document.getElementById(inputId);
+    var list  = document.getElementById(listId);
+    if (!zone || !input) return;
+
+    renderFileList(list, formData[stateKey]);
+
+    zone.addEventListener('click', function() { input.click(); });
+    input.addEventListener('change', function() {
+      var files = Array.from(input.files);
+      files.forEach(function(f) { addFile(f, stateKey, list); });
+      input.value = '';
+    });
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault(); zone.classList.remove('dragover');
+      Array.from(e.dataTransfer.files).forEach(function(f) { addFile(f, stateKey, list); });
+    });
+  }
+
+  function addFile(f, stateKey, list) {
+    var allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg','image/png','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    if (!allowed.includes(f.type) && !f.name.match(/\.(pdf|doc|docx|jpg|jpeg|png|xls|xlsx)$/i)) {
+      showToast('File type not allowed: ' + f.name, 'error'); return;
+    }
+    formData[stateKey] = formData[stateKey] || [];
+    formData[stateKey].push({ name: f.name, size: f.size, type: f.type, addedAt: new Date().toISOString() });
+    renderFileList(list, formData[stateKey]);
+    hasChanges = true;
+  }
+
+  function renderFileList(list, files) {
+    if (!list) return;
+    list.innerHTML = (files || []).map(function(f, i) {
+      return '<div class="file-item">' +
+        '<div class="file-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+        '<span class="file-item-name">' + escHtml(f.name) + '</span>' +
+        '<span class="file-item-size">' + fmtFileSize(f.size) + '</span>' +
+        '<button class="file-item-remove" onclick="removeFile(\'' + String(list.id) + '\',' + i + ')" aria-label="Remove file">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+        '</button></div>';
+    }).join('');
+  }
+
+  window.removeFile = function(listId, idx) {
+    var keyMap = { 'communiqueFileList': 'communiqueFiles' };
+    var key = keyMap[listId];
+    if (key && formData[key]) {
+      formData[key].splice(idx, 1);
+      renderFileList(document.getElementById(listId), formData[key]);
+    } else {
+      // Try shortcoming evidence
+      document.querySelectorAll('[data-sc-evidence]').forEach(function(el) {
+        if (el.id === listId) {
+          var scId = el.getAttribute('data-sc-evidence');
+          formData.stations.forEach(function(st) {
+            (st.shortcomings || []).forEach(function(sc) {
+              if (sc.id === scId) {
+                sc.evidence = sc.evidence || [];
+                sc.evidence.splice(idx, 1);
+                renderFileList(el, sc.evidence);
+              }
+            });
+          });
+        }
+      });
+    }
+    hasChanges = true;
+  };
+
+  // ── Validation ───────────────────────────────────────────────────
+  function validateStep(step) {
+    var ok = true;
+    if (step === 1) {
+      var from = getVal('inspectionDateFrom');
+      var to   = getVal('inspectionDateTo');
+      var commDate = getVal('communiqueDate');
+      var commRef  = getVal('communiqueReference');
+
+      if (!from || !to) { setError('errInspDates', true); ok = false; }
+      else if (to < from) { setError('errInspDates', true); ok = false; }
+      else { setError('errInspDates', false); }
+
+      if (!commDate) { setError('errCommDate', true); addClass('fieldCommDate'); ok = false; }
+      else { setError('errCommDate', false); rmClass('fieldCommDate'); }
+
+      if (!commRef.trim()) { setError('errCommRef', true); addClass('fieldCommRef'); ok = false; }
+      else { setError('errCommRef', false); rmClass('fieldCommRef'); }
+    }
+    if (step === 2) {
+      if (!formData.stations.length) {
+        showToast('Please add at least one station before continuing.', 'error');
+        ok = false;
+      } else {
+        var stationOk = true;
+        formData.stations.forEach(function(st) {
+          if (!st.outletType) { stationOk = false; return; }
+          if (st.outletType === 'Consumer') {
+            if (!st.consumerName || !st.siteLocation) stationOk = false;
+          } else {
+            if (!st.facilityId) { stationOk = false; return; }
+            if (st.facilityId === 'Other' && !(st.facilityOther || '').trim()) { stationOk = false; return; }
+            if (requiresZone(st.outletType) && !st.zone) stationOk = false;
+          }
+        });
+        if (!stationOk) { showToast('Each facility requires all fields: Type, Zone (if applicable), Facility Name / Consumer Name & Site Location.', 'error'); ok = false; }
+      }
+    }
+    if (step === 3) {
+      var scOk = true;
+      formData.stations.forEach(function(st) {
+        if (!st.shortcomings || !st.shortcomings.length) { scOk = false; return; }
+        st.shortcomings.forEach(function(sc) {
+          if (!sc.description || !sc.correctiveAction || !sc.responsiblePerson || !sc.targetCompletionDate || !sc.priority) {
+            scOk = false;
+          }
+        });
+      });
+      if (!scOk) { showToast('Every shortcoming requires a description, corrective action, responsible person, target date, and priority.', 'error'); ok = false; }
+    }
+    return ok;
+  }
+
+  function setError(id, show) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = show ? 'block' : 'none';
+  }
+  function addClass(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('has-error');
+  }
+  function rmClass(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('has-error');
+  }
+  function getVal(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  // ── Collect step data ────────────────────────────────────────────
+  function collectStep(step) {
+    if (step === 1) {
+      formData.inspectionDateFrom  = getVal('inspectionDateFrom');
+      formData.inspectionDateTo    = getVal('inspectionDateTo');
+      formData.communiqueDate      = getVal('communiqueDate');
+      formData.communiqueReference = getVal('communiqueReference');
+      formData.communiqueSubject   = getVal('communiqueSubject');
+      formData.generalNotes        = getVal('generalNotes');
+    }
+    // Stations are collected live as the user edits
+  }
+
+  // ── Station management ───────────────────────────────────────────
+  function addStation() {
+    stationKey++;
+    var st = {
+      id: genId(), key: stationKey,
+      outletType: '', zone: '', facilityId: '', facilityName: '', facilityOther: '', consumerName: '', siteLocation: '',
+      shortcomings: []
+    };
+    formData.stations.push(st);
+    renderStations();
+    hasChanges = true;
+    // Scroll to new station
+    setTimeout(function() {
+      var card = document.getElementById('station-card-' + st.id);
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  function removeStation(stId) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    if (st.shortcomings && st.shortcomings.length) {
+      if (!confirm('This station has ' + st.shortcomings.length + ' shortcoming(s). Remove it and all its shortcomings?')) return;
+    }
+    formData.stations = formData.stations.filter(function(s) { return s.id !== stId; });
+    renderStations();
+    hasChanges = true;
+  }
+
+  function renderStations() {
+    var list  = document.getElementById('stationsList');
+    var empty = document.getElementById('stationsEmpty');
+    if (!list) return;
+
+    if (!formData.stations.length) {
+      list.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+
+    list.innerHTML = formData.stations.map(function(st, idx) {
+      var needsZone = requiresZone(st.outletType);
+      var zoneOptions = needsZone ? getZonesForType(st.outletType).map(function(z) {
+        return '<option value="' + escHtml(z) + '"' + (st.zone === z ? ' selected' : '') + '>' + escHtml(z) + '</option>';
+      }).join('') : '';
+      var facilityList = st.outletType ? getFacilitiesForType(st.outletType, needsZone ? st.zone : null) : [];
+      var facilityOptions = facilityList.map(function(name) {
+        return '<option value="' + escHtml(name) + '"' + (st.facilityName === name ? ' selected' : '') + '>' + escHtml(name) + '</option>';
+      }).join('');
+
+      var isConsumer = st.outletType === 'Consumer';
+      var headerTitle = isConsumer
+        ? (st.consumerName ? escHtml(st.consumerName) : 'Station ' + (idx + 1))
+        : (st.facilityName ? escHtml(st.facilityName) : 'Station ' + (idx + 1));
+      var headerSub = st.outletType ? escHtml(st.outletType) : 'No type selected';
+      if (!isConsumer && st.zone) headerSub += ' &bull; ' + escHtml(st.zone);
+      if (isConsumer && st.siteLocation) headerSub += ' &bull; ' + escHtml(st.siteLocation);
+
+      return '<div class="station-card" id="station-card-' + st.id + '">' +
+        '<div class="station-header" onclick="toggleStation(\'' + st.id + '\')">' +
+          '<div class="station-number">' + (idx + 1) + '</div>' +
+          '<div>' +
+            '<div class="station-title">' + headerTitle + '</div>' +
+            '<div class="station-subtitle">' + headerSub + '</div>' +
+          '</div>' +
+          '<div class="station-header-actions" onclick="event.stopPropagation()">' +
+            '<button class="station-btn danger" onclick="removeStation(\'' + st.id + '\')">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>' +
+              'Remove' +
+            '</button>' +
+          '</div>' +
+          '<svg class="station-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
+        '<div class="station-body">' +
+          '<div class="station-fields">' +
+            '<div class="form-grid form-grid-2" style="margin-top:16px;gap:14px;">' +
+              '<div class="form-field">' +
+                '<label class="form-label">Type of Facility <span class="required-star">*</span></label>' +
+                '<select class="form-select" onchange="onOutletTypeChange(\'' + st.id + '\', this.value)">' +
+                  '<option value="">Select type...</option>' +
+                  OUTLET_TYPES.map(function(t) { return '<option value="' + escHtml(t) + '"' + (st.outletType === t ? ' selected' : '') + '>' + escHtml(t) + '</option>'; }).join('') +
+                '</select>' +
+              '</div>' +
+              (needsZone ?
+                '<div class="form-field">' +
+                  '<label class="form-label">Zone <span class="required-star">*</span></label>' +
+                  '<select class="form-select" id="zoneSelect-' + st.id + '" onchange="onZoneChange(\'' + st.id + '\', this.value)">' +
+                    '<option value="">Select zone...</option>' +
+                    zoneOptions +
+                  '</select>' +
+                '</div>'
+              : '<div class="form-field" style="visibility:hidden;pointer-events:none;"></div>') +
+              (isConsumer ?
+                '<div class="form-field">' +
+                  '<label class="form-label">Consumer Name <span class="required-star">*</span></label>' +
+                  '<input type="text" class="form-input" value="' + escHtml(st.consumerName) + '" oninput="onConsumerField(\'' + st.id + '\',\'consumerName\',this.value)" placeholder="Enter consumer name\u2026" />' +
+                '</div>' +
+                '<div class="form-field">' +
+                  '<label class="form-label">Site Location <span class="required-star">*</span></label>' +
+                  '<input type="text" class="form-input" value="' + escHtml(st.siteLocation) + '" oninput="onConsumerField(\'' + st.id + '\',\'siteLocation\',this.value)" placeholder="Enter site location\u2026" />' +
+                '</div>'
+              :
+                '<div class="form-field">' +
+                  '<label class="form-label">Facility Name <span class="required-star">*</span></label>' +
+                  '<select class="form-select" id="facilitySelect-' + st.id + '" onchange="onFacilityChange(\'' + st.id + '\', this.value)"' + (needsZone && !st.zone ? ' disabled' : '') + '>' +
+                    '<option value="">' + (needsZone && !st.zone ? 'Select zone first...' : 'Select facility...') + '</option>' +
+                    facilityOptions +
+                    '<option value="Other"' + (st.facilityId === 'Other' ? ' selected' : '') + '>Other \u2014 specify below</option>' +
+                  '</select>' +
+                  (st.facilityId === 'Other' ?
+                    '<input type="text" class="form-input" style="margin-top:8px;" id="facilityOther-' + st.id + '" value="' + escHtml(st.facilityOther) + '" oninput="onFacilityOtherInput(\'' + st.id + '\',this.value)" placeholder="Enter facility name\u2026" />'
+                  : '') +
+                '</div>' +
+                '<div class="form-field" style="visibility:hidden;pointer-events:none;"></div>'
+              ) +
+            '</div>' +
+          '</div>' +
+          '<div class="shortcomings-header">' +
+            '<div class="shortcomings-label">Shortcomings <span style="color:rgba(255,255,255,0.3);font-weight:400;">(' + (st.shortcomings ? st.shortcomings.length : 0) + ')</span></div>' +
+            '<button class="station-btn" onclick="addShortcoming(\'' + st.id + '\')">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+              'Add Shortcoming' +
+            '</button>' +
+          '</div>' +
+          '<div class="shortcomings-list" id="scList-' + st.id + '">' +
+            renderShortcomingCards(st) +
+          '</div>' +
+          '<button class="add-btn" onclick="addShortcoming(\'' + st.id + '\')" style="margin-top:10px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+            'Add Another Shortcoming' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  window.toggleStation = function(stId) {
+    var card = document.getElementById('station-card-' + stId);
+    if (card) card.classList.toggle('collapsed');
+  };
+
+  window.onOutletTypeChange = function(stId, val) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    st.outletType = val;
+    st.zone = ''; st.facilityId = ''; st.facilityName = ''; st.facilityOther = ''; st.consumerName = ''; st.siteLocation = '';
+    renderStations();
+    hasChanges = true;
+  };
+
+  window.onZoneChange = function(stId, val) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    st.zone = val;
+    st.facilityId = ''; st.facilityName = ''; st.facilityOther = '';
+    // Update facility select without full re-render
+    var facSel = document.getElementById('facilitySelect-' + stId);
+    if (facSel) {
+      var opts = '<option value="">' + (val ? 'Select facility...' : 'Select zone first...') + '</option>';
+      if (val) {
+        opts += getFacilitiesForType(st.outletType, val).map(function(name) {
+          return '<option value="' + escHtml(name) + '">' + escHtml(name) + '</option>';
+        }).join('');
+        opts += '<option value="Other">Other \u2014 specify below</option>';
+      }
+      facSel.innerHTML = opts;
+      facSel.disabled = !val;
+    }
+    // Update subtitle in station header
+    var titleEl = document.querySelector('#station-card-' + stId + ' .station-subtitle');
+    if (titleEl && st.outletType) {
+      titleEl.innerHTML = escHtml(st.outletType) + (val ? ' &bull; ' + escHtml(val) : '');
+    }
+    hasChanges = true;
+  };
+
+  window.onFacilityChange = function(stId, name) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st || !name) return;
+    if (name === 'Other') {
+      st.facilityId = 'Other'; st.facilityName = ''; st.facilityOther = '';
+      renderStations();
+      // Focus the text input after render
+      setTimeout(function() {
+        var inp = document.getElementById('facilityOther-' + stId);
+        if (inp) inp.focus();
+      }, 50);
+      hasChanges = true;
+      return;
+    }
+    // Check duplicate
+    var duplicate = formData.stations.some(function(s) { return s.id !== stId && s.facilityName === name; });
+    if (duplicate) {
+      showToast('This facility is already added in another station.', 'error');
+      return;
+    }
+    st.facilityId   = name;
+    st.facilityName = name;
+    st.facilityOther = '';
+    hasChanges = true;
+  };
+
+  window.onFacilityOtherInput = function(stId, val) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    st.facilityOther = val;
+    st.facilityName  = val; // keep in sync for display
+    // Update card header title live
+    var titleEl = document.querySelector('#station-card-' + stId + ' .station-title');
+    if (titleEl) titleEl.textContent = val || 'Station ' + (formData.stations.indexOf(st) + 1);
+    hasChanges = true;
+  };
+
+  window.onConsumerField = function(stId, field, val) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    st[field] = val;
+    // Update station header live
+    var titleEl = document.querySelector('#station-card-' + stId + ' .station-title');
+    var subEl   = document.querySelector('#station-card-' + stId + ' .station-subtitle');
+    if (titleEl && field === 'consumerName') titleEl.textContent = val || 'Station ' + (formData.stations.indexOf(st) + 1);
+    if (subEl && field === 'siteLocation')  subEl.innerHTML = 'Consumer' + (val ? ' &bull; ' + escHtml(val) : '');
+    hasChanges = true;
+  };
+
+  window.onStationField = function(stId, field, val) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (st) { st[field] = val; hasChanges = true; }
+  };
+
+  // ── Shortcoming management ───────────────────────────────────────
+  function addShortcoming(stId) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    scKey++;
+    st.shortcomings = st.shortcomings || [];
+    st.shortcomings.push({
+      id: genId(), key: scKey,
+      description: '', correctiveAction: '', responsiblePerson: '', responsiblePersonEmail: '',
+      targetCompletionDate: '', priority: 'Medium', status: 'Open',
+      progressUpdate: '', evidence: [],
+      closedBy: '', closedAt: '', closureRemarks: '',
+      verifiedBy: '', verifiedAt: '', verificationRemarks: '',
+    });
+    var scListEl = document.getElementById('scList-' + stId);
+    if (scListEl) scListEl.innerHTML = renderShortcomingCards(st);
+    wireScEvents(stId);
+    hasChanges = true;
+    // Update count label
+    var hdr = document.querySelector('#station-card-' + stId + ' .shortcomings-label');
+    if (hdr) hdr.innerHTML = 'Shortcomings <span style="color:rgba(255,255,255,0.3);font-weight:400;">(' + st.shortcomings.length + ')</span>';
+  }
+  window.addShortcoming = addShortcoming;
+
+  function removeShortcoming(stId, scId) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    var sc = (st.shortcomings || []).find(function(s) { return s.id === scId; });
+    if (sc && (sc.description || sc.correctiveAction)) {
+      if (!confirm('Remove this shortcoming? This action cannot be undone.')) return;
+    }
+    st.shortcomings = (st.shortcomings || []).filter(function(s) { return s.id !== scId; });
+    var scListEl = document.getElementById('scList-' + stId);
+    if (scListEl) scListEl.innerHTML = renderShortcomingCards(st);
+    wireScEvents(stId);
+    hasChanges = true;
+  }
+  window.removeShortcoming = removeShortcoming;
+
+  window.toggleShortcoming = function(scId) {
+    var card = document.getElementById('sc-card-' + scId);
+    if (card) card.classList.toggle('collapsed');
+  };
+
+  function renderShortcomingCards(st) {
+    if (!st.shortcomings || !st.shortcomings.length) return '';
+    return st.shortcomings.map(function(sc, idx) {
+      var isClosed = sc.status === 'Closed';
+      var summaryText = sc.description ? sc.description.substring(0, 60) + (sc.description.length > 60 ? '...' : '') : 'New Shortcoming';
+      var statusClass = {
+        'Open': 'color:#60A5FA;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08);',
+        'In Progress': 'color:#FBBF24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08);',
+        'Pending Verification': 'color:#A78BFA;border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);',
+        'Closed': 'color:#34D399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);',
+        'Reopened': 'color:#F87171;border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);',
+      }[sc.status] || '';
+
+      return '<div class="shortcoming-card" id="sc-card-' + sc.id + '">' +
+        '<div class="shortcoming-header" onclick="toggleShortcoming(\'' + sc.id + '\')">' +
+          '<div class="shortcoming-number">' + (idx + 1) + '</div>' +
+          '<div class="shortcoming-title">' + escHtml(summaryText) + '</div>' +
+          '<span class="shortcoming-status-badge" style="' + statusClass + '">' + escHtml(sc.status) + '</span>' +
+          '<div class="shortcoming-header-actions" onclick="event.stopPropagation()">' +
+            '<button class="sc-btn danger" onclick="removeShortcoming(\'' + st.id + '\',\'' + sc.id + '\')" aria-label="Remove shortcoming">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            '</button>' +
+          '</div>' +
+          '<svg style="width:14px;height:14px;color:rgba(255,255,255,0.3);flex-shrink:0;transition:transform 0.2s;" class="sc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+        '</div>' +
+        '<div class="shortcoming-body">' +
+          '<div class="sc-fields">' +
+            '<div class="form-field">' +
+              '<label class="form-label">Shortcoming <span class="required-star">*</span></label>' +
+              '<textarea class="form-textarea large" id="sc-desc-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="description" placeholder="Describe the shortcoming in detail...">' + escHtml(sc.description) + '</textarea>' +
+              '<div class="char-count" id="sc-desc-count-' + sc.id + '">' + (sc.description || '').length + ' characters</div>' +
+            '</div>' +
+            '<div class="form-field">' +
+              '<label class="form-label">Corrective Action <span class="required-star">*</span></label>' +
+              '<textarea class="form-textarea large" id="sc-ca-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="correctiveAction" placeholder="Describe the corrective action required...">' + escHtml(sc.correctiveAction) + '</textarea>' +
+            '</div>' +
+            '<div class="sc-grid-2">' +
+              '<div class="form-field">' +
+                '<label class="form-label">Responsible Person <span class="required-star">*</span></label>' +
+                '<input type="text" class="form-input" id="sc-rp-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="responsiblePerson" value="' + escHtml(sc.responsiblePerson) + '" placeholder="Name or email" />' +
+              '</div>' +
+              '<div class="form-field">' +
+                '<label class="form-label">Target Completion Date <span class="required-star">*</span></label>' +
+                '<input type="date" class="form-input" id="sc-tcd-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="targetCompletionDate" value="' + escHtml(sc.targetCompletionDate) + '" />' +
+              '</div>' +
+              '<div class="form-field">' +
+                '<label class="form-label">Priority <span class="required-star">*</span></label>' +
+                '<select class="form-select" id="sc-pri-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="priority">' +
+                  PRIORITIES.map(function(p) { return '<option value="' + p + '"' + (sc.priority === p ? ' selected' : '') + '>' + p + '</option>'; }).join('') +
+                '</select>' +
+              '</div>' +
+              '<div class="form-field">' +
+                '<label class="form-label">Status</label>' +
+                '<select class="form-select" id="sc-status-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="status">' +
+                  SC_STATUSES.map(function(s) { return '<option value="' + s + '"' + (sc.status === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+                '</select>' +
+              '</div>' +
+            '</div>' +
+            '<div class="form-field">' +
+              '<label class="form-label">Progress Update / Notes</label>' +
+              '<textarea class="form-textarea" id="sc-pu-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="progressUpdate" placeholder="Add progress notes, milestones achieved, blockers...">' + escHtml(sc.progressUpdate) + '</textarea>' +
+            '</div>' +
+            // Evidence upload
+            '<div class="form-field">' +
+              '<label class="form-label">Evidence of Corrective Action</label>' +
+              '<div class="file-upload-zone" id="sc-ev-zone-' + sc.id + '" onclick="document.getElementById(\'sc-ev-input-' + sc.id + '\').click()">' +
+                '<div class="file-upload-text">Drop evidence files here or <strong>click to browse</strong></div>' +
+                '<div class="file-upload-types">PDF, DOC, DOCX, XLS, XLSX, JPG, JPEG, PNG</div>' +
+              '</div>' +
+              '<input type="file" id="sc-ev-input-' + sc.id + '" style="display:none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" multiple data-sc="' + sc.id + '" data-stid="' + st.id + '" />' +
+              '<div class="file-list" id="sc-ev-list-' + sc.id + '" data-sc-evidence="' + sc.id + '">' +
+                renderScEvidenceHtml(sc) +
+              '</div>' +
+            '</div>' +
+            // Closure section
+            '<div class="closure-section" id="sc-closure-' + sc.id + '"' + (isClosed ? '' : ' style="display:none;"') + '>' +
+              '<div class="closure-section-title">Closure Details</div>' +
+              '<div class="sc-grid-2">' +
+                '<div class="form-field">' +
+                  '<label class="form-label">Closed By</label>' +
+                  '<input type="text" class="form-input" id="sc-cb-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="closedBy" value="' + escHtml(sc.closedBy) + '" placeholder="Name" ' + (!isClosed ? 'disabled' : '') + ' />' +
+                '</div>' +
+                '<div class="form-field">' +
+                  '<label class="form-label">Date Closed</label>' +
+                  '<input type="date" class="form-input readonly" id="sc-cdat-' + sc.id + '" value="' + escHtml(sc.closedAt ? sc.closedAt.split('T')[0] : '') + '" readonly />' +
+                '</div>' +
+              '</div>' +
+              '<div class="form-field" style="margin-top:12px;">' +
+                '<label class="form-label">Closure Remarks <span class="required-star">*</span></label>' +
+                '<textarea class="form-textarea" id="sc-cr-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="closureRemarks" placeholder="Describe how the shortcoming was addressed..." ' + (!isClosed ? 'disabled' : '') + '>' + escHtml(sc.closureRemarks) + '</textarea>' +
+              '</div>' +
+            '</div>' +
+            // Verification section
+            '<div class="verification-section" id="sc-verify-' + sc.id + '">' +
+              '<div class="verification-section-title">Verification (Optional)</div>' +
+              '<div class="sc-grid-2">' +
+                '<div class="form-field">' +
+                  '<label class="form-label">Verified By</label>' +
+                  '<input type="text" class="form-input" id="sc-vb-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="verifiedBy" value="' + escHtml(sc.verifiedBy) + '" placeholder="Name" />' +
+                '</div>' +
+                '<div class="form-field">' +
+                  '<label class="form-label">Verification Date</label>' +
+                  '<input type="date" class="form-input" id="sc-vd-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="verifiedAt" value="' + escHtml(sc.verifiedAt ? sc.verifiedAt.split('T')[0] : '') + '" />' +
+                '</div>' +
+              '</div>' +
+              '<div class="form-field" style="margin-top:12px;">' +
+                '<label class="form-label">Verification Remarks</label>' +
+                '<textarea class="form-textarea" id="sc-vr-' + sc.id + '" data-sc="' + sc.id + '" data-stid="' + st.id + '" data-field="verificationRemarks" placeholder="Verification notes...">' + escHtml(sc.verificationRemarks) + '</textarea>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderScEvidenceHtml(sc) {
+    return (sc.evidence || []).map(function(f, i) {
+      return '<div class="file-item">' +
+        '<div class="file-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>' +
+        '<span class="file-item-name">' + escHtml(f.name) + '</span>' +
+        '<span class="file-item-size">' + fmtFileSize(f.size) + '</span>' +
+        '<button class="file-item-remove" onclick="removeScEvidence(\'' + sc.id + '\',' + i + ')" aria-label="Remove">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+        '</button></div>';
+    }).join('');
+  }
+
+  window.removeScEvidence = function(scId, idx) {
+    formData.stations.forEach(function(st) {
+      (st.shortcomings || []).forEach(function(sc) {
+        if (sc.id === scId) {
+          sc.evidence = sc.evidence || [];
+          sc.evidence.splice(idx, 1);
+          var el = document.getElementById('sc-ev-list-' + scId);
+          if (el) el.innerHTML = renderScEvidenceHtml(sc);
+        }
+      });
+    });
+    hasChanges = true;
+  };
+
+  function wireScEvents(stId) {
+    var listEl = document.getElementById('scList-' + stId);
+    if (!listEl) return;
+
+    listEl.querySelectorAll('[data-sc][data-field]').forEach(function(el) {
+      var scId = el.getAttribute('data-sc');
+      var field = el.getAttribute('data-field');
+      var stationId = el.getAttribute('data-stid');
+
+      function updateSc(val) {
+        formData.stations.forEach(function(st) {
+          if (st.id !== stationId) return;
+          (st.shortcomings || []).forEach(function(sc) {
+            if (sc.id !== scId) return;
+            sc[field] = val;
+            // Handle closure toggle
+            if (field === 'status') {
+              var isClosed = val === 'Closed';
+              var closureEl = document.getElementById('sc-closure-' + scId);
+              if (closureEl) closureEl.style.display = isClosed ? 'block' : 'none';
+              var cbEl  = document.getElementById('sc-cb-' + scId);
+              var crEl  = document.getElementById('sc-cr-' + scId);
+              if (cbEl) { cbEl.disabled = !isClosed; if (isClosed && !sc.closedBy) cbEl.value = formData.createdBy || ''; }
+              if (crEl) crEl.disabled = !isClosed;
+              if (isClosed && !sc.closedAt) {
+                sc.closedAt = new Date().toISOString();
+                var cdEl = document.getElementById('sc-cdat-' + scId);
+                if (cdEl) cdEl.value = sc.closedAt.split('T')[0];
+                if (cbEl && !cbEl.value) { cbEl.value = formData.createdBy || ''; sc.closedBy = cbEl.value; }
+              }
+              // Update badge
+              var badge = document.querySelector('#sc-card-' + scId + ' .shortcoming-status-badge');
+              if (badge) {
+                var styleMap = {
+                  'Open': 'color:#60A5FA;border-color:rgba(96,165,250,0.3);background:rgba(96,165,250,0.08);',
+                  'In Progress': 'color:#FBBF24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08);',
+                  'Pending Verification': 'color:#A78BFA;border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.08);',
+                  'Closed': 'color:#34D399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);',
+                  'Reopened': 'color:#F87171;border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);',
+                };
+                badge.style.cssText = styleMap[val] || '';
+                badge.textContent = val;
+              }
+            }
+          });
+        });
+        hasChanges = true;
+      }
+
+      if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+        el.addEventListener('input', function() {
+          updateSc(el.value);
+          // Char count
+          if (field === 'description') {
+            var countEl = document.getElementById('sc-desc-count-' + scId);
+            if (countEl) countEl.textContent = el.value.length + ' characters';
+          }
+        });
+      } else if (el.tagName === 'SELECT') {
+        el.addEventListener('change', function() { updateSc(el.value); });
+      }
+    });
+
+    // Wire evidence file inputs
+    listEl.querySelectorAll('input[type="file"][data-sc]').forEach(function(input) {
+      var scId = input.getAttribute('data-sc');
+      var stationId = input.getAttribute('data-stid');
+      input.addEventListener('change', function() {
+        Array.from(input.files).forEach(function(f) {
+          formData.stations.forEach(function(st) {
+            if (st.id !== stationId) return;
+            (st.shortcomings || []).forEach(function(sc) {
+              if (sc.id !== scId) return;
+              sc.evidence = sc.evidence || [];
+              sc.evidence.push({ name: f.name, size: f.size, type: f.type, addedAt: new Date().toISOString() });
+              var listEl = document.getElementById('sc-ev-list-' + scId);
+              if (listEl) listEl.innerHTML = renderScEvidenceHtml(sc);
+            });
+          });
+        });
+        input.value = '';
+        hasChanges = true;
+      });
+    });
+
+    // Wire chevrons
+    listEl.querySelectorAll('.sc-chevron').forEach(function(chev) {
+      var card = chev.closest('.shortcoming-card');
+      if (card) {
+        var observer = new MutationObserver(function() {
+          chev.style.transform = card.classList.contains('collapsed') ? 'rotate(-90deg)' : '';
+        });
+        observer.observe(card, { attributes: true, attributeFilter: ['class'] });
+      }
+    });
+  }
+
+  // ── Step 3: Shortcomings page ────────────────────────────────────
+  function renderStep3() {
+    var container = document.getElementById('shortcomingsStep3Container');
+    if (!container) return;
+    container.innerHTML = formData.stations.map(function(st, idx) {
+      return '<div class="form-card" style="margin-bottom:20px;">' +
+        '<div class="form-card-title">Station ' + (idx + 1) + ': ' + escHtml(st.facilityName || 'Unnamed Station') + '</div>' +
+        '<div class="shortcomings-list" id="step3-scList-' + st.id + '">' +
+          renderShortcomingCards(st) +
+        '</div>' +
+        '<button class="add-btn" onclick="addShortcomingStep3(\'' + st.id + '\')" style="margin-top:10px;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+          'Add Shortcoming to ' + escHtml(st.facilityName || 'Station ' + (idx + 1)) +
+        '</button>' +
+      '</div>';
+    }).join('');
+
+    formData.stations.forEach(function(st) { wireScEvents(st.id); });
+    // Wire step3 lists
+    formData.stations.forEach(function(st) {
+      var listId = 'step3-scList-' + st.id;
+      var listEl = document.getElementById(listId);
+      if (listEl) {
+        // Override the scList id so wireScEvents targets the right element
+        listEl.id = 'scList-' + st.id;
+        wireScEvents(st.id);
+        listEl.id = listId; // restore
+      }
+    });
+  }
+
+  window.addShortcomingStep3 = function(stId) {
+    var st = formData.stations.find(function(s) { return s.id === stId; });
+    if (!st) return;
+    scKey++;
+    st.shortcomings = st.shortcomings || [];
+    st.shortcomings.push({
+      id: genId(), key: scKey,
+      description: '', correctiveAction: '', responsiblePerson: '', responsiblePersonEmail: '',
+      targetCompletionDate: '', priority: 'Medium', status: 'Open',
+      progressUpdate: '', evidence: [],
+      closedBy: '', closedAt: '', closureRemarks: '',
+      verifiedBy: '', verifiedAt: '', verificationRemarks: '',
+    });
+    var scListEl = document.getElementById('step3-scList-' + stId);
+    if (scListEl) {
+      var origId = scListEl.id;
+      scListEl.id = 'scList-' + stId;
+      scListEl.innerHTML = renderShortcomingCards(st);
+      wireScEvents(stId);
+      scListEl.id = origId;
+    }
+    hasChanges = true;
+  };
+
+  // ── Review ───────────────────────────────────────────────────────
+  function renderReview() {
+    var el = document.getElementById('reviewContent');
+    if (!el) return;
+
+    var html = '';
+    // Record Details
+    html += '<div class="form-card review-section">' +
+      '<div class="review-section-title">Record Details</div>' +
+      '<div class="review-grid">' +
+        reviewItem('Record Number', formData.recordNumber) +
+        reviewItem('Date', formData.recordDate) +
+        reviewItem('Time', formData.recordTime) +
+        reviewItem('Created By', formData.createdBy) +
+      '</div></div>';
+
+    // Inspection Details
+    html += '<div class="form-card review-section">' +
+      '<div class="review-section-title">NPA Inspection Details</div>' +
+      '<div class="review-grid">' +
+        reviewItem('Inspection From', fmtDate(formData.inspectionDateFrom)) +
+        reviewItem('Inspection To', fmtDate(formData.inspectionDateTo)) +
+        reviewItem('Communiqu\u00e9 Date', fmtDate(formData.communiqueDate)) +
+        reviewItem('Communiqu\u00e9 Reference', formData.communiqueReference || '—') +
+        reviewItem('Communiqu\u00e9 Subject', formData.communiqueSubject || '—') +
+        (formData.generalNotes ? reviewItem('General Notes', formData.generalNotes) : '') +
+      '</div></div>';
+
+    // Stations and shortcomings
+    formData.stations.forEach(function(st, stIdx) {
+      html += '<div class="form-card review-section">' +
+        '<div class="review-section-title">Station ' + (stIdx + 1) + ': ' + escHtml(st.facilityName || 'Unnamed') + '</div>' +
+        '<div class="review-grid">' +
+          reviewItem('Type of Facility', st.outletType || '—') +
+          (requiresZone(st.outletType) ? reviewItem('Zone', st.zone || '—') : '') +
+          (st.outletType === 'Consumer'
+            ? reviewItem('Consumer Name', st.consumerName || '—') + reviewItem('Site Location', st.siteLocation || '—')
+            : reviewItem('Facility Name', (st.facilityId === 'Other' ? st.facilityOther : st.facilityName) || '—')
+          ) +
+        '</div>';
+      if (st.shortcomings && st.shortcomings.length) {
+        html += '<div style="margin-top:16px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-bottom:10px;">Shortcomings (' + st.shortcomings.length + ')</div>';
+        st.shortcomings.forEach(function(sc, scIdx) {
+          html += '<div class="review-sc-card">' +
+            '<div class="review-sc-num">Shortcoming ' + (scIdx + 1) + '</div>' +
+            '<div class="review-sc-desc">' + escHtml(sc.description || '—') + '</div>' +
+            '<div class="review-sc-meta">' +
+              '<span class="review-sc-tag">Corrective: ' + escHtml((sc.correctiveAction || '').substring(0, 40) || '—') + (sc.correctiveAction && sc.correctiveAction.length > 40 ? '...' : '') + '</span>' +
+              '<span class="review-sc-tag">Responsible: ' + escHtml(sc.responsiblePerson || '—') + '</span>' +
+              '<span class="review-sc-tag">Target: ' + fmtDate(sc.targetCompletionDate) + '</span>' +
+              '<span class="review-sc-tag">Priority: ' + escHtml(sc.priority) + '</span>' +
+              '<span class="review-sc-tag">Status: ' + escHtml(sc.status) + '</span>' +
+            '</div></div>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+
+    if (formData.communiqueFiles && formData.communiqueFiles.length) {
+      html += '<div class="form-card review-section">' +
+        '<div class="review-section-title">Attachments (' + formData.communiqueFiles.length + ')</div>' +
+        formData.communiqueFiles.map(function(f) { return '<div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:4px;">' + escHtml(f.name) + ' (' + fmtFileSize(f.size) + ')</div>'; }).join('') +
+      '</div>';
+    }
+
+    el.innerHTML = html;
+  }
+
+  function reviewItem(label, value) {
+    return '<div class="review-item"><div class="review-item-label">' + escHtml(label) + '</div>' +
+      '<div class="review-item-value">' + escHtml(String(value || '—')) + '</div></div>';
+  }
+
+  // ── Save Draft ───────────────────────────────────────────────────
+  function saveDraft() {
+    collectStep(currentStep);
+    formData.status = 'Draft';
+    formData.updatedAt = new Date().toISOString();
+    saveRecord();
+    showToast('Draft saved successfully.', 'success');
+  }
+  window.saveDraft = saveDraft;
+
+  // ── Submit ───────────────────────────────────────────────────────
+  function submitRecord() {
+    if (!validateStep(currentStep)) return;
+    collectStep(currentStep);
+    formData.status = 'Open';
+    formData.updatedAt = new Date().toISOString();
+    saveRecord();
+    saveToSupabase();
+    showToast('Record submitted successfully!', 'success');
+    hasChanges = false;
+    setTimeout(function() {
+      window.location.href = 'npa-record-detail.html?id=' + encodeURIComponent(formData.id);
+    }, 1200);
+  }
+  window.submitRecord = submitRecord;
+
+  function saveRecord() {
+    var records = readLS();
+    var idx = records.findIndex(function(r) { return r.id === formData.id; });
+    if (idx >= 0) {
+      records[idx] = JSON.parse(JSON.stringify(formData));
+    } else {
+      records.unshift(JSON.parse(JSON.stringify(formData)));
+    }
+    writeLS(records);
+    // Log activity
+    logActivity('record_saved', 'Status: ' + formData.status);
+  }
+
+  function logActivity(type, remarks) {
+    var key = 'goil_npa_activity_' + formData.id;
+    try {
+      var log = JSON.parse(localStorage.getItem(key) || '[]') || [];
+      log.unshift({
+        id: genId(),
+        recordId: formData.id,
+        actionType: type,
+        remarks: remarks || '',
+        performedBy: formData.createdBy || '',
+        performedAt: new Date().toISOString(),
+      });
+      localStorage.setItem(key, JSON.stringify(log.slice(0, 200)));
+    } catch(e) {}
+  }
+
+  function saveToSupabase() {
+    if (!db) return;
+    db.from('npa_monitoring_records').upsert({
+      id: formData.id,
+      record_number: formData.recordNumber,
+      record_date: formData.recordDate,
+      communique_reference: formData.communiqueReference,
+      communique_date: formData.communiqueDate,
+      overall_status: formData.status,
+      created_by: formData.createdBy,
+      created_at: formData.createdAt,
+      updated_at: formData.updatedAt,
+      record_data: formData,
+    }).then(function(res) {
+      if (res.error) console.warn('[NPA] Supabase save error:', res.error.message);
+      else console.log('[NPA] Saved to Supabase.');
+    });
+  }
+
+  // ── Cancel ───────────────────────────────────────────────────────
+  function confirmCancel() {
+    if (hasChanges) {
+      if (!confirm('You have unsaved changes. Leave without saving?')) return;
+    }
+    window.location.href = 'npa-monitoring.html';
+  }
+  window.confirmCancel = confirmCancel;
+
+  // ── User display ─────────────────────────────────────────────────
+  function initUserDisplay() {
+    var attempts = 0;
+    var poll = setInterval(function() {
+      attempts++;
+      var ctx = window.GOIL_AUTH_CONTEXT;
+      if (ctx && ctx.profile) {
+        clearInterval(poll);
+        var name  = ctx.profile.full_name || ctx.session.user.email || 'Compliance Officer';
+        var email = ctx.session.user.email || '';
+        var initials = name.split(' ').map(function(w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
+        var nameEl = document.getElementById('topbarName');
+        var avEl   = document.getElementById('topbarAvatar');
+        if (nameEl) nameEl.textContent = name;
+        if (avEl)   avEl.textContent   = initials;
+
+        // Set created by
+        if (!formData.createdBy) {
+          formData.createdBy = name;
+          formData.createdByEmail = email;
+          var byEl = document.getElementById('createdBy');
+          if (byEl) byEl.value = name;
+        }
+      }
+      if (attempts > 30) clearInterval(poll);
+    }, 100);
+  }
+
+  // ── Init Supabase ────────────────────────────────────────────────
+  function initSupabase() {
+    var sb = window.supabase;
+    if (!sb || typeof sb.createClient !== 'function') return;
+    db = sb.createClient(SUPABASE_URL, SUPABASE_ANON);
+  }
+
+  // ── URL params ───────────────────────────────────────────────────
+  function parseUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    var mode = params.get('mode');
+
+    if (id) {
+      var records = readLS();
+      var existing = records.find(function(r) { return r.id === id; });
+      if (existing) {
+        formData = JSON.parse(JSON.stringify(existing));
+        editMode = true;
+        editRecordId = id;
+        if (mode === 'add-station') {
+          // Jump straight to step 2
+          setTimeout(function() { showStep(2); }, 0);
+        }
+      }
+    }
+
+    // Try to restore draft for new record
+    if (!id) {
+      try {
+        var draft = JSON.parse(localStorage.getItem(LS_DRAFT_KEY) || 'null');
+        if (draft && draft.id && !readLS().find(function(r) { return r.id === draft.id; })) {
+          if (confirm('A draft was found. Restore it?')) {
+            formData = draft;
+          } else {
+            localStorage.removeItem(LS_DRAFT_KEY);
+            initNewRecord();
+          }
+        } else {
+          initNewRecord();
+        }
+      } catch(e) { initNewRecord(); }
+    }
+  }
+
+  function initNewRecord() {
+    var now = new Date();
+    formData.id = genId();
+    formData.recordNumber = genRecordNumber();
+    formData.recordDate = now.toISOString().split('T')[0];
+    formData.recordTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    formData.createdAt = now.toISOString();
+  }
+
+  // ── Unload warning ───────────────────────────────────────────────
+  window.addEventListener('beforeunload', function(e) {
+    if (hasChanges) {
+      e.preventDefault(); e.returnValue = '';
+    }
+  });
+
+  // ── Autosave ─────────────────────────────────────────────────────
+  var autosaveTimer = null;
+  function scheduleAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(function() {
+      if (hasChanges) {
+        collectStep(currentStep);
+        formData.updatedAt = new Date().toISOString();
+        saveDraftToLS();
+      }
+    }, 3000);
+  }
+  document.addEventListener('input', scheduleAutosave);
+  document.addEventListener('change', scheduleAutosave);
+
+  // ── Init ─────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    parseUrlParams();
+    initStep1();
+    renderSteps();
+    updateFooter();
+    initUserDisplay();
+
+    // Fill in auto-generated fields
+    var numEl = document.getElementById('recordNumber');
+    if (numEl) numEl.value = formData.recordNumber;
+    var dateEl = document.getElementById('recordDate');
+    if (dateEl) dateEl.value = formData.recordDate;
+    var timeEl = document.getElementById('recordTime');
+    if (timeEl) timeEl.value = formData.recordTime;
+
+    // Station button
+    var addStBtn = document.getElementById('btnAddStation');
+    if (addStBtn) addStBtn.addEventListener('click', function() {
+      addStation();
+      // If no stations, show empty was hidden
+    });
+
+    // Render stations if editing
+    if (formData.stations && formData.stations.length) {
+      renderStations();
+    } else {
+      var empty = document.getElementById('stationsEmpty');
+      if (empty) empty.style.display = 'block';
+    }
+
+    setTimeout(initSupabase, 1500);
+  });
+
+})();
+</script>
+</body>
+</html>

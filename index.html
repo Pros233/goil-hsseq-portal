@@ -538,55 +538,119 @@
       }
       .forgot-cancel:hover { border-color: var(--wh3); color: var(--wh2); }
 
-      /* ── Mobile: stack vertically ── */
+      /* ── Mobile: compact header + form ── */
       @media (max-width: 820px) {
         .login-shell {
           grid-template-columns: 1fr;
-          grid-template-rows: 280px 3px auto;
+          grid-template-rows: 148px 3px 1fr;
+          min-height: 100vh;
         }
 
         .panel-divider {
           width: 100%;
           height: 3px;
+          flex-shrink: 0;
         }
 
+        /* Brand panel becomes a compact top bar */
         .brand-panel {
-          min-height: 280px;
+          min-height: 148px;
+          max-height: 148px;
+          background:
+            linear-gradient(135deg, rgba(244,121,32,0.13) 0%, transparent 55%),
+            #111111;
+          overflow: hidden;
         }
 
+        /* Hide carousel on mobile — too slow, no visual value */
+        .carousel { display: none; }
+        .carousel-overlay { display: none; }
+
+        /* Row layout: logo-block left, portal name right */
         .brand-overlay {
-          min-height: 280px;
-          padding: 20px 20px 0;
+          min-height: 148px;
+          padding: 0 22px;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          gap: 14px;
+        }
+
+        /* Left block: logo + tagline stacked */
+        .brand-top {
+          flex-direction: row;
+          align-items: center;
+          gap: 12px;
+          padding: 0;
         }
 
         .brand-logo-wrap {
-          width: min(110px, 38%);
+          width: 72px;
+          flex-shrink: 0;
+        }
+
+        /* Fix logo visibility — lighten blend is invisible without a bright bg */
+        .brand-logo {
+          mix-blend-mode: normal;
+          filter: brightness(1.15);
+        }
+
+        .brand-tagline {
+          font-size: 9px;
+          letter-spacing: 2px;
+          color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* Portal name sits on the right, no scrim needed */
+        .brand-bottom {
+          margin: 0;
+          padding: 0;
+          background: none;
+          text-align: right;
+          flex-shrink: 0;
+          max-width: 55%;
         }
 
         .brand-portal-name {
-          font-size: clamp(22px, 7vw, 34px);
+          font-size: clamp(18px, 5.5vw, 26px);
+          line-height: 1.05;
+          letter-spacing: 0.5px;
         }
 
-        .brand-bottom {
-          margin-left: -20px;
-          margin-right: -20px;
-          margin-bottom: 0;
-          padding: 48px 20px 20px;
-        }
-
+        /* Form panel fills remaining height, centred */
         .form-panel {
           min-height: unset;
-          padding: 20px 16px 40px;
-          align-items: flex-start;
-          padding-top: 28px;
+          padding: 32px 20px 36px;
+          align-items: center;
+          justify-content: center;
+          background: var(--bg2);
         }
 
         .login-card {
-          padding: 28px 18px;
+          width: 100%;
+          max-width: 420px;
+          padding: 0;
+        }
+
+        .card-title {
+          font-size: 24px;
+          margin-bottom: 4px;
+        }
+
+        .card-sub {
+          margin-bottom: 20px;
         }
 
         .focus-lock-label {
           bottom: 6px;
+        }
+
+        /* Theme toggle: smaller, stays top-right */
+        .login-theme-btn {
+          top: 10px;
+          right: 12px;
+          width: 30px;
+          height: 30px;
         }
       }
     </style>

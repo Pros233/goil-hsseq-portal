@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOIL HSSEQ | NPA Record Detail</title>
+  <script src="../assets/js/auth-guard.js?v=20260508-userprefs6" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Barlow', sans-serif; background: #0d1117; color: #e6edf3; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    .app { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar (same pattern) ── */
+    .sidebar {
+      width: 220px; flex-shrink: 0; height: 100vh;
+      background: #0b0e14; border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column;
+      position: relative; transition: width 0.26s ease; overflow: hidden; z-index: 40;
+    }
+    .sidebar.collapsed { width: 62px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 18px 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; overflow: hidden; }
+    .logo-text { overflow: hidden; white-space: nowrap; }
+    .logo-title { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 800; color: #FF9D4D; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1; }
+    .logo-sub { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer;
+      border: none; background: transparent; color: rgba(255,255,255,0.5);
+      font-family: 'Barlow', sans-serif; font-size: 13.5px; font-weight: 500; width: 100%; text-align: left;
+      transition: background 0.15s, color 0.15s; white-space: nowrap; overflow: hidden; position: relative;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+    .nav-item.active { background: rgba(255,107,0,0.15); color: #FF6B00; font-weight: 600; }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px; border-radius: 0 3px 3px 0; background: #FF6B00; }
+    .nav-icon { flex-shrink: 0; width: 17px; height: 17px; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 17px; height: 17px; }
+    .nav-label { flex: 1; overflow: hidden; }
+    .sidebar-user { border-top: 1px solid rgba(255,255,255,0.06); padding: 10px 8px; flex-shrink: 0; }
+    .user-btn { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: transparent; border: none; width: 100%; cursor: pointer; color: #fff; overflow: hidden; white-space: nowrap; transition: background 0.15s; }
+    .user-btn:hover { background: rgba(255,255,255,0.06); }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #FF6B00; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .user-info-wrap { overflow: hidden; }
+    .user-name { font-size: 12px; font-weight: 600; color: #fff; line-height: 1; }
+    .user-role { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .collapse-btn { position: absolute; right: -11px; top: 64px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: #1a1d22; color: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+    .collapse-btn:hover { background: #FF6B00; color: #fff; border-color: #FF6B00; }
+    .collapse-btn svg { width: 11px; height: 11px; }
+    .sidebar.collapsed .nav-label, .sidebar.collapsed .logo-text, .sidebar.collapsed .user-info-wrap { display: none; }
+    .sidebar.collapsed .nav-item { justify-content: center; padding: 9px 0; }
+    .sidebar.collapsed .user-btn { justify-content: center; padding: 8px 0; }
+    .sidebar.collapsed .sidebar-logo { justify-content: center; padding: 18px 0 16px; }
+
+    /* ── Main ── */
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 54px; flex-shrink: 0; background: #0d1117;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; padding: 0 20px; gap: 12px;
+    }
+    .topbar-spacer { flex: 1; }
+    .topbar-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.09); margin: 0 4px; }
+    .user-pill { display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 10px; cursor: pointer; background: transparent; border: none; color: #fff; transition: background 0.15s; }
+    .user-pill:hover { background: rgba(255,255,255,0.06); }
+    .user-pill-avatar { width: 28px; height: 28px; border-radius: 50%; background: #FF6B00; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .user-pill-name { font-size: 13px; font-weight: 500; }
+    .user-pill svg { width: 13px; height: 13px; color: rgba(255,255,255,0.4); }
+    .mobile-menu-btn { display: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .mobile-menu-btn svg { width: 18px; height: 18px; }
+
+    /* ── Content ── */
+    .content { flex: 1; overflow-y: auto; }
+
+    /* ── Record Header ── */
+    .record-header {
+      background: linear-gradient(135deg, #0d1117 0%, #111827 70%, #0c1a0e 100%);
+      border-bottom: 1px solid rgba(255,107,0,0.12);
+      padding: 24px 28px; position: relative; overflow: hidden;
+    }
+    .record-header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,0,0.07) 0%, transparent 70%); pointer-events: none; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
+    .breadcrumb a { color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.15s; }
+    .breadcrumb a:hover { color: #FF6B00; }
+    .breadcrumb svg { width: 10px; height: 10px; }
+
+    .record-header-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .record-title-block {}
+    .record-number-badge { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; color: #FF6B00; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+    .record-title { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
+    .record-meta-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .record-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: rgba(255,255,255,0.4); }
+    .record-meta-item svg { width: 12px; height: 12px; color: rgba(255,255,255,0.3); }
+    .record-meta-item strong { color: rgba(255,255,255,0.7); }
+    .record-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+    .btn-action {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; color: rgba(255,255,255,0.7); font-family: 'Barlow', sans-serif;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-action:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .btn-action.primary { background: #FF6B00; border-color: #FF6B00; color: #fff; }
+    .btn-action.primary:hover { filter: brightness(1.1); }
+    .btn-action svg { width: 13px; height: 13px; }
+
+    /* ── Progress Bar ── */
+    .progress-section {
+      padding: 16px 28px; background: #0d1117;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .progress-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .progress-label-right { font-size: 13px; font-weight: 700; }
+    .progress-bar-track { height: 8px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; background: linear-gradient(90deg, #059669, #34D399); }
+    .progress-bar-fill.warn { background: linear-gradient(90deg, #D97706, #FBBF24); }
+
+    /* ── Tabs ── */
+    .tab-bar { display: flex; align-items: center; gap: 2px; padding: 0 28px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .tab-btn { padding: 12px 16px; background: transparent; border: none; border-bottom: 2px solid transparent; color: rgba(255,255,255,0.45); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; white-space: nowrap; margin-bottom: -1px; }
+    .tab-btn:hover { color: rgba(255,255,255,0.8); }
+    .tab-btn.active { color: #FF6B00; border-bottom-color: #FF6B00; }
+
+    /* ── Tab Content ── */
+    .tab-content { padding: 24px 28px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Section title ── */
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.35); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+
+    /* ── Info Grid ── */
+    .info-card { background: #161d2a; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+    .info-item {}
+    .info-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+    .info-value { font-size: 13px; color: rgba(255,255,255,0.8); word-break: break-word; }
+    .info-value.highlight { color: #FF6B00; font-weight: 600; }
+
+    /* ── Station cards ── */
+    .station-card {
+      background: #161d2a; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+    }
+    .station-card.sc-collapsed .station-body { display: none; }
+    .station-header {
+      display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+      cursor: pointer; user-select: none;
+    }
+    .station-header:hover { background: rgba(255,255,255,0.02); }
+    .station-num { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,107,0,0.15); color: #FF6B00; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .station-info { flex: 1; }
+    .station-name { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+    .station-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .station-stats { display: flex; align-items: center; gap: 10px; }
+    .station-stat { text-align: center; }
+    .station-stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; line-height: 1; }
+    .station-stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .station-chevron { width: 16px; height: 16px; color: rgba(255,255,255,0.3); transition: transform 0.2s; flex-shrink: 0; }
+    .station-card:not(.sc-collapsed) .station-chevron { transform: rotate(180deg); }
+    .station-body { border-top: 1px solid rgba(255,255,255,0.06); }
+
+    /* ── Shortcomings table ── */
+    .sc-table { width: 100%; border-collapse: collapse; }
+    .sc-table th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.06); white-space: nowrap; background: rgba(255,255,255,0.01); }
+    .sc-table td { padding: 12px 14px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+    .sc-table tr:last-child td { border-bottom: none; }
+    .sc-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .sc-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: rgba(255,255,255,0.4); }
+    .sc-desc-short { color: rgba(255,255,255,0.75); line-height: 1.5; max-width: 280px; }
+    .sc-desc-full { display: none; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-top: 6px; }
+    .sc-view-link { font-size: 11px; color: #FF6B00; cursor: pointer; display: inline-block; margin-top: 4px; }
+    .sc-view-link:hover { text-decoration: underline; }
+    .sc-person { color: rgba(255,255,255,0.7); }
+    .sc-date { color: rgba(255,255,255,0.6); white-space: nowrap; }
+    .sc-days { font-size: 12px; font-weight: 600; }
+    .sc-days.overdue { color: #F87171; }
+    .sc-days.ok { color: #34D399; }
+    .sc-days.soon { color: #FBBF24; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; border: 1px solid; }
+    .badge.open              { color: #60A5FA; border-color: rgba(96,165,250,0.3);   background: rgba(96,165,250,0.08); }
+    .badge.in-progress       { color: #FBBF24; border-color: rgba(251,191,36,0.3);   background: rgba(251,191,36,0.08); }
+    .badge.pending           { color: #A78BFA; border-color: rgba(167,139,250,0.3);  background: rgba(167,139,250,0.08); }
+    .badge.closed            { color: #34D399; border-color: rgba(52,211,153,0.3);   background: rgba(52,211,153,0.08); }
+    .badge.overdue           { color: #F87171; border-color: rgba(248,113,113,0.3);  background: rgba(248,113,113,0.08); }
+    .badge.reopened          { color: #F87171; border-color: rgba(248,113,113,0.3);  background: rgba(248,113,113,0.08); }
+    .badge.draft             { color: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); }
+    .badge.critical { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #EF4444; }
+    .badge.high     { background: rgba(251,146,60,0.1);  border-color: rgba(251,146,60,0.25); color: #FB923C; }
+    .badge.medium   { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2);  color: #FBBF24; }
+    .badge.low      { background: rgba(52,211,153,0.06); border-color: rgba(52,211,153,0.15); color: #34D399; }
+
+    .sc-action-btn { display: flex; align-items: center; gap: 4px; padding: 4px 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 10px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .sc-action-btn:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .sc-action-btn.close-btn:hover { background: rgba(52,211,153,0.1); color: #34D399; border-color: rgba(52,211,153,0.2); }
+    .sc-action-btn.reopen-btn:hover { background: rgba(248,113,113,0.1); color: #F87171; border-color: rgba(248,113,113,0.2); }
+    .sc-action-btn svg { width: 11px; height: 11px; }
+    .sc-actions-cell { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    /* ── Activity Log ── */
+    .activity-list { display: flex; flex-direction: column; }
+    .activity-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .activity-dot { width: 10px; height: 10px; border-radius: 50%; background: #FF6B00; flex-shrink: 0; margin-top: 3px; }
+    .activity-line { width: 2px; flex: 1; background: rgba(255,255,255,0.07); margin-top: 6px; }
+    .activity-body { flex: 1; }
+    .activity-action { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .activity-meta { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+    .activity-remarks { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 5px; background: rgba(255,255,255,0.03); border-radius: 6px; padding: 6px 10px; }
+
+    /* ── Close modal ── */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #1a2235; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.4); margin-bottom: 6px; display: block; }
+    .modal-input, .modal-textarea, .modal-select {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 9px 12px; color: #e6edf3; font-family: 'Barlow', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s;
+    }
+    .modal-input:focus, .modal-textarea:focus, .modal-select:focus { border-color: rgba(255,107,0,0.4); }
+    .modal-textarea { resize: vertical; min-height: 90px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .btn-modal-cancel { padding: 9px 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: rgba(255,255,255,0.6); font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-modal-confirm { padding: 9px 20px; background: #059669; border: none; border-radius: 8px; color: #fff; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .btn-modal-confirm:hover { filter: brightness(1.1); }
+    .btn-modal-confirm.danger { background: #DC2626; }
+
+    /* ── Toast ── */
+    .toast-container { position: fixed; top: 70px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #1a2235; border: 1px solid; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); min-width: 260px; max-width: 360px; animation: toastIn 0.25s ease; font-size: 13px; }
+    .toast.success { border-color: rgba(52,211,153,0.3); }
+    .toast.success svg { color: #34D399; }
+    .toast.error   { border-color: rgba(248,113,113,0.3); }
+    .toast.error   svg { color: #F87171; }
+    .toast.info    { border-color: rgba(255,107,0,0.3); }
+    .toast.info    svg { color: #FF6B00; }
+    .toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .toast-text { flex: 1; color: rgba(255,255,255,0.8); }
+    @keyframes toastIn { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+
+    /* ── Mobile ── */
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 299; backdrop-filter: blur(2px); }
+    .mobile-overlay.active { display: block; }
+
+    @media (max-width: 768px) {
+      .sidebar { position: fixed !important; left: -250px; top: 0; height: 100vh; z-index: 300; transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1); width: 240px !important; }
+      .sidebar.mobile-open { left: 0 !important; box-shadow: 4px 0 40px rgba(0,0,0,0.55); }
+      .collapse-btn { display: none !important; }
+      .mobile-menu-btn { display: flex; }
+      .main { width: 100% !important; min-width: 0; }
+      .topbar { padding: 0 12px; gap: 8px; }
+      .user-pill-name { display: none; }
+      .record-header { padding: 16px; }
+      .record-header-main { flex-direction: column; }
+      .tab-content { padding: 16px; }
+      .tab-bar { padding: 0 16px; }
+      .progress-section { padding: 12px 16px; }
+      .info-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="../assets/img/goil-logo.png" alt="GOIL" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;border-radius:9px;" />
+      <div class="logo-text"><div class="logo-title">GOIL HSSEQ</div><div class="logo-sub">Department</div></div>
+    </div>
+    <button class="collapse-btn" id="collapseBtn" title="Toggle sidebar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-user">
+      <button class="user-btn">
+        <div class="user-avatar" id="sidebarUserAvatar">AD</div>
+        <div class="user-info-wrap"><div class="user-name" id="sidebarUserName">Admin User</div><div class="user-role">Compliance Officer</div></div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="main">
+    <header class="topbar">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-divider"></div>
+      <button class="user-pill">
+        <div class="user-pill-avatar" id="topbarAvatar">AD</div>
+        <span class="user-pill-name" id="topbarName">Admin User</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </header>
+
+    <div class="content" id="mainContent">
+      <!-- Loaded dynamically -->
+      <div style="padding:60px 28px;text-align:center;color:rgba(255,255,255,0.3);">
+        <div style="font-size:14px;">Loading record...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<!-- ═══ Close Shortcoming Modal ═══ -->
+<div class="modal-backdrop" id="closeModal">
+  <div class="modal">
+    <div class="modal-title">Close Shortcoming</div>
+    <div class="modal-sub">Provide closure details to mark this shortcoming as resolved.</div>
+    <div class="modal-field">
+      <label class="modal-label">Closed By <span style="color:#F87171;">*</span></label>
+      <input type="text" class="modal-input" id="modalClosedBy" placeholder="Your name" />
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Closure Remarks <span style="color:#F87171;">*</span></label>
+      <textarea class="modal-textarea" id="modalClosureRemarks" placeholder="Describe how the shortcoming was addressed..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('closeModal')">Cancel</button>
+      <button class="btn-modal-confirm" onclick="confirmClose()">Mark as Closed</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Reopen Modal ═══ -->
+<div class="modal-backdrop" id="reopenModal">
+  <div class="modal">
+    <div class="modal-title">Reopen Shortcoming</div>
+    <div class="modal-sub">Provide a reason for reopening this shortcoming.</div>
+    <div class="modal-field">
+      <label class="modal-label">Reason for Reopening <span style="color:#F87171;">*</span></label>
+      <textarea class="modal-textarea" id="modalReopenRemarks" placeholder="Explain why this shortcoming needs to be reopened..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('reopenModal')">Cancel</button>
+      <button class="btn-modal-confirm danger" onclick="confirmReopen()">Reopen Shortcoming</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var LS_KEY = 'goil_npa_records';
+  var NAV_ITEMS = [
+    { id: 'dashboard',  label: 'Home',       href: 'dashboard.html',    path: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
+    { id: 'hse',        label: 'HSE',        href: 'unit-hse.html',     path: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+    { id: 'compliance', label: 'Compliance', href: 'unit-compliance.html', path: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/>' },
+    { id: 'security',   label: 'Security',   href: 'unit-security.html',path: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' },
+    { id: 'quality',    label: 'Quality',    href: 'unit-quality.html', path: '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>' },
+    { id: 'iso',        label: 'ISO',        href: 'unit-iso.html',     path: '<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/>' },
+    { id: 'common',     label: 'Common',     href: 'unit-common.html',  path: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+  ];
+
+  var record = null;
+  var currentUser = '';
+  var pendingScId  = null;
+  var pendingStId  = null;
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function readLS() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]') || []; } catch (e) { return []; } }
+  function writeLS(data) { try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {} }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function fmtDate(d) {
+    if (!d) return '—';
+    var dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function fmtDatetime(d) {
+    if (!d) return '—';
+    var dt = new Date(d);
+    return dt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+           dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  function today() { return new Date().toISOString().split('T')[0]; }
+  function daysFromNow(dateStr) {
+    if (!dateStr) return null;
+    var diff = new Date(dateStr + 'T00:00:00').getTime() - new Date(today() + 'T00:00:00').getTime();
+    return Math.round(diff / (1000 * 60 * 60 * 24));
+  }
+  function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+
+  function showToast(msg, type) {
+    type = type || 'info';
+    var c = document.getElementById('toastContainer');
+    var icons = { success: '<polyline points="20 6 9 17 4 12"/>', error: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>' };
+    var el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + icons[type] + '</svg><span class="toast-text">' + escHtml(msg) + '</span>';
+    c.appendChild(el);
+    setTimeout(function() { el.remove(); }, 3500);
+  }
+
+  function computeRecordStatus(r) {
+    var all = [];
+    (r.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ all.push(sc); }); });
+    if (!all.length) return r.status || 'Draft';
+    var closed = all.filter(function(sc){ return sc.status==='Closed'; }).length;
+    if (closed === all.length) return 'Closed';
+    if (closed > 0) return 'Partially Closed';
+    var active = all.some(function(sc){ return sc.status==='In Progress'||sc.status==='Pending Verification'; });
+    return active ? 'In Progress' : 'Open';
+  }
+
+  function isOverdue(sc) {
+    return sc.targetCompletionDate && sc.status !== 'Closed' && sc.targetCompletionDate < today();
+  }
+
+  function badgeClass(status) {
+    return { 'Open':'open','In Progress':'in-progress','Pending Verification':'pending','Closed':'closed','Reopened':'reopened','Draft':'draft','Partially Closed':'in-progress','Overdue':'overdue' }[status] || 'draft';
+  }
+  function priBadgeClass(p) {
+    return { 'Critical':'critical','High':'high','Medium':'medium','Low':'low' }[p] || 'low';
+  }
+
+  // ── Load record ──────────────────────────────────────────────
+  function loadRecord() {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    if (!id) { showError('No record ID specified.'); return; }
+    var records = readLS();
+    record = records.find(function(r) { return r.id === id; });
+    if (!record) { showError('Record not found. It may have been deleted.'); return; }
+    renderPage();
+  }
+
+  function showError(msg) {
+    document.getElementById('mainContent').innerHTML =
+      '<div style="padding:60px 28px;text-align:center;"><div style="color:#F87171;font-size:14px;">' + escHtml(msg) + '</div>' +
+      '<button onclick="window.location.href=\'npa-monitoring.html\'" style="margin-top:16px;padding:9px 18px;background:#FF6B00;border:none;border-radius:8px;color:#fff;cursor:pointer;font-family:Barlow,sans-serif;font-weight:700;">Back to List</button></div>';
+  }
+
+  // ── Render page ──────────────────────────────────────────────
+  function renderPage() {
+    var status = computeRecordStatus(record);
+    var allSC  = [];
+    (record.stations||[]).forEach(function(st){ (st.shortcomings||[]).forEach(function(sc){ allSC.push(sc); }); });
+    var closedCount = allSC.filter(function(sc){ return sc.status==='Closed'; }).length;
+    var total       = allSC.length;
+    var pct         = total ? Math.round(closedCount/total*100) : 0;
+
+    var html = '';
+
+    // Record header
+    html += '<div class="record-header">' +
+      '<div class="breadcrumb">' +
+        '<a href="unit-compliance.html">Compliance</a>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+        '<a href="npa-monitoring.html">NPA Monitoring</a>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+        escHtml(record.recordNumber) +
+      '</div>' +
+      '<div class="record-header-main">' +
+        '<div class="record-title-block">' +
+          '<div class="record-number-badge">' + escHtml(record.recordNumber) + '</div>' +
+          '<div class="record-title">' + escHtml(record.communiqueReference || 'NPA Record') + '</div>' +
+          '<div class="record-meta-row">' +
+            '<div class="record-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><strong>Inspection:</strong>&nbsp;' + fmtDate(record.inspectionDateFrom) + (record.inspectionDateTo ? ' &ndash; ' + fmtDate(record.inspectionDateTo) : '') + '</div>' +
+            '<div class="record-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><strong>By:</strong>&nbsp;' + escHtml(record.createdBy||'—') + '</div>' +
+            '<div class="record-meta-item">' + fmtDate(record.recordDate) + '</div>' +
+            '<div class="record-meta-item"><span class="badge ' + badgeClass(status) + '">' + escHtml(status) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="record-actions">' +
+          '<button class="btn-action" onclick="window.location.href=\'npa-new-record.html?id=' + escHtml(record.id) + '&mode=edit\'">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit' +
+          '</button>' +
+          '<button class="btn-action" onclick="window.location.href=\'npa-new-record.html?id=' + escHtml(record.id) + '&mode=add-station\'">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Station' +
+          '</button>' +
+          '<button class="btn-action" onclick="exportRecord()">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+    // Progress bar
+    html += '<div class="progress-section">' +
+      '<div class="progress-label">' +
+        '<span>Overall Progress</span>' +
+        '<span class="progress-label-right" style="color:' + (pct===100?'#34D399':(pct>50?'#FBBF24':'#e6edf3')) + '">' + closedCount + ' of ' + total + ' shortcomings closed &mdash; ' + pct + '%</span>' +
+      '</div>' +
+      '<div class="progress-bar-track"><div class="progress-bar-fill' + (pct<50?' warn':'') + '" style="width:' + pct + '%"></div></div>' +
+    '</div>';
+
+    // Tabs
+    html += '<div class="tab-bar">' +
+      '<button class="tab-btn active" data-tab="overview" onclick="switchTab(this, \'overview\')">Overview</button>' +
+      '<button class="tab-btn" data-tab="stations" onclick="switchTab(this, \'stations\')">Stations &amp; Shortcomings</button>' +
+      '<button class="tab-btn" data-tab="activity" onclick="switchTab(this, \'activity\')">Activity History</button>' +
+    '</div>';
+
+    html += '<div class="tab-content">';
+
+    // Overview tab
+    html += '<div class="tab-panel active" id="tab-overview">';
+    html += '<div class="info-card"><div class="section-title">Record Details</div><div class="info-grid">' +
+      infoItem('Record Number', record.recordNumber, true) +
+      infoItem('Record Date', fmtDate(record.recordDate)) +
+      infoItem('Record Time', record.recordTime || '—') +
+      infoItem('Created By', record.createdBy || '—') +
+      infoItem('Status', status) +
+      infoItem('Last Updated', fmtDatetime(record.updatedAt)) +
+    '</div></div>';
+
+    html += '<div class="info-card"><div class="section-title">NPA Inspection Details</div><div class="info-grid">' +
+      infoItem('Inspection From', fmtDate(record.inspectionDateFrom)) +
+      infoItem('Inspection To', fmtDate(record.inspectionDateTo)) +
+      infoItem('Communiqu\u00e9 Date', fmtDate(record.communiqueDate)) +
+      infoItem('Communiqu\u00e9 Reference', record.communiqueReference || '—') +
+      infoItem('Communiqu\u00e9 Subject', record.communiqueSubject || '—') +
+      infoItem('Stations', (record.stations||[]).length) +
+    '</div>';
+    if (record.generalNotes) {
+      html += '<div style="margin-top:14px;"><div class="info-label" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-bottom:6px;">General Notes</div>' +
+        '<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;">' + escHtml(record.generalNotes) + '</div></div>';
+    }
+    html += '</div>';
+
+    // Summary stats per station
+    html += '<div class="info-card"><div class="section-title">Shortcomings Summary</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">' +
+      statBox('Total', String(total), '#e6edf3') +
+      statBox('Open', String(allSC.filter(function(s){return s.status==='Open';}).length), '#60A5FA') +
+      statBox('In Progress', String(allSC.filter(function(s){return s.status==='In Progress';}).length), '#FBBF24') +
+      statBox('Overdue', String(allSC.filter(function(s){return isOverdue(s);}).length), '#F87171') +
+      '</div></div>';
+
+    if (record.communiqueFiles && record.communiqueFiles.length) {
+      html += '<div class="info-card"><div class="section-title">Attachments</div>';
+      html += record.communiqueFiles.map(function(f) {
+        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+          '<span style="font-size:12px;color:rgba(255,255,255,0.7);">' + escHtml(f.name) + '</span>' +
+          '<span style="font-size:11px;color:rgba(255,255,255,0.3);margin-left:auto;">' + fmtFileSize(f.size) + '</span>' +
+          '</div>';
+      }).join('');
+      html += '</div>';
+    }
+
+    html += '</div>'; // end overview tab
+
+    // Stations tab
+    html += '<div class="tab-panel" id="tab-stations">';
+    if (!record.stations || !record.stations.length) {
+      html += '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);">No stations added. <a href="npa-new-record.html?id=' + escHtml(record.id) + '&mode=add-station" style="color:#FF6B00;">Add Station</a></div>';
+    } else {
+      html += record.stations.map(function(st, stIdx) {
+        var stSC = st.shortcomings || [];
+        var stClosed = stSC.filter(function(s){return s.status==='Closed';}).length;
+        var stOverdue = stSC.filter(function(s){return isOverdue(s);}).length;
+
+        return '<div class="station-card" id="det-station-' + st.id + '">' +
+          '<div class="station-header" onclick="toggleStation(\'' + st.id + '\')">' +
+            '<div class="station-num">' + (stIdx+1) + '</div>' +
+            '<div class="station-info">' +
+              '<div class="station-name">' + escHtml(st.facilityName || 'Station '+(stIdx+1)) + '</div>' +
+              '<div class="station-sub">' + escHtml(st.outletType||'') + (st.region?' &bull; '+escHtml(st.region):'') + (st.stationCode?' &bull; '+escHtml(st.stationCode):'') + '</div>' +
+            '</div>' +
+            '<div class="station-stats">' +
+              '<div class="station-stat"><div class="station-stat-val" style="color:#e6edf3;">' + stSC.length + '</div><div class="station-stat-label">Total</div></div>' +
+              '<div class="station-stat"><div class="station-stat-val" style="color:#34D399;">' + stClosed + '</div><div class="station-stat-label">Closed</div></div>' +
+              (stOverdue > 0 ? '<div class="station-stat"><div class="station-stat-val" style="color:#F87171;">' + stOverdue + '</div><div class="station-stat-label">Overdue</div></div>' : '') +
+            '</div>' +
+            '<svg class="station-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>' +
+          '</div>' +
+          '<div class="station-body">' +
+            '<table class="sc-table">' +
+              '<thead><tr>' +
+                '<th>No.</th><th>Shortcoming</th><th>Responsible</th><th>Priority</th>' +
+                '<th>Target Date</th><th>Days Remaining</th><th>Status</th>' +
+                '<th>Closed By</th><th>Date Closed</th><th>Actions</th>' +
+              '</tr></thead>' +
+              '<tbody>' +
+                (stSC.length ? stSC.map(function(sc, scIdx) {
+                  var overdue = isOverdue(sc);
+                  var displayStatus = overdue ? 'Overdue' : sc.status;
+                  var days = sc.status !== 'Closed' ? daysFromNow(sc.targetCompletionDate) : null;
+                  var daysHtml = '';
+                  if (days !== null) {
+                    var cls = days < 0 ? 'overdue' : (days <= 7 ? 'soon' : 'ok');
+                    daysHtml = '<span class="sc-days ' + cls + '">' + (days < 0 ? Math.abs(days)+' days overdue' : (days===0?'Due today':days+' days')) + '</span>';
+                  }
+                  var shortPreview = (sc.description||'').substring(0,80) + ((sc.description||'').length > 80 ? '...' : '');
+
+                  return '<tr>' +
+                    '<td class="sc-num">' + (scIdx+1) + '</td>' +
+                    '<td class="sc-desc-short">' +
+                      escHtml(shortPreview) +
+                      (sc.description && sc.description.length > 80 ? '<div class="sc-view-link" onclick="expandDesc(\'' + sc.id + '\')">View full description</div><div class="sc-desc-full" id="sc-full-' + sc.id + '">' + escHtml(sc.description) + '</div>' : '') +
+                    '</td>' +
+                    '<td class="sc-person">' + escHtml(sc.responsiblePerson||'—') + '</td>' +
+                    '<td><span class="badge ' + priBadgeClass(sc.priority) + '">' + escHtml(sc.priority||'—') + '</span></td>' +
+                    '<td class="sc-date">' + fmtDate(sc.targetCompletionDate) + '</td>' +
+                    '<td>' + (daysHtml || '—') + '</td>' +
+                    '<td><span class="badge ' + badgeClass(displayStatus) + '">' + escHtml(displayStatus) + '</span></td>' +
+                    '<td class="sc-person">' + escHtml(sc.closedBy||'—') + '</td>' +
+                    '<td class="sc-date">' + (sc.closedAt ? fmtDate(sc.closedAt.split('T')[0]) : '—') + '</td>' +
+                    '<td><div class="sc-actions-cell">' +
+                      (sc.status !== 'Closed' ?
+                        '<button class="sc-action-btn close-btn" onclick="openCloseModal(\'' + st.id + '\',\'' + sc.id + '\')">' +
+                          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Close' +
+                        '</button>' : '') +
+                      (sc.status === 'Closed' ?
+                        '<button class="sc-action-btn reopen-btn" onclick="openReopenModal(\'' + st.id + '\',\'' + sc.id + '\')">' +
+                          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>Reopen' +
+                        '</button>' : '') +
+                    '</div></td>' +
+                  '</tr>';
+                }).join('') : '<tr><td colspan="10" style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);">No shortcomings for this station.</td></tr>') +
+              '</tbody>' +
+            '</table>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+    html += '</div>'; // end stations tab
+
+    // Activity History tab
+    html += '<div class="tab-panel" id="tab-activity">';
+    var activityKey = 'goil_npa_activity_' + record.id;
+    var activityLog = [];
+    try { activityLog = JSON.parse(localStorage.getItem(activityKey) || '[]') || []; } catch(e) {}
+    if (!activityLog.length) {
+      html += '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3);">No activity recorded yet.</div>';
+    } else {
+      html += '<div class="activity-list">';
+      html += activityLog.map(function(entry, i) {
+        var actionLabels = {
+          'record_saved': 'Record Saved',
+          'shortcoming_closed': 'Shortcoming Closed',
+          'shortcoming_reopened': 'Shortcoming Reopened',
+          'status_changed': 'Status Changed',
+        };
+        return '<div class="activity-item">' +
+          '<div class="activity-dot-wrap"><div class="activity-dot"></div>' + (i < activityLog.length-1 ? '<div class="activity-line"></div>' : '') + '</div>' +
+          '<div class="activity-body">' +
+            '<div class="activity-action">' + escHtml(actionLabels[entry.actionType] || entry.actionType) + '</div>' +
+            '<div class="activity-meta">' + escHtml(entry.performedBy||'—') + ' &bull; ' + fmtDatetime(entry.performedAt) + '</div>' +
+            (entry.remarks ? '<div class="activity-remarks">' + escHtml(entry.remarks) + '</div>' : '') +
+          '</div></div>';
+      }).join('');
+      html += '</div>';
+    }
+    html += '</div>'; // end activity tab
+
+    html += '</div>'; // end tab-content
+
+    document.getElementById('mainContent').innerHTML = html;
+  }
+
+  function infoItem(label, val, highlight) {
+    return '<div class="info-item"><div class="info-label">' + escHtml(label) + '</div><div class="info-value' + (highlight?' highlight':'') + '">' + escHtml(String(val||'—')) + '</div></div>';
+  }
+
+  function statBox(label, val, color) {
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;text-align:center;">' +
+      '<div style="font-family:Barlow Condensed,sans-serif;font-size:28px;font-weight:800;color:' + color + ';line-height:1;">' + val + '</div>' +
+      '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-top:4px;">' + label + '</div>' +
+      '</div>';
+  }
+
+  function fmtFileSize(bytes) {
+    if (!bytes) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  // ── Tab switching ────────────────────────────────────────────
+  window.switchTab = function(btn, tabId) {
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    var panel = document.getElementById('tab-' + tabId);
+    if (panel) panel.classList.add('active');
+  };
+
+  // ── Station toggle ───────────────────────────────────────────
+  window.toggleStation = function(stId) {
+    var card = document.getElementById('det-station-' + stId);
+    if (card) card.classList.toggle('sc-collapsed');
+  };
+
+  // ── Expand desc ──────────────────────────────────────────────
+  window.expandDesc = function(scId) {
+    var full = document.getElementById('sc-full-' + scId);
+    var link = full && full.previousElementSibling;
+    if (full) {
+      var visible = full.style.display === 'block';
+      full.style.display = visible ? 'none' : 'block';
+      if (link) link.textContent = visible ? 'View full description' : 'Hide';
+    }
+  };
+
+  // ── Close shortcoming ────────────────────────────────────────
+  window.openCloseModal = function(stId, scId) {
+    pendingStId = stId; pendingScId = scId;
+    document.getElementById('modalClosedBy').value = currentUser || '';
+    document.getElementById('modalClosureRemarks').value = '';
+    document.getElementById('closeModal').classList.add('open');
+  };
+
+  window.confirmClose = function() {
+    var closedBy  = document.getElementById('modalClosedBy').value.trim();
+    var remarks   = document.getElementById('modalClosureRemarks').value.trim();
+    if (!closedBy) { alert('Please enter who is closing this shortcoming.'); return; }
+    if (!remarks)  { alert('Closure remarks are required.'); return; }
+
+    var records = readLS();
+    var rec = records.find(function(r){ return r.id===record.id; });
+    if (rec) {
+      (rec.stations||[]).forEach(function(st){
+        if (st.id !== pendingStId) return;
+        (st.shortcomings||[]).forEach(function(sc){
+          if (sc.id !== pendingScId) return;
+          sc.status = 'Closed';
+          sc.closedBy = closedBy;
+          sc.closedAt = new Date().toISOString();
+          sc.closureRemarks = remarks;
+        });
+      });
+      writeLS(records);
+      logActivity('shortcoming_closed', 'Closed by ' + closedBy + '. ' + remarks);
+      record = JSON.parse(JSON.stringify(rec));
+    }
+    document.getElementById('closeModal').classList.remove('open');
+    showToast('Shortcoming marked as closed.', 'success');
+    renderPage();
+  };
+
+  // ── Reopen shortcoming ────────────────────────────────────────
+  window.openReopenModal = function(stId, scId) {
+    pendingStId = stId; pendingScId = scId;
+    document.getElementById('modalReopenRemarks').value = '';
+    document.getElementById('reopenModal').classList.add('open');
+  };
+
+  window.confirmReopen = function() {
+    var remarks = document.getElementById('modalReopenRemarks').value.trim();
+    if (!remarks) { alert('Please provide a reason for reopening.'); return; }
+
+    var records = readLS();
+    var rec = records.find(function(r){ return r.id===record.id; });
+    if (rec) {
+      (rec.stations||[]).forEach(function(st){
+        if (st.id !== pendingStId) return;
+        (st.shortcomings||[]).forEach(function(sc){
+          if (sc.id !== pendingScId) return;
+          sc.status = 'Reopened';
+          sc.reopenedBy = currentUser; sc.reopenedAt = new Date().toISOString();
+          sc.closedBy = ''; sc.closedAt = ''; sc.closureRemarks = '';
+        });
+      });
+      writeLS(records);
+      logActivity('shortcoming_reopened', 'Reopened: ' + remarks);
+      record = JSON.parse(JSON.stringify(rec));
+    }
+    document.getElementById('reopenModal').classList.remove('open');
+    showToast('Shortcoming reopened.', 'info');
+    renderPage();
+  };
+
+  window.closeModal = function(id) {
+    document.getElementById(id).classList.remove('open');
+  };
+
+  // ── Activity log ─────────────────────────────────────────────
+  function logActivity(type, remarks) {
+    if (!record) return;
+    var key = 'goil_npa_activity_' + record.id;
+    try {
+      var log = JSON.parse(localStorage.getItem(key) || '[]') || [];
+      log.unshift({ id: 'act_'+Date.now(), recordId: record.id, actionType: type, remarks: remarks||'', performedBy: currentUser||'—', performedAt: new Date().toISOString() });
+      localStorage.setItem(key, JSON.stringify(log.slice(0, 200)));
+    } catch(e) {}
+  }
+
+  // ── Export ───────────────────────────────────────────────────
+  window.exportRecord = function() {
+    if (!record) return;
+    var data = JSON.stringify(record, null, 2);
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url;
+    a.download = (record.recordNumber || 'npa-record') + '-export.json';
+    a.click(); URL.revokeObjectURL(url);
+    showToast('Export downloaded.', 'success');
+  };
+
+  // ── Sidebar ──────────────────────────────────────────────────
+  function renderNav(activeId) {
+    var nav = document.getElementById('sidebarNav');
+    if (!nav) return;
+    nav.innerHTML = NAV_ITEMS.map(function(item) {
+      var active = item.id === activeId;
+      var svg = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + item.path + '</svg>';
+      return '<button class="nav-item' + (active?' active':'') + '" data-href="' + item.href + '">' +
+        '<span class="nav-icon">' + svg + '</span><span class="nav-label">' + item.label + '</span></button>';
+    }).join('');
+    nav.querySelectorAll('.nav-item').forEach(function(btn) {
+      btn.addEventListener('click', function() { var h=btn.getAttribute('data-href'); if(h) window.location.href=h; });
+    });
+  }
+
+  function initCollapse() {
+    var sb=document.getElementById('sidebar'), btn=document.getElementById('collapseBtn');
+    if (!sb||!btn) return;
+    var c=false;
+    btn.addEventListener('click', function() { c=!c; sb.classList.toggle('collapsed',c); btn.querySelector('polyline').setAttribute('points',c?'9 18 15 12 9 6':'15 18 9 12 15 6'); });
+  }
+
+  function initMobileSidebar() {
+    var h=document.getElementById('mobileMenuBtn'), sb=document.getElementById('sidebar'), ov=document.getElementById('mobileOverlay');
+    if (!h||!sb||!ov) return;
+    function open()  { sb.classList.add('mobile-open');    ov.classList.add('active'); }
+    function close() { sb.classList.remove('mobile-open'); ov.classList.remove('active'); }
+    h.addEventListener('click', open); ov.addEventListener('click', close);
+  }
+
+  function initUserDisplay() {
+    var attempts=0;
+    var poll=setInterval(function() {
+      attempts++;
+      var ctx=window.GOIL_AUTH_CONTEXT;
+      if (ctx&&ctx.profile) {
+        clearInterval(poll);
+        var name=ctx.profile.full_name||ctx.session.user.email||'Admin User';
+        currentUser=name;
+        var initials=name.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+        setText('sidebarUserName',name); setText('topbarName',name);
+        setText('sidebarUserAvatar',initials); setText('topbarAvatar',initials);
+      }
+      if (attempts>30) clearInterval(poll);
+    }, 100);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    renderNav('compliance');
+    initCollapse();
+    initMobileSidebar();
+    initUserDisplay();
+    loadRecord();
+  });
+
+})();
+</script>
+</body>
+</html>
